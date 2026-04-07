@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Politique - Transport collectif et Santé</title>
+    
+    <!-- Intégration de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Intégration des icônes Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuration des couleurs du CISSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cisss-yellow': '#FDB913',
+                        'cisss-orange': '#F15A22',
+                        'cisss-lightGreen': '#63BD59',
+                        'cisss-teal': '#17A7A5',
+                        'cisss-lightBlue': '#0787A1',
+                        'cisss-darkBlue': '#0E4E7B'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Styles spécifiques à l'impression -->
+    <style>
+        @media print {
+            body { 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                background-color: white !important;
+            }
+            @page { margin: 1.5cm; }
+            .page-break { page-break-before: always; }
+            .print-hidden { display: none !important; }
+            .print-block { display: block !important; }
+            .print-opacity-100 { opacity: 1 !important; }
+            .print-shadow-none { box-shadow: none !important; }
+            .print-border-0 { border: 0 !important; }
+            .print-p-0 { padding: 0 !important; }
+            .print-m-0 { margin: 0 !important; }
+            .print-bg-transparent { background-color: transparent !important; }
+            .print-border-gray-300 { border-color: #d1d5db !important; border-width: 1px !important; }
+            .break-inside-avoid { break-inside: avoid; }
+        }
+        
+        ::selection {
+            background-color: #17A7A5;
+            color: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white text-gray-800 font-sans leading-relaxed selection:bg-cisss-teal selection:text-white">
+
+    <!-- HEADER OFFICIEL -->
+    <header class="w-full border-b border-gray-200 py-4 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 bg-white print:py-2">
+        <div class="flex items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Logo_du_gouvernement_du_Qu%C3%A9bec.svg/960px-Logo_du_gouvernement_du_Qu%C3%A9bec.svg.png" 
+                 alt="Gouvernement du Québec" 
+                 class="h-10 md:h-12 w-auto object-contain">
+        </div>
+        <div class="text-center font-bold text-lg md:text-xl text-gray-800 tracking-tight print:text-base">
+            Centre intégré de santé et de services sociaux<br>des Laurentides
+        </div>
+        <div class="text-right">
+            <div class="font-bold text-sm text-cisss-darkBlue">LE CISSS DES LAURENTIDES</div>
+            <div class="text-xs italic text-cisss-teal">complice de votre communauté</div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="max-w-5xl mx-auto px-6 py-8 print-p-0 print-m-0">
+        
+        <!-- Section Titre et Bouton Print -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+            <div class="flex-1">
+                <h2 class="text-sm font-bold uppercase tracking-widest mb-2 text-cisss-orange">Note de politique</h2>
+                <h1 class="text-3xl md:text-5xl font-extrabold leading-tight text-balance text-cisss-darkBlue">
+                    Transport collectif, changements climatiques et santé : des leviers d’action pour les Laurentides
+                </h1>
+            </div>
+            <button id="printBtn" class="print-hidden flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white bg-cisss-teal transition-transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
+                <i data-lucide="printer" class="w-5 h-5"></i>
+                Imprimer en PDF
+            </button>
+        </div>
+
+        <!-- Résumé (Abstract) -->
+        <div class="text-lg md:text-xl font-medium text-gray-700 mb-12 border-l-4 pl-6 border-cisss-yellow">
+            <p class="mb-4">
+                Au Québec, le secteur des transports représente près de 45 % des émissions de gaz à effet de serre (GES), et le transport routier en constitue la plus grande part. Dans les Laurentides, région vaste et à forte dépendance automobile, le développement du transport collectif représente un levier majeur pour réduire les GES, améliorer la qualité de l’air et favoriser la santé de la population.
+            </p>
+            <p>
+                Cette note synthétise les connaissances sur les liens entre changements climatiques, transport collectif et santé, présente un portrait régional des Laurentides et propose des interventions adaptées qui tiennent compte de l’équité en santé. Le transport en commun procure de nombreux avantages pour l’environnement, la santé et la société (Perrotta, 2021), notamment en réduisant la pollution atmosphérique, en favorisant l’activité physique et en diminuant l’isolement social.
+            </p>
+        </div>
+
+        <!-- Layout en grille : Main text + Sidebar (Faits Saillants) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- Colonne Gauche : Contenu principal -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <section>
+                    <h2 class="text-2xl font-bold mb-4 border-b-2 inline-block pb-1 text-cisss-darkBlue border-cisss-teal">Introduction</h2>
+                    <p class="mb-4">Les changements climatiques constituent l’un des plus grands défis de santé publique du 21e siècle. Au Québec, le secteur des transports est le principal émetteur de GES, représentant près de 45 % des émissions totales. À lui seul, le transport routier génère plus du tiers des émissions québécoises. La part du transport routier dans les émissions totales est passée de 24,5 % en 1990 à plus de 33 % aujourd’hui, en raison notamment de la popularité croissante des véhicules utilitaires sport (VUS) et du transport de marchandises.</p>
+                    <p class="mb-4">Dans la région des Laurentides, le territoire vaste et à caractère rural ou périurbain engendre une forte dépendance à l’automobile. L’offre de transport collectif demeure limitée, malgré les efforts du Transport adapté et collectif des Laurentides (TACL) qui dessert l’axe Mont-Tremblant–Saint-Jérôme. La croissance démographique rapide de la région et le vieillissement de sa population amplifient les besoins en matière de mobilité durable.</p>
+                    <p>Cette note de politique vise à synthétiser les connaissances scientifiques sur les liens entre le transport collectif, les changements climatiques et la santé, à dresser un portrait des enjeux spécifiques aux Laurentides et à proposer des interventions prometteuses, en portant une attention particulière à l’équité en santé.</p>
+                </section>
+
+                <section class="bg-gray-50 p-6 rounded-lg print-p-0 print-bg-transparent">
+                    <h2 class="text-xl font-bold mb-3 text-cisss-lightBlue">Approche méthodologique</h2>
+                    <p class="text-sm">Cette note s’appuie sur une synthèse des connaissances issues de la littérature scientifique, des données de l’Institut national de santé publique du Québec (INSPQ), de l’inventaire québécois des émissions de GES et des données régionales du CISSS des Laurentides. L’analyse intègre également les données sur la mobilité de la région et les constats du projet <em>Mobilité intégrée des personnes dans les Laurentides</em>, mené par le Conseil régional de l’environnement des Laurentides (CRE Laurentides).</p>
+                </section>
+
+                <!-- Insertion du schéma interactif (Adapté en JS natif) -->
+                <div class="my-12 p-6 rounded-xl border border-gray-200 bg-gray-50 print:bg-white print-border-0 print-p-0 shadow-sm print-shadow-none break-inside-avoid">
+                    <h3 class="text-xl font-bold mb-6 text-center text-cisss-darkBlue">
+                        Mécanismes d'impact : Transport collectif et Santé
+                    </h3>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 relative">
+                        
+                        <!-- Point de départ -->
+                        <div class="z-10 bg-white p-4 rounded-xl shadow-md border-l-4 w-full md:w-1/4 text-center transition-all border-cisss-darkBlue">
+                            <h4 class="font-bold text-lg text-cisss-darkBlue">Transport Collectif</h4>
+                            <p class="text-sm text-gray-600 mt-2">Investissements et développement du réseau</p>
+                        </div>
+
+                        <!-- Flèches -->
+                        <div class="hidden md:flex flex-col justify-center items-center w-16">
+                            <i data-lucide="arrow-right" class="text-gray-300 w-8 h-8"></i>
+                        </div>
+
+                        <!-- Nœuds intermédiaires interactifs -->
+                        <div class="z-10 flex flex-col gap-3 w-full md:w-2/4">
+                            
+                            <!-- Nœud Activité -->
+                            <div id="node-activite" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-lightGreen">
+                                    <i data-lucide="activity" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Activité Physique</h5>
+                                    <p id="desc-activite" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        La marche pour se rendre aux arrêts augmente l'activité physique quotidienne de 15 à 30 minutes.
+                                    </p>
+                                </div>
+                                <div id="arrow-activite" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-lightGreen">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud Air -->
+                            <div id="node-air" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-lightBlue">
+                                    <i data-lucide="wind" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Qualité de l'Air</h5>
+                                    <p id="desc-air" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        La réduction de l'utilisation de la voiture solo diminue drastiquement les émissions de polluants locaux (NOx, PM2.5).
+                                    </p>
+                                </div>
+                                <div id="arrow-air" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-lightBlue">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud Équité -->
+                            <div id="node-equite" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-yellow">
+                                    <i data-lucide="users" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Équité & Accès</h5>
+                                    <p id="desc-equite" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Offre une option de mobilité abordable pour les populations vulnérables et les aînés, réduisant l'isolement.
+                                    </p>
+                                </div>
+                                <div id="arrow-equite" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-yellow">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud Climat -->
+                            <div id="node-climat" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-orange">
+                                    <i data-lucide="tree-pine" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Changements Climatiques</h5>
+                                    <p id="desc-climat" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Baisse des émissions globales de gaz à effet de serre (GES) du secteur des transports.
+                                    </p>
+                                </div>
+                                <div id="arrow-climat" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-orange">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Flèches -->
+                        <div class="hidden md:flex flex-col justify-center items-center w-16">
+                            <i data-lucide="arrow-right" class="text-gray-300 w-8 h-8"></i>
+                        </div>
+
+                        <!-- Résultat final -->
+                        <div id="diagram-result" class="z-10 bg-white p-4 rounded-xl shadow-md border-r-4 w-full md:w-1/4 text-center transition-all border-cisss-teal print-shadow-none print-border-gray-300">
+                            <h4 id="diagram-result-title" class="font-bold text-lg text-cisss-teal transition-colors">
+                                Santé Publique
+                            </h4>
+                            <p id="diagram-result-text" class="text-sm font-medium mt-2 min-h-[40px] text-gray-700">
+                                Amélioration globale de la santé de la population laurentienne.
+                            </p>
+                        </div>
+
+                    </div>
+                    <div class="text-center mt-6 text-sm text-gray-500 flex items-center justify-center gap-2 print-hidden">
+                        <i data-lucide="info" class="w-4 h-4"></i> Survolez les catégories pour voir les détails.
+                    </div>
+                </div>
+
+                <section class="break-inside-avoid">
+                    <h2 class="text-2xl font-bold mb-6 border-b-2 inline-block pb-1 text-cisss-darkBlue border-cisss-teal">Résultats et Analyses</h2>
+                    
+                    <h3 class="text-xl font-bold mt-6 mb-3 flex items-center gap-2 text-cisss-lightGreen">
+                        <i data-lucide="activity" class="w-5 h-5"></i> Transport en commun, activité physique et santé
+                    </h3>
+                    <h4 class="font-bold text-gray-800 mt-4 mb-2">Le mécanisme principal : la marche d'accès</h4>
+                    <p class="mb-4">L'utilisation du transport en commun favorise l'activité physique principalement par la marche (et parfois le vélo) nécessaire pour rejoindre les arrêts et stations. Les usagers du transport en commun pratiquent davantage d'activité physique globale que les non-usagers et atteignent plus souvent les recommandations quotidiennes (≥ 30 min/jour la plupart des jours), vraisemblablement grâce au transport actif lié à l'accès aux services.</p>
+                    <p class="mb-4">Une donnée souvent citée provient de Besser et Dannenberg (2005) : aux États-Unis, 29 % des usagers du transport en commun étaient suffisamment actifs (30 minutes ou plus par jour) uniquement grâce à la marche entre leur domicile et les arrêts.</p>
+
+                    <h4 class="font-bold text-gray-800 mt-4 mb-2">Quantification : combien de minutes gagnées ?</h4>
+                    <p class="mb-4">La revue systématique de référence (Rissel et coll., 2012) a identifié un gain de 8 à 33 minutes de marche supplémentaires par jour attribuable à l'usage du transport en commun. Pour la région de Montréal spécifiquement, Wasfi et coll. (2013) ont documenté que les résidents utilisant les trains de banlieue rapportaient entre 35 et 41 minutes de marche supplémentaires.</p>
+
+                    <h4 class="font-bold text-gray-800 mt-4 mb-2">La question importante : substitution ou activité « nouvelle » ?</h4>
+                    <p class="mb-4">L'étude clé de Saelens et coll. (2014) a tranché cette question avec des accéléromètres : les usagers du transport en commun avaient plus d'activité physique quotidienne et plus de marche totale, sans différer pour la marche non liée au transport. Une activité supplémentaire de 14,6 minutes par jour était directement attribuable à l'usage du transport collectif.</p>
+
+                    <div class="my-8 p-6 bg-blue-50 border-l-4 rounded-r-lg border-cisss-lightBlue">
+                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2 text-cisss-lightBlue">
+                            <i data-lucide="wind" class="w-5 h-5"></i> Transport en commun et qualité de l’air
+                        </h3>
+                        <p class="mb-3">Plusieurs études ont documenté les bénéfices directs du transport en commun sur la qualité de l'air ambiant. L'ouverture de nouveaux réseaux ferroviaires entraîne des réductions significatives du monoxyde de carbone (5 à 15%) et d'autres polluants (NO, NO₂, CO). Les bénéfices sanitaires associés sont considérables : aux États-Unis, on estime que des milliers de décès prématurés sont évités grâce à la réduction des émissions liées au transport.</p>
+                        <p class="mb-3">Le transport en commun contribue également à la lutte contre les changements climatiques par une réduction directe des émissions de gaz à effet de serre (réduction de 45% des émissions de CO₂ comparativement à la conduite solo).</p>
+                        <p class="text-sm italic">Cependant, l'implantation de normes équivalant à Euro VI et l'électrification progressive des parcs d'autobus constituent des conditions essentielles pour maximiser ces co-bénéfices.</p>
+                    </div>
+
+                    <h3 class="text-xl font-bold mt-8 mb-3 flex items-center gap-2 text-cisss-yellow">
+                        <i data-lucide="users" class="w-5 h-5"></i> Le TC et l'équité en santé
+                    </h3>
+                    <p class="mb-4">L'accès au transport constitue un déterminant social de la santé reconnu. Les disparités dans l'accès contribuent à creuser les inégalités de santé. Les obstacles liés au transport ont un effet direct sur le recours aux soins : 21 % des adultes sans accès à un véhicule ni à un transport en commun renoncent à des soins médicaux, contre 9 % pour ceux ayant un accès au transport collectif.</p>
+                    <p class="mb-4">Au-delà des soins, l'accès au transport en commun améliore l'accès à des aliments sains et à l'emploi, tout en réduisant l'exposition à la pollution atmosphérique, souvent plus élevée dans les quartiers défavorisés traversés par de grandes artères.</p>
+                </section>
+                
+                <section class="bg-gray-100 p-6 rounded-xl mt-8 print:border print-border-gray-300 break-inside-avoid">
+                    <h3 class="text-xl font-bold mb-3 text-cisss-orange">Portrait régional des Laurentides</h3>
+                    <p>La région connaît une croissance démographique supérieure à la moyenne québécoise, avec une hausse marquée de la proportion de personnes âgées. Les MRC du nord (Antoine-Labelle, Laurentides, Pays-d’en-Haut) sont particulièrement touchées par le vieillissement et l’insuffisance des services de transport. Le TACL assure la liaison Mont-Tremblant–Saint-Jérôme, mais les compressions budgétaires récentes au Programme d’aide au développement du transport collectif (PADTC) menacent ces acquis, avec un manque à gagner estimé à 750 000 $ pour 2025-2027.</p>
+                </section>
+
+            </div>
+
+            <!-- Colonne Droite : Sidebar (Faits Saillants) -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-6 rounded-xl shadow-xl overflow-hidden print-shadow-none print:border print-border-gray-300 break-inside-avoid bg-cisss-darkBlue">
+                    <div class="p-6 text-white">
+                        <h3 class="text-2xl font-black uppercase tracking-wider mb-6 flex items-center gap-2">
+                            Faits Saillants
+                        </h3>
+                        <ul class="space-y-6">
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Au Québec, le secteur des transports génère 44,8 % des émissions totales de GES (2023). Le transport routier à lui seul représente 33,4 %.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Les Laurentides comptent environ 659 100 habitants répartis sur 21 554 km², avec une forte dépendance à l’automobile et une offre de TC limitée.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">La pollution atmosphérique (transport) cause 14 400 décès prématurés/an au Canada. Les usagers du TC font 5 à 10 min de plus d’activité physique/jour.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Le vieillissement rapide de la population laurentienne accentue les enjeux d’isolement social et de mobilité.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Conclusion & Recommandations (Pleine largeur) -->
+        <div class="mt-16 pt-12 border-t-2 page-break border-cisss-teal">
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold mb-6 text-center text-cisss-darkBlue">Conclusion</h2>
+                <div class="max-w-4xl mx-auto text-lg font-medium text-gray-700 text-center space-y-4">
+                    <p>Le transport collectif est un déterminant de la santé qui agit simultanément sur plusieurs fronts : réduction des GES et de la pollution atmosphérique, augmentation de l’activité physique, diminution de l’isolement social et amélioration de l’accessibilité aux services. Dans les Laurentides, le développement du transport collectif est non seulement un impératif climatique, mais également un enjeu d’équité en santé.</p>
+                    <p>Les décisions en matière de transport et d’aménagement du territoire façonnent durablement la santé des populations. Il est essentiel que la santé publique participe activement à la planification du transport collectif régional. L’investissement dans le transport collectif représente un levier puissant pour améliorer la santé de la population laurentienne.</p>
+                </div>
+            </section>
+
+            <section class="bg-white p-8 md:p-12 rounded-2xl shadow-lg border print-shadow-none print-border-gray-300 border-cisss-lightGreen">
+                <h2 class="text-2xl md:text-3xl font-black uppercase mb-8 flex items-center gap-4 text-cisss-darkBlue">
+                    <span class="p-3 rounded-xl text-white bg-cisss-lightGreen">
+                        <i data-lucide="arrow-right" class="w-7 h-7"></i>
+                    </span>
+                    Recommandations d'action
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Consolider et développer l’offre régionale</h4>
+                                <p class="text-sm text-gray-700">Maintenir le financement du TACL et étendre les dessertes par autobus et taxibus, particulièrement vers les MRC du nord. Développer des liaisons intermodales.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Prioriser l’accès aux populations vulnérables</h4>
+                                <p class="text-sm text-gray-700">Mettre en place des services à la demande pour aînés, offrir la gratuité/tarifs réduits (faible revenu, étudiants), et améliorer l'accessibilité universelle.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">3</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Intégrer la santé dans la planification</h4>
+                                <p class="text-sm text-gray-700">Recourir à l’évaluation d’impact sur la santé (ÉIS) lors de projets majeurs. Favoriser la densification et l’aménagement favorable au transport actif.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">4</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Favoriser l’intermodalité et le transport actif</h4>
+                                <p class="text-sm text-gray-700">Relier les arrêts aux réseaux cyclables/piétonniers, installer des supports à vélos. Tirer parti du P’tit Train du Nord pour l’intermodalité.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">5</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Sensibiliser et mobiliser les acteurs</h4>
+                                <p class="text-sm text-gray-700">Renforcer la collaboration (santé publique, MRC, TACL, organismes communautaires). Soutenir les initiatives locales de mobilité partagée adaptées aux milieux ruraux.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- Sources -->
+        <section class="mt-16 pt-8 border-t border-gray-200">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Sources et Références</h3>
+            <ul class="text-xs text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                <li>Axsen, J. et Wolinetz, M. (2019). Achieving climate targets with transport in Canada. Transport Policy.</li>
+                <li>Bailey, L., Mokhtarian, P. L. et Little, A. (2008). The Broader Connection between Public Transportation, Energy Conservation and Greenhouse Gas Reduction. APTA.</li>
+                <li>CISSS des Laurentides (2023). Portrait des enjeux démographiques – Région des Laurentides.</li>
+                <li>CRE Laurentides (2021). Mobilité intégrée des personnes dans les Laurentides – Volet transport actif.</li>
+                <li>INSPQ (2017). Mémoire concernant la Politique québécoise de mobilité durable.</li>
+                <li>INSPQ (2024). Les clés d’un environnement bâti favorisant le transport actif. TOPO no 23.</li>
+                <li>Lachapelle, U. et al. (2011). Transit use and physical activity. Preventive Medicine, 52(2), 90–95.</li>
+                <li>Litman, T. (2024). Evaluating Public Transit Benefits and Costs. Victoria Transport Policy Institute.</li>
+                <li>MELCCFP (2024). Inventaire québécois des émissions de GES en 2023.</li>
+                <li>Perrotta, K. (2021). Les avantages du transport en commun pour la santé et l’environnement.</li>
+                <li>Santé Canada (2021). Les impacts sur la santé de la pollution de l’air au Canada.</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- FOOTER OFFICIEL -->
+    <footer class="w-full bg-gray-50 border-t border-gray-200 py-8 mt-12 print-mt-4 print-py-4 print:bg-white text-sm">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-right">
+                <div class="font-bold text-sm text-cisss-darkBlue">LE CISSS DES LAURENTIDES</div>
+                <div class="text-xs italic text-cisss-teal">complice de votre communauté</div>
+            </div>
+            <div class="flex items-center gap-4 text-gray-600">
+                <a href="https://www.quebec.ca/droit-auteur" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1 transition-colors hover:text-blue-600">
+                    Droit d'auteur | Gouvernement du Québec <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+                <span class="hidden md:inline">|</span>
+                <span>© <script>document.write(new Date().getFullYear())</script></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script de l'application -->
+    <script>
+        // Initialisation des icônes Lucide
+        lucide.createIcons();
+
+        // Fonctionnalité d'impression
+        document.getElementById('printBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        // Données pour le schéma interactif
+        const nodesData = [
+            { id: 'activite', color: '#63BD59', impact: "Amélioration de la santé cardiovasculaire et réduction de l'obésité." },
+            { id: 'air', color: '#0787A1', impact: "Diminution des maladies respiratoires, comme l'asthme." },
+            { id: 'equite', color: '#FDB913', impact: "Meilleur accès aux soins de santé, aliments sains et services." },
+            { id: 'climat', color: '#F15A22', impact: "Atténuation des risques climatiques sur la santé publique à long terme." }
+        ];
+
+        // Éléments du résultat final
+        const resultBox = document.getElementById('diagram-result');
+        const resultTitle = document.getElementById('diagram-result-title');
+        const resultText = document.getElementById('diagram-result-text');
+        
+        const defaultImpact = "Amélioration globale de la santé de la population laurentienne.";
+        const defaultColor = '#17A7A5';
+
+        // Logique de survol (Hover)
+        nodesData.forEach(data => {
+            const nodeEl = document.getElementById(`node-${data.id}`);
+            const descEl = document.getElementById(`desc-${data.id}`);
+            const arrowEl = document.getElementById(`arrow-${data.id}`);
+
+            nodeEl.addEventListener('mouseenter', () => {
+                // Style du noeud
+                nodeEl.style.borderColor = data.color;
+                nodeEl.classList.remove('border-transparent', 'shadow-sm', 'hover:shadow-md');
+                nodeEl.classList.add('shadow-lg', 'scale-[1.02]', 'bg-white');
+                
+                // Description & flèche
+                descEl.classList.remove('hidden', 'md:hidden');
+                descEl.classList.add('block');
+                arrowEl.style.opacity = '1';
+
+                // Boite résultat
+                resultBox.style.borderColor = data.color;
+                resultBox.style.transform = 'scale(1.05)';
+                resultTitle.style.color = data.color;
+                resultText.textContent = data.impact;
+            });
+
+            nodeEl.addEventListener('mouseleave', () => {
+                // Restauration du style du noeud
+                nodeEl.style.borderColor = 'transparent';
+                nodeEl.classList.remove('shadow-lg', 'scale-[1.02]', 'bg-white');
+                nodeEl.classList.add('border-transparent', 'shadow-sm', 'hover:shadow-md');
+                
+                // Masquage description & flèche
+                descEl.classList.remove('block');
+                descEl.classList.add('hidden', 'md:hidden');
+                arrowEl.style.opacity = '0';
+
+                // Restauration boite résultat
+                resultBox.style.borderColor = defaultColor;
+                resultBox.style.transform = 'scale(1)';
+                resultTitle.style.color = defaultColor;
+                resultText.textContent = defaultImpact;
+            });
+        });
+    </script>
+</body>
+</html>
