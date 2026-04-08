@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processus de Révision de Rapport EIS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .swimlane-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            min-width: 1300px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+        .lane {
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .lane:last-child {
+            border-right: none;
+        }
+        .lane-header {
+            background-color: #0f172a;
+            color: white;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lane-content {
+            padding: 2.5rem 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem; /* Augmentation de l'espace entre les éléments */
+            position: relative;
+        }
+        .step-box {
+            background: #ffffff;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 0.85rem;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Variants */
+        .step-expertise { border-color: #94a3b8; background-color: #f8fafc; }
+        .step-coord { border-color: #3b82f6; }
+        .step-strategic { border-color: #8b5cf6; }
+        .step-linguistic { border-color: #10b981; }
+        .step-direction { border-color: #f59e0b; }
+        .step-final { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
+
+        /* Flow Arrows */
+        .arrow-down {
+            align-self: center;
+            width: 2px;
+            height: 24px;
+            background-color: #cbd5e1;
+            position: relative;
+            margin: -0.5rem 0; /* Ajustement pour coller aux boîtes */
+        }
+        .arrow-down::after {
+            content: '▼';
+            position: absolute;
+            bottom: -8px;
+            left: -5px;
+            color: #cbd5e1;
+            font-size: 10px;
+        }
+
+        /* Feedback Loops */
+        .feedback-loop {
+            position: absolute;
+            border: 2px dashed #94a3b8;
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .feedback-label {
+            position: absolute;
+            background: white;
+            padding: 2px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #475569;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Positions de boucles ajustées */
+        .loop-internal-coord {
+            top: 155px; right: -15px; width: 40px; height: 110px;
+            border-left: none; border-radius: 0 12px 12px 0;
+            border-color: #3b82f6;
+        }
+        .loop-strategic-back {
+            top: 180px; left: -20px; width: 45px; height: 140px;
+            border-right: none; border-radius: 12px 0 0 12px;
+            border-color: #8b5cf6;
+        }
+        .loop-linguistic-expert {
+            top: 50px; left: -780px; width: 800px; height: 490px;
+            border-top: none; border-right: none; border-radius: 0 0 0 30px;
+            border-color: #10b981;
+        }
+        .loop-mgmt-back {
+            top: 620px; left: -220px; width: 240px; height: 100px;
+            border-top: none; border-radius: 0 0 12px 12px;
+            border-color: #f59e0b;
+        }
+
+        @media print {
+            .no-print { display: none; }
+            body { background: white; padding: 0; }
+            .swimlane-container { box-shadow: none; border: 1px solid #000; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-full mx-auto">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-2">PROCESSUS DE RÉVISION DE RAPPORT EIS</h1>
+            <p class="text-slate-500 font-semibold uppercase tracking-widest text-sm">Protocole Interne — Direction de la Santé Publique</p>
+        </header>
+
+        <div class="overflow-x-auto pb-16">
+            <div class="swimlane-container">
+                
+                <!-- Couloir 1: Experts Sectoriels -->
+                <div class="lane bg-slate-50/50">
+                    <div class="lane-header">Experts Sectoriels</div>
+                    <div class="lane-content">
+                        <div class="grid grid-cols-1 gap-2">
+                            <div class="step-box step-expertise">Alimentation</div>
+                            <div class="step-box step-expertise">Environnement</div>
+                            <div class="step-box step-expertise">Mobilité</div>
+                            <div class="step-box step-expertise">Cadre Bâti</div>
+                            <div class="step-box step-expertise">Surveillance</div>
+                            <div class="step-box step-expertise">Développement Social</div>
+                        </div>
+                        <div class="mt-6 p-4 border-l-4 border-slate-300 bg-white text-[0.75rem] text-slate-600 italic leading-relaxed">
+                            Émission des recommandations initiales basées sur les données probantes.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Couloir 2: Coordonnateur EIS -->
+                <div class="lane">
+                    <div class="lane-header">Coordonnateur EIS</div>
+                    <div class="lane-content">
+                        <div class="step-box step-coord mt-4">Consolidation & Cohérence<br><span class="text-[0.7rem] font-normal opacity-80">(Synthèse & Harmonisation)</span></div>
+                        <div class="arrow-down"></div>
+                        
+                        <div class="relative">
+                            <div class="step-box step-coord">Validation des Suggestions & Adaptation</div>
+                            <!-- Feedback Loop 1: Internal -->
+                            <div class="feedback-loop loop-internal-coord"></div>
+                            <div class="feedback-label" style="top: 45px; right: -55px; z-index: 20;">Boucle 1 : Itération Experts</div>
+                        </div>
+                        
+                        <div class="arrow-down"></div>
+                        <div class="step-box step-coord bg-blue-50 border-dashed">Texte Final Consolidé</div>
+                        <div class="mt-4 text-[0.7rem] text-center text-blue-600 font-bold uppercase tracking-tighter">Transfert Stratégique ⮕</div>
+                    </div>
+                </div>
+
+                <!-- Couloir 3: Co-gestion (Stratégique) -->
+                <div class="lane">
+                    <div class="lane-header">Co-gestion (Stratégique)</div>
+                    <div class="lane-content">
+                        <div class="step-box step-strategic">Révision Stratégique & Alignement</div>
+                        <div class="arrow-down"></div>
+                        
+                        <div class="relative">
+                            <div class="step-box step-strategic">Ajustements de Co-gestion</div>
+                            <div class="feedback-loop loop-strategic-back"></div>
+                            <div class="feedback-label" style="top: 60px; left: -70px;">Besoin Refonte</div>
+                        </div>
+                        
+                        <div class="arrow-down"></div>
+                        
+                        <div class="step-box step-strategic">Validation par Experts (V2)<br><span class="text-[0.7rem] font-normal opacity-80">(Si ajustements majeurs)</span></div>
+                        <div class="arrow-down"></div>
+                        <div class="step-box step-strategic">Rapport Corrigé</div>
+                        <div class="arrow-down"></div>
+                        <div class="step-box step-strategic bg-purple-50 font-bold">Approbation Co-gestion</div>
+                    </div>
+                </div>
+
+                <!-- Couloir 4: Révision Linguistique -->
+                <div class="lane bg-slate-50/30">
+                    <div class="lane-header">Révision Linguistique</div>
+                    <div class="lane-content">
+                        <div class="mt-[28rem]"></div>
+                        <div class="relative">
+                            <div class="step-box step-linguistic">Correction Style & Clarté</div>
+                            <!-- Loop: Linguistic to Experts -->
+                            <div class="feedback-loop loop-linguistic-expert"></div>
+                            <div class="feedback-label" style="bottom: -35px; left: -680px; z-index: 20;">Validation Technique des Reformulations</div>
+                        </div>
+                        <div class="arrow-down"></div>
+                    </div>
+                </div>
+
+                <!-- Couloir 5: Direction & Communications -->
+                <div class="lane">
+                    <div class="lane-header">Direction & Communications</div>
+                    <div class="lane-content">
+                        <div class="mt-[28rem]"></div>
+                        
+                        <div class="relative">
+                            <div class="step-box step-direction">Approbation de l'Équipe de Gestion</div>
+                            <div class="feedback-loop loop-mgmt-back"></div>
+                            <div class="feedback-label" style="bottom: -25px; left: -140px;">Arbitrage / Modif. Stratégique</div>
+                        </div>
+                        
+                        <div class="arrow-down"></div>
+                        <div class="step-box step-direction">Approbation Finale Direction DSP<br><span class="text-[0.7rem] font-normal opacity-80">(Signature)</span></div>
+                        <div class="arrow-down"></div>
+                        <div class="step-box step-direction">Mise en Page Finale<br><span class="text-[0.7rem] font-normal opacity-80">(Infographie & Logos)</span></div>
+                        <div class="arrow-down"></div>
+                        <div class="step-box step-final font-bold">DÉPART DIFFUSION</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center">
+                    <span class="mr-2 text-blue-500">🔄</span> Dynamique des Rétroactions
+                </h3>
+                <ul class="text-xs text-slate-600 space-y-3">
+                    <li><strong>Boucle 1 :</strong> Validation itérative entre coordination et experts pour assurer la fidélité technique dès la synthèse.</li>
+                    <li><strong>Validation Linguistique/Experts :</strong> S'assure que l'épuration du style par les réviseurs ne change pas la portée des recommandations d'experts.</li>
+                    <li><strong>Boucle Stratégique :</strong> Mécanisme de retour vers la coordination si les objectifs stratégiques imposent une réécriture.</li>
+                    <li><strong>Boucle de Gestion :</strong> Point d'arbitrage final par la direction avant la mise en production.</li>
+                </ul>
+            </div>
+            <div class="flex flex-col justify-center items-center md:items-end">
+                <p class="text-[0.7rem] text-slate-400 mb-4 font-medium italic">Version 2.4 — Optimisation de la lisibilité des flux et boucles</p>
+                <div class="flex gap-3">
+                    <button onclick="window.print()" class="no-print bg-slate-900 text-white px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 shadow-lg transition-all active:scale-95 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Exporter en PDF
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
