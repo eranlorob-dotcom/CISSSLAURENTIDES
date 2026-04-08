@@ -5,274 +5,278 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Processus de Révision de Rapport EIS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body {
-            background-color: #f1f5f9;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-        .swimlane-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            min-width: 1300px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-        .lane {
-            border-right: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        .lane:last-child {
-            border-right: none;
-        }
-        .lane-header {
-            background-color: #0f172a;
-            color: white;
-            padding: 1.25rem 1rem;
-            text-align: center;
-            font-weight: 800;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            min-height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .lane-content {
-            padding: 2.5rem 1rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 1.75rem; /* Augmentation de l'espace entre les éléments */
-            position: relative;
-        }
-        .step-box {
-            background: #ffffff;
-            border: 2px solid #3b82f6;
-            border-radius: 8px;
-            padding: 0.85rem;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #1e293b;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 10;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
         
-        /* Variants */
-        .step-expertise { border-color: #94a3b8; background-color: #f8fafc; }
-        .step-coord { border-color: #3b82f6; }
-        .step-strategic { border-color: #8b5cf6; }
-        .step-linguistic { border-color: #10b981; }
-        .step-direction { border-color: #f59e0b; }
-        .step-final { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
-
-        /* Flow Arrows */
-        .arrow-down {
-            align-self: center;
-            width: 2px;
-            height: 24px;
-            background-color: #cbd5e1;
-            position: relative;
-            margin: -0.5rem 0; /* Ajustement pour coller aux boîtes */
-        }
-        .arrow-down::after {
-            content: '▼';
-            position: absolute;
-            bottom: -8px;
-            left: -5px;
-            color: #cbd5e1;
-            font-size: 10px;
+        body {
+            font-family: 'Inter', sans-serif;
         }
 
-        /* Feedback Loops */
-        .feedback-loop {
-            position: absolute;
-            border: 2px dashed #94a3b8;
-            border-radius: 12px;
-            pointer-events: none;
-            z-index: 5;
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
-        .feedback-label {
-            position: absolute;
-            background: white;
-            padding: 2px 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            color: #475569;
-            font-weight: 700;
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .animate-spin-slow {
+            animation: spin-slow 8s linear infinite;
         }
 
-        /* Positions de boucles ajustées */
-        .loop-internal-coord {
-            top: 155px; right: -15px; width: 40px; height: 110px;
-            border-left: none; border-radius: 0 12px 12px 0;
-            border-color: #3b82f6;
-        }
-        .loop-strategic-back {
-            top: 180px; left: -20px; width: 45px; height: 140px;
-            border-right: none; border-radius: 12px 0 0 12px;
-            border-color: #8b5cf6;
-        }
-        .loop-linguistic-expert {
-            top: 50px; left: -780px; width: 800px; height: 490px;
-            border-top: none; border-right: none; border-radius: 0 0 0 30px;
-            border-color: #10b981;
-        }
-        .loop-mgmt-back {
-            top: 620px; left: -220px; width: 240px; height: 100px;
-            border-top: none; border-radius: 0 0 12px 12px;
-            border-color: #f59e0b;
+        .step-card:hover .tooltip {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        @media print {
-            .no-print { display: none; }
-            body { background: white; padding: 0; }
-            .swimlane-container { box-shadow: none; border: 1px solid #000; }
+        .loop-path {
+            stroke-dasharray: 8, 4;
+            animation: dash 20s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-full mx-auto">
-        <header class="mb-10 text-center">
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-2">PROCESSUS DE RÉVISION DE RAPPORT EIS</h1>
-            <p class="text-slate-500 font-semibold uppercase tracking-widest text-sm">Protocole Interne — Direction de la Santé Publique</p>
-        </header>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8 overflow-x-hidden">
 
-        <div class="overflow-x-auto pb-16">
-            <div class="swimlane-container">
-                
-                <!-- Couloir 1: Experts Sectoriels -->
-                <div class="lane bg-slate-50/50">
-                    <div class="lane-header">Experts Sectoriels</div>
-                    <div class="lane-content">
-                        <div class="grid grid-cols-1 gap-2">
-                            <div class="step-box step-expertise">Alimentation</div>
-                            <div class="step-box step-expertise">Environnement</div>
-                            <div class="step-box step-expertise">Mobilité</div>
-                            <div class="step-box step-expertise">Cadre Bâti</div>
-                            <div class="step-box step-expertise">Surveillance</div>
-                            <div class="step-box step-expertise">Développement Social</div>
-                        </div>
-                        <div class="mt-6 p-4 border-l-4 border-slate-300 bg-white text-[0.75rem] text-slate-600 italic leading-relaxed">
-                            Émission des recommandations initiales basées sur les données probantes.
-                        </div>
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-10 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight uppercase border-b-4 border-indigo-500 inline-block pb-2 mb-4">
+            Processus de Révision de Rapport EIS
+        </h1>
+        <p class="text-slate-500 font-medium italic">Un flux collaboratif et interactif avec boucles de rétroaction</p>
+    </header>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto relative">
+        
+        <!-- SVG Overlay for Cross-Lane Loops (Desktop Only) -->
+        <svg class="absolute top-0 left-0 w-full h-full pointer-events-none hidden md:block" style="z-index: 5;">
+            <!-- Loop from Lane 4 back to Lane 1 -->
+            <path 
+                id="linguistic-loop"
+                d="M 850 420 Q 500 700 150 420" 
+                fill="transparent" 
+                stroke="#f472b6" 
+                stroke-width="3" 
+                class="loop-path opacity-60"
+            />
+            <text x="400" y="580" fill="#f472b6" class="text-[10px] font-bold uppercase tracking-widest" style="font-size: 12px; font-weight: 800;">
+                Validation technique de style (si nécessaire)
+            </text>
+        </svg>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative z-10">
+            
+            <!-- Couloir 1: Experts Sectoriels -->
+            <div class="flex flex-col bg-slate-100/60 rounded-2xl p-4 border border-slate-200">
+                <div class="flex items-center gap-2 mb-6 justify-center">
+                    <i data-lucide="users" class="text-indigo-600"></i>
+                    <h2 class="font-black text-xs uppercase tracking-widest text-indigo-900">Experts Sectoriels</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-1 gap-2" id="expert-list">
+                    <!-- Cards will be populated here if needed, or static -->
+                    <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 flex items-center gap-3">
+                        <span class="text-lg">🍎</span>
+                        <span class="text-[10px] font-bold">Alimentation</span>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 flex items-center gap-3">
+                        <span class="text-lg">🌿</span>
+                        <span class="text-[10px] font-bold">Environnement</span>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 flex items-center gap-3">
+                        <span class="text-lg">🚲</span>
+                        <span class="text-[10px] font-bold">Mobilité</span>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 flex items-center gap-3">
+                        <span class="text-lg">🏗️</span>
+                        <span class="text-[10px] font-bold">Cadre Bâti</span>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 flex items-center gap-3">
+                        <span class="text-lg">📊</span>
+                        <span class="text-[10px] font-bold">Surveillance</span>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 flex items-center gap-3">
+                        <span class="text-lg">🤝</span>
+                        <span class="text-[10px] font-bold">Dév. Social</span>
                     </div>
                 </div>
+                <div class="mt-20 p-3 border-2 border-dashed border-orange-300 rounded-xl bg-orange-50 text-center">
+                    <div class="flex justify-center mb-1"><i data-lucide="refresh-ccw" class="text-orange-500 w-4 h-4"></i></div>
+                    <span class="text-[9px] font-black text-orange-600 uppercase">Réception des Itérations</span>
+                </div>
+            </div>
 
-                <!-- Couloir 2: Coordonnateur EIS -->
-                <div class="lane">
-                    <div class="lane-header">Coordonnateur EIS</div>
-                    <div class="lane-content">
-                        <div class="step-box step-coord mt-4">Consolidation & Cohérence<br><span class="text-[0.7rem] font-normal opacity-80">(Synthèse & Harmonisation)</span></div>
-                        <div class="arrow-down"></div>
-                        
-                        <div class="relative">
-                            <div class="step-box step-coord">Validation des Suggestions & Adaptation</div>
-                            <!-- Feedback Loop 1: Internal -->
-                            <div class="feedback-loop loop-internal-coord"></div>
-                            <div class="feedback-label" style="top: 45px; right: -55px; z-index: 20;">Boucle 1 : Itération Experts</div>
+            <!-- Couloir 2: Coordonnateur EIS -->
+            <div class="flex flex-col bg-indigo-50/40 rounded-2xl p-4 border border-indigo-100">
+                <div class="flex items-center gap-2 mb-6 justify-center">
+                    <i data-lucide="git-merge" class="text-blue-600"></i>
+                    <h2 class="font-black text-xs uppercase tracking-widest text-blue-900">Coordonnateur EIS</h2>
+                </div>
+                <div class="flex flex-col items-center">
+                    <!-- Step 1 -->
+                    <div class="step-card relative p-4 rounded-xl border-2 border-blue-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="p-2 rounded-full mb-2 bg-blue-100"><i data-lucide="file-text" class="text-blue-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Consolidation & Cohérence</h4>
+                        <div class="tooltip opacity-0 transition-opacity absolute top-full mt-2 w-48 p-2 bg-gray-800 text-white text-[10px] rounded shadow-xl z-20 pointer-events-none">
+                            Synthèse et harmonisation des recommandations initiales.
                         </div>
-                        
-                        <div class="arrow-down"></div>
-                        <div class="step-box step-coord bg-blue-50 border-dashed">Texte Final Consolidé</div>
-                        <div class="mt-4 text-[0.7rem] text-center text-blue-600 font-bold uppercase tracking-tighter">Transfert Stratégique ⮕</div>
+                    </div>
+                    <i data-lucide="arrow-down" class="text-gray-300 mb-4"></i>
+                    
+                    <!-- Step 2 (Loop) -->
+                    <div class="step-card relative p-4 rounded-xl border-2 border-orange-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="absolute -right-2 -top-2 animate-spin-slow"><i data-lucide="refresh-ccw" class="text-orange-500 w-5 h-5"></i></div>
+                        <div class="p-2 rounded-full mb-2 bg-orange-100"><i data-lucide="refresh-ccw" class="text-orange-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Validation & Adaptation</h4>
+                        <div class="tooltip opacity-0 transition-opacity absolute top-full mt-2 w-48 p-2 bg-gray-800 text-white text-[10px] rounded shadow-xl z-20 pointer-events-none">
+                            Boucle 1 : Itérations avec les experts pour valider les ajustements.
+                        </div>
+                    </div>
+                    <i data-lucide="arrow-down" class="text-gray-300 mb-4"></i>
+
+                    <!-- Step 3 -->
+                    <div class="step-card relative p-4 rounded-xl border-2 border-emerald-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="p-2 rounded-full mb-2 bg-emerald-100"><i data-lucide="check-circle-2" class="text-emerald-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Texte Final Consolidé</h4>
+                    </div>
+
+                    <div class="mt-4 flex items-center gap-1">
+                        <i data-lucide="arrow-right" class="text-indigo-400"></i>
+                        <span class="text-[9px] font-bold text-indigo-400 uppercase">Transfert Stratégique</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Couloir 3: Co-gestion (Stratégique) -->
-                <div class="lane">
-                    <div class="lane-header">Co-gestion (Stratégique)</div>
-                    <div class="lane-content">
-                        <div class="step-box step-strategic">Révision Stratégique & Alignement</div>
-                        <div class="arrow-down"></div>
-                        
-                        <div class="relative">
-                            <div class="step-box step-strategic">Ajustements de Co-gestion</div>
-                            <div class="feedback-loop loop-strategic-back"></div>
-                            <div class="feedback-label" style="top: 60px; left: -70px;">Besoin Refonte</div>
+            <!-- Couloir 3: Co-gestion -->
+            <div class="flex flex-col bg-purple-50/40 rounded-2xl p-4 border border-purple-100">
+                <div class="flex items-center gap-2 mb-6 justify-center text-center">
+                    <i data-lucide="shield-check" class="text-purple-600"></i>
+                    <h2 class="font-black text-[10px] uppercase tracking-widest text-purple-900 leading-tight">Co-gestion (Stratégique)</h2>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="step-card relative p-4 rounded-xl border-2 border-purple-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="p-2 rounded-full mb-2 bg-purple-100"><i data-lucide="navigation" class="text-purple-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Révision Stratégique & Alignement</h4>
+                    </div>
+                    <i data-lucide="arrow-down" class="text-gray-300 mb-4"></i>
+
+                    <div class="step-card relative p-4 rounded-xl border-2 border-orange-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="absolute -right-2 -top-2 animate-spin-slow"><i data-lucide="refresh-ccw" class="text-orange-500 w-5 h-5"></i></div>
+                        <div class="p-2 rounded-full mb-2 bg-orange-100"><i data-lucide="user-check" class="text-orange-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Validation Experts (V2)</h4>
+                        <div class="tooltip opacity-0 transition-opacity absolute top-full mt-2 w-48 p-2 bg-gray-800 text-white text-[10px] rounded shadow-xl z-20 pointer-events-none">
+                            Relance si ajustements majeurs.
                         </div>
-                        
-                        <div class="arrow-down"></div>
-                        
-                        <div class="step-box step-strategic">Validation par Experts (V2)<br><span class="text-[0.7rem] font-normal opacity-80">(Si ajustements majeurs)</span></div>
-                        <div class="arrow-down"></div>
-                        <div class="step-box step-strategic">Rapport Corrigé</div>
-                        <div class="arrow-down"></div>
-                        <div class="step-box step-strategic bg-purple-50 font-bold">Approbation Co-gestion</div>
+                    </div>
+                    <i data-lucide="arrow-down" class="text-gray-300 mb-4"></i>
+
+                    <div class="step-card relative p-4 rounded-xl border-2 border-emerald-500 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="p-2 rounded-full mb-2 bg-emerald-100"><i data-lucide="check-circle-2" class="text-emerald-800"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Approbation Co-gérée</h4>
+                    </div>
+
+                    <div class="mt-4 flex items-center gap-1">
+                        <i data-lucide="arrow-right" class="text-indigo-400"></i>
+                        <span class="text-[9px] font-bold text-indigo-400 uppercase">Envoi Linguistique</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Couloir 4: Révision Linguistique -->
-                <div class="lane bg-slate-50/30">
-                    <div class="lane-header">Révision Linguistique</div>
-                    <div class="lane-content">
-                        <div class="mt-[28rem]"></div>
-                        <div class="relative">
-                            <div class="step-box step-linguistic">Correction Style & Clarté</div>
-                            <!-- Loop: Linguistic to Experts -->
-                            <div class="feedback-loop loop-linguistic-expert"></div>
-                            <div class="feedback-label" style="bottom: -35px; left: -680px; z-index: 20;">Validation Technique des Reformulations</div>
-                        </div>
-                        <div class="arrow-down"></div>
+            <!-- Couloir 4: Révision Linguistique -->
+            <div class="flex flex-col bg-pink-50/40 rounded-2xl p-4 border border-pink-100">
+                <div class="flex items-center gap-2 mb-6 justify-center">
+                    <i data-lucide="type" class="text-pink-600"></i>
+                    <h2 class="font-black text-xs uppercase tracking-widest text-pink-900">Révision Linguistique</h2>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="h-10"></div>
+                    <div class="step-card relative p-4 rounded-xl border-2 border-pink-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105 shadow-pink-100 shadow-md">
+                        <div class="p-2 rounded-full mb-2 bg-pink-100"><i data-lucide="pen-tool" class="text-pink-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Correction Style & Clarté</h4>
+                    </div>
+                    
+                    <!-- Visual indicator for loop back to Experts -->
+                    <div class="mt-12 p-2 border-2 border-pink-300 rounded-lg bg-white flex flex-col items-center animate-pulse">
+                        <i data-lucide="arrow-left" class="text-pink-500 mb-1"></i>
+                        <span class="text-[8px] font-black text-pink-600 uppercase text-center">Boucle Technique vers Experts</span>
+                    </div>
+
+                    <div class="mt-24 flex items-center gap-1">
+                        <i data-lucide="arrow-right" class="text-indigo-400"></i>
+                        <span class="text-[9px] font-bold text-indigo-400 uppercase">Prêt pour Direction</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Couloir 5: Direction & Communications -->
-                <div class="lane">
-                    <div class="lane-header">Direction & Communications</div>
-                    <div class="lane-content">
-                        <div class="mt-[28rem]"></div>
-                        
-                        <div class="relative">
-                            <div class="step-box step-direction">Approbation de l'Équipe de Gestion</div>
-                            <div class="feedback-loop loop-mgmt-back"></div>
-                            <div class="feedback-label" style="bottom: -25px; left: -140px;">Arbitrage / Modif. Stratégique</div>
+            <!-- Couloir 5: Direction & Comms -->
+            <div class="flex flex-col bg-emerald-50/40 rounded-2xl p-4 border border-emerald-100">
+                <div class="flex items-center gap-2 mb-6 justify-center">
+                    <i data-lucide="send" class="text-emerald-600"></i>
+                    <h2 class="font-black text-[10px] uppercase tracking-widest text-emerald-900 leading-tight">Direction & Comm.</h2>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="step-card relative p-4 rounded-xl border-2 border-slate-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="p-2 rounded-full mb-2 bg-slate-100"><i data-lucide="users" class="text-slate-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Approbation Gestion</h4>
+                    </div>
+                    <i data-lucide="arrow-down" class="text-gray-300 mb-4"></i>
+
+                    <div class="step-card relative p-4 rounded-xl border-4 border-indigo-600 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105 shadow-xl">
+                        <div class="p-2 rounded-full mb-2 bg-indigo-100"><i data-lucide="shield-check" class="text-indigo-900"></i></div>
+                        <h4 class="text-xs font-black leading-tight uppercase">Signature Direction DSP</h4>
+                    </div>
+                    <i data-lucide="arrow-down" class="text-gray-300 mb-4"></i>
+
+                    <div class="step-card relative p-4 rounded-xl border-2 border-slate-400 bg-white mb-4 flex flex-col items-center text-center w-full group transition-all hover:scale-105">
+                        <div class="p-2 rounded-full mb-2 bg-slate-100"><i data-lucide="layout" class="text-slate-700"></i></div>
+                        <h4 class="text-xs font-bold leading-tight">Mise en Page Finale</h4>
+                    </div>
+
+                    <div class="mt-6 flex flex-col items-center">
+                        <div class="bg-indigo-600 text-white p-4 rounded-full shadow-2xl animate-bounce cursor-pointer">
+                            <i data-lucide="send" class="w-6 h-6"></i>
                         </div>
-                        
-                        <div class="arrow-down"></div>
-                        <div class="step-box step-direction">Approbation Finale Direction DSP<br><span class="text-[0.7rem] font-normal opacity-80">(Signature)</span></div>
-                        <div class="arrow-down"></div>
-                        <div class="step-box step-direction">Mise en Page Finale<br><span class="text-[0.7rem] font-normal opacity-80">(Infographie & Logos)</span></div>
-                        <div class="arrow-down"></div>
-                        <div class="step-box step-final font-bold">DÉPART DIFFUSION</div>
+                        <span class="text-[10px] font-black uppercase mt-3 text-indigo-600 tracking-tighter">Départ Diffusion Officielle</span>
                     </div>
                 </div>
+            </div>
 
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <footer class="max-w-7xl mx-auto mt-12 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div class="flex items-center justify-center gap-3">
+                <div class="w-4 h-4 rounded-full bg-orange-400 animate-pulse"></div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Boucles d'Itérations V1/V2</span>
+            </div>
+            <div class="flex items-center justify-center gap-3">
+                <div class="w-10 h-1 bg-pink-400 rounded-full"></div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Retour Technique Linguistique</span>
+            </div>
+            <div class="flex items-center justify-center gap-3">
+                <div class="w-4 h-4 rounded-full bg-indigo-500"></div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Flux de Validation Principal</span>
             </div>
         </div>
+    </footer>
 
-        <footer class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
-                <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center">
-                    <span class="mr-2 text-blue-500">🔄</span> Dynamique des Rétroactions
-                </h3>
-                <ul class="text-xs text-slate-600 space-y-3">
-                    <li><strong>Boucle 1 :</strong> Validation itérative entre coordination et experts pour assurer la fidélité technique dès la synthèse.</li>
-                    <li><strong>Validation Linguistique/Experts :</strong> S'assure que l'épuration du style par les réviseurs ne change pas la portée des recommandations d'experts.</li>
-                    <li><strong>Boucle Stratégique :</strong> Mécanisme de retour vers la coordination si les objectifs stratégiques imposent une réécriture.</li>
-                    <li><strong>Boucle de Gestion :</strong> Point d'arbitrage final par la direction avant la mise en production.</li>
-                </ul>
-            </div>
-            <div class="flex flex-col justify-center items-center md:items-end">
-                <p class="text-[0.7rem] text-slate-400 mb-4 font-medium italic">Version 2.4 — Optimisation de la lisibilité des flux et boucles</p>
-                <div class="flex gap-3">
-                    <button onclick="window.print()" class="no-print bg-slate-900 text-white px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 shadow-lg transition-all active:scale-95 flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        Exporter en PDF
-                    </button>
-                </div>
-            </div>
-        </footer>
-    </div>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Small interactivity for fun
+        document.querySelectorAll('.step-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('shadow-lg');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('shadow-lg');
+            });
+        });
+    </script>
 </body>
 </html>
