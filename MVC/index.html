@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Politique - Milieux de vie complets</title>
+    
+    <!-- Intégration de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Intégration des icônes Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuration des couleurs du CISSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cisss-yellow': '#FDB913',
+                        'cisss-orange': '#F15A22',
+                        'cisss-lightGreen': '#63BD59',
+                        'cisss-teal': '#17A7A5',
+                        'cisss-lightBlue': '#0787A1',
+                        'cisss-darkBlue': '#0E4E7B'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Styles spécifiques à l'impression -->
+    <style>
+        @media print {
+            body { 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                background-color: white !important;
+            }
+            @page { margin: 1.5cm; }
+            .page-break { page-break-before: always; }
+            .print-hidden { display: none !important; }
+            .print-block { display: block !important; }
+            .print-opacity-100 { opacity: 1 !important; }
+            .print-shadow-none { box-shadow: none !important; }
+            .print-border-0 { border: 0 !important; }
+            .print-p-0 { padding: 0 !important; }
+            .print-m-0 { margin: 0 !important; }
+            .print-bg-transparent { background-color: transparent !important; }
+            .print-border-gray-300 { border-color: #d1d5db !important; border-width: 1px !important; }
+            .break-inside-avoid { break-inside: avoid; }
+        }
+        
+        ::selection {
+            background-color: #17A7A5;
+            color: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white text-gray-800 font-sans leading-relaxed selection:bg-cisss-teal selection:text-white">
+
+    <!-- HEADER OFFICIEL -->
+    <header class="w-full border-b border-gray-200 py-4 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 bg-white print:py-2">
+        <div class="flex items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Logo_du_gouvernement_du_Qu%C3%A9bec.svg/960px-Logo_du_gouvernement_du_Qu%C3%A9bec.svg.png" 
+                 alt="Gouvernement du Québec" 
+                 class="h-10 md:h-12 w-auto object-contain">
+        </div>
+        <div class="text-center font-bold text-lg md:text-xl text-gray-800 tracking-tight print:text-base">
+            Centre intégré de santé et de services sociaux<br>des Laurentides
+        </div>
+        <div class="text-right">
+            <div class="font-bold text-sm text-cisss-darkBlue">LE CISSS DES LAURENTIDES</div>
+            <div class="text-xs italic text-cisss-teal">complice de votre communauté</div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="max-w-5xl mx-auto px-6 py-8 print-p-0 print-m-0">
+        
+        <!-- Section Titre et Bouton Print -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-10">
+            <div class="flex-1">
+                <div class="flex items-center gap-4 mb-2">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-cisss-orange">Note de politique</h2>
+                    <span class="text-gray-300">|</span>
+                    <span class="text-sm font-medium text-gray-500">9 avril 2026</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold leading-tight text-balance text-cisss-darkBlue mb-3">
+                    La ville de 15 minutes et les milieux de vie complets comme leviers d'adaptation aux changements climatiques et de réduction des inégalités sociales de santé
+                </h1>
+                <p class="text-xl text-gray-600 font-medium mb-3">Portée et application pour les milieux mixtes des Laurentides</p>
+                <div class="inline-block bg-gray-100 text-sm px-3 py-1 rounded-full text-gray-700 font-medium">
+                    <i data-lucide="users" class="inline w-4 h-4 mr-1 mb-0.5"></i> Destinataires : Élue.s et professionnel.les en urbanisme de la région des Laurentides
+                </div>
+            </div>
+            <button id="printBtn" class="print-hidden flex-shrink-0 flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white bg-cisss-teal transition-transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg mt-2 md:mt-0">
+                <i data-lucide="printer" class="w-5 h-5"></i>
+                Imprimer en PDF
+            </button>
+        </div>
+
+        <!-- Résumé (Abstract) -->
+        <div class="text-lg md:text-xl font-medium text-gray-700 mb-12 border-l-4 pl-6 border-cisss-yellow">
+            <p class="mb-4">
+                La ville de 15 minutes est un cadre conceptuel inspirant, mais son application directe est limitée dans nos milieux de faible densité nord-américains. Le concept de milieu de vie complet — structuré autour de 15 paramètres mesurables développés par Vivre en Ville — constitue un outil opérationnel plus adapté et directement applicable à toutes les collectivités des Laurentides, quelle que soit leur taille.
+            </p>
+            <p>
+                Un milieu de vie complet permet à chaque personne de répondre à l'essentiel de ses besoins dans son voisinage, quelle que soit sa situation financière ou ses capacités. Ce n'est ni un luxe ni une utopie pour la population laurentienne : c'est un objectif mesurable, planifiable et atteignable progressivement pour améliorer la santé et la résilience de notre région.
+            </p>
+        </div>
+
+        <!-- Layout en grille : Main text + Sidebar (Faits Saillants) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- Colonne Gauche : Contenu principal -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <section>
+                    <h2 class="text-2xl font-bold mb-4 border-b-2 inline-block pb-1 text-cisss-darkBlue border-cisss-teal">Mise en contexte</h2>
+                    <p class="mb-4">La ville de 15 minutes désigne un modèle d'organisation territoriale selon lequel les résidents peuvent rejoindre à pied ou à vélo, en moins de 15 minutes, l'ensemble des services essentiels à leur vie quotidienne. Théorisé par l'urbaniste franco-colombien Carlos Moreno en 2016 et popularisé à l'échelle mondiale lors de la crise de la COVID-19, le concept a été adopté par des dizaines de municipalités, dont Paris, Melbourne, Ottawa, Edmonton et Montréal.</p>
+                    <p class="mb-4">Ce modèle s'inscrit dans une longue tradition de réflexion sur les <strong>milieux de vie complets</strong>, un concept qui lui est étroitement apparenté et qui est aujourd'hui au cœur des orientations gouvernementales québécoises et des enjeux d'aménagement des Laurentides. Selon Vivre en Ville (2026), un milieu de vie complet permet à chaque personne de se loger adéquatement, d'avoir accès aux équipements, espaces publics, biens et services du quotidien, et de se déplacer efficacement et de façon sécuritaire. C'est précisément cet objectif de complétude fonctionnelle, mesurable et applicable à toutes les collectivités laurentiennes, qui distingue le cadre des milieux de vie complets de la formulation originale de la ville de 15 minutes (souvent perçue comme valide surtout pour les métropoles denses).</p>
+                    <p>Dans un contexte de changements climatiques, ces deux concepts convergent : réduire la dépendance à l'automobile, rapprocher la population laurentienne des services essentiels et des espaces verts, et renforcer la résilience de nos quartiers face aux aléas climatiques. Ces objectifs servent directement la santé publique et la durabilité de notre territoire.</p>
+                </section>
+
+                <section class="bg-gray-50 p-6 rounded-lg print-p-0 print-bg-transparent break-inside-avoid">
+                    <h2 class="text-xl font-bold mb-3 text-cisss-lightBlue">Approche méthodologique</h2>
+                    <p class="text-sm mb-2">Cette note a été produite à partir d'une recension documentaire en trois temps :</p>
+                    <ul class="text-sm list-disc pl-5 space-y-2 text-gray-700">
+                        <li>Constitution d'une base de connaissances sur les liens entre aménagement, changements climatiques et santé (INSPQ, Vivre en Ville, Univ. Paris 1 Panthéon-Sorbonne).</li>
+                        <li>Recherche complémentaire ciblée : ville de 15 minutes, milieux moins denses, banlieue, rural, Québec, adaptation, inégalités sociales de santé (articles revus par les pairs, Nature Cities 2024, presse de qualité).</li>
+                        <li>Analyse approfondie du guide pratique <em>Milieux de vie complets : évaluer, planifier et agir localement</em> (Vivre en Ville, 2026) pour sa grille d'analyse opérationnelle en 15 paramètres mesurables.</li>
+                    </ul>
+                </section>
+
+                <!-- Insertion du schéma interactif -->
+                <div class="my-12 p-6 rounded-xl border border-gray-200 bg-gray-50 print:bg-white print-border-0 print-p-0 shadow-sm print-shadow-none break-inside-avoid">
+                    <h3 class="text-xl font-bold mb-6 text-center text-cisss-darkBlue">
+                        Cadre Conceptuel : Milieux de Vie Complets
+                    </h3>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 relative">
+                        
+                        <!-- Point de départ -->
+                        <div class="z-10 bg-white p-4 rounded-xl shadow-md border-l-4 w-full md:w-1/4 text-center transition-all border-cisss-darkBlue">
+                            <h4 class="font-bold text-lg text-cisss-darkBlue">L'Approche des 15 Paramètres</h4>
+                            <p class="text-sm text-gray-600 mt-2">Évaluation et aménagement axés sur la proximité</p>
+                        </div>
+
+                        <!-- Flèches -->
+                        <div class="hidden md:flex flex-col justify-center items-center w-16">
+                            <i data-lucide="arrow-right" class="text-gray-300 w-8 h-8"></i>
+                        </div>
+
+                        <!-- Nœuds intermédiaires interactifs -->
+                        <div class="z-10 flex flex-col gap-3 w-full md:w-2/4">
+                            
+                            <!-- Nœud Mixité -->
+                            <div id="node-mixite" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-lightBlue">
+                                    <i data-lucide="home" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Habitation & Mixité</h5>
+                                    <p id="desc-mixite" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Diversité des tailles, offre locative et abordabilité pérenne pour les Laurentiens.
+                                    </p>
+                                </div>
+                                <div id="arrow-mixite" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-lightBlue">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud Santé -->
+                            <div id="node-sante" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-lightGreen">
+                                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Destinations de Proximité</h5>
+                                    <p id="desc-sante" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Alimentation, écoles, loisirs et soins de santé à distance de marche ou de vélo.
+                                    </p>
+                                </div>
+                                <div id="arrow-sante" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-lightGreen">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud Climat -->
+                            <div id="node-climat" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-orange">
+                                    <i data-lucide="tree-pine" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Nature & Climat</h5>
+                                    <p id="desc-climat" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Parcs végétalisés accessibles (à moins de 400m) pour contrer les aléas climatiques.
+                                    </p>
+                                </div>
+                                <div id="arrow-climat" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-orange">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud Équité -->
+                            <div id="node-equite" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-yellow">
+                                    <i data-lucide="bus" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Mobilité Intégrée</h5>
+                                    <p id="desc-equite" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Infrastructures actives sécuritaires, transport collectif et options d'autopartage.
+                                    </p>
+                                </div>
+                                <div id="arrow-equite" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-yellow">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Flèches -->
+                        <div class="hidden md:flex flex-col justify-center items-center w-16">
+                            <i data-lucide="arrow-right" class="text-gray-300 w-8 h-8"></i>
+                        </div>
+
+                        <!-- Résultat final -->
+                        <div id="diagram-result" class="z-10 bg-white p-4 rounded-xl shadow-md border-r-4 w-full md:w-1/4 text-center transition-all border-cisss-teal print-shadow-none print-border-gray-300">
+                            <h4 id="diagram-result-title" class="font-bold text-lg text-cisss-teal transition-colors">
+                                Santé & Résilience
+                            </h4>
+                            <p id="diagram-result-text" class="text-sm font-medium mt-2 min-h-[40px] text-gray-700">
+                                Réduction des inégalités sociales et adaptation climatique pour les Laurentides.
+                            </p>
+                        </div>
+
+                    </div>
+                    <div class="text-center mt-6 text-sm text-gray-500 flex items-center justify-center gap-2 print-hidden">
+                        <i data-lucide="info" class="w-4 h-4"></i> Survolez les catégories pour voir les détails.
+                    </div>
+                </div>
+
+                <section class="break-inside-avoid">
+                    <h2 class="text-2xl font-bold mb-6 border-b-2 inline-block pb-1 text-cisss-darkBlue border-cisss-teal">État des connaissances</h2>
+                    
+                    <h3 class="text-xl font-bold mt-6 mb-3 flex items-center gap-2 text-cisss-lightBlue">
+                        <i data-lucide="map" class="w-5 h-5"></i> Les milieux de vie complets : Un cadre en 15 paramètres
+                    </h3>
+                    <p class="mb-4">Le guide de Vivre en Ville (2026) propose une grille d'analyse structurée autour de trois grandes dimensions et de 15 paramètres mesurables, chacun assorti d'indicateurs et de cibles concrètes pour nos municipalités.</p>
+                    
+                    <ul class="space-y-4 mb-6">
+                        <li class="bg-gray-50 p-4 rounded-lg print:border print-border-gray-300">
+                            <strong class="text-cisss-darkBlue block mb-1">1. La dimension habitation (4 paramètres) :</strong>
+                            <p class="text-sm text-gray-700">Diversité de taille des logements (au moins 20 % de 1, 2 et 3 chambres dans un rayon de 1 600m), part locative (au moins 50 %), disponibilité (taux d'inoccupation de 5 % à 8 %) et abordabilité pérenne (au moins 20 % à but non lucratif). Ensemble, ils permettent à la population laurentienne de trouver un logement adapté à ses besoins sans se déraciner.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded-lg print:border print-border-gray-300">
+                            <strong class="text-cisss-darkBlue block mb-1">2. La dimension destinations de proximité (7 paramètres) :</strong>
+                            <p class="text-sm text-gray-700">Alimentation (à moins de 800m), services de garde (subventionné à moins de 400m), école (primaire à 800m, secondaire à 1600m), nature (parc végétalisé à moins de 400m), loisirs, soins de santé (pharmacie 400m, CLSC/GMF 800m) et activités complémentaires. L'accès aux espaces naturels y est explicitement valorisé pour la régulation du climat local.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded-lg print:border print-border-gray-300">
+                            <strong class="text-cisss-darkBlue block mb-1">3. La dimension mobilité (4 paramètres) :</strong>
+                            <p class="text-sm text-gray-700">Infrastructures piétonnières (100 % des rues compatibles dans un rayon de 800m), infrastructures cyclables (75 % du réseau convivial à 1600m), transport en commun (point d'accès à 800m) et mobilité partagée (station d'autopartage à 800m). Ce dernier est particulièrement pertinent pour nos milieux moins denses afin de réduire la possession automobile.</p>
+                        </li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold mt-8 mb-3 flex items-center gap-2 text-cisss-yellow">
+                        <i data-lucide="arrows-up-down" class="w-5 h-5"></i> La transposabilité du concept en milieux laurentiens
+                    </h3>
+                    <p class="mb-4">Une étude de l'Université McGill (2024) conclut que le modèle de 15 minutes à mobilité active est difficilement transposable tel quel en Amérique du Nord. Un modèle de proximité à 20-30 minutes intégrant le transport collectif serait nettement plus réaliste pour la région des Laurentides. Vivre en Ville reconnaît que tous les milieux ne présentent pas les mêmes possibilités d'évolution. Dans nos secteurs ruraux ou de très faible densité, la priorité doit être donnée à leur connexion aux centralités voisines (pôles villageois).</p>
+                    <p class="mb-4">Sur le plan de la santé, l'INSPQ (2024) confirme que l'étalement urbain est associé à de plus faibles niveaux d'activité physique (maladies cardiovasculaires, diabète de type 2). L'Université de Toronto (2022) lie les longs trajets en voiture, fréquents dans les Laurentides, aux risques cardiovasculaires.</p>
+                    <p class="mb-4 text-sm italic text-gray-600 border-l-2 border-gray-300 pl-3">Note : Les théories du complot affirmant que ce concept vise à restreindre la liberté de mouvement ont été réfutées. L'objectif n'est pas de faire disparaître l'automobile des Laurentides, mais de permettre à chacun de choisir son mode de déplacement en toute autonomie pour ses besoins quotidiens.</p>
+                </section>
+                
+                <section class="bg-blue-50 p-6 rounded-xl mt-8 border-l-4 border-cisss-lightBlue print:border print-border-gray-300 break-inside-avoid">
+                    <h3 class="text-xl font-bold mb-4 text-cisss-lightBlue">Enjeux spécifiques pour le territoire laurentien</h3>
+                    <p class="mb-4">Dans nos milieux mixtes, la mise en œuvre se heurte à plusieurs enjeux structurels :</p>
+                    <div class="space-y-4">
+                        <p><strong>1. Des milieux mixtes très contrastés :</strong> Certains secteurs sont des centralités établies avec une base robuste. D'autres, en périphérie, souffrent de lacunes importantes. Un diagnostic différencié selon les 15 paramètres est essentiel pour prioriser les investissements des municipalités laurentiennes.</p>
+                        <p><strong>2. Le zonage monofonctionnel :</strong> Ce zonage hérité empêche l'intégration des destinations du quotidien dans les secteurs résidentiels. C'est la principale barrière à lever.</p>
+                        <p><strong>3. Vulnérabilité climatique :</strong> Les personnes à faible revenu vivant dans des secteurs dépendants de l'auto et peu arborés sont surexposées aux aléas (chaleur, inondations). Le paramètre Nature (parc à moins de 400m) rejoint directement les priorités d'adaptation régionales.</p>
+                        <p><strong>4. Valorisation foncière et abordabilité :</strong> Un milieu complet qui attire de nouveaux résidents sans préserver l'abordabilité du logement risque de déplacer nos ménages vulnérables vers des secteurs isolés — annulant les gains d'équité visés.</p>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Colonne Droite : Sidebar (Messages Clés) -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-6 rounded-xl shadow-xl overflow-hidden print-shadow-none print:border print-border-gray-300 break-inside-avoid bg-cisss-darkBlue">
+                    <div class="p-6 text-white">
+                        <h3 class="text-2xl font-black uppercase tracking-wider mb-6 flex items-center gap-2">
+                            Messages Clés
+                        </h3>
+                        <ul class="space-y-6">
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Le concept de <strong>milieu de vie complet</strong> (structuré autour de 15 paramètres mesurables) est un outil opérationnel plus adapté et directement applicable aux collectivités laurentiennes que la stricte "ville de 15 minutes".</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Un milieu de vie complet permet de répondre à l'essentiel de ses besoins dans son voisinage. C'est un objectif mesurable, planifiable et atteignable progressivement pour les municipalités.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">La population laurentienne la plus vulnérable bénéficie de façon disproportionnée de cette proximité, mais risque l'exclusion sans mesures de maintien de l'abordabilité du logement.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Les nouvelles orientations gouvernementales (OGAT, 2024) créent une fenêtre d'opportunité pour les MRC, le concept de milieu de vie complet y occupant une place centrale.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Conclusion & Recommandations (Pleine largeur) -->
+        <div class="mt-16 pt-12 border-t-2 page-break border-cisss-teal">
+            
+            <section class="bg-white p-8 md:p-12 rounded-2xl shadow-lg border print-shadow-none print-border-gray-300 border-cisss-lightGreen">
+                <h2 class="text-2xl md:text-3xl font-black uppercase mb-8 flex items-center gap-4 text-cisss-darkBlue">
+                    <span class="p-3 rounded-xl text-white bg-cisss-lightGreen">
+                        <i data-lucide="arrow-right" class="w-7 h-7"></i>
+                    </span>
+                    Recommandations Pratiques
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Réaliser un portrait-diagnostic territorial</h4>
+                                <p class="text-sm text-gray-700">Utiliser la méthode géospatiale (les 15 paramètres de Vivre en Ville) pour obtenir un état des lieux précis. Cela permet de distinguer les milieux complets à intensifier, les prometteurs à consolider, et les incomplets à connecter.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Adopter un modèle de proximité adapté</h4>
+                                <p class="text-sm text-gray-700">Se fixer des objectifs progressifs plutôt que de viser mécaniquement les 15 minutes à pied. Prioriser d'abord les paramètres atteignables à court terme (parc à 400m, commerce à 800m, autopartage).</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">3</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Réviser le zonage pour la mixité fonctionnelle</h4>
+                                <p class="text-sm text-gray-700">Concentrer les nouveaux équipements et commerces dans les centralités existantes. Éviter l'éparpillement et la création de pôles commerciaux isolés en périphérie.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">4</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Intégrer le paramètre Nature (Verdissement)</h4>
+                                <p class="text-sm text-gray-700">Assortir tout projet de mobilité de plantations et surfaces perméables pour cibler un parc végétalisé à moins de 400m, et contrer les îlots de chaleur (inclusivement).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">5</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Protéger l'abordabilité pérenne du logement</h4>
+                                <p class="text-sm text-gray-700">Viser une cible de 20 % de logements à but non lucratif dans les secteurs en transformation via des outils réglementaires d'inclusion, pour éviter l'embourgeoisement.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">6</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Protéger les milieux naturels et agricoles</h4>
+                                <p class="text-sm text-gray-700">En cohérence avec les OGAT, orienter le développement vers les périmètres déjà urbanisés pour préserver les services écosystémiques et éviter les coûts d'infrastructures.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">7</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Préparer une communication claire</h4>
+                                <p class="text-sm text-gray-700">Anticiper les résistances en soulignant que l'objectif est d'augmenter les choix disponibles (temps gagné, accès actif pour les enfants), sans restreindre la liberté de mouvement.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- Outil interactif -->
+        <section class="mt-16 break-inside-avoid">
+            <div class="bg-blue-50 p-8 rounded-2xl border-l-4 border-cisss-darkBlue print:border print-border-gray-300">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-3 flex items-center gap-2 text-cisss-darkBlue">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i> Outil d'analyse territoriale pour les Laurentides
+                        </h2>
+                        <p class="text-gray-700 mb-2">
+                            Pour accompagner les professionnel.les et les élue.s de la région, une application interactive a été développée. Elle permet une <strong>analyse territoriale des Milieux de vie complets pour la Région des Laurentides</strong>.
+                        </p>
+                        <p class="text-sm text-gray-600 mb-0">
+                            <em>Évaluation détaillée par municipalité selon 11 paramètres de Vivre en Ville (2026), basée sur les données spatiales libres d'OpenStreetMap.</em>
+                        </p>
+                    </div>
+                    <a href="https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/MVC/analyse.html" target="_blank" rel="noopener noreferrer" class="flex-shrink-0 inline-flex items-center gap-2 bg-cisss-darkBlue text-white px-6 py-4 rounded-xl font-bold transition-transform hover:scale-105 shadow-md print-hidden">
+                        Accéder à l'application
+                        <i data-lucide="external-link" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sources -->
+        <section class="mt-12 pt-8 border-t border-gray-200 break-inside-avoid">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Références</h3>
+            <ul class="text-xs text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                <li>Collectivités viables. La ville des 15 minutes. Carrefour Vivre en Ville.</li>
+                <li>INSPQ. (2024). Les effets de la densification urbaine sur la santé. Québec : INSPQ.</li>
+                <li>INSPQ. (2022). Environnement bâti et santé : synthèse des connaissances pour l'action municipale. Québec.</li>
+                <li>Meloche, J.-P. (2023). Entrevue sur la ville de 15 minutes. Radio-Canada / Ici Première.</li>
+                <li>MAMH. (2024). Orientations gouvernementales en aménagement du territoire (OGAT). Québec.</li>
+                <li>MAMH. Pour des milieux de vie durables : guide de planification. Québec.</li>
+                <li>Moreno, C., et al. (2021). Introducing the "15-Minute City": Sustainability, Resilience... Smart Cities, 4(1).</li>
+                <li>Nature Québec. (2024). Miser sur l'environnement urbain au Québec. Montréal.</li>
+                <li>Radio-Canada / Les Décrypteurs. (2023). Non, les villes 15 minutes ne limiteront pas la liberté...</li>
+                <li>Radio-Canada. (2024). Aménagement du territoire : nouveau plan de Québec pour atteindre la carboneutralité.</li>
+                <li>Stanley, J., et Hansen, R. (2020). People love the idea of 20-minute neighbourhoods... The Conversation.</li>
+                <li>Université McGill (2024). La ville de 30 minutes : une adaptation pour l'Amérique du Nord. L'actualité.</li>
+                <li><strong>Vivre en Ville. Brun, C., et Chopin, P.-Y. (2026). Milieux de vie complets : évaluer, planifier et agir localement. Guide pratique (version synthèse). ISBN : 978-2-923263-92-2.</strong></li>
+                <li>Vivre en Ville. (2022). Étalement urbain : une catastrophe écologique et économique à endiguer.</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- FOOTER OFFICIEL -->
+    <footer class="w-full bg-gray-50 border-t border-gray-200 py-8 mt-12 print-mt-4 print-py-4 print:bg-white text-sm">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-right">
+                <div class="font-bold text-sm text-cisss-darkBlue">LE CISSS DES LAURENTIDES</div>
+                <div class="text-xs italic text-cisss-teal">complice de votre communauté</div>
+            </div>
+            <div class="flex items-center gap-4 text-gray-600">
+                <a href="https://www.quebec.ca/droit-auteur" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1 transition-colors hover:text-blue-600">
+                    Droit d'auteur | Gouvernement du Québec <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+                <span class="hidden md:inline">|</span>
+                <span>© 2026</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script de l'application -->
+    <script>
+        // Initialisation des icônes Lucide
+        lucide.createIcons();
+
+        // Fonctionnalité d'impression
+        document.getElementById('printBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        // Données pour le schéma interactif
+        const nodesData = [
+            { id: 'mixite', color: '#0787A1', impact: "Accessibilité universelle au logement et forte réduction de la dépendance automobile." },
+            { id: 'sante', color: '#63BD59', impact: "Prévention des maladies chroniques grâce à une vie active et la proximité des soins." },
+            { id: 'climat', color: '#F15A22', impact: "Régulation du climat urbain, qualité de l'air et gestion efficace des eaux." },
+            { id: 'equite', color: '#FDB913', impact: "Indépendance de déplacement pour tous, avec ou sans véhicule personnel." }
+        ];
+
+        // Éléments du résultat final
+        const resultBox = document.getElementById('diagram-result');
+        const resultTitle = document.getElementById('diagram-result-title');
+        const resultText = document.getElementById('diagram-result-text');
+        
+        const defaultImpact = "Réduction des inégalités sociales et adaptation climatique pour les Laurentides.";
+        const defaultColor = '#17A7A5';
+
+        // Logique de survol (Hover)
+        nodesData.forEach(data => {
+            const nodeEl = document.getElementById(`node-${data.id}`);
+            const descEl = document.getElementById(`desc-${data.id}`);
+            const arrowEl = document.getElementById(`arrow-${data.id}`);
+
+            nodeEl.addEventListener('mouseenter', () => {
+                // Style du noeud
+                nodeEl.style.borderColor = data.color;
+                nodeEl.classList.remove('border-transparent', 'shadow-sm', 'hover:shadow-md');
+                nodeEl.classList.add('shadow-lg', 'scale-[1.02]', 'bg-white');
+                
+                // Description & flèche
+                descEl.classList.remove('hidden', 'md:hidden');
+                descEl.classList.add('block');
+                arrowEl.style.opacity = '1';
+
+                // Boite résultat
+                resultBox.style.borderColor = data.color;
+                resultBox.style.transform = 'scale(1.05)';
+                resultTitle.style.color = data.color;
+                resultText.textContent = data.impact;
+            });
+
+            nodeEl.addEventListener('mouseleave', () => {
+                // Restauration du style du noeud
+                nodeEl.style.borderColor = 'transparent';
+                nodeEl.classList.remove('shadow-lg', 'scale-[1.02]', 'bg-white');
+                nodeEl.classList.add('border-transparent', 'shadow-sm', 'hover:shadow-md');
+                
+                // Masquage description & flèche
+                descEl.classList.remove('block');
+                descEl.classList.add('hidden', 'md:hidden');
+                arrowEl.style.opacity = '0';
+
+                // Restauration boite résultat
+                resultBox.style.borderColor = defaultColor;
+                resultBox.style.transform = 'scale(1)';
+                resultTitle.style.color = defaultColor;
+                resultText.textContent = defaultImpact;
+            });
+        });
+    </script>
+</body>
+</html>
