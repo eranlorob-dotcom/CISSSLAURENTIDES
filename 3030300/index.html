@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Politique - Indicateur 3-30-300</title>
+    
+    <!-- Intégration de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Intégration des icônes Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuration des couleurs du CISSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cisss-yellow': '#FDB913',
+                        'cisss-orange': '#F15A22',
+                        'cisss-lightGreen': '#63BD59',
+                        'cisss-teal': '#17A7A5',
+                        'cisss-lightBlue': '#0787A1',
+                        'cisss-darkBlue': '#0E4E7B'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Styles spécifiques à l'impression -->
+    <style>
+        @media print {
+            body { 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                background-color: white !important;
+            }
+            @page { margin: 1.5cm; }
+            .page-break { page-break-before: always; }
+            .print-hidden { display: none !important; }
+            .print-block { display: block !important; }
+            .print-opacity-100 { opacity: 1 !important; }
+            .print-shadow-none { box-shadow: none !important; }
+            .print-border-0 { border: 0 !important; }
+            .print-p-0 { padding: 0 !important; }
+            .print-m-0 { margin: 0 !important; }
+            .print-bg-transparent { background-color: transparent !important; }
+            .print-border-gray-300 { border-color: #d1d5db !important; border-width: 1px !important; }
+            .break-inside-avoid { break-inside: avoid; }
+        }
+        
+        ::selection {
+            background-color: #17A7A5;
+            color: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white text-gray-800 font-sans leading-relaxed selection:bg-cisss-teal selection:text-white">
+
+    <!-- HEADER OFFICIEL -->
+    <header class="w-full border-b border-gray-200 py-4 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 bg-white print:py-2">
+        <div class="flex items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Logo_du_gouvernement_du_Qu%C3%A9bec.svg/960px-Logo_du_gouvernement_du_Qu%C3%A9bec.svg.png" 
+                 alt="Gouvernement du Québec" 
+                 class="h-10 md:h-12 w-auto object-contain">
+        </div>
+        <div class="text-center font-bold text-lg md:text-xl text-gray-800 tracking-tight print:text-base">
+            Centre intégré de santé et de services sociaux<br>des Laurentides
+        </div>
+        <div class="text-right">
+            <div class="font-bold text-sm text-cisss-darkBlue">LE CISSS DES LAURENTIDES</div>
+            <div class="text-xs italic text-cisss-teal">complice de votre communauté</div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="max-w-5xl mx-auto px-6 py-8 print-p-0 print-m-0">
+        
+        <!-- Section Titre et Bouton Print -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-10">
+            <div class="flex-1">
+                <div class="flex items-center gap-4 mb-2">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-cisss-orange">Note de politique</h2>
+                    <span class="text-gray-300">|</span>
+                    <span class="text-sm font-medium text-gray-500">Mai 2026</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold leading-tight text-balance text-cisss-darkBlue mb-3">
+                    Le verdissement urbain comme levier de santé publique et d'adaptation aux changements climatiques : application de l'indicateur 3-30-300 aux Laurentides
+                </h1>
+                <p class="text-xl text-gray-600 font-medium mb-3">Portée et application pour les milieux urbanisés et les noyaux villageois de la région</p>
+                <div class="inline-block bg-gray-100 text-sm px-3 py-1 rounded-full text-gray-700 font-medium">
+                    <i data-lucide="users" class="inline w-4 h-4 mr-1 mb-0.5"></i> Destinataires : élu.es municipaux, professionnel.les en urbanisme et en environnement, et partenaires en santé publique de la région des Laurentides
+                </div>
+            </div>
+            <button id="printBtn" class="print-hidden flex-shrink-0 flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white bg-cisss-teal transition-transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg mt-2 md:mt-0">
+                <i data-lucide="printer" class="w-5 h-5"></i>
+                Imprimer en PDF
+            </button>
+        </div>
+
+        <!-- Résumé (Abstract) -->
+        <div class="text-lg md:text-xl font-medium text-gray-700 mb-12 border-l-4 pl-6 border-cisss-yellow">
+            <p class="mb-4">
+                L'indicateur 3-30-300 est un outil simple et intuitif, fondé sur des données probantes, pour évaluer et planifier l'accès à la nature en milieu habité. Il fixe trois cibles mesurables : voir au moins <strong>trois arbres</strong> depuis sa résidence, vivre dans un voisinage ayant au moins <strong>30 % de canopée</strong> et résider à moins de <strong>300 mètres</strong> d'un parc ou d'un espace vert. Ces cibles sont directement associées à des bénéfices reconnus pour la santé mentale, l'activité physique, la régulation thermique et la résilience face aux changements climatiques.
+            </p>
+            <p>
+                Pour les Laurentides, région à la fois densément peuplée dans ses noyaux urbains du sud et très forestière dans ses secteurs ruraux, le 3-30-300 offre un cadre commun pour identifier les zones déficitaires, prioriser les interventions de verdissement et réduire les inégalités sociales de santé liées à l'accès inégal aux espaces verts.
+            </p>
+        </div>
+
+        <!-- Layout en grille : Main text + Sidebar (Faits Saillants) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- Colonne Gauche : Contenu principal -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <section>
+                    <h2 class="text-2xl font-bold mb-4 border-b-2 inline-block pb-1 text-cisss-darkBlue border-cisss-teal">Mise en contexte</h2>
+                    <p class="mb-4">Les espaces verts et les espaces extérieurs jouent un rôle important pour la santé et le bien-être. Passer du temps dans un parc, une forêt ou près d'un plan d'eau contribue à réduire le stress, à améliorer la santé mentale et à favoriser l'activité physique. Les bénéfices sont d'autant plus marqués que la fréquence et la durée d'exposition sont soutenues, ce qui rend l'accès de proximité — près du domicile — particulièrement déterminant.</p>
+                    <p class="mb-4">Or, cet accès n'est pas équitablement distribué. En milieu habité, les populations les plus vulnérables sur le plan socioéconomique sont souvent celles qui disposent du moins d'arbres, de la plus faible couverture de canopée et des parcs les plus éloignés. Ces mêmes secteurs sont également les plus exposés aux îlots de chaleur urbains et aux effets des vagues de chaleur, qui s'intensifient avec les changements climatiques.</p>
+                    <p>Proposé par Konijnendijk et repris par plusieurs équipes de recherche, le 3-30-300 traduit ces enjeux en trois cibles concrètes, communicables et mesurables, compatibles avec les pratiques d'aménagement et de santé publique. Il s'inscrit en cohérence avec les recommandations de l'OMS sur l'accès aux espaces verts à moins de 300 mètres du domicile, et avec les orientations régionales et gouvernementales en matière d'adaptation aux changements climatiques.</p>
+                </section>
+
+                <section class="bg-gray-50 p-6 rounded-lg print-p-0 print-bg-transparent break-inside-avoid">
+                    <h2 class="text-xl font-bold mb-3 text-cisss-lightBlue">Approche méthodologique</h2>
+                    <p class="text-sm mb-2">Cette note s'appuie sur :</p>
+                    <ul class="text-sm list-disc pl-5 space-y-2 text-gray-700">
+                        <li>une recension des écrits scientifiques portant sur le 3-30-300, les bienfaits des espaces verts sur la santé et l'adaptation climatique (Konijnendijk, 2023; Browning et coll., 2024; Nieuwenhuijsen et coll., 2022);</li>
+                        <li>les résultats d'une étude géospatiale appliquant le 3-30-300 à l'île de Montréal à partir de données LiDAR, d'orthophotos à haute résolution et du rôle d'évaluation foncière (Robitaille et Douyon, 2025), dont la méthodologie est transposable à l'échelle des MRC et des municipalités des Laurentides;</li>
+                        <li>les orientations de l'INSPQ sur le verdissement et l'adaptation aux changements climatiques, ainsi que les lignes directrices de l'OMS sur les espaces verts urbains.</li>
+                    </ul>
+                </section>
+
+                <!-- Insertion du schéma interactif -->
+                <div class="my-12 p-6 rounded-xl border border-gray-200 bg-gray-50 print:bg-white print-border-0 print-p-0 shadow-sm print-shadow-none break-inside-avoid">
+                    <h3 class="text-xl font-bold mb-6 text-center text-cisss-darkBlue">
+                        Cadre Conceptuel : L'Indicateur 3-30-300
+                    </h3>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 relative">
+                        
+                        <!-- Point de départ -->
+                        <div class="z-10 bg-white p-4 rounded-xl shadow-md border-l-4 w-full md:w-1/4 text-center transition-all border-cisss-darkBlue">
+                            <h4 class="font-bold text-lg text-cisss-darkBlue">L'accès à la nature</h4>
+                            <p class="text-sm text-gray-600 mt-2">Une évaluation multidimensionnelle</p>
+                        </div>
+
+                        <!-- Flèches -->
+                        <div class="hidden md:flex flex-col justify-center items-center w-16">
+                            <i data-lucide="arrow-right" class="text-gray-300 w-8 h-8"></i>
+                        </div>
+
+                        <!-- Nœuds intermédiaires interactifs -->
+                        <div class="z-10 flex flex-col gap-3 w-full md:w-2/4">
+                            
+                            <!-- Nœud 3 arbres -->
+                            <div id="node-3arbres" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-lightGreen">
+                                    <i data-lucide="tree-pine" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">3 Arbres visibles</h5>
+                                    <p id="desc-3arbres" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Vue depuis la résidence : réduit le stress, améliore l'humeur et soutient la récupération.
+                                    </p>
+                                </div>
+                                <div id="arrow-3arbres" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-lightGreen">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud 30% canopée -->
+                            <div id="node-30canopee" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-lightBlue">
+                                    <i data-lucide="wind" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">30 % de Canopée</h5>
+                                    <p id="desc-30canopee" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Dans le voisinage : régulation thermique, qualité de l'air et atténuation des îlots de chaleur.
+                                    </p>
+                                </div>
+                                <div id="arrow-30canopee" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-lightBlue">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud 300 mètres -->
+                            <div id="node-300metres" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-yellow">
+                                    <i data-lucide="activity" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">300 Mètres d'un Parc</h5>
+                                    <p id="desc-300metres" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        À moins de 5 min de marche : favorise l'activité physique et l'utilisation fréquente.
+                                    </p>
+                                </div>
+                                <div id="arrow-300metres" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-yellow">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nœud Équité -->
+                            <div id="node-equite" class="diagram-node p-3 rounded-lg border-2 border-transparent bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-300 flex items-center gap-4 print-shadow-none print:border-gray-200 print:mb-2">
+                                <div class="p-2 rounded-full text-white bg-cisss-orange">
+                                    <i data-lucide="users" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-gray-800">Équité en santé</h5>
+                                    <p id="desc-equite" class="text-sm text-gray-600 mt-1 transition-all hidden md:hidden print-block">
+                                        Cibler les interventions dans les secteurs déficitaires où la vulnérabilité est élevée.
+                                    </p>
+                                </div>
+                                <div id="arrow-equite" class="hidden md:flex transition-opacity opacity-0 print-opacity-100 text-cisss-orange">
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Flèches -->
+                        <div class="hidden md:flex flex-col justify-center items-center w-16">
+                            <i data-lucide="arrow-right" class="text-gray-300 w-8 h-8"></i>
+                        </div>
+
+                        <!-- Résultat final -->
+                        <div id="diagram-result" class="z-10 bg-white p-4 rounded-xl shadow-md border-r-4 w-full md:w-1/4 text-center transition-all border-cisss-teal print-shadow-none print-border-gray-300">
+                            <h4 id="diagram-result-title" class="font-bold text-lg text-cisss-teal transition-colors">
+                                Santé & Résilience
+                            </h4>
+                            <p id="diagram-result-text" class="text-sm font-medium mt-2 min-h-[40px] text-gray-700">
+                                Des milieux de vie plus frais, sains et équitables.
+                            </p>
+                        </div>
+
+                    </div>
+                    <div class="text-center mt-6 text-sm text-gray-500 flex items-center justify-center gap-2 print-hidden">
+                        <i data-lucide="info" class="w-4 h-4"></i> Survolez les cibles pour voir les impacts détaillés.
+                    </div>
+                </div>
+
+                <section class="break-inside-avoid">
+                    <h2 class="text-2xl font-bold mb-6 border-b-2 inline-block pb-1 text-cisss-darkBlue border-cisss-teal">État des connaissances</h2>
+                    
+                    <h3 class="text-xl font-bold mt-6 mb-3 flex items-center gap-2 text-cisss-lightGreen">
+                        <i data-lucide="activity" class="w-5 h-5"></i> Des bénéfices convergents pour la santé et le climat
+                    </h3>
+                    <p class="mb-4">Les bienfaits des espaces verts sur la santé sont aujourd'hui bien documentés : réduction du stress et des symptômes dépressifs, amélioration de la santé cardiovasculaire, augmentation de l'activité physique, meilleur développement cognitif des enfants et réduction de la mortalité toutes causes confondues chez les personnes vivant dans des voisinages plus verts. Ces bénéfices sont dose-dépendants : plus l'exposition est fréquente et prolongée, plus les effets sont marqués, ce qui justifie l'importance de la proximité au domicile.</p>
+                    <p class="mb-4">Sur le plan climatique, la canopée urbaine contribue à abaisser les températures locales de plusieurs degrés lors des vagues de chaleur, à gérer les eaux pluviales, à soutenir la biodiversité et à améliorer la qualité de l'air. Ces fonctions sont particulièrement critiques pour les populations vulnérables (personnes âgées, enfants, personnes atteintes de maladies chroniques, ménages à faible revenu) qui sont surexposées aux effets de la chaleur et disposent souvent de moins de moyens pour s'y adapter.</p>
+
+                    <h3 class="text-xl font-bold mt-8 mb-3 flex items-center gap-2 text-cisss-lightBlue">
+                        <i data-lucide="map" class="w-5 h-5"></i> Ce que révèle l'application du 3-30-300 en contexte québécois
+                    </h3>
+                    <p class="mb-4">L'étude géospatiale réalisée sur l'île de Montréal (Robitaille et Douyon, 2025) a permis de mesurer les trois composantes du 3-30-300 à l'échelle des aires de diffusion (environ 400 à 700 habitants). Les résultats révèlent des disparités marquées : si 94,7 % de la population voit au moins trois arbres depuis son domicile, seulement 31,3 % vit dans un voisinage ayant 30 % de canopée et 60,6 % réside à moins de 300 mètres d'un parc. Au total, seulement <strong>19,4 % de la population satisfait les trois critères simultanément</strong>.</p>
+                    <p class="mb-4">L'analyse spatiale montre également que les secteurs qui ne remplissent aucun critère sont concentrés dans les quartiers centraux denses et dans certains secteurs périphériques du nord-est de l'île, tandis que les zones conformes se trouvent plutôt dans les quartiers résidentiels bien établis de l'ouest et de l'est. Les analyses de corrélation spatiale (Lee's L) révèlent des regroupements significatifs où la dépendance économique, l'instabilité résidentielle et la vulnérabilité situationnelle coïncident avec un faible accès aux espaces verts — illustrant concrètement l'injustice environnementale.</p>
+
+                    <h3 class="text-xl font-bold mt-8 mb-3 flex items-center gap-2 text-cisss-yellow">
+                        <i data-lucide="arrows-up-down" class="w-5 h-5"></i> Transposabilité aux Laurentides
+                    </h3>
+                    <p class="mb-4">Le contexte laurentien diffère de celui de Montréal, mais la grille 3-30-300 reste pertinente. La région combine des noyaux urbains densifiés (Saint-Jérôme, Blainville, Sainte-Thérèse, Mirabel), des banlieues pavillonnaires en forte croissance, des noyaux villageois patrimoniaux et de vastes secteurs ruraux et forestiers. Dans les secteurs les plus densifiés, les trois cibles sont directement applicables telles quelles. Dans les noyaux villageois anciens, l'enjeu porte davantage sur la protection de l'arbre mature existant et sur l'accès aux espaces verts publics de proximité, souvent déjà présents mais parfois peu accessibles à pied en toute sécurité.</p>
+                    <p class="mb-4">À l'inverse, certains secteurs de banlieue récente présentent un paradoxe : un couvert végétal élevé en superficie, mais peu de parcs publics accessibles à pied et des distances de marche rendues difficiles par un réseau routier orienté vers l'automobile. Un diagnostic territorial adapté à chaque type de milieu permettrait de cibler les interventions là où elles produiront les plus grands gains de santé et d'équité.</p>
+
+                    <!-- Ajout des données régionales -->
+                    <div class="my-8 p-6 bg-gray-50 border-l-4 border-cisss-teal rounded-r-lg print:border print-border-gray-300">
+                        <h4 class="font-bold text-lg text-cisss-darkBlue mb-4 flex items-center gap-2">
+                            <i data-lucide="bar-chart-2" class="w-5 h-5"></i> Portrait actuel : Région des Laurentides
+                        </h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                            <div class="p-4 bg-white rounded-lg shadow-sm print-shadow-none print:border print-border-gray-200">
+                                <div class="text-3xl font-black text-cisss-lightGreen mb-1">92.2 %</div>
+                                <div class="text-xs text-gray-600 font-medium">Critère 3<br>(proxy arbres)</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-lg shadow-sm print-shadow-none print:border print-border-gray-200">
+                                <div class="text-3xl font-black text-cisss-lightBlue mb-1">88.5 %</div>
+                                <div class="text-xs text-gray-600 font-medium">Critère 30<br>(canopée &ge; 30 %)</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-lg shadow-sm print-shadow-none print:border print-border-gray-200">
+                                <div class="text-3xl font-black text-cisss-yellow mb-1">6.2 %</div>
+                                <div class="text-xs text-gray-600 font-medium">Critère 300<br>(parc &le; 300 m)</div>
+                            </div>
+                            <div class="p-4 bg-cisss-darkBlue rounded-lg shadow-sm text-white flex flex-col justify-center print:border print-border-gray-300">
+                                <div class="text-3xl font-black mb-1">1.87 <span class="text-lg font-bold">/ 3</span></div>
+                                <div class="text-xs text-blue-100 font-medium">Moyenne de<br>critères atteints</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-700 mt-4 italic">
+                            Ces données soulignent un contraste fort : si la canopée et la vue sur les arbres sont globalement excellentes dans la région, l'accès de proximité à pied aux parcs publics (à moins de 300 mètres) représente le défi majeur pour l'aménagement des Laurentides.
+                        </p>
+                    </div>
+
+                </section>
+                
+                <section class="bg-blue-50 p-6 rounded-xl mt-8 border-l-4 border-cisss-lightBlue print:border print-border-gray-300 break-inside-avoid">
+                    <h3 class="text-xl font-bold mb-4 text-cisss-lightBlue">L'alternative 2-20-200 : un seuil plus réaliste dans certains contextes</h3>
+                    <p class="text-gray-700">
+                        Plusieurs travaux récents (notamment en Suède) soulignent les difficultés à atteindre les seuils originaux du 3-30-300 dans les milieux très densifiés ou industriels. Une variante assouplie — <strong>2-20-200</strong> (deux arbres visibles, 20 % de canopée, 200 mètres d'un espace vert) — a été proposée comme cible intermédiaire pragmatique. Pour les Laurentides, cette alternative pourrait être pertinente dans les cœurs villageois historiques où la trame bâtie ancienne limite les possibilités de plantation, tout en conservant le 3-30-300 comme cible long terme pour les nouveaux développements.
+                    </p>
+                </section>
+
+            </div>
+
+            <!-- Colonne Droite : Sidebar (Messages Clés) -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-6 rounded-xl shadow-xl overflow-hidden print-shadow-none print:border print-border-gray-300 break-inside-avoid bg-cisss-darkBlue">
+                    <div class="p-6 text-white">
+                        <h3 class="text-2xl font-black uppercase tracking-wider mb-6 flex items-center gap-2">
+                            Messages Clés
+                        </h3>
+                        <ul class="space-y-6">
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">L'indicateur 3-30-300 traduit l'accès à la nature en trois cibles simples, mesurables et communicables, directement liées à des bénéfices reconnus pour la santé mentale, l'activité physique et l'adaptation aux changements climatiques.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">La canopée de 30 % est généralement la cible la plus difficile à atteindre en milieu urbanisé; elle doit être protégée lorsqu'elle existe et progressivement reconstituée là où elle a été perdue.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Certaines populations vulnérables des Laurentides bénéficient déjà de cette proximité, notamment dans les anciens noyaux villageois, mais risquent l'exclusion sans mesures de maintien de l'abordabilité du logement.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">L'approche géospatiale permet d'identifier précisément les secteurs déficitaires et de prioriser les investissements en verdissement là où les gains de santé et d'équité seront les plus importants.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-2xl leading-none text-cisss-yellow">▶</span>
+                                <span class="font-medium text-sm">Le 3-30-300 est complémentaire au cadre des milieux de vie complets : la canopée et l'accès aux parcs font partie intégrante d'un milieu de vie complet, et les deux cadres gagnent à être mobilisés ensemble.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Conclusion & Recommandations (Pleine largeur) -->
+        <div class="mt-16 pt-12 border-t-2 page-break border-cisss-teal">
+            
+            <section class="bg-white p-8 md:p-12 rounded-2xl shadow-lg border print-shadow-none print-border-gray-300 border-cisss-lightGreen">
+                <h2 class="text-2xl md:text-3xl font-black uppercase mb-8 flex items-center gap-4 text-cisss-darkBlue">
+                    <span class="p-3 rounded-xl text-white bg-cisss-lightGreen">
+                        <i data-lucide="arrow-right" class="w-7 h-7"></i>
+                    </span>
+                    Recommandations Pratiques
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Réaliser un diagnostic territorial 3-30-300 à l'échelle des MRC</h4>
+                                <p class="text-sm text-gray-700">Mobiliser les données LiDAR, les orthophotos récentes et le rôle d'évaluation foncière pour mesurer les trois cibles à l'échelle des aires de diffusion. Ce diagnostic permet de distinguer les secteurs conformes, intermédiaires et déficitaires.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Protéger prioritairement la canopée mature existante</h4>
+                                <p class="text-sm text-gray-700">Adopter ou renforcer les règlements municipaux sur l'abattage et la protection des arbres, particulièrement dans les noyaux villageois et les secteurs en densification. Un arbre mature perdu ne se remplace pas avant plusieurs décennies.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">3</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Cibler les plantations là où les déficits sont les plus marqués</h4>
+                                <p class="text-sm text-gray-700">Prioriser les plantations dans les secteurs où la canopée est sous 20 %, où la vulnérabilité sociale est élevée et où l'exposition aux îlots de chaleur est importante. Favoriser les essences diversifiées et résilientes.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">4</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Assurer un parc accessible à pied à moins de 300 mètres</h4>
+                                <p class="text-sm text-gray-700">Lors des révisions de plans d'urbanisme, vérifier systématiquement que tout nouveau développement s'inscrit à distance de marche d'un espace vert. Convertir les terrains vacants en parcs de quartier si nécessaire.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">5</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Intégrer le 3-30-300 aux plans climat municipaux et régionaux</h4>
+                                <p class="text-sm text-gray-700">Faire du verdissement un pilier explicite des mesures d'adaptation, en cohérence avec les efforts de réduction des îlots de chaleur et de gestion des eaux pluviales.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">6</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Adopter le 2-20-200 comme cible intermédiaire pragmatique</h4>
+                                <p class="text-sm text-gray-700">Dans les secteurs où le 3-30-300 est hors d'atteinte à court terme (cœurs villageois denses, secteurs commerciaux), utiliser le 2-20-200 comme jalon mesurable tout en maintenant le 3-30-300 comme cible long terme.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">7</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Évaluer l'équité, pas seulement la quantité</h4>
+                                <p class="text-sm text-gray-700">Croiser les indicateurs 3-30-300 avec des données de défavorisation (Indice canadien de défavorisation multiple) pour s'assurer que les investissements bénéficient d'abord aux populations les plus vulnérables.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="font-black text-4xl mt-[-5px] text-cisss-teal">8</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-900 mb-1">Mobiliser les partenaires communautaires pour un verdissement durable</h4>
+                                <p class="text-sm text-gray-700">Appuyer les initiatives citoyennes (ruelles vertes, plantations communautaires, jardins collectifs) qui favorisent l'appropriation locale et la pérennité des aménagements.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- Outil interactif -->
+        <section class="mt-16 break-inside-avoid">
+            <div class="bg-blue-50 p-8 rounded-2xl border-l-4 border-cisss-darkBlue print:border print-border-gray-300">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-3 flex items-center gap-2 text-cisss-darkBlue">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i> Outil complémentaire — diagnostic territorial 3-30-300
+                        </h2>
+                        <p class="text-gray-700 mb-2">
+                            Une application interactive est en cours de développement pour cartographier l'indicateur 3-30-300 à l'échelle des municipalités des Laurentides. Elle reprendra la méthodologie géospatiale éprouvée sur l'île de Montréal (Robitaille et Douyon, 2025), adaptée aux réalités d'un territoire mixte urbain-rural.
+                        </p>
+                        <p class="text-sm text-gray-600 mb-0">
+                            <em>L'outil permettra aux professionnel.les en urbanisme et aux élu.es de visualiser, par aire de diffusion, les trois critères du 3-30-300 et d'identifier les secteurs prioritaires d'intervention.</em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sources -->
+        <section class="mt-12 pt-8 border-t border-gray-200 break-inside-avoid">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Références</h3>
+            <ul class="text-xs text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                <li>Browning, M. H. E. M., Locke, D. H., Konijnendijk, C., Labib, S. M., Rigolon, A., Yeager, R. et coll. (2024). Measuring the 3-30-300 Rule to Help Cities Meet Nature Access Thresholds. Science of The Total Environment, 907, 167739.</li>
+                <li>Croeser, T., Sharma, R., Weisser, W. W. et Bekessy, S. A. (2024). Acute Canopy Deficits in Global Cities Exposed by the 3-30-300 Benchmark for Urban Nature. Nature Communications, 15, 9333.</li>
+                <li>Daland, S. (2023). An Investigation of the 3-30-300 Rule in a Swedish Context. Université de Göteborg.</li>
+                <li>Hartig, T., Mitchell, R., de Vries, S. et Frumkin, H. (2014). Nature and Health. Annual Review of Public Health, 35, 207–228.</li>
+                <li>INSPQ (2024). Verdissement et adaptation aux changements climatiques. Québec : Institut national de santé publique du Québec.</li>
+                <li>Konijnendijk, C. C. (2023). Evidence-Based Guidelines for Greener, Healthier, More Resilient Neighbourhoods: Introducing the 3-30-300 Rule. Journal of Forestry Research, 34, 821–830.</li>
+                <li>Nieuwenhuijsen, M. J., Dadvand, P., Márquez, S., Bartoll, X., Barboza, E. P., Cirach, M. et coll. (2022). The Evaluation of the 3-30-300 Green Space Rule and Mental Health. Environmental Research, 215, 114387.</li>
+                <li>OMS (2017). Urban Green Spaces: A Brief for Action. Genève : Organisation mondiale de la santé.</li>
+                <li>Robitaille, É. et Douyon, C. (2025). Using the 3-30-300 Indicator to Evaluate Green Space Accessibility and Inequalities: A Case Study of Montreal, Canada. Geographies, 5(1), 6.</li>
+                <li>Ulrich, R. S. (1984). View through a Window May Influence Recovery from Surgery. Science, 224, 420–421.</li>
+                <li>Wolch, J. R., Byrne, J. et Newell, J. P. (2014). Urban Green Space, Public Health, and Environmental Justice: The Challenge of Making Cities ‘Just Green Enough’. Landscape and Urban Planning, 125, 234–244.</li>
+                <li>Zheng, Y., Lin, T., Hamm, N. A. S., Liu, J., Zhou, T., Geng, H. et coll. (2024). Quantitative Evaluation of Urban Green Exposure and Its Impact on Human Health: A Case Study on the 3-30-300 Green Space Rule. Science of The Total Environment, 924, 171461.</li>
+            </ul>
+        </section>
+
+        <!-- Crédits -->
+        <section class="mt-12 pt-8 border-t border-gray-200 break-inside-avoid">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-6">Crédits</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm text-gray-700">
+                <div class="col-span-1 md:col-span-2 lg:col-span-3">
+                    <strong class="block text-cisss-darkBlue mb-1">CISSS des Laurentides — Équipe EIS</strong>
+                    <p>Complice de votre communauté</p>
+                </div>
+                <div>
+                    <strong class="block text-cisss-darkBlue mb-1">Chargé de projet</strong>
+                    <p>Éric Robitaille</p>
+                </div>
+                <div>
+                    <strong class="block text-cisss-darkBlue mb-1">Équipe de rédaction</strong>
+                    <p>Pascale Bellemare, Brigitte Camden, Stéphane Dupont, Nathalie Guerra, Sylvie Nadon</p>
+                </div>
+                <div>
+                    <strong class="block text-cisss-darkBlue mb-1">Collaboratrices</strong>
+                    <p>Gabrielle Bureau, Nicole Damestoy, Annie Thériault</p>
+                </div>
+                <div>
+                    <strong class="block text-cisss-darkBlue mb-1">Révision</strong>
+                    <p>À déterminer</p>
+                </div>
+                <div>
+                    <strong class="block text-cisss-darkBlue mb-1">Correction et secrétariat</strong>
+                    <p>Isabelle Daigle</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER OFFICIEL -->
+    <footer class="w-full bg-gray-50 border-t border-gray-200 py-8 mt-12 print-mt-4 print-py-4 print:bg-white text-sm">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-right">
+                <div class="font-bold text-sm text-cisss-darkBlue">LE CISSS DES LAURENTIDES</div>
+                <div class="text-xs italic text-cisss-teal">complice de votre communauté</div>
+            </div>
+            <div class="flex items-center gap-4 text-gray-600">
+                <a href="https://www.quebec.ca/droit-auteur" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1 transition-colors hover:text-blue-600">
+                    Droit d'auteur | Gouvernement du Québec <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+                <span class="hidden md:inline">|</span>
+                <span>© 2026</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script de l'application -->
+    <script>
+        // Initialisation des icônes Lucide
+        lucide.createIcons();
+
+        // Fonctionnalité d'impression
+        document.getElementById('printBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        // Données pour le schéma interactif
+        const nodesData = [
+            { id: '3arbres', color: '#63BD59', impact: "Amélioration de la santé mentale et réduction du stress quotidien." },
+            { id: '30canopee', color: '#0787A1', impact: "Rafraîchissement urbain et amélioration de la qualité de l'air." },
+            { id: '300metres', color: '#FDB913', impact: "Augmentation de l'activité physique et de la socialisation." },
+            { id: 'equite', color: '#F15A22', impact: "Réduction des inégalités de santé et justice environnementale." }
+        ];
+
+        // Éléments du résultat final
+        const resultBox = document.getElementById('diagram-result');
+        const resultTitle = document.getElementById('diagram-result-title');
+        const resultText = document.getElementById('diagram-result-text');
+        
+        const defaultImpact = "Des milieux de vie plus frais, sains et équitables.";
+        const defaultColor = '#17A7A5';
+
+        // Logique de survol (Hover)
+        nodesData.forEach(data => {
+            const nodeEl = document.getElementById(`node-${data.id}`);
+            const descEl = document.getElementById(`desc-${data.id}`);
+            const arrowEl = document.getElementById(`arrow-${data.id}`);
+
+            nodeEl.addEventListener('mouseenter', () => {
+                // Style du noeud
+                nodeEl.style.borderColor = data.color;
+                nodeEl.classList.remove('border-transparent', 'shadow-sm', 'hover:shadow-md');
+                nodeEl.classList.add('shadow-lg', 'scale-[1.02]', 'bg-white');
+                
+                // Description & flèche
+                descEl.classList.remove('hidden', 'md:hidden');
+                descEl.classList.add('block');
+                arrowEl.style.opacity = '1';
+
+                // Boite résultat
+                resultBox.style.borderColor = data.color;
+                resultBox.style.transform = 'scale(1.05)';
+                resultTitle.style.color = data.color;
+                resultText.textContent = data.impact;
+            });
+
+            nodeEl.addEventListener('mouseleave', () => {
+                // Restauration du style du noeud
+                nodeEl.style.borderColor = 'transparent';
+                nodeEl.classList.remove('shadow-lg', 'scale-[1.02]', 'bg-white');
+                nodeEl.classList.add('border-transparent', 'shadow-sm', 'hover:shadow-md');
+                
+                // Masquage description & flèche
+                descEl.classList.remove('block');
+                descEl.classList.add('hidden', 'md:hidden');
+                arrowEl.style.opacity = '0';
+
+                // Restauration boite résultat
+                resultBox.style.borderColor = defaultColor;
+                resultBox.style.transform = 'scale(1)';
+                resultTitle.style.color = defaultColor;
+                resultText.textContent = defaultImpact;
+            });
+        });
+    </script>
+</body>
+</html>
