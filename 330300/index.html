@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indicateur 3-30-300 — Région des Laurentides</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<style>
+  :root {
+    --bleu-fonce: #1F3864;
+    --bleu-accent: #2E75B6;
+    --vert-accent: #548235;
+    --gris-clair: #F2F2F2;
+    --gris-texte: #595959;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; color: #222; }
+
+  header {
+    background: var(--bleu-fonce);
+    color: #fff;
+    padding: 14px 24px;
+    border-bottom: 4px solid var(--bleu-accent);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  header .sous-titre {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+
+  main {
+    display: flex;
+    height: calc(100vh - 68px);
+  }
+
+  #map {
+    flex: 1;
+    background: #e8eef3;
+  }
+
+  aside {
+    width: 340px;
+    background: #fff;
+    border-left: 1px solid #ddd;
+    padding: 18px 22px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  aside h2 {
+    color: var(--bleu-fonce);
+    font-size: 15px;
+    margin: 18px 0 8px;
+    border-bottom: 2px solid var(--bleu-accent);
+    padding-bottom: 4px;
+  }
+  aside h2:first-child { margin-top: 0; }
+  aside p { margin: 8px 0; color: #333; }
+  aside .note { font-size: 12px; color: var(--gris-texte); font-style: italic; }
+
+  /* Bascule MRC / Municipalités */
+  .bascule {
+    display: flex;
+    background: var(--gris-clair);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 12px;
+  }
+  .bascule button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gris-texte);
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .bascule button.actif {
+    background: var(--bleu-fonce);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  /* Légende */
+  .legende {
+    background: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .legende h4 {
+    margin: 0 0 6px;
+    color: var(--bleu-fonce);
+    font-size: 13px;
+  }
+  .legende .gradient {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .legende .barre {
+    width: 120px;
+    height: 12px;
+    background: linear-gradient(to right, #d73027, #fdae61, #a6d96a, #1a9850);
+    border: 1px solid #999;
+  }
+  .legende .labels {
+    display: flex;
+    justify-content: space-between;
+    width: 120px;
+    font-size: 10px;
+    color: var(--gris-texte);
+  }
+
+  /* Popup Leaflet personnalisé */
+  .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    padding: 0;
+  }
+  .leaflet-popup-content {
+    margin: 0;
+    width: 260px !important;
+  }
+  .popup-contenu {
+    padding: 12px 14px;
+  }
+  .popup-contenu h3 {
+    margin: 0 0 4px;
+    color: var(--bleu-fonce);
+    font-size: 15px;
+    border-bottom: 2px solid var(--bleu-accent);
+    padding-bottom: 4px;
+  }
+  .popup-contenu .mrc-nom {
+    font-size: 11px;
+    color: var(--gris-texte);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .popup-contenu .indicateur {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .popup-contenu .indicateur .label { color: var(--gris-texte); }
+  .popup-contenu .indicateur .valeur {
+    font-weight: 700;
+    color: var(--bleu-fonce);
+    font-family: monospace;
+    font-size: 13px;
+  }
+  .popup-contenu .moyenne {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+    font-size: 13px;
+    text-align: center;
+  }
+  .popup-contenu .moyenne .valeur-grande {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--vert-accent);
+    display: block;
+    font-family: monospace;
+  }
+  .popup-contenu .moyenne .etiquette {
+    font-size: 11px;
+    color: var(--gris-texte);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(255,255,255,0.9);
+    padding: 6px 10px;
+    font-size: 10px;
+    color: var(--gris-texte);
+    border-radius: 4px;
+    z-index: 1000;
+  }
+
+  @media (max-width: 768px) {
+    main { flex-direction: column; }
+    aside { width: 100%; height: 40vh; border-left: none; border-top: 1px solid #ddd; }
+    #map { height: 60vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Indicateur 3-30-300 — Région des Laurentides</h1>
+  <div class="sous-titre">Accès aux espaces verts et canopée urbaine · Prototype exploratoire — CISSS des Laurentides, Équipe EIS</div>
+</header>
+
+<main>
+  <div id="map"></div>
+
+  <aside>
+    <h2>Échelle d'analyse</h2>
+    <div class="bascule">
+      <button id="btn-mrc" class="actif">MRC (8)</button>
+      <button id="btn-muni">Municipalités</button>
+    </div>
+
+    <h2>Qu'est-ce que le 3-30-300?</h2>
+    <p>
+      Un indicateur simple pour évaluer l'accès à la nature en milieu habité :
+    </p>
+    <p style="padding-left: 8px; border-left: 3px solid var(--vert-accent);">
+      <strong>3</strong> arbres visibles depuis la résidence<br>
+      <strong>30&nbsp;%</strong> de canopée dans le voisinage<br>
+      <strong>300&nbsp;m</strong> d'un parc ou espace vert
+    </p>
+    <p>
+      Ces trois cibles sont associées à des bénéfices reconnus pour la santé mentale, l'activité physique et l'adaptation aux changements climatiques.
+    </p>
+
+    <h2>Utilisation</h2>
+    <p>
+      Cliquez sur un territoire pour voir la part (%) qui satisfait chacun des trois critères, ainsi qu'une moyenne synthétique de 0 à 3.
+    </p>
+
+    <h2>Méthode</h2>
+    <p class="note">
+      Couvert arboré : ESA WorldCover 10 m (2021). Distance aux parcs : OpenStreetMap. Calcul sur grille 100 m via Google Earth Engine. Le critère « 3 arbres » est un proxy basé sur un seuil de couvert arboré. Prototype exploratoire — à raffiner avec les données LiDAR du MRNF.
+    </p>
+    <p class="note">
+      Référence : Robitaille, É. &amp; Douyon, C. (2025). <em>Using the 3-30-300 Indicator to Evaluate Green Space Accessibility and Inequalities</em>. Geographies, 5(1), 6.
+    </p>
+  </aside>
+</main>
+
+<footer>© 2026 CISSS des Laurentides · Données : ESA WorldCover, OpenStreetMap, Statistique Canada</footer>
+
+<script>
+  // ===== Carte de base =====
+  const map = L.map('map', {
+    zoomControl: true,
+    preferCanvas: true,
+  }).setView([46.0, -74.5], 9);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap contributors © CARTO',
+    maxZoom: 18,
+  }).addTo(map);
+
+  // ===== Légende =====
+  const legende = L.control({ position: 'bottomright' });
+  legende.onAdd = function () {
+    const div = L.DomUtil.create('div', 'legende');
+    div.innerHTML = `
+      <h4>Critères 3-30-300 atteints</h4>
+      <div class="gradient"><div class="barre"></div></div>
+      <div class="labels"><span>0</span><span>1</span><span>2</span><span>3</span></div>
+    `;
+    return div;
+  };
+  legende.addTo(map);
+
+  // ===== Échelle de couleur =====
+  // Interpole du rouge (#d73027) au vert (#1a9850) via #fdae61 et #a6d96a
+  function couleurIndicateur(valeur) {
+    if (valeur === null || valeur === undefined || isNaN(valeur)) return '#cccccc';
+    const v = Math.max(0, Math.min(3, valeur));
+    if (v < 1) {
+      // rouge → orange
+      const t = v / 1;
+      return interpole('#d73027', '#fdae61', t);
+    } else if (v < 2) {
+      // orange → vert clair
+      const t = (v - 1) / 1;
+      return interpole('#fdae61', '#a6d96a', t);
+    } else {
+      // vert clair → vert foncé
+      const t = (v - 2) / 1;
+      return interpole('#a6d96a', '#1a9850', t);
+    }
+  }
+  function interpole(hex1, hex2, t) {
+    const c1 = hexVersRgb(hex1);
+    const c2 = hexVersRgb(hex2);
+    const r = Math.round(c1[0] + (c2[0] - c1[0]) * t);
+    const g = Math.round(c1[1] + (c2[1] - c1[1]) * t);
+    const b = Math.round(c1[2] + (c2[2] - c1[2]) * t);
+    return `rgb(${r},${g},${b})`;
+  }
+  function hexVersRgb(hex) {
+    const h = hex.replace('#', '');
+    return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)];
+  }
+
+  // ===== Style des polygones =====
+  function style(feature) {
+    const v = feature.properties.crit_count;
+    return {
+      fillColor: couleurIndicateur(v),
+      weight: 1.5,
+      opacity: 1,
+      color: '#1F3864',
+      fillOpacity: 0.75,
+    };
+  }
+  function styleSurvol(feature) {
+    return {
+      weight: 3,
+      color: '#000',
+      fillOpacity: 0.9,
+    };
+  }
+
+  // ===== Popup =====
+  function contenuPopup(props) {
+    const nom = props.nom || props.CDNAME || '?';
+    const mrc = props.mrc_nom ? `<div class="mrc-nom">MRC : ${props.mrc_nom}</div>` : '';
+    const c3 = (props.crit_3 * 100).toFixed(1);
+    const c30 = (props.crit_30 * 100).toFixed(1);
+    const c300 = (props.crit_300 * 100).toFixed(1);
+    const moy = props.crit_count.toFixed(2);
+    return `
+      <div class="popup-contenu">
+        <h3>${nom}</h3>
+        ${mrc}
+        <div class="indicateur">
+          <span class="label">≥ 3 arbres (proxy)</span>
+          <span class="valeur">${c3} %</span>
+        </div>
+        <div class="indicateur">
+          <span class="label">≥ 30 % canopée</span>
+          <span class="valeur">${c30} %</span>
+        </div>
+        <div class="indicateur">
+          <span class="label">≤ 300 m d'un parc</span>
+          <span class="valeur">${c300} %</span>
+        </div>
+        <div class="moyenne">
+          <span class="valeur-grande">${moy} <span style="font-size: 14px; color: var(--gris-texte);">/ 3</span></span>
+          <span class="etiquette">Critères moyens atteints</span>
+        </div>
+      </div>
+    `;
+  }
+
+  // ===== Interactions =====
+  function surChaque(feature, layer) {
+    layer.on({
+      mouseover: (e) => {
+        e.target.setStyle(styleSurvol(feature));
+        e.target.bringToFront();
+      },
+      mouseout: (e) => {
+        coucheActive.resetStyle(e.target);
+      },
+      click: (e) => {
+        layer.bindPopup(contenuPopup(feature.properties)).openPopup(e.latlng);
+        map.fitBounds(e.target.getBounds(), { maxZoom: 11, padding: [30, 30] });
+      },
+    });
+  }
+
+  // ===== Gestion des couches MRC / Municipalités =====
+  let coucheMRC = null;
+  let coucheMuni = null;
+  let coucheActive = null;
+
+  function chargerGeoJSON(url) {
+    return fetch(url).then((r) => {
+      if (!r.ok) throw new Error(`Impossible de charger ${url}`);
+      return r.json();
+    });
+  }
+
+  Promise.all([
+    chargerGeoJSON('laurentides_mrc_3_30_300.geojson'),
+    chargerGeoJSON('laurentides_municipalites_3_30_300.geojson'),
+  ])
+    .then(([mrcData, muniData]) => {
+      coucheMRC = L.geoJSON(mrcData, { style, onEachFeature: surChaque });
+      coucheMuni = L.geoJSON(muniData, { style, onEachFeature: surChaque });
+      coucheActive = coucheMRC;
+      coucheMRC.addTo(map);
+      map.fitBounds(coucheMRC.getBounds(), { padding: [20, 20] });
+    })
+    .catch((err) => {
+      console.error(err);
+      document.getElementById('map').innerHTML = `
+        <div style="padding: 40px; text-align: center; color: #d73027;">
+          <h2>Données non trouvées</h2>
+          <p>Les fichiers <code>laurentides_mrc_3_30_300.geojson</code> et <code>laurentides_municipalites_3_30_300.geojson</code><br>doivent être placés à côté de ce fichier HTML.</p>
+          <p style="font-size: 12px;">Voir la cellule Colab pour les générer.</p>
+        </div>
+      `;
+    });
+
+  // ===== Bascule =====
+  const btnMRC = document.getElementById('btn-mrc');
+  const btnMuni = document.getElementById('btn-muni');
+
+  function basculer(vers) {
+    if (vers === 'mrc' && coucheActive !== coucheMRC) {
+      map.removeLayer(coucheMuni);
+      coucheMRC.addTo(map);
+      coucheActive = coucheMRC;
+      btnMRC.classList.add('actif');
+      btnMuni.classList.remove('actif');
+    } else if (vers === 'muni' && coucheActive !== coucheMuni) {
+      map.removeLayer(coucheMRC);
+      coucheMuni.addTo(map);
+      coucheActive = coucheMuni;
+      btnMuni.classList.add('actif');
+      btnMRC.classList.remove('actif');
+    }
+  }
+  btnMRC.addEventListener('click', () => basculer('mrc'));
+  btnMuni.addEventListener('click', () => basculer('muni'));
+</script>
+
+</body>
+</html>
