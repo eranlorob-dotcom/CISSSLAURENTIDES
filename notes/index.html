@@ -362,37 +362,56 @@
                 </div>
             </section>
         </div>
-    <section className="mt-16 mb-12 break-inside-avoid">
-          <div className="bg-blue-50 p-8 rounded-2xl border-l-4 shadow-sm print:border print:border-gray-300" style={{ borderColor: colors.darkBlue }}>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-3 flex items-center gap-2" style={{ color: colors.darkBlue }}>
-                  <MapPin size={28} /> Score de Potentiel de Transfert Modal
-                </h2>
-                <p className="text-gray-700 mb-4 font-medium">
-                  Le score MVC évalue l'accessibilité aux services essentiels à pied ou à vélo depuis les immeubles résidentiels. Il agrège 11 catégories pondérées :
-                </p>
+   <!-- Outil interactif - Score de Potentiel de Transfert Modal -->
+        <section class="mt-16 mb-12 break-inside-avoid">
+            <div class="bg-white p-8 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden print-border-gray-300">
+                <!-- Bordure épaisse à gauche -->
+                <div class="absolute left-0 top-0 bottom-0 w-2 bg-cisss-darkBlue"></div>
                 
-                <div className="bg-white p-4 rounded-xl shadow-sm mb-5 border border-blue-100">
-                   <p className="font-mono text-sm text-center mb-2 font-bold" style={{ color: colors.teal }}>Score = Σ (pct_catégorie × poids) / Σ poids</p>
-                   <p className="text-sm text-gray-600"><strong>Catégories :</strong> alimentation, services de garde, écoles primaires et secondaires, espaces naturels, loisirs, culture, pharmacies, santé, transport collectif, autopartage.</p>
-                </div>
+                <div class="flex flex-col lg:flex-row justify-between items-center gap-8 pl-2">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 text-cisss-darkBlue">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i> Score de Potentiel de Transfert Modal
+                        </h2>
+                        <p class="text-gray-700 mb-6 text-sm md:text-base">
+                            Le score MVC évalue l'accessibilité aux services essentiels à pied ou à vélo depuis les immeubles résidentiels. Il agrège 11 catégories pondérées :
+                        </p>
+                        
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mb-6">
+                           <p class="font-mono text-sm md:text-base text-center mb-3 font-medium text-cisss-teal">Score = Σ (pct_catégorie × poids) / Σ poids</p>
+                           <p class="text-sm text-gray-700"><strong>Catégories :</strong> alimentation, services de garde, écoles primaires et secondaires, espaces naturels, loisirs, culture, pharmacies, santé, transport collectif, autopartage.</p>
+                        </div>
 
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Couche de densité :</strong> 234 466 immeubles résidentiels (305 827 logements) du rôle foncier 2026, grille ~500m.</li>
-                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Données :</strong> 79/93 municipalités analysées (mise à jour 2026-04-23).</li>
-                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Sources :</strong> Rôle foncier 2026, MAMH, INSPQ · CISSS des Laurentides</li>
-                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Projet :</strong> C.A.R.T.O.S — Direction de santé publique</li>
-                </ul>
-              </div>
-              
-              <a href="https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/notes/TC.html" target="_blank" rel="noopener noreferrer" className="flex-shrink-0 inline-flex items-center gap-3 text-white px-6 py-4 rounded-xl font-bold transition-transform hover:scale-105 shadow-md print:hidden" style={{ backgroundColor: colors.darkBlue }}>
-                Accéder à l'application
-                <ExternalLink size={20} />
-              </a>
+                        <ul class="text-sm text-gray-600 space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 text-cisss-teal">■</span> 
+                                <div><strong>Couche de densité :</strong> 234 466 immeubles résidentiels (305 827 logements) du rôle foncier 2026, grille ~500m.</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 text-cisss-teal">■</span> 
+                                <div><strong>Données :</strong> 79/93 municipalités analysées (mise à jour 2026-04-23).</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 text-cisss-teal">■</span> 
+                                <div><strong>Sources :</strong> Rôle foncier 2026, MAMH, INSPQ · CISSS des Laurentides</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 text-cisss-teal">■</span> 
+                                <div><strong>Projet :</strong> Direction de santé publique</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="w-full lg:w-auto flex justify-center lg:justify-end">
+                        <a href="https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/notes/TC.html" target="_blank" rel="noopener noreferrer" class="flex-shrink-0 inline-flex items-center gap-2 text-white px-6 py-3 rounded-lg font-bold transition-colors hover:opacity-90 shadow-md print-hidden bg-cisss-darkBlue">
+                            Accéder à l'application
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
         </section>
+
         <!-- Sources -->
         <section class="mt-16 pt-8 border-t border-gray-200">
             <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Sources et Références</h3>
