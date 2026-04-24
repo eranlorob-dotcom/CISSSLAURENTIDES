@@ -362,13 +362,44 @@
                 </div>
             </section>
         </div>
+    <section className="mt-16 mb-12 break-inside-avoid">
+          <div className="bg-blue-50 p-8 rounded-2xl border-l-4 shadow-sm print:border print:border-gray-300" style={{ borderColor: colors.darkBlue }}>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold mb-3 flex items-center gap-2" style={{ color: colors.darkBlue }}>
+                  <MapPin size={28} /> Score de Potentiel de Transfert Modal
+                </h2>
+                <p className="text-gray-700 mb-4 font-medium">
+                  Le score MVC évalue l'accessibilité aux services essentiels à pied ou à vélo depuis les immeubles résidentiels. Il agrège 11 catégories pondérées :
+                </p>
+                
+                <div className="bg-white p-4 rounded-xl shadow-sm mb-5 border border-blue-100">
+                   <p className="font-mono text-sm text-center mb-2 font-bold" style={{ color: colors.teal }}>Score = Σ (pct_catégorie × poids) / Σ poids</p>
+                   <p className="text-sm text-gray-600"><strong>Catégories :</strong> alimentation, services de garde, écoles primaires et secondaires, espaces naturels, loisirs, culture, pharmacies, santé, transport collectif, autopartage.</p>
+                </div>
 
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Couche de densité :</strong> 234 466 immeubles résidentiels (305 827 logements) du rôle foncier 2026, grille ~500m.</li>
+                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Données :</strong> 79/93 municipalités analysées (mise à jour 2026-04-23).</li>
+                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Sources :</strong> Rôle foncier 2026, MAMH, INSPQ · CISSS des Laurentides</li>
+                  <li className="flex items-start gap-2"><span style={{ color: colors.teal }}>•</span> <strong>Projet :</strong> C.A.R.T.O.S — Direction de santé publique</li>
+                </ul>
+              </div>
+              
+              <a href="https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/notes/TC.html" target="_blank" rel="noopener noreferrer" className="flex-shrink-0 inline-flex items-center gap-3 text-white px-6 py-4 rounded-xl font-bold transition-transform hover:scale-105 shadow-md print:hidden" style={{ backgroundColor: colors.darkBlue }}>
+                Accéder à l'application
+                <ExternalLink size={20} />
+              </a>
+            </div>
+          </div>
+        </section>
         <!-- Sources -->
         <section class="mt-16 pt-8 border-t border-gray-200">
             <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Sources et Références</h3>
             <ul class="text-xs text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
                 <li>Axsen, J. et Wolinetz, M. (2019). Achieving climate targets with transport in Canada. Transport Policy.</li>
                 <li>Bailey, L., Mokhtarian, P. L. et Little, A. (2008). The Broader Connection between Public Transportation, Energy Conservation and Greenhouse Gas Reduction. APTA.</li>
+                <li>Besser, L. M., & Dannenberg, A. L. (2005). Walking to public transit: steps to help meet physical activity recommendations. American journal of preventive medicine, 29(4), 273-280.</li>
                 <li>CISSS des Laurentides (2023). Portrait des enjeux démographiques – Région des Laurentides.</li>
                 <li>CRE Laurentides (2021). Mobilité intégrée des personnes dans les Laurentides – Volet transport actif.</li>
                 <li>INSPQ (2017). Mémoire concernant la Politique québécoise de mobilité durable.</li>
@@ -376,8 +407,11 @@
                 <li>Lachapelle, U. et al. (2011). Transit use and physical activity. Preventive Medicine, 52(2), 90–95.</li>
                 <li>Litman, T. (2024). Evaluating Public Transit Benefits and Costs. Victoria Transport Policy Institute.</li>
                 <li>MELCCFP (2024). Inventaire québécois des émissions de GES en 2023.</li>
+                <li>Rissel, C., Curac, N., Greenaway, M., & Bauman, A. (2012). Physical Activity Associated with Public Transport Use—A Review and Modelling of Potential Benefits. International Journal of Environmental Research and Public Health, 9(7), 2454‑2478.</li>
+                <li>Saelens, B. E., Vernez Moudon, A., Bumjoon, K., Hurvitz, P. M., & Chuan, Z. (2014). Relation Between Higher Physical Activity and Public Transit Use. American Journal of Public Health, 104(5), 854‑860.</li>
                 <li>Perrotta, K. (2021). Les avantages du transport en commun pour la santé et l’environnement.</li>
                 <li>Santé Canada (2021). Les impacts sur la santé de la pollution de l’air au Canada.</li>
+                <li>Wasfi, R. A., Ross, N. A., & El-Geneidy, A. M. (2013). Achieving recommended daily physical activity levels through commuting by public transportation: Unpacking individual and contextual influences. Health & place, 23, 18-25.</li>
             </ul>
         </section>
 
