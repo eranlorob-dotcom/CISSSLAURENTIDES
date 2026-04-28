@@ -90,6 +90,15 @@
             font-size: 1.25rem;
             font-weight: bold;
         }
+
+        /* Animation pour la phase d'innovation active */
+        @keyframes pulse-slow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(234, 179, 8, 0); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s infinite;
+        }
     </style>
 </head>
 <body class="h-screen overflow-hidden flex flex-col relative">
@@ -116,6 +125,58 @@
             
             <!-- Ligne de fond qui relie tout -->
             <div class="diagram-connector"></div>
+
+            <!-- NIVEAU 0 : INNOVATION SOCIALE (CYCLE DE VIE) -->
+            <div class="relative flex justify-center mb-16 arrow-down">
+                <div class="node-card border-t-8 border-yellow-500 rounded-2xl shadow-lg p-6 w-full max-w-4xl text-center bg-white" 
+                     onclick="openDetails('innovation')">
+                    
+                    <div class="flex items-center justify-center mb-4">
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider flex items-center border border-yellow-200 shadow-sm">
+                            <i class="fa-solid fa-lightbulb text-yellow-500 mr-2 text-sm"></i> Projet d'Innovation Sociale
+                        </span>
+                    </div>
+                    
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">Cycle de vie et État d'avancement</h2>
+                    
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 relative px-4">
+                        <!-- Progress Bar Background (Desktop) -->
+                        <div class="hidden md:block absolute top-1/2 left-8 right-8 h-1 bg-gray-200 -z-10 -translate-y-1/2"></div>
+                        
+                        <!-- 1. Émergence -->
+                        <div class="flex flex-col items-center bg-white px-2 opacity-60 grayscale transition-all hover:grayscale-0 hover:opacity-100">
+                            <div class="w-10 h-10 rounded-full border-4 border-gray-300 bg-gray-50 flex items-center justify-center mb-2">
+                                <i class="fa-solid fa-seedling text-gray-400"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500">Émergence</span>
+                        </div>
+
+                        <!-- 2. Expérimentation (PHASE ACTIVE) -->
+                        <div class="flex flex-col items-center bg-white px-2 relative z-10 transform scale-110">
+                            <div class="w-14 h-14 rounded-full border-4 border-yellow-400 bg-yellow-50 flex items-center justify-center mb-2 animate-pulse-slow">
+                                <i class="fa-solid fa-flask text-yellow-500 text-xl"></i>
+                            </div>
+                            <span class="text-sm font-extrabold text-yellow-700 bg-yellow-50 px-3 py-1 rounded-md border border-yellow-200 shadow-sm">Phase actuelle : Expérimentation</span>
+                        </div>
+
+                        <!-- 3. Pérennisation -->
+                        <div class="flex flex-col items-center bg-white px-2 opacity-60 grayscale transition-all hover:grayscale-0 hover:opacity-100">
+                            <div class="w-10 h-10 rounded-full border-4 border-gray-300 bg-gray-50 flex items-center justify-center mb-2">
+                                <i class="fa-solid fa-chart-line text-gray-400"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500 text-center leading-tight">Pérennisation<br>& mise à l'échelle</span>
+                        </div>
+
+                        <!-- 4. Institutionnalisation -->
+                        <div class="flex flex-col items-center bg-white px-2 opacity-60 grayscale transition-all hover:grayscale-0 hover:opacity-100">
+                            <div class="w-10 h-10 rounded-full border-4 border-gray-300 bg-gray-50 flex items-center justify-center mb-2">
+                                <i class="fa-solid fa-building-columns text-gray-400"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500">Institutionnalisation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- NIVEAU 1 : INTRANTS (Cadrage Réglementaire) -->
             <div class="relative flex justify-center mb-16 arrow-down">
@@ -245,6 +306,40 @@
     <!-- Base de données des contenus textuels -->
     <script>
         const contentData = {
+            'innovation': {
+                title: "<i class='fa-solid fa-lightbulb text-yellow-500 mr-2'></i> L'Innovation Sociale C.A.R.T.O.S",
+                html: `
+                    <p class="text-gray-600 mb-5 leading-relaxed">En tant qu'<strong>innovation sociale</strong>, C.A.R.T.O.S suit un cycle de vie structuré visant à apporter une réponse nouvelle à un besoin d'arrimage entre l'aménagement et la santé publique.</p>
+                    
+                    <div class="bg-yellow-50 p-5 rounded-lg border-l-4 border-yellow-500 mb-6 relative overflow-hidden">
+                        <i class="fa-solid fa-flask absolute -right-4 -bottom-4 text-yellow-100 text-7xl opacity-50"></i>
+                        <h4 class="font-bold text-yellow-900 mb-2 relative z-10">Phase actuelle : Expérimentation</h4>
+                        <p class="text-sm text-gray-700 mb-3 relative z-10">Le projet est actuellement présenté dans sa phase de test et d'application concrète. Cette étape inclut :</p>
+                        <ul class="space-y-2 relative z-10 ml-2">
+                            <li class="flex items-start text-sm text-gray-700"><i class="fa-solid fa-check text-yellow-600 mt-1 mr-2 text-xs"></i> <strong>Développement et expérimentation</strong> de la stratégie conjointe (EIS via Géoweb).</li>
+                            <li class="flex items-start text-sm text-gray-700"><i class="fa-solid fa-check text-yellow-600 mt-1 mr-2 text-xs"></i> <strong>Rétroaction des parties prenantes</strong> (Acteurs municipaux, DSPublique).</li>
+                            <li class="flex items-start text-sm text-gray-700"><i class="fa-solid fa-check text-yellow-600 mt-1 mr-2 text-xs"></i> <strong>Adaptation de l'innovation</strong> aux réalités spécifiques des Régions Rurales Éloignées (RRE).</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 mb-2 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-3 text-sm uppercase tracking-wide flex items-center">
+                            <i class="fa-solid fa-arrows-spin text-indigo-500 mr-2"></i> Activités transversales
+                        </h4>
+                        <p class="text-xs text-gray-500 mb-3">Ces activités nourrissent les <strong>apprentissages collectifs</strong> tout au long du cycle :</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-gray-50 border border-gray-100 p-2 rounded text-xs flex flex-col items-center justify-center text-center"><i class="fa-solid fa-magnifying-glass text-blue-500 mb-1"></i> Analyse & Éval.</div>
+                            <div class="bg-gray-50 border border-gray-100 p-2 rounded text-xs flex flex-col items-center justify-center text-center"><i class="fa-solid fa-users text-pink-500 mb-1"></i> Mobilisation</div>
+                            <div class="bg-gray-50 border border-gray-100 p-2 rounded text-xs flex flex-col items-center justify-center text-center"><i class="fa-solid fa-hand-holding-dollar text-green-500 mb-1"></i> Financement</div>
+                            <div class="bg-gray-50 border border-gray-100 p-2 rounded text-xs flex flex-col items-center justify-center text-center"><i class="fa-solid fa-share-nodes text-orange-500 mb-1"></i> Accompagnement</div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-gray-500 italic mt-4 pt-4 border-t border-gray-200 text-center">
+                        <i class="fa-solid fa-forward text-gray-400 mr-1"></i> Prochaines étapes : Pérennisation, mise à l'échelle puis institutionnalisation de l'innovation.
+                    </p>
+                `
+            },
             'intrants': {
                 title: "<i class='fa-solid fa-bullseye text-indigo-600 mr-2'></i> Intrants Stratégiques",
                 html: `
@@ -373,5 +468,4 @@
         }
     </script>
 </body>
-</html>
 </html>
