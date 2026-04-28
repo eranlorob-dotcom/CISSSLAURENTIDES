@@ -3,479 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C.A.R.T.O.S - Cadre conceptuel dynamique</title>
+    <title>C.A.R.T.O.S - Schéma conceptuel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Styles personnalisés pour les animations et le design */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
+            background-color: #f8fafc; /* Slate-50 */
+            color: #1e293b;
         }
 
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .nav-item.active {
-            background-color: #0d9488; /* Teal-600 */
-            color: white;
-            border-left: 4px solid #0f766e; /* Teal-700 */
-        }
-
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Ligne de temps (Timeline) pour l'EIS */
-        .timeline-container {
-            position: relative;
-        }
-        .timeline-container::before {
-            content: '';
+        /* Ligne de connexion centrale pour le diagramme */
+        .diagram-connector {
             position: absolute;
+            left: 50%;
             top: 0;
             bottom: 0;
-            left: 24px;
-            width: 4px;
-            background-color: #e5e7eb;
+            width: 2px;
+            background: repeating-linear-gradient(to bottom, #cbd5e1, #cbd5e1 8px, transparent 8px, transparent 16px);
+            transform: translateX(-50%);
+            z-index: 0;
         }
 
-        .geoweb-equation {
+        /* Nœuds du diagramme */
+        .node-card {
+            position: relative;
+            z-index: 10;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .node-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Flèches de connexion */
+        .arrow-down::after {
+            content: '\f063'; /* fa-arrow-down */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #94a3b8;
+            font-size: 1.5rem;
+            z-index: 1;
+        }
+
+        .arrow-bidirectional {
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #374151;
+            color: #64748b;
         }
 
-        .geoweb-element {
+        /* Panneau de détails latéral (Modal/Drawer) */
+        #detail-drawer {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #detail-drawer.open {
+            transform: translateX(0);
+        }
+        
+        #overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Équation Géoweb compacte */
+        .equation-mini {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            background: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-        .geoweb-element:hover {
-            transform: scale(1.05);
-            border-color: #0d9488;
-        }
-
-        .geoweb-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
         }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="h-screen overflow-hidden flex flex-col relative">
 
-    <!-- Sidebar de Navigation -->
-    <aside class="w-72 bg-white shadow-xl z-20 flex flex-col h-full">
-        <div class="p-6 bg-teal-700 text-white flex flex-col items-center justify-center">
-            <i class="fa-solid fa-map-location-dot text-5xl mb-3"></i>
-            <h1 class="text-2xl font-bold text-center tracking-wider">C.A.R.T.O.S</h1>
-            <p class="text-xs text-center mt-2 opacity-90">Appropriation Rurale et Territoriale des Orientations gouvernementales en aménagement du territoire et de la Santé</p>
+    <!-- En-tête -->
+    <header class="bg-teal-800 text-white shadow-md py-4 z-20 relative">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-map-location-dot text-3xl text-teal-300"></i>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-widest">C.A.R.T.O.S</h1>
+                    <p class="text-xs text-teal-200">Cadre conceptuel systémique de l'appropriation rurale et territoriale</p>
+                </div>
+            </div>
+            <div class="text-sm bg-teal-900 px-4 py-2 rounded-full border border-teal-700">
+                <i class="fa-solid fa-circle-info mr-2"></i> Cliquez sur les blocs pour explorer
+            </div>
+        </div>
+    </header>
+
+    <!-- Zone de diagramme (Scrollable) -->
+    <main class="flex-1 overflow-y-auto relative p-8">
+        <div class="max-w-5xl mx-auto relative pb-20">
+            
+            <!-- Ligne de fond qui relie tout -->
+            <div class="diagram-connector"></div>
+
+            <!-- NIVEAU 1 : INTRANTS (Cadrage Réglementaire) -->
+            <div class="relative flex justify-center mb-16 arrow-down">
+                <div class="node-card border-t-8 border-indigo-600 rounded-2xl shadow-lg p-6 w-full max-w-2xl text-center" 
+                     onclick="openDetails('intrants')">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Intrants stratégiques</span>
+                    <h2 class="text-2xl font-extrabold text-gray-800 mt-4 mb-2">Le cadre de révision pour les MRC</h2>
+                    <div class="flex justify-center items-center gap-4 text-gray-600 mt-4">
+                        <div class="flex flex-col items-center">
+                            <i class="fa-solid fa-file-contract text-3xl text-indigo-500 mb-2"></i>
+                            <span class="font-bold">OGAT</span>
+                        </div>
+                        <i class="fa-solid fa-plus text-gray-300 text-xl"></i>
+                        <div class="flex flex-col items-center">
+                            <i class="fa-solid fa-map text-3xl text-blue-500 mb-2"></i>
+                            <span class="font-bold">SAD</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-gray-300 text-xl"></i>
+                        <div class="flex flex-col items-center">
+                            <i class="fa-solid fa-tractor text-3xl text-green-600 mb-2"></i>
+                            <span class="font-bold">Territoire RRE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NIVEAU 2 : LE NOYAU SYNERGIQUE (Processus) -->
+            <div class="relative flex flex-col md:flex-row justify-center items-stretch gap-6 mb-16 arrow-down">
+                
+                <!-- Bloc EIS -->
+                <div class="node-card border-l-8 border-blue-500 rounded-2xl shadow-lg p-6 w-full md:w-1/2 flex flex-col"
+                     onclick="openDetails('eis')">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide self-start mb-4">Le Processus</span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-stethoscope text-blue-500"></i> Méthodologie EIS flexible
+                    </h3>
+                    <ul class="space-y-3 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-gray-600 font-medium bg-gray-50 p-2 rounded"><span class="w-6 h-6 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs">1</span> Prospection et dépistage</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600 font-medium bg-gray-50 p-2 rounded"><span class="w-6 h-6 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs">2</span> Cadrage spatial</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600 font-medium bg-gray-50 p-2 rounded"><span class="w-6 h-6 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs">3</span> Analyse des impacts</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600 font-medium bg-gray-50 p-2 rounded"><span class="w-6 h-6 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-xs">4</span> Recommandations</li>
+                    </ul>
+                </div>
+
+                <!-- Connecteur central horizontal -->
+                <div class="hidden md:flex flex-col justify-center items-center z-10 w-16">
+                    <div class="bg-white rounded-full p-2 shadow-md border border-gray-200 text-teal-600">
+                        <i class="fa-solid fa-arrow-right-arrow-left text-xl"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-500 font-bold uppercase mt-1 tracking-widest text-center">Arrimage</span>
+                </div>
+
+                <!-- Bloc Géoweb -->
+                <div class="node-card border-r-8 border-orange-500 rounded-2xl shadow-lg p-6 w-full md:w-1/2 flex flex-col"
+                     onclick="openDetails('geoweb')">
+                    <span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide self-end mb-4">L'Outil</span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center justify-end gap-2 text-right">
+                        Architecture Géoweb <i class="fa-solid fa-layer-group text-orange-500"></i>
+                    </h3>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4 mt-auto">
+                        <div class="equation-mini text-white">
+                            <i class="fa-solid fa-desktop text-blue-400"></i> <span class="text-xs">App</span>
+                            <span class="text-gray-400 font-light">=</span>
+                            <i class="fa-solid fa-map text-green-400"></i> <span class="text-xs">Fonds</span>
+                            <span class="text-gray-400 font-light">+</span>
+                            <i class="fa-solid fa-layer-group text-orange-400"></i> <span class="text-xs">Couches</span>
+                            <span class="text-gray-400 font-light">+</span>
+                            <i class="fa-solid fa-wrench text-yellow-400"></i> <span class="text-xs">Outils</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- NIVEAU 3 : EXTRANTS (Déterminants) -->
+            <div class="relative flex justify-center">
+                <div class="node-card border-b-8 border-green-500 rounded-2xl shadow-lg p-6 w-full text-center"
+                     onclick="openDetails('environnements')">
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Cibles et extrants (Impact)</span>
+                    <h2 class="text-2xl font-extrabold text-gray-800 mt-4 mb-6">Les 6 environnements </h2>
+                    
+                    <!-- Grille hexagonale / Flex -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="border border-gray-100 bg-gray-50 rounded-lg p-3 hover:bg-teal-50 transition-colors">
+                            <i class="fa-solid fa-city text-gray-600 text-2xl mb-2"></i><br><span class="font-bold text-sm">Bâti</span>
+                        </div>
+                        <div class="border border-gray-100 bg-gray-50 rounded-lg p-3 hover:bg-teal-50 transition-colors">
+                            <i class="fa-solid fa-tree text-green-600 text-2xl mb-2"></i><br><span class="font-bold text-sm">Naturel</span>
+                        </div>
+                        <div class="border border-gray-100 bg-gray-50 rounded-lg p-3 hover:bg-teal-50 transition-colors">
+                            <i class="fa-solid fa-users text-pink-600 text-2xl mb-2"></i><br><span class="font-bold text-sm">Social</span>
+                        </div>
+                        <div class="border border-gray-100 bg-gray-50 rounded-lg p-3 hover:bg-teal-50 transition-colors">
+                            <i class="fa-solid fa-chart-pie text-blue-600 text-2xl mb-2"></i><br><span class="font-bold text-sm">Économique</span>
+                        </div>
+                        <div class="border border-gray-100 bg-gray-50 rounded-lg p-3 hover:bg-teal-50 transition-colors">
+                            <i class="fa-solid fa-masks-theater text-purple-600 text-2xl mb-2"></i><br><span class="font-bold text-sm">Culturel</span>
+                        </div>
+                        <div class="border border-gray-100 bg-gray-50 rounded-lg p-3 hover:bg-teal-50 transition-colors">
+                            <i class="fa-solid fa-landmark text-red-600 text-2xl mb-2"></i><br><span class="font-bold text-sm">Politique</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Overlay assombrissant -->
+    <div id="overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-30" onclick="closeDetails()"></div>
+
+    <!-- Tiroir latéral pour le contenu détaillé -->
+    <aside id="detail-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-40 flex flex-col border-l border-gray-200">
+        <div class="flex items-center justify-between p-4 border-b">
+            <h2 id="drawer-title" class="text-xl font-bold text-teal-800">Détails</h2>
+            <button onclick="closeDetails()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         
-        <nav class="flex-1 overflow-y-auto py-4">
-            <ul class="space-y-1">
-                <li>
-                    <button onclick="openTab('concept')" id="tab-concept" class="nav-item active w-full text-left px-6 py-4 text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition-colors flex items-center font-medium">
-                        <i class="fa-solid fa-lightbulb w-6"></i> Le Concept C.A.R.T.O.S
-                    </button>
-                </li>
-                <li>
-                    <button onclick="openTab('methodology')" id="tab-methodology" class="nav-item w-full text-left px-6 py-4 text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition-colors flex items-center font-medium">
-                        <i class="fa-solid fa-route w-6"></i> Méthodologie EIS-Géoweb
-                    </button>
-                </li>
-                <li>
-                    <button onclick="openTab('environments')" id="tab-environments" class="nav-item w-full text-left px-6 py-4 text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition-colors flex items-center font-medium">
-                        <i class="fa-solid fa-leaf w-6"></i> Les 6 Environnements
-                    </button>
-                </li>
-                <li>
-                    <button onclick="openTab('architecture')" id="tab-architecture" class="nav-item w-full text-left px-6 py-4 text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition-colors flex items-center font-medium">
-                        <i class="fa-solid fa-layer-group w-6"></i> Architecture Géoweb
-                    </button>
-                </li>
-            </ul>
-        </nav>
-        
-        <div class="p-4 bg-gray-50 border-t text-xs text-gray-500 text-center">
-            Adapté pour la révision des SAD en RRE (Régions Rurales Éloignées)
+        <div class="flex-1 overflow-y-auto p-6" id="drawer-content">
+            <!-- Le contenu sera injecté ici via JS -->
         </div>
     </aside>
 
-    <!-- Contenu Principal -->
-    <main class="flex-1 overflow-y-auto bg-gray-100 p-8">
-        
-        <!-- Tab 1 : Le concept -->
-        <section id="concept" class="tab-content active max-w-6xl mx-auto">
-            <header class="mb-10">
-                <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Le Cadre C.A.R.T.O.S</h2>
-                <div class="h-1 w-24 bg-teal-600 rounded"></div>
-            </header>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-2xl shadow-md border-t-4 border-teal-600 card-hover transition-all">
-                    <h3 class="text-2xl font-bold text-teal-800 mb-4"><i class="fa-solid fa-bullseye mr-2"></i> Vision globale</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        Le projet <strong>C.A.R.T.O.S</strong> vise à outiller les MRC et les acteurs de santé publique lors de la révision macroscopique des <strong>Schémas d'Aménagement et de Développement (SAD)</strong>, en réponse aux nouvelles <strong>Orientations gouvernementales en aménagement du territoire (OGAT)</strong>.
-                    </p>
-                    <p class="text-gray-600 leading-relaxed">
-                        Il s'attaque aux défis uniques des <strong>Régions Rurales Éloignées (RRE)</strong> (faible densité, vastes territoires, ressources limitées) en combinant la rigueur de l'<strong>Évaluation d'Impact sur la Santé (EIS)</strong> avec l'accessibilité et le dynamisme du <strong>Géoweb</strong> pour faciliter l'arrimage entre les OGAT et la santé.
-                    </p>
-                </div>
-
-                <div class="bg-white p-8 rounded-2xl shadow-md border-t-4 border-blue-600 card-hover transition-all">
-                    <h3 class="text-2xl font-bold text-blue-800 mb-4"><i class="fa-solid fa-puzzle-piece mr-2"></i> Les Piliers</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <span class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold mr-3 mt-1">1</span>
-                            <div>
-                                <strong class="text-gray-800 block">Les OGAT (Le Moteur Réglementaire)</strong>
-                                <span class="text-sm text-gray-600">L'intégration des Orientations gouvernementales en aménagement du territoire comme cadre de référence normatif pour la révision des SAD.</span>
-                            </div>
+    <!-- Base de données des contenus textuels -->
+    <script>
+        const contentData = {
+            'intrants': {
+                title: "<i class='fa-solid fa-bullseye text-indigo-600 mr-2'></i> Intrants Stratégiques",
+                html: `
+                    <p class="text-gray-600 mb-4 leading-relaxed">Cette section représente le déclencheur réglementaire et territorial du projet.</p>
+                    <div class="space-y-4">
+                        <div class="bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-500">
+                            <h4 class="font-bold text-indigo-900 mb-1">OGAT</h4>
+                            <p class="text-sm text-gray-700"><strong>Le Moteur Réglementaire.</strong> L'intégration des Orientations gouvernementales en aménagement du territoire comme cadre de référence normatif exige de revoir la planification.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                            <h4 class="font-bold text-blue-900 mb-1">SAD</h4>
+                            <p class="text-sm text-gray-700"><strong>L'Objet.</strong> Le Schéma d'Aménagement et de Développement est le document qui traduit ces orientations sur le terrain physique.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                            <h4 class="font-bold text-green-900 mb-1">RRE</h4>
+                            <p class="text-sm text-gray-700"><strong>Le Contexte.</strong> Les Régions Rurales Éloignées imposent des défis uniques (faible densité, vastes espaces, accès aux services restreint) qui modifient l'impact des décisions d'aménagement.</p>
+                        </div>
+                    </div>
+                `
+            },
+            'eis': {
+                title: "<i class='fa-solid fa-stethoscope text-blue-500 mr-2'></i> Processus EIS",
+                html: `
+                    <p class="text-gray-600 mb-4 leading-relaxed">L'Évaluation d'Impact sur la Santé permet de filtrer les orientations du SAD pour optimiser la santé publique.</p>
+                    <ul class="space-y-4 relative border-l-2 border-blue-100 ml-3">
+                        <li class="pl-6 relative">
+                            <span class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold">1</span>
+                            <h4 class="font-bold text-gray-800 text-sm">Prospection</h4>
+                            <p class="text-sm text-gray-600">Cibler comment les OGAT influencent la santé locale (ex: protection agricole vs vitalisation).</p>
                         </li>
-                        <li class="flex items-start">
-                            <span class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-3 mt-1">2</span>
-                            <div>
-                                <strong class="text-gray-800 block">L'approche EIS </strong>
-                                <span class="text-sm text-gray-600">Un processus prospectif et itératif (Prospection, Cadrage, Analyse, Recommandations) pour maximiser les retombées positives des SAD.</span>
-                            </div>
+                        <li class="pl-6 relative">
+                            <span class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold">2</span>
+                            <h4 class="font-bold text-gray-800 text-sm">Cadrage</h4>
+                            <p class="text-sm text-gray-600">Croiser les exigences réglementaires avec les priorités d'analyse de santé.</p>
                         </li>
-                        <li class="flex items-start">
-                            <span class="flex-shrink-0 h-8 w-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold mr-3 mt-1">3</span>
-                            <div>
-                                <strong class="text-gray-800 block">Les Déterminants de santé</strong>
-                                <span class="text-sm text-gray-600">L'action sur les 6 environnements locaux (Bâti, Naturel, Social, Économique, Culturel, Politique).</span>
-                            </div>
+                        <li class="pl-6 relative">
+                            <span class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold">3</span>
+                            <h4 class="font-bold text-gray-800 text-sm">Analyse</h4>
+                            <p class="text-sm text-gray-600">Évaluer les effets potentiels (profils démographiques, accès aux services).</p>
                         </li>
-                        <li class="flex items-start">
-                            <span class="flex-shrink-0 h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold mr-3 mt-1">4</span>
-                            <div>
-                                <strong class="text-gray-800 block">Opérationnalisation Géoweb</strong>
-                                <span class="text-sm text-gray-600">Une interface interactive de cartographie en ligne facilitant la concertation intersectorielle et la spatialisation des données de santé.</span>
-                            </div>
+                        <li class="pl-6 relative">
+                            <span class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold">4</span>
+                            <h4 class="font-bold text-gray-800 text-sm">Recommandations</h4>
+                            <p class="text-sm text-gray-600">Ajuster le zonage pour réduire les inégalités et favoriser la qualité de vie.</p>
                         </li>
                     </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Tab 2 : Méthodologie EIS-Géoweb -->
-        <section id="methodology" class="tab-content max-w-6xl mx-auto">
-            <header class="mb-10">
-                <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Méthodologie synergique : EIS et Géoweb</h2>
-                <p class="text-lg text-gray-600">Comment les étapes de l'EIS sont opérationnalisées via les outils cartographiques pour la révision des SAD.</p>
-                <div class="h-1 w-24 bg-blue-600 rounded mt-4"></div>
-            </header>
-
-            <div class="timeline-container py-4 pl-4">
-                
-                <!-- Étape 1 -->
-                <div class="relative pl-12 mb-10 group">
-                    <div class="absolute left-0 top-1 w-12 h-12 bg-white border-4 border-blue-600 rounded-full flex items-center justify-center -ml-6 z-10 shadow-lg group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-search text-blue-600"></i>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                            <h3 class="text-xl font-bold text-gray-800">1. Prospection et dépistage</h3>
-                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mt-2 md:mt-0">Phase EIS</span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="text-sm uppercase text-gray-400 font-bold mb-2">Objectif SAD-RRE</h4>
-                                <p class="text-sm text-gray-600">Identifier comment l'application des <strong>OGAT</strong> (ex: pérennisation des milieux agricoles, vitalisation des cœurs villageois) dans l'aménagement est susceptible d'influencer la santé et les inégalités sociales.</p>
+                `
+            },
+            'geoweb': {
+                title: "<i class='fa-solid fa-layer-group text-orange-500 mr-2'></i> L'Architecture Géoweb",
+                html: `
+                    <p class="text-gray-600 mb-4 leading-relaxed">Le Géoweb est l'interface technique qui permet d'arrimer spatialement l'EIS et le SAD.</p>
+                    <div class="bg-gray-900 rounded-xl p-5 shadow-lg">
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-map text-green-400 mt-1"></i>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">Fonds de carte</h4>
+                                    <p class="text-gray-400 text-xs">Base topographique de la MRC/RRE.</p>
+                                </div>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-blue-400">
-                                <h4 class="text-sm uppercase text-blue-600 font-bold mb-2"><i class="fa-solid fa-laptop-code mr-1"></i> Traduction Géoweb</h4>
-                                <p class="text-sm text-gray-700"><strong>Cartographie exploratoire :</strong> Superposition de couches macroscopiques (indices de défavorisation matérielle/sociale + zones visées par les OGAT) pour cibler les secteurs d'intervention prioritaires.</p>
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-layer-group text-orange-400 mt-1"></i>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">Couches Thématiques</h4>
+                                    <p class="text-gray-400 text-xs">Superposition des affectations (OGAT), risques naturels, et données socio-sanitaires.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-wrench text-yellow-400 mt-1"></i>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">Outils d'Analyse</h4>
+                                    <p class="text-gray-400 text-xs">Calculs de distance, identification des populations vulnérables, tampons spatiaux.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Étape 2 -->
-                <div class="relative pl-12 mb-10 group">
-                    <div class="absolute left-0 top-1 w-12 h-12 bg-white border-4 border-teal-600 rounded-full flex items-center justify-center -ml-6 z-10 shadow-lg group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-crop-simple text-teal-600"></i>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                            <h3 class="text-xl font-bold text-gray-800">2. Cadrage</h3>
-                            <span class="bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full mt-2 md:mt-0">Phase EIS</span>
+                `
+            },
+            'environnements': {
+                title: "<i class='fa-solid fa-leaf text-green-600 mr-2'></i> Cibles d'Impact",
+                html: `
+                    <p class="text-gray-600 mb-4 leading-relaxed">Les décisions arrimées via C.A.R.T.O.S modifient directement ces 6 déterminants sur le territoire rural :</p>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div class="bg-gray-50 border border-gray-200 p-3 rounded">
+                            <strong class="text-gray-800 text-sm"><i class="fa-solid fa-city mr-1"></i> Bâti :</strong> <span class="text-xs text-gray-600">Connectivité cyclable, déserts alimentaires.</span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="text-sm uppercase text-gray-400 font-bold mb-2">Objectif SAD-RRE</h4>
-                                <p class="text-sm text-gray-600">Établir le modèle logique, croiser les exigences réglementaires des <strong>OGAT</strong> avec les priorités d'analyse spatiale en santé (ex: accès aux services, transport actif).</p>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-teal-400">
-                                <h4 class="text-sm uppercase text-teal-600 font-bold mb-2"><i class="fa-solid fa-laptop-code mr-1"></i> Traduction Géoweb</h4>
-                                <p class="text-sm text-gray-700"><strong>Configuration de l'application :</strong> Sélection des <em>Fonds de carte</em> et structuration des <em>Couches (Layers)</em> pertinentes (infrastructures, routes, zones agricoles) par un comité local conjoint.</p>
-                            </div>
+                        <div class="bg-green-50 border border-green-200 p-3 rounded">
+                            <strong class="text-green-800 text-sm"><i class="fa-solid fa-tree mr-1"></i> Naturel :</strong> <span class="text-xs text-gray-600">Zones inondables, couvert forestier protégé.</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Étape 3 -->
-                <div class="relative pl-12 mb-10 group">
-                    <div class="absolute left-0 top-1 w-12 h-12 bg-white border-4 border-orange-500 rounded-full flex items-center justify-center -ml-6 z-10 shadow-lg group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-chart-line text-orange-500"></i>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                            <h3 class="text-xl font-bold text-gray-800">3. Analyse des impacts</h3>
-                            <span class="bg-orange-100 text-orange-800 text-xs font-semibold px-3 py-1 rounded-full mt-2 md:mt-0">Phase EIS</span>
+                        <div class="bg-pink-50 border border-pink-200 p-3 rounded">
+                            <strong class="text-pink-800 text-sm"><i class="fa-solid fa-users mr-1"></i> Social :</strong> <span class="text-xs text-gray-600">Équipements communautaires, inclusion.</span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="text-sm uppercase text-gray-400 font-bold mb-2">Objectif SAD-RRE</h4>
-                                <p class="text-sm text-gray-600">Évaluer les effets potentiels des orientations du SAD sur les 6 environnements de la qualité de vie (profil de la population, effets sur la santé et l'équité).</p>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-orange-400">
-                                <h4 class="text-sm uppercase text-orange-600 font-bold mb-2"><i class="fa-solid fa-laptop-code mr-1"></i> Traduction Géoweb</h4>
-                                <p class="text-sm text-gray-700"><strong>Analyse spatiale interactive :</strong> Utilisation d'<em>outils (Tools)</em> comme les requêtes spatiales, tampons (buffers) autour des écoles ou zones inondables, profils démographiques dynamiques des zones affectées.</p>
-                            </div>
+                        <div class="bg-blue-50 border border-blue-200 p-3 rounded">
+                            <strong class="text-blue-800 text-sm"><i class="fa-solid fa-chart-pie mr-1"></i> Économique :</strong> <span class="text-xs text-gray-600">Accessibilité aux emplois ruraux.</span>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 p-3 rounded">
+                            <strong class="text-purple-800 text-sm"><i class="fa-solid fa-masks-theater mr-1"></i> Culturel :</strong> <span class="text-xs text-gray-600">Protection des paysages identitaires.</span>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 p-3 rounded">
+                            <strong class="text-red-800 text-sm"><i class="fa-solid fa-landmark mr-1"></i> Politique :</strong> <span class="text-xs text-gray-600">Zonage et règlements adaptés.</span>
                         </div>
                     </div>
-                </div>
+                `
+            }
+        };
 
-                <!-- Étape 4 -->
-                <div class="relative pl-12 group">
-                    <div class="absolute left-0 top-1 w-12 h-12 bg-white border-4 border-green-600 rounded-full flex items-center justify-center -ml-6 z-10 shadow-lg group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-clipboard-check text-green-600"></i>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                            <h3 class="text-xl font-bold text-gray-800">4. Recommandations et suivi</h3>
-                            <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mt-2 md:mt-0">Phase EIS</span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="text-sm uppercase text-gray-400 font-bold mb-2">Objectif SAD-RRE</h4>
-                                <p class="text-sm text-gray-600">Ajuster le SAD pour maximiser les gains de santé, réduire les inégalités, et assurer une veille dans le temps.</p>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-green-400">
-                                <h4 class="text-sm uppercase text-green-600 font-bold mb-2"><i class="fa-solid fa-laptop-code mr-1"></i> Traduction Géoweb</h4>
-                                <p class="text-sm text-gray-700"><strong>Tableau de Bord / StoryMap :</strong> Scénarisation spatiale (Avant/Après). Partage public de la carte pour la participation citoyenne et tableaux de bord d'indicateurs de suivi territorial continus.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        const drawer = document.getElementById('detail-drawer');
+        const overlay = document.getElementById('overlay');
+        const drawerTitle = document.getElementById('drawer-title');
+        const drawerContent = document.getElementById('drawer-content');
 
-        <!-- Tab 3 : Les 6 environnements -->
-        <section id="environments" class="tab-content max-w-6xl mx-auto">
-            <header class="mb-10">
-                <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Les environnements de santé en action</h2>
-                <p class="text-lg text-gray-600">Spatialisation des déterminants de la santé dans l'aménagement rural.</p>
-                <div class="h-1 w-24 bg-green-600 rounded mt-4"></div>
-            </header>
+        function openDetails(sectionKey) {
+            const data = contentData[sectionKey];
+            if(data) {
+                drawerTitle.innerHTML = data.title;
+                drawerContent.innerHTML = data.html;
+                drawer.classList.add('open');
+                overlay.classList.add('open');
+            }
+        }
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Bâti -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover border-t-4 border-gray-800">
-                    <div class="p-6">
-                        <div class="flex items-center justify-center w-12 h-12 bg-gray-100 text-gray-800 rounded-full mb-4">
-                            <i class="fa-solid fa-city text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Env. Bâti</h3>
-                        <p class="text-sm text-gray-600 mb-4">Réseaux de transport, aménagement des quartiers, logements, systèmes alimentaires locaux.</p>
-                        <div class="bg-gray-50 p-3 rounded text-xs">
-                            <strong class="text-gray-800">Géoweb :</strong> Cartographie des déserts alimentaires, connectivité des liens cyclables ruraux (accotements pavés).
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Naturel -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover border-t-4 border-green-500">
-                    <div class="p-6">
-                        <div class="flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-full mb-4">
-                            <i class="fa-solid fa-tree text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Env. Naturel</h3>
-                        <p class="text-sm text-gray-600 mb-4">Espaces verts, qualité de l'air, protection de l'eau, biodiversité, aléas climatiques.</p>
-                        <div class="bg-gray-50 p-3 rounded text-xs">
-                            <strong class="text-green-700">Géoweb :</strong> Zones inondables, couvert forestier, protection des bassins versants superposés au zonage.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Social -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover border-t-4 border-pink-500">
-                    <div class="p-6">
-                        <div class="flex items-center justify-center w-12 h-12 bg-pink-100 text-pink-600 rounded-full mb-4">
-                            <i class="fa-solid fa-users text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Env. Social</h3>
-                        <p class="text-sm text-gray-600 mb-4">Rapports sociaux, sentiment de sécurité, participation citoyenne, inclusion.</p>
-                        <div class="bg-gray-50 p-3 rounded text-xs">
-                            <strong class="text-pink-700">Géoweb :</strong> Cartographie des équipements communautaires, zones de concentration des populations vulnérables.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Économique -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover border-t-4 border-blue-500">
-                    <div class="p-6">
-                        <div class="flex items-center justify-center w-12 h-12 bg-blue-100 text-blue-600 rounded-full mb-4">
-                            <i class="fa-solid fa-chart-pie text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Env. Économique</h3>
-                        <p class="text-sm text-gray-600 mb-4">Emplois, revenu, vitalité économique locale, coût des services.</p>
-                        <div class="bg-gray-50 p-3 rounded text-xs">
-                            <strong class="text-blue-700">Géoweb :</strong> Parcs industriels vs zones résidentielles, accessibilité aux pôles d'emplois via le transport collectif.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Culturel -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover border-t-4 border-purple-500">
-                    <div class="p-6">
-                        <div class="flex items-center justify-center w-12 h-12 bg-purple-100 text-purple-600 rounded-full mb-4">
-                            <i class="fa-solid fa-masks-theater text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Env. Culturel</h3>
-                        <p class="text-sm text-gray-600 mb-4">Patrimoine bâti et paysager, accès aux arts, identité territoriale.</p>
-                        <div class="bg-gray-50 p-3 rounded text-xs">
-                            <strong class="text-purple-700">Géoweb :</strong> Identification et protection des corridors panoramiques, distribution de l'offre culturelle rurale.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Politique -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover border-t-4 border-red-500">
-                    <div class="p-6">
-                        <div class="flex items-center justify-center w-12 h-12 bg-red-100 text-red-600 rounded-full mb-4">
-                            <i class="fa-solid fa-landmark text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Env. Politique</h3>
-                        <p class="text-sm text-gray-600 mb-4">Réglementation, gouvernance, politiques publiques locales.</p>
-                        <div class="bg-gray-50 p-3 rounded text-xs">
-                            <strong class="text-red-700">Géoweb :</strong> Visualisation des contraintes réglementaires (ex: limites du périmètre d'urbanisation, zonage restrictif).
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Tab 4 : Architecture Géoweb -->
-        <section id="architecture" class="tab-content max-w-6xl mx-auto">
-            <header class="mb-10">
-                <h2 class="text-4xl font-extrabold text-gray-800 mb-4">L'Équation Géoweb pour C.A.R.T.O.S</h2>
-                <p class="text-lg text-gray-600">Décomposition de l'interface interactive pour l'analyse spatiale de la santé.</p>
-                <div class="h-1 w-24 bg-indigo-600 rounded mt-4"></div>
-            </header>
-
-            <!-- Représentation visuelle de l'image -->
-            <div class="bg-gray-900 rounded-2xl p-10 shadow-2xl mt-10">
-                <p class="text-gray-300 text-sm italic mb-8 border-l-4 border-indigo-500 pl-4">
-                    "Cette architecture illustre une application Géoweb. Elle décompose une interface interactive en trois éléments qui travaillent ensemble pour créer l'expérience utilisateur finale utile à la révision d'un SAD."
-                </p>
-
-                <div class="geoweb-equation">
-                    
-                    <!-- L'Application -->
-                    <div class="geoweb-element">
-                        <i class="fa-solid fa-desktop text-blue-500 geoweb-icon"></i>
-                        <span class="text-sm font-bold uppercase tracking-widest text-gray-800">Application</span>
-                    </div>
-
-                    <div class="text-4xl text-white font-light">=</div>
-
-                    <!-- Fonds de carte -->
-                    <div class="geoweb-element">
-                        <i class="fa-solid fa-map text-green-600 geoweb-icon"></i>
-                        <span class="text-sm font-bold uppercase tracking-widest text-gray-800">Fonds de carte</span>
-                    </div>
-
-                    <div class="text-4xl text-white font-light">+</div>
-
-                    <!-- Couches (Layers) -->
-                    <div class="geoweb-element">
-                        <div class="relative geoweb-icon">
-                            <i class="fa-solid fa-layer-group text-orange-500"></i>
-                            <i class="fa-solid fa-house-chimney text-gray-700 absolute -bottom-2 -right-4 text-2xl drop-shadow-md"></i>
-                            <i class="fa-solid fa-tree text-green-500 absolute -top-4 -left-2 text-xl drop-shadow-md"></i>
-                        </div>
-                        <span class="text-sm font-bold uppercase tracking-widest text-gray-800 mt-4">Couches</span>
-                    </div>
-
-                    <div class="text-4xl text-white font-light">+</div>
-
-                    <!-- Outils -->
-                    <div class="geoweb-element">
-                        <i class="fa-solid fa-screwdriver-wrench text-yellow-600 geoweb-icon"></i>
-                        <span class="text-sm font-bold uppercase tracking-widest text-gray-800">Outils</span>
-                    </div>
-
-                </div>
-                
-                <!-- Détails techniques -->
-                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-gray-800 p-5 rounded-lg border-t-2 border-green-500">
-                        <h4 class="text-white font-bold mb-2">Base territoriale</h4>
-                        <p class="text-gray-400 text-sm">Les fonds topographiques ou images satellites fournissant le contexte géographique de la RRE étudiée.</p>
-                    </div>
-                    <div class="bg-gray-800 p-5 rounded-lg border-t-2 border-orange-500">
-                        <h4 class="text-white font-bold mb-2">Données thématiques (OGAT, SAD & Santé)</h4>
-                        <p class="text-gray-400 text-sm">Superposition des affectations du sol découlant des <strong>OGAT</strong>, des risques naturels, et des données sociodémographiques (EIS).</p>
-                    </div>
-                    <div class="bg-gray-800 p-5 rounded-lg border-t-2 border-yellow-600">
-                        <h4 class="text-white font-bold mb-2">Fonctions interactives</h4>
-                        <p class="text-gray-400 text-sm">Zoom, identification, calculs de distances (ex: accessibilité à l'eau potable), balayage spatial (Swipe).</p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Script de gestion des onglets -->
-    <script>
-        function openTab(tabName) {
-            // Cacher tous les contenus
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // Retirer la classe active de tous les liens de navigation
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Afficher le contenu sélectionné
-            document.getElementById(tabName).classList.add('active');
-
-            // Mettre en surbrillance le bouton cliqué
-            document.getElementById('tab-' + tabName).classList.add('active');
+        function closeDetails() {
+            drawer.classList.remove('open');
+            overlay.classList.remove('open');
         }
     </script>
 </body>
