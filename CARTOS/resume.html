@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet C.A.R.T.O.S. - CISSS des Laurentides</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuration des couleurs du CISSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cisss-yellow': '#FDB913',
+                        'cisss-orange': '#F15A22',
+                        'cisss-lightGreen': '#63BD59',
+                        'cisss-teal': '#17A7A5',
+                        'cisss-lightBlue': '#0787A1',
+                        'cisss-darkBlue': '#0E4E7B',
+                        'cisss-gray-dark': '#555555',
+                        'cisss-header-teal': '#008491'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in { animation: fadeIn 1s ease-in forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+    </style>
+</head>
+<body class="bg-gray-50 text-cisss-gray-dark font-sans antialiased selection:bg-cisss-teal selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-3">
+                        <!-- Logo stylisé basé sur les couleurs -->
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cisss-header-teal to-cisss-lightBlue flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                            C
+                        </div>
+                        <span class="font-bold text-2xl text-cisss-darkBlue tracking-tight">C.A.R.T.O.S.</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#contexte" class="text-cisss-gray-dark hover:text-cisss-orange transition-colors font-medium">Contexte</a>
+                    <a href="#innovation" class="text-cisss-gray-dark hover:text-cisss-orange transition-colors font-medium">L'Innovation</a>
+                    <a href="#methodologie" class="text-cisss-gray-dark hover:text-cisss-orange transition-colors font-medium">Méthodologie</a>
+                    <a href="#retombees" class="text-cisss-gray-dark hover:text-cisss-orange transition-colors font-medium">Retombées</a>
+                    <a href="#equipe" class="bg-cisss-orange text-white px-5 py-2 rounded-full font-medium hover:bg-cisss-darkBlue transition-colors shadow-md hover:shadow-lg">Équipe</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative bg-cisss-darkBlue text-white overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+            <svg class="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <polygon fill="#008491" points="0,100 100,0 100,100"/>
+            </svg>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10 flex flex-col items-center text-center fade-in">
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 text-cisss-yellow font-semibold text-sm mb-6 border border-white/20 backdrop-blur-sm">
+                <i class="fas fa-lightbulb mr-2"></i> Projet d'Innovation Sociale
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                Opérationnaliser la santé dans <br class="hidden md:block" />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cisss-yellow to-cisss-lightGreen">l'aménagement du territoire</span>
+            </h1>
+
+            <!-- Signification de l'acronyme C.A.R.T.O.S. -->
+            <div class="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 mb-8 text-white/90 font-medium bg-white/5 py-3 px-6 rounded-2xl backdrop-blur-sm border border-white/10 shadow-inner">
+                <span class="flex items-center text-lg"><strong class="text-cisss-yellow text-2xl mr-1">C</strong>artographie</span>
+                <span class="text-cisss-teal/50 hidden md:inline">•</span>
+                <span class="flex items-center text-lg"><strong class="text-cisss-yellow text-2xl mr-1">A</strong>ménagement</span>
+                <span class="text-cisss-teal/50 hidden md:inline">•</span>
+                <span class="flex items-center text-lg"><strong class="text-cisss-yellow text-2xl mr-1">R</strong>uralité</span>
+                <span class="text-cisss-teal/50 hidden md:inline">•</span>
+                <span class="flex items-center text-lg"><strong class="text-cisss-yellow text-2xl mr-1">T</strong>erritoire</span>
+                <span class="text-cisss-teal/50 hidden md:inline">•</span>
+                <span class="flex items-center text-lg"><strong class="text-cisss-yellow text-2xl mr-1">O</strong>pérationnalisation</span>
+                <span class="text-cisss-teal/50 hidden md:inline">•</span>
+                <span class="flex items-center text-lg"><strong class="text-cisss-yellow text-2xl mr-1">S</strong>anté</span>
+            </div>
+
+            <p class="mt-4 max-w-3xl text-xl text-gray-200 mb-10 leading-relaxed">
+                Un levier interactif et agile pour accompagner les MRC rurales et éloignées dans l'intégration des nouvelles Orientations gouvernementales (OGAT).
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="#innovation" class="bg-cisss-yellow text-cisss-darkBlue px-8 py-3 rounded-full font-bold hover:bg-white transition-all transform hover:-translate-y-1 shadow-lg">
+                    Découvrir la démarche
+                </a>
+                <a href="#methodologie" class="border-2 border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-cisss-darkBlue transition-all transform hover:-translate-y-1">
+                    Voir le plan de match
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section 1 : Contexte et Besoin Social -->
+    <section id="contexte" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="fade-in delay-100">
+                    <h2 class="text-3xl font-bold text-cisss-darkBlue mb-6">Le besoin social : <br/><span class="text-cisss-header-teal">Un changement de paradigme imposé</span></h2>
+                    <p class="text-lg text-cisss-gray-dark mb-6 leading-relaxed">
+                        Les nouvelles <strong>Orientations gouvernementales en aménagement du territoire (OGAT)</strong> exigent l’intégration systémique de la santé et du développement durable dans la planification (SAD). 
+                    </p>
+                    <p class="text-lg text-cisss-gray-dark mb-6 leading-relaxed">
+                        Or, les MRC en <strong>Région rurale et éloignée (RRE)</strong> manquent d'outils adaptés. L'Évaluation d'impact sur la santé (EIS) classique est reconnue, mais s'avère trop lourde et textuelle pour une application macroscopique.
+                    </p>
+                    <div class="bg-orange-50 border-l-4 border-cisss-orange p-6 rounded-r-lg shadow-sm">
+                        <h4 class="text-cisss-orange font-bold text-lg mb-2"><i class="fas fa-exclamation-triangle mr-2"></i> L'Enjeu</h4>
+                        <p class="text-gray-700">Doter ces milieux de leviers agiles et visuels pour analyser les <strong>Inégalités sociales de santé (ISS)</strong> et éviter une fracture d’expertise entre les grands centres et les régions.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 fade-in delay-200">
+                    <div class="bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 bg-cisss-lightBlue text-white rounded-full flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3 class="font-bold text-cisss-darkBlue text-xl mb-2">4 MRC Pilotes</h3>
+                        <p class="text-sm text-gray-600">Laurentides, Outaouais, Abitibi-Témiscamingue et Mauricie.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 bg-cisss-lightGreen text-white rounded-full flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="font-bold text-cisss-darkBlue text-xl mb-2">Décloisonnement</h3>
+                        <p class="text-sm text-gray-600">Briser les silos entre l'urbanisme réglementaire et la santé publique.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow col-span-2">
+                        <div class="w-12 h-12 bg-cisss-teal text-white rounded-full flex items-center justify-center text-xl mb-4">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3 class="font-bold text-cisss-darkBlue text-xl mb-2">Justice Environnementale</h3>
+                        <p class="text-sm text-gray-600">Intégrer les questions d'îlots de chaleur, d'accès aux services et de mobilité directement dans les documents d'urbanisme (SAD).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2 : L'Innovation C.A.R.T.O.S -->
+    <section id="innovation" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 fade-in">
+                <h2 class="text-3xl font-bold text-cisss-darkBlue mb-4">L'Innovation Sociale : <span class="text-cisss-teal">Les nouvelles OGAT</span></h2>
+                <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+                    L'innovation sociale principale réside dans le changement de paradigme imposé par les <strong>nouvelles Orientations gouvernementales en aménagement du territoire (OGAT)</strong> : l'intégration systémique et obligatoire de la santé et du développement durable dans l'aménagement du territoire québécois.
+                </p>
+                <div class="inline-block bg-white p-5 rounded-xl shadow-sm border-l-4 border-cisss-orange text-left max-w-2xl mx-auto">
+                    <span class="font-bold text-cisss-darkBlue block mb-1"><i class="fas fa-rocket text-cisss-orange mr-2"></i> Le rôle de C.A.R.T.O.S.</span>
+                    <span class="text-gray-600 text-sm">Il agit comme le <strong>levier d'opérationnalisation novateur</strong> (une innovation de processus). Il s'inspire de l'EIS et se transpose dans des plateformes cartographiques (Géoweb) pour permettre aux milieux ruraux de s'approprier cette transformation sans alourdir les processus.</span>
+                </div>
+            </div>
+
+            <!-- Cadre INSPQ -->
+            <div class="mb-12 text-center">
+                <h3 class="text-xl font-semibold text-cisss-gray-dark mb-8">Structuré par le Cadre d'analyse systémique de l'INSPQ (6 environnements)</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Env 1 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-cisss-darkBlue">
+                    <div class="text-cisss-darkBlue text-4xl mb-4"><i class="fas fa-landmark"></i></div>
+                    <h4 class="font-bold text-xl mb-3 text-gray-800">Politique</h4>
+                    <p class="text-sm text-gray-600">Lois, règlements, gouvernance. Les OGAT elles-mêmes constituent le levier, et le SAD l'instrument.</p>
+                </div>
+                <!-- Env 2 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-cisss-yellow">
+                    <div class="text-cisss-yellow text-4xl mb-4"><i class="fas fa-chart-line"></i></div>
+                    <h4 class="font-bold text-xl mb-3 text-gray-800">Économique</h4>
+                    <p class="text-sm text-gray-600">Indicateurs de défavorisation matérielle et d'accès aux commerces intégrés aux tableaux de bord.</p>
+                </div>
+                <!-- Env 3 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-cisss-orange">
+                    <div class="text-cisss-orange text-4xl mb-4"><i class="fas fa-city"></i></div>
+                    <h4 class="font-bold text-xl mb-3 text-gray-800">Bâti</h4>
+                    <p class="text-sm text-gray-600">Le cœur de la démarche : mobilité active, qualité des milieux, îlots de chaleur, systèmes alimentaires.</p>
+                </div>
+                <!-- Env 4 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-cisss-lightGreen">
+                    <div class="text-cisss-lightGreen text-4xl mb-4"><i class="fas fa-leaf"></i></div>
+                    <h4 class="font-bold text-xl mb-3 text-gray-800">Naturel</h4>
+                    <p class="text-sm text-gray-600">Couches cartographiques sur les espaces verts, la qualité de l’air et la résilience aux risques climatiques.</p>
+                </div>
+                <!-- Env 5 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-cisss-teal">
+                    <div class="text-cisss-teal text-4xl mb-4"><i class="fas fa-users"></i></div>
+                    <h4 class="font-bold text-xl mb-3 text-gray-800">Social</h4>
+                    <p class="text-sm text-gray-600">Vulnérabilités sociales évaluées spatialement et délibérations communautaires lors des ateliers.</p>
+                </div>
+                <!-- Env 6 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-cisss-lightBlue">
+                    <div class="text-cisss-lightBlue text-4xl mb-4"><i class="fas fa-palette"></i></div>
+                    <h4 class="font-bold text-xl mb-3 text-gray-800">Culturel</h4>
+                    <p class="text-sm text-gray-600">Prise en compte des réalités identitaires et du contexte local des MRC éloignées.</p>
+                </div>
+            </div>
+
+            <!-- Principes directeurs -->
+            <div class="mt-16 bg-white p-8 rounded-2xl shadow-md flex flex-wrap items-center justify-center gap-6">
+                <span class="font-bold text-gray-700 mr-4">Guidé par 5 principes :</span>
+                <span class="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-cisss-darkBlue"><i class="fas fa-check-circle text-cisss-lightGreen mr-1"></i> Inclusion</span>
+                <span class="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-cisss-darkBlue"><i class="fas fa-check-circle text-cisss-lightGreen mr-1"></i> Équité</span>
+                <span class="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-cisss-darkBlue"><i class="fas fa-check-circle text-cisss-lightGreen mr-1"></i> Sécurité</span>
+                <span class="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-cisss-darkBlue"><i class="fas fa-check-circle text-cisss-lightGreen mr-1"></i> Résilience</span>
+                <span class="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-cisss-darkBlue"><i class="fas fa-check-circle text-cisss-lightGreen mr-1"></i> Durabilité</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3 : Méthodologie et Phases (Gantt) -->
+    <section id="methodologie" class="py-20 bg-cisss-darkBlue text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold mb-4">Déploiement en 4 Phases (36 mois)</h2>
+                <p class="text-gray-300">Un cycle complet d'accompagnement en coconstruction avec les milieux preneurs.</p>
+            </div>
+
+            <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-1 before:bg-gradient-to-b before:from-cisss-teal before:via-cisss-yellow before:to-cisss-orange">
+                
+                <!-- Phase 1 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-cisss-darkBlue bg-cisss-teal shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 relative z-10">
+                        <span class="font-bold">1</span>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white text-gray-800 p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-xl text-cisss-teal">Évaluation des SAD</h3>
+                            <span class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-500">Mois 1-6</span>
+                        </div>
+                        <p class="text-sm mb-3">Construction des profils territoriaux et évaluation des Schémas d'aménagement (SAD) à l'aide de la grille INSPQ.</p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-angle-right text-cisss-orange mr-2"></i> Sélection des 4 MRC</li>
+                            <li><i class="fas fa-angle-right text-cisss-orange mr-2"></i> Création des tableaux de bord Géoweb</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-cisss-darkBlue bg-cisss-lightBlue shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 relative z-10">
+                        <span class="font-bold">2</span>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white text-gray-800 p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-xl text-cisss-lightBlue">Ateliers Intersectoriels</h3>
+                            <span class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-500">Mois 7-16</span>
+                        </div>
+                        <p class="text-sm mb-3">Espaces de dialogue délibératifs réunissant aménagistes et professionnels de la santé publique (8 ateliers au total).</p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-angle-right text-cisss-orange mr-2"></i> Analyse rétrospective des SAD adoptés</li>
+                            <li><i class="fas fa-angle-right text-cisss-orange mr-2"></i> Production des cartes de priorités locales</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-cisss-darkBlue bg-cisss-yellow shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 relative z-10 text-cisss-darkBlue">
+                        <span class="font-bold">3</span>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white text-gray-800 p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-xl text-cisss-yellow">Accompagnement Flexible</h3>
+                            <span class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-500">Mois 17-30</span>
+                        </div>
+                        <p class="text-sm mb-3">Soutien sur mesure aux MRC et municipalités pour la traduction des vulnérabilités en clauses réglementaires (concordance).</p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-angle-right text-cisss-orange mr-2"></i> Accompagnement-conseil DSPublique</li>
+                            <li><i class="fas fa-angle-right text-cisss-orange mr-2"></i> Outil de diagnostic rapide</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Phase 4 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-cisss-darkBlue bg-cisss-orange shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 relative z-10">
+                        <span class="font-bold">4</span>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white text-gray-800 p-6 rounded-2xl shadow-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-xl text-cisss-orange">Évaluation & Transfert</h3>
+                            <span class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-500">Mois 31-36</span>
+                        </div>
+                        <p class="text-sm mb-3">Mesure de l'impact organisationnel et mise à l'échelle provinciale de la méthode.</p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-angle-right text-cisss-teal mr-2"></i> Rédaction du Guide de pratique provincial</li>
+                            <li><i class="fas fa-angle-right text-cisss-teal mr-2"></i> Dépôt du modèle au MAMH et MSSS</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4 : Retombées Attendues -->
+    <section id="retombees" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-cisss-darkBlue mb-4">Retombées & Livrables</h2>
+                <p class="text-lg text-gray-600">Un impact structurant à court et à long terme, pour les régions et pour le Québec.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Pour les milieux preneurs -->
+                <div class="bg-blue-50/50 p-8 rounded-2xl border border-blue-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-cisss-lightBlue text-white rounded-xl flex items-center justify-center text-2xl mr-4 shadow-sm">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-cisss-darkBlue">Pour les MRC</h3>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-cisss-lightGreen mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Conformité facilitée, rapide et moins coûteuse aux nouvelles OGAT.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-cisss-lightGreen mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Gain de temps majeur grâce aux <strong>tableaux de bord Géoweb</strong> (analyse cartographique vs textuelle).</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-cisss-lightGreen mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Renforcement des capacités en aménagement favorable à la santé (<em>empowerment</em>).</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-cisss-lightGreen mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Création d'un langage commun santé-urbanisme.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Pour le Québec -->
+                <div class="bg-orange-50/50 p-8 rounded-2xl border border-orange-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-cisss-orange text-white rounded-xl flex items-center justify-center text-2xl mr-4 shadow-sm">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-cisss-darkBlue">Pour le Québec</h3>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-cisss-yellow mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Création d’un modèle d’innovation exportable (Guide de pratique C.A.R.T.O.S) pour les 87 MRC.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-cisss-yellow mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Opérationnalisation de l’approche « La santé dans toutes les politiques ».</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-cisss-yellow mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Production de données probantes pour la gouvernance (évaluation de l'effectivité des OGAT).</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-cisss-yellow mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700">Diminution systémique des Inégalités sociales de santé (ISS) par l'aménagement.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5 : Équipe de recherche -->
+    <section id="equipe" class="py-20 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-cisss-darkBlue mb-4">L'Équipe de Recherche</h2>
+                <p class="text-lg text-gray-600">Une approche multidisciplinaire alliant santé publique, aménagement, géomatique et gouvernance.</p>
+            </div>
+
+            <!-- Chercheur principal -->
+            <div class="bg-white rounded-2xl shadow-md p-8 border-t-4 border-cisss-teal mb-12 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 hover:shadow-lg transition-shadow">
+                <div class="w-24 h-24 bg-cisss-teal/10 rounded-full flex items-center justify-center text-cisss-teal text-4xl shrink-0">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <div class="inline-block px-3 py-1 bg-cisss-teal/10 text-cisss-teal rounded-full text-xs font-bold mb-2">Chercheur Principal</div>
+                    <h3 class="text-2xl font-bold text-cisss-darkBlue mb-1">Éric Robitaille, Ph. D.</h3>
+                    <p class="text-cisss-orange font-medium mb-3">CISSS des Laurentides / Université de Montréal</p>
+                    <p class="text-gray-600 text-sm leading-relaxed">Expert en liens entre l'environnement bâti et la santé, accès spatial aux services et potentiel piétonnier. Coauteur du Cadre d'analyse systémique de l'action municipale (INSPQ) qui structure le projet.</p>
+                </div>
+            </div>
+
+            <!-- Co-chercheurs -->
+            <h4 class="text-xl font-bold text-center text-cisss-gray-dark mb-8">Co-chercheur·e·s et collaborateurs</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Carte Co-chercheur -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Marie-Eve Couture-Ménard</h5>
+                    <p class="text-xs font-bold text-cisss-lightBlue mb-3">Université de Sherbrooke</p>
+                    <p class="text-sm text-gray-600">Droit et gouvernance de la santé publique, action municipale en santé.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Madeleine Lefebvre</h5>
+                    <p class="text-xs font-bold text-cisss-lightBlue mb-3">UQAT</p>
+                    <p class="text-sm text-gray-600">Intervention collective et gouvernance locale en région rurale et éloignée.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Stéphane Bernatchez</h5>
+                    <p class="text-xs font-bold text-cisss-lightBlue mb-3">Université de Sherbrooke</p>
+                    <p class="text-sm text-gray-600">Droit constitutionnel, participation citoyenne et adaptation climatique.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Mathieu Philibert</h5>
+                    <p class="text-xs font-bold text-cisss-lightBlue mb-3">UQAM</p>
+                    <p class="text-sm text-gray-600">Épidémiologie sociale, géographie de la santé et indices de défavorisation.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Mélanie Doyon</h5>
+                    <p class="text-xs font-bold text-cisss-lightBlue mb-3">UQAM</p>
+                    <p class="text-sm text-gray-600">Développement territorial rural, revitalisation et sécurisation alimentaire.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Rodolphe Gonzalès</h5>
+                    <p class="text-xs font-bold text-cisss-lightBlue mb-3">UQAM</p>
+                    <p class="text-sm text-gray-600">Géomatique, analyse spatiale et conception d'interfaces cartographiques.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Sébastien Lord</h5>
+                    <p class="text-xs font-bold text-cisss-lightBlue mb-3">Université de Montréal</p>
+                    <p class="text-sm text-gray-600">Aménagement, mobilité quotidienne, modes de vie et développement urbain.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <h5 class="font-bold text-lg text-cisss-darkBlue mb-1">Guy Clarck Pagui Tsobjmo</h5>
+                    <p class="text-xs font-bold text-cisss-lightGreen mb-3">Chercheur post-doc (UdeM)</p>
+                    <p class="text-sm text-gray-600">Prospective territoriale, aménagement et production cartographique.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Équipe -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 border-b border-gray-700 pb-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-4 flex items-center">
+                        <div class="w-8 h-8 rounded bg-gradient-to-br from-cisss-header-teal to-cisss-lightBlue flex items-center justify-center mr-2 text-sm">C</div>
+                        C.A.R.T.O.S.
+                    </h4>
+                    <p class="text-gray-400 text-sm">
+                        Démarche d'innovation sociale en aménagement du territoire et santé publique.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4 text-cisss-yellow">Partenaires Principaux</h4>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li>CISSS des Laurentides (Porteur)</li>
+                        <li>INSPQ (Garant scientifique)</li>
+                        <li>CARES (Expertise rurale)</li>
+                        <li>REFIPS (Diffusion francophone)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4 text-cisss-teal">Chercheur Principal</h4>
+                    <p class="text-sm text-gray-400 font-medium text-white mb-1">Éric Robitaille, Ph. D.</p>
+                    <p class="text-xs text-gray-500">CISSS des Laurentides / Univ. de Montréal<br/>Expert en liens environnement bâti et santé.</p>
+                </div>
+            </div>
+            <div class="text-center text-xs text-gray-500">
+                <p>&copy; 2026-2029 Projet C.A.R.T.O.S. - Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
