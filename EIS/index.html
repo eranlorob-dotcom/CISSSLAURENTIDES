@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Présentation ÉIS - CISSS des Laurentides</title>
+    
+    <!-- Feuille de style officielle (CISSS des Laurentides) -->
+    <link rel="stylesheet" href="https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EIS/CSS/CISSS.CSS">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React & ReactDOM -->
@@ -19,16 +23,18 @@
             theme: {
                 extend: {
                     colors: {
-                        cisssGreen: '#5cb849',
-                        cisssDarkGreen: '#4a953a',
-                        titleBlue: '#005b82',
-                        iceTop: '#8ecae6',
-                        iceMid: '#219ebc',
-                        iceLow: '#023047',
-                        iceDeep: '#011e2b',
-                        prepYellow: '#f4a226',
-                        evalBlue: '#157e9b',
-                        suiviOrange: '#f05a28'
+                        cisssGreen: '#63BD59', /* Vert */
+                        cisssDarkGreen: '#45ad8d', /* MSI */
+                        titleBlue: '#0E4E7B', /* Marine */
+                        iceTop: '#0382C9', /* Bleu pale */
+                        iceMid: '#0787A1', /* Bleu */
+                        iceLow: '#0E4E7B', /* Marine */
+                        iceDeep: '#001E5A', /* Bleu fonce */
+                        prepYellow: '#FDB913', /* Jaune */
+                        evalBlue: '#17A7A5', /* Turquoise */
+                        suiviOrange: '#F15A22', /* Orange */
+                        grisFonce: '#525e6c', /* Gris fonce */
+                        grisPale: '#f5f5f5' /* Gris pâle */
                     },
                     fontFamily: {
                         sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
@@ -38,7 +44,7 @@
         }
     </script>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #f3f4f6; }
+        body { margin: 0; overflow: hidden; background-color: #f5f5f5; color: #525e6c; }
         .slide-enter { opacity: 0; transform: translateX(20px); }
         .slide-enter-active { opacity: 1; transform: translateX(0); transition: opacity 500ms, transform 500ms; }
         .slide-exit { opacity: 1; transform: translateX(0); }
@@ -91,10 +97,10 @@
                 <div className="flex items-center gap-2 text-titleBlue font-bold text-xl tracking-tighter">
                     Québec
                     <div className="grid grid-cols-2 gap-0.5 ml-1">
-                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
-                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
-                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
-                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
+                        <div className="w-2 h-2 bg-iceMid rounded-sm"></div>
+                        <div className="w-2 h-2 bg-iceMid rounded-sm"></div>
+                        <div className="w-2 h-2 bg-iceMid rounded-sm"></div>
+                        <div className="w-2 h-2 bg-iceMid rounded-sm"></div>
                     </div>
                 </div>
             </div>
@@ -231,9 +237,9 @@
                         </div>
 
                         {/* Item 3 */}
-                        <div onClick={() => toggleCard(3)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-orange-400 hover:-translate-y-1">
+                        <div onClick={() => toggleCard(3)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-suiviOrange hover:-translate-y-1">
                             <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                                <span className="bg-orange-400 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">3</span>
+                                <span className="bg-suiviOrange text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">3</span>
                                 Renforcer l'acceptabilité sociale
                             </h3>
                             {openCard === 3 && (
@@ -244,9 +250,9 @@
                         </div>
 
                         {/* Item 4 */}
-                        <div onClick={() => toggleCard(4)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-red-500 hover:-translate-y-1">
+                        <div onClick={() => toggleCard(4)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-iceMid hover:-translate-y-1">
                             <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                                <span className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">4</span>
+                                <span className="bg-iceMid text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">4</span>
                                 Prévenir des coûts futurs
                             </h3>
                             {openCard === 4 && (
@@ -502,7 +508,39 @@
             </div>
         );
 
-        const slides = [Slide1, Slide2, Slide3, Slide4, Slide5];
+        const Slide6 = () => (
+            <div className="h-full flex flex-col justify-center px-24 relative">
+                <Title>Pour aller plus loin</Title>
+                
+                <div className="bg-white p-12 rounded-2xl shadow-lg border-t-8 border-t-cisssGreen mt-4 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+                    <div className="bg-blue-50 p-6 rounded-full mb-8 group-hover:scale-110 transition-transform duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-titleBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                        </svg>
+                    </div>
+                    
+                    <h3 className="text-4xl font-bold text-titleBlue mb-6">Ressources et accompagnement</h3>
+                    
+                    <p className="text-2xl text-gray-600 mb-10 max-w-3xl leading-relaxed">
+                        Retrouvez plus d'informations, des fiches informatives, des outils pratiques et les coordonnées de notre équipe pour vous accompagner dans vos démarches d'ÉIS.
+                    </p>
+                    
+                    <a 
+                        href="https://www.santelaurentides.gouv.qc.ca/sante-publique/evaluation-dimpact-sur-la-sante-eis/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-cisssGreen text-white px-10 py-5 rounded-full text-2xl font-bold hover:bg-titleBlue transition-colors shadow-md flex items-center gap-4 hover:shadow-xl"
+                    >
+                        Visiter la section ÉIS du CISSS
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        );
+
+        const slides = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6];
 
         // --- Application Principale ---
 
@@ -545,7 +583,7 @@
             const CurrentSlideComponent = slides[currentSlide];
 
             return (
-                <div className="w-screen h-screen flex flex-col bg-[#f8fafc] font-sans relative overflow-hidden select-none">
+                <div className="w-screen h-screen flex flex-col bg-grisPale font-sans relative overflow-hidden select-none text-grisFonce">
                     <Header />
                     
                     {/* Main Slide Content Area */}
