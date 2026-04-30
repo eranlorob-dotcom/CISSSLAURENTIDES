@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation ÉIS - CISSS des Laurentides</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cisssGreen: '#5cb849',
+                        cisssDarkGreen: '#4a953a',
+                        titleBlue: '#005b82',
+                        iceTop: '#8ecae6',
+                        iceMid: '#219ebc',
+                        iceLow: '#023047',
+                        iceDeep: '#011e2b',
+                        prepYellow: '#f4a226',
+                        evalBlue: '#157e9b',
+                        suiviOrange: '#f05a28'
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #f3f4f6; }
+        .slide-enter { opacity: 0; transform: translateX(20px); }
+        .slide-enter-active { opacity: 1; transform: translateX(0); transition: opacity 500ms, transform 500ms; }
+        .slide-exit { opacity: 1; transform: translateX(0); }
+        .slide-exit-active { opacity: 0; transform: translateX(-20px); transition: opacity 500ms, transform 500ms; }
+        
+        /* Custom scrollbar for table if needed */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Iceberg clip paths */
+        .iceberg-tip { clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
+        .iceberg-body { clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%); }
+        
+        /* Animations interactives */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // --- Composants de base de la présentation ---
+
+        const Header = () => (
+            <div className="absolute top-0 w-full h-24 flex items-start justify-end pr-8 pt-4 overflow-hidden z-10">
+                <div className="absolute top-0 right-0 w-2/3 h-full bg-cisssGreen transform skew-x-[45deg] translate-x-12 origin-top-right shadow-md"></div>
+                <div className="absolute top-0 right-[66%] w-1/4 h-2/3 border-t-4 border-cisssGreen transform skew-x-[45deg] origin-top-right opacity-50"></div>
+                
+                <div className="relative z-20 text-white text-right pr-4 pt-2">
+                    <h1 className="font-bold text-xl tracking-wide">LE CISSS <span className="font-light">DES LAURENTIDES</span></h1>
+                    <p className="text-sm">complice de votre santé</p>
+                </div>
+            </div>
+        );
+
+        const Footer = ({ current, total }) => (
+            <div className="absolute bottom-0 w-full h-16 flex items-center justify-between px-8 bg-white/80 backdrop-blur-sm z-10">
+                <div className="text-gray-500 font-semibold">{current}</div>
+                <div className="flex items-center gap-2 text-titleBlue font-bold text-xl tracking-tighter">
+                    Québec
+                    <div className="grid grid-cols-2 gap-0.5 ml-1">
+                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
+                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
+                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
+                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const Title = ({ children }) => (
+            <div className="flex items-center mb-10 z-20 relative">
+                <div className="w-16 h-0.5 bg-cisssGreen transform -rotate-45 mr-4 origin-right"></div>
+                <h2 className="text-4xl font-bold text-titleBlue">{children}</h2>
+            </div>
+        );
+
+        // --- Diapositives ---
+
+        const Slide1 = () => (
+            <div className="h-full flex flex-col justify-center px-24 relative">
+                <Title>Une définition simple</Title>
+                <div className="text-2xl text-gray-800 leading-relaxed mt-4 bg-white/60 p-8 rounded-xl shadow-sm border-l-8 border-cisssGreen">
+                    <p className="font-bold mb-6 text-3xl">L'ÉIS est une démarche qui permet :</p>
+                    <ul className="list-disc pl-10 mb-8 space-y-4">
+                        <li>D'<strong className="text-titleBlue">anticiper</strong> les effets potentiels d'un projet sur la santé et le bien-être de la population.</li>
+                        <li>De proposer des <strong className="text-titleBlue">recommandations concrètes</strong> pour maximiser les effets positifs et réduire les effets négatifs.</li>
+                    </ul>
+                    <p className="font-bold text-3xl bg-blue-50 p-4 rounded-lg inline-block border border-blue-100">
+                        En bref : <span className="font-normal text-gray-700">c'est un outil d'aide à la décision pour construire des milieux de vie plus sains.</span>
+                    </p>
+                </div>
+            </div>
+        );
+
+        const Slide2 = () => {
+            const [hovered, setHovered] = useState(null);
+            
+            return (
+                <div className="h-full flex flex-col pt-24 px-20 relative">
+                    <Title>Élargir la notion de santé: qu'est-ce qui explique (déterminants) la santé?</Title>
+                    
+                    <div className="flex-1 flex items-center justify-center relative mt-4">
+                        {/* Iceberg Container */}
+                        <div className="w-full max-w-3xl flex flex-col items-center group cursor-pointer">
+                            
+                            {/* Tip of Iceberg (Above water) */}
+                            <div 
+                                className={`w-48 h-32 bg-iceTop iceberg-tip flex items-center justify-center transition-all duration-300 ${hovered && hovered !== 'top' ? 'opacity-50' : 'scale-105'}`}
+                                onMouseEnter={() => setHovered('top')}
+                                onMouseLeave={() => setHovered(null)}
+                            >
+                                <span className="text-white font-bold text-center drop-shadow-md z-10 mt-8">Soins de santé<br/>(25%)</span>
+                            </div>
+                            
+                            {/* Waterline */}
+                            <div className="w-[120%] h-1 bg-blue-300 shadow-[0_0_10px_rgba(147,197,253,0.8)] z-0 relative -my-1"></div>
+                            
+                            {/* Submerged part Container */}
+                            <div className="w-full flex flex-col items-center bg-blue-100/30 p-4 rounded-b-3xl">
+                                
+                                {/* Layer 1 */}
+                                <div 
+                                    className={`w-full max-w-xl h-24 bg-iceMid flex items-center justify-center mb-1 transition-all duration-300 ${hovered && hovered !== 'mid' ? 'opacity-40' : 'scale-105 shadow-lg'}`}
+                                    style={{ clipPath: 'polygon(5% 0%, 95% 0%, 100% 100%, 0% 100%)' }}
+                                    onMouseEnter={() => setHovered('mid')}
+                                    onMouseLeave={() => setHovered(null)}
+                                >
+                                    <span className="text-white font-bold text-xl drop-shadow-md">Environnement socioéconomique (50%)</span>
+                                </div>
+
+                                {/* Layer 2 */}
+                                <div 
+                                    className={`w-[105%] max-w-2xl h-24 bg-iceLow flex items-center justify-center mb-1 transition-all duration-300 ${hovered && hovered !== 'low' ? 'opacity-40' : 'scale-105 shadow-lg'}`}
+                                    style={{ clipPath: 'polygon(2% 0%, 98% 0%, 90% 100%, 10% 100%)' }}
+                                    onMouseEnter={() => setHovered('low')}
+                                    onMouseLeave={() => setHovered(null)}
+                                >
+                                    <span className="text-white font-bold text-xl drop-shadow-md">Environnement physique (10%)</span>
+                                </div>
+
+                                {/* Layer 3 */}
+                                <div 
+                                    className={`w-[90%] max-w-lg h-24 bg-iceDeep flex items-center justify-center rounded-b-[40px] transition-all duration-300 ${hovered && hovered !== 'deep' ? 'opacity-40' : 'scale-105 shadow-lg'}`}
+                                    style={{ clipPath: 'polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%)' }}
+                                    onMouseEnter={() => setHovered('deep')}
+                                    onMouseLeave={() => setHovered(null)}
+                                >
+                                    <span className="text-white font-bold text-xl drop-shadow-md pb-4">Facteurs biologiques et génétiques (15%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="absolute bottom-20 left-10 text-[10px] text-gray-400 w-1/3 leading-tight">
+                        CISSSLAU (source: Adapté du Comité sénatorial permanent des affaires sociales, des sciences et de la technologie. (2001). La santé des Canadiens: Le rôle du gouvernement fédéral. Volume VI - Le chemin parcouru. Ottawa)
+                    </div>
+                </div>
+            );
+        };
+
+        const Slide3 = () => {
+            const [openCard, setOpenCard] = useState(null);
+            
+            const toggleCard = (id) => {
+                setOpenCard(openCard === id ? null : id);
+            };
+
+            return (
+                <div className="h-full flex flex-col justify-center px-24 relative">
+                    <Title>Les bénéfices concrets</Title>
+                    <p className="text-gray-500 italic mb-6">Cliquez sur un bénéfice pour en savoir plus</p>
+                    
+                    <div className="grid grid-cols-2 gap-6 mt-2">
+                        {/* Item 1 */}
+                        <div onClick={() => toggleCard(1)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-titleBlue hover:-translate-y-1">
+                            <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                <span className="bg-titleBlue text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">1</span>
+                                Prendre des décisions éclairées et justifiables
+                            </h3>
+                            {openCard === 1 && (
+                                <p className="text-gray-600 italic ml-11 mt-4 text-lg border-t pt-4" style={{animation: 'fadeIn 0.3s ease-out'}}>
+                                    • Appuyées sur des données probantes, pas seulement sur l'intuition.
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Item 2 */}
+                        <div onClick={() => toggleCard(2)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-cisssGreen hover:-translate-y-1">
+                            <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                <span className="bg-cisssGreen text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">2</span>
+                                Bonifier les projets et maximiser les "co-bénéfices"
+                            </h3>
+                            {openCard === 2 && (
+                                <p className="text-gray-600 italic ml-11 mt-4 text-lg border-t pt-4" style={{animation: 'fadeIn 0.3s ease-out'}}>
+                                    • Transformer un bon projet en un projet excellent pour la santé, l'environnement et l'économie.
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Item 3 */}
+                        <div onClick={() => toggleCard(3)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-orange-400 hover:-translate-y-1">
+                            <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                <span className="bg-orange-400 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">3</span>
+                                Renforcer l'acceptabilité sociale
+                            </h3>
+                            {openCard === 3 && (
+                                <p className="text-gray-600 italic ml-11 mt-4 text-lg border-t pt-4" style={{animation: 'fadeIn 0.3s ease-out'}}>
+                                    • Un processus transparent qui inclut les citoyens en amont réduit les oppositions.
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Item 4 */}
+                        <div onClick={() => toggleCard(4)} className="cursor-pointer group bg-white p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all border-l-8 border-l-red-500 hover:-translate-y-1">
+                            <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                <span className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0">4</span>
+                                Prévenir des coûts futurs
+                            </h3>
+                            {openCard === 4 && (
+                                <p className="text-gray-600 italic ml-11 mt-4 text-lg border-t pt-4" style={{animation: 'fadeIn 0.3s ease-out'}}>
+                                    • Éviter les problématiques sociales ou de santé qui coûtent cher à corriger plus tard.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const Slide4 = () => {
+            const [activeStep, setActiveStep] = useState(null);
+
+            const stepsData = {
+                depistage: {
+                    title: "Dépistage",
+                    phase: "Préparation",
+                    color: "text-prepYellow",
+                    bgColor: "bg-prepYellow/10",
+                    but: "Déterminer si une ÉIS est nécessaire pour la proposition.",
+                    resultats: ["Décision sur la production ou pas d'une EIS."]
+                },
+                cadrage: {
+                    title: "Cadrage",
+                    phase: "Préparation",
+                    color: "text-prepYellow",
+                    bgColor: "bg-prepYellow/10",
+                    but: "Définir la portée de l'ÉIS, y compris les déterminants de la santé pertinents, les populations concernées et les méthodes à utiliser.",
+                    resultats: [
+                        "Identification des déterminants de la santé pertinents.",
+                        "Identification des populations concernées.",
+                        "Modèle logique.",
+                        "Délimitation géographique et temporelle.",
+                        "Proposition de méthodologie d'évaluation."
+                    ]
+                },
+                analyse: {
+                    title: "Analyse",
+                    phase: "Évaluation",
+                    color: "text-evalBlue",
+                    bgColor: "bg-evalBlue/10",
+                    but: "Analyser les impacts potentiels sur la santé en utilisant différentes sources de données (littérature scientifique, données épidémiologiques, connaissances locales, consultations publiques).",
+                    resultats: [
+                        "Analyse détaillée des liens.",
+                        "Identification et caractérisation des impacts potentiels sur la santé.",
+                        "Évaluation de la signification des impacts."
+                    ]
+                },
+                recommandations: {
+                    title: "Recommandations et rapport",
+                    phase: "Évaluation",
+                    color: "text-evalBlue",
+                    bgColor: "bg-evalBlue/10",
+                    but: "Proposer des mesures pour atténuer les impacts négatifs et renforcer les impacts positifs sur la santé. Documenter le processus et les conclusions.",
+                    resultats: [
+                        "Recommandations claires et réalisables.",
+                        "Priorisation des recommandations (si nécessaire).",
+                        "Plan de suivi et d'évaluation (ébauché).",
+                        "Rapport final de l'ÉIS / Communication des résultats."
+                    ]
+                },
+                suivi: {
+                    title: "Suivi et évaluation",
+                    phase: "Suivi",
+                    color: "text-suiviOrange",
+                    bgColor: "bg-suiviOrange/10",
+                    but: "Surveiller les impacts réels sur la santé après la mise en œuvre de la proposition et évaluer l'efficacité des recommandations.",
+                    resultats: [
+                        "Données collectées sur les impacts réels.",
+                        "Comparaison entre impacts prédits et impacts observés.",
+                        "Évaluation de l'efficacité des recommandations.",
+                        "Leçons apprises et amélioration des pratiques futures."
+                    ]
+                }
+            };
+
+            const currentData = activeStep ? stepsData[activeStep] : null;
+
+            return (
+                <div className="h-full flex flex-col pt-20 px-12 relative overflow-hidden">
+                    <Title>Processus et Étapes de l'ÉIS</Title>
+                    <p className="text-gray-500 italic mb-4 px-2">Cliquez sur les étapes du processus ci-dessous pour en afficher les détails.</p>
+                    
+                    <div className="flex-1 flex gap-6 mt-2 overflow-hidden pb-4">
+                        {/* Menu de navigation (Gauche) */}
+                        <div className="w-1/3 flex flex-col gap-3 overflow-y-auto pr-2">
+                            {/* Préparation */}
+                            <div className="border-l-4 border-prepYellow pl-4 py-2">
+                                <h4 className="font-bold text-prepYellow mb-2 uppercase text-sm tracking-wider">Préparation</h4>
+                                <div className="flex flex-col gap-2">
+                                    <button 
+                                        onClick={() => setActiveStep('depistage')}
+                                        className={`text-left px-4 py-3 rounded-lg font-semibold transition-all ${activeStep === 'depistage' ? 'bg-prepYellow text-white shadow-md' : 'bg-white hover:bg-prepYellow/10 text-gray-700 border border-gray-200'}`}
+                                    >
+                                        Dépistage
+                                    </button>
+                                    <button 
+                                        onClick={() => setActiveStep('cadrage')}
+                                        className={`text-left px-4 py-3 rounded-lg font-semibold transition-all ${activeStep === 'cadrage' ? 'bg-prepYellow text-white shadow-md' : 'bg-white hover:bg-prepYellow/10 text-gray-700 border border-gray-200'}`}
+                                    >
+                                        Cadrage
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Évaluation */}
+                            <div className="border-l-4 border-evalBlue pl-4 py-2">
+                                <h4 className="font-bold text-evalBlue mb-2 uppercase text-sm tracking-wider">Évaluation</h4>
+                                <div className="flex flex-col gap-2">
+                                    <button 
+                                        onClick={() => setActiveStep('analyse')}
+                                        className={`text-left px-4 py-3 rounded-lg font-semibold transition-all ${activeStep === 'analyse' ? 'bg-evalBlue text-white shadow-md' : 'bg-white hover:bg-evalBlue/10 text-gray-700 border border-gray-200'}`}
+                                    >
+                                        Analyse
+                                    </button>
+                                    <button 
+                                        onClick={() => setActiveStep('recommandations')}
+                                        className={`text-left px-4 py-3 rounded-lg font-semibold transition-all ${activeStep === 'recommandations' ? 'bg-evalBlue text-white shadow-md' : 'bg-white hover:bg-evalBlue/10 text-gray-700 border border-gray-200'}`}
+                                    >
+                                        Recommandations et rapport
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Suivi */}
+                            <div className="border-l-4 border-suiviOrange pl-4 py-2">
+                                <h4 className="font-bold text-suiviOrange mb-2 uppercase text-sm tracking-wider">Suivi</h4>
+                                <div className="flex flex-col gap-2">
+                                    <button 
+                                        onClick={() => setActiveStep('suivi')}
+                                        className={`text-left px-4 py-3 rounded-lg font-semibold transition-all ${activeStep === 'suivi' ? 'bg-suiviOrange text-white shadow-md' : 'bg-white hover:bg-suiviOrange/10 text-gray-700 border border-gray-200'}`}
+                                    >
+                                        Suivi et évaluation
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Panneau de détails (Droite) */}
+                        <div className="w-2/3 bg-white rounded-xl shadow-lg border border-gray-100 p-8 flex flex-col relative overflow-hidden">
+                            {!currentData ? (
+                                <div className="flex-1 flex flex-col items-center justify-center text-gray-400 opacity-60">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                                    </svg>
+                                    <p className="text-xl font-medium text-center">Sélectionnez une étape dans le menu de gauche<br/>pour en voir les détails.</p>
+                                </div>
+                            ) : (
+                                <div className="flex-1 flex flex-col" style={{animation: 'slideIn 0.3s ease-out'}}>
+                                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-4 w-max ${currentData.bgColor} ${currentData.color}`}>
+                                        Phase : {currentData.phase}
+                                    </div>
+                                    <h3 className={`text-4xl font-bold mb-8 ${currentData.color}`}>
+                                        {currentData.title}
+                                    </h3>
+                                    
+                                    <div className="flex-1 flex flex-col gap-6">
+                                        {/* Section Buts */}
+                                        <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                                            <h4 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                </svg>
+                                                But
+                                            </h4>
+                                            <p className="text-lg text-gray-700 leading-relaxed">
+                                                {currentData.but}
+                                            </p>
+                                        </div>
+
+                                        {/* Section Resultats */}
+                                        <div className="bg-blue-50/50 p-6 rounded-xl border border-blue-100 flex-1">
+                                            <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                Résultats attendus
+                                            </h4>
+                                            <ul className="space-y-3">
+                                                {currentData.resultats.map((res, idx) => (
+                                                    <li key={idx} className="flex items-start text-lg text-gray-700">
+                                                        <span className="text-blue-500 mr-3 font-bold mt-1">•</span>
+                                                        <span>{res}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const Slide5 = () => (
+            <div className="h-full flex flex-col justify-center px-24 relative">
+                <Title>Un partenariat essentiel</Title>
+                
+                <div className="text-center mb-10 mt-4">
+                    <p className="text-3xl font-light text-gray-700 bg-white inline-block px-8 py-3 rounded-full shadow-sm border border-gray-100">
+                        L'ÉIS est un <strong className="text-titleBlue font-bold">travail d'équipe</strong>.
+                    </p>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-8 mt-4">
+                    {/* Municipalité Card */}
+                    <div className="flex-1 bg-white p-8 rounded-2xl shadow-md border-t-8 border-t-titleBlue relative overflow-hidden group hover:scale-105 transition-transform duration-300">
+                        <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full z-0 group-hover:scale-150 transition-transform"></div>
+                        <div className="relative z-10">
+                            <h3 className="text-3xl font-bold text-titleBlue mb-6 flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                                La Municipalité :
+                            </h3>
+                            <ul className="space-y-4 text-xl text-gray-700">
+                                <li className="flex items-start">
+                                    <span className="text-titleBlue mr-3 font-bold">•</span>
+                                    <span>Apporte sa connaissance fine du territoire, des enjeux locaux et des projets.</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-titleBlue mr-3 font-bold">•</span>
+                                    <span className="font-semibold bg-blue-50 px-2 rounded">Est le décideur final.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* DRSP Card */}
+                    <div className="flex-1 bg-white p-8 rounded-2xl shadow-md border-t-8 border-t-cisssGreen relative overflow-hidden group hover:scale-105 transition-transform duration-300">
+                        <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full z-0 group-hover:scale-150 transition-transform"></div>
+                        <div className="relative z-10">
+                            <h3 className="text-3xl font-bold text-cisssDarkGreen mb-6 flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                La Direction régionale de santé publique (de votre CISSS) :
+                            </h3>
+                            <ul className="space-y-4 text-xl text-gray-700">
+                                <li className="flex items-start">
+                                    <span className="text-cisssGreen mr-3 font-bold">•</span>
+                                    <span>Apporte son expertise sur la santé et ses déterminants.</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-cisssGreen mr-3 font-bold">•</span>
+                                    <span>Fournit un soutien méthodologique et l'accès à des données probantes.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const slides = [Slide1, Slide2, Slide3, Slide4, Slide5];
+
+        // --- Application Principale ---
+
+        const App = () => {
+            const [currentSlide, setCurrentSlide] = useState(0);
+            const [isFullscreen, setIsFullscreen] = useState(false);
+
+            const nextSlide = useCallback(() => {
+                setCurrentSlide((prev) => (prev === slides.length - 1 ? prev : prev + 1));
+            }, []);
+
+            const prevSlide = useCallback(() => {
+                setCurrentSlide((prev) => (prev === 0 ? prev : prev - 1));
+            }, []);
+
+            // Keyboard navigation
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+                    if (e.key === 'ArrowLeft') prevSlide();
+                };
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [nextSlide, prevSlide]);
+
+            const toggleFullscreen = () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`Erreur plein écran: ${err.message}`);
+                    });
+                    setIsFullscreen(true);
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                        setIsFullscreen(false);
+                    }
+                }
+            };
+
+            const CurrentSlideComponent = slides[currentSlide];
+
+            return (
+                <div className="w-screen h-screen flex flex-col bg-[#f8fafc] font-sans relative overflow-hidden select-none">
+                    <Header />
+                    
+                    {/* Main Slide Content Area */}
+                    <div className="flex-1 relative z-0 w-full h-full pb-16">
+                        <CurrentSlideComponent />
+                    </div>
+
+                    <Footer current={currentSlide + 6} total={slides.length + 5} />
+
+                    {/* Navigation Controls */}
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-4 z-50">
+                        <button 
+                            onClick={prevSlide} 
+                            disabled={currentSlide === 0}
+                            className={`p-2 rounded-full bg-white shadow-md border border-gray-200 transition ${currentSlide === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 hover:text-titleBlue'}`}
+                            title="Diapositive précédente"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        
+                        <div className="flex gap-2 items-center px-4">
+                            {slides.map((_, idx) => (
+                                <div 
+                                    key={idx} 
+                                    onClick={() => setCurrentSlide(idx)}
+                                    className={`h-2.5 rounded-full cursor-pointer transition-all ${currentSlide === idx ? 'w-8 bg-cisssGreen' : 'w-2.5 bg-gray-300 hover:bg-gray-400'}`}
+                                />
+                            ))}
+                        </div>
+
+                        <button 
+                            onClick={nextSlide} 
+                            disabled={currentSlide === slides.length - 1}
+                            className={`p-2 rounded-full bg-white shadow-md border border-gray-200 transition ${currentSlide === slides.length - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 hover:text-titleBlue'}`}
+                            title="Diapositive suivante"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
+
+                    {/* Fullscreen Toggle */}
+                    <button 
+                        onClick={toggleFullscreen}
+                        className="absolute bottom-5 right-6 z-50 p-2 text-gray-400 hover:text-gray-700 transition"
+                        title="Plein écran"
+                    >
+                        {isFullscreen ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 8V4m0 0h4M3 4l4 4m8 0V4m0 0h-4m4 0l-4 4m-8 4v4m0 0h4m-4 0l4-4m8 4l-4-4m4 4v-4m0 4h-4" clipRule="evenodd" /></svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z" clipRule="evenodd" /></svg>
+                        )}
+                    </button>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
