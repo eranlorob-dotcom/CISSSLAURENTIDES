@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+title: >-
+  Milieux de vie complets – Outil cartographique interactif
+  pour l'analyse des territoires des Laurentides
+message: >-
+  Si vous utilisez cet outil dans vos travaux, merci de le citer
+  en utilisant les métadonnées ci-dessous.
+type: software
+authors:
+  - given-names: Éric
+    family-names: Robitaille
+    orcid: "https://orcid.org/0009-0009-4834-7613"
+    affiliation: >-
+      CISSS des Laurentides – Direction de santé publique;
+      École de santé publique de l'Université de Montréal (ESPUM),
+      Département de médecine sociale et préventive
+repository-code: "https://github.com/eranlorob-dotcom/CISSSLAURENTIDES"
+url: "https://github.com/eranlorob-dotcom/CISSSLAURENTIDES/tree/main/MVC"
+keywords:
+  - milieux de vie complets
+  - cartographie interactive
+  - santé publique
+  - aménagement du territoire
+  - géomatique
+  - Leaflet
+  - Laurentides
+  - Québec
+  - OGAT
+  - accessibilité
+license: GPL-3.0-or-later
+version: "1.0.0"
+date-released: "2026-05-15"
