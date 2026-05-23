@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C.A.R.T.O.S. — Accessibilité Universelle · Laurentides</title>
+<title> Accessibilité Universelle · Laurentides</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -334,12 +334,20 @@ header {
   <aside class="sidebar">
 
     <div class="sb-section">
-      <div class="sb-label">Clé API Google Street View</div>
+      <div class="sb-label">Clé API Anthropic <span style="color:var(--nonconf);font-size:9px">● Requise</span></div>
       <div class="api-wrap">
-        <input class="api-input" id="gKey" type="password" placeholder="AIzaSy... (optionnel — affichage Street View)">
+        <input class="api-input" id="aKey" type="password" placeholder="sk-ant-... (console.anthropic.com)">
+        <div class="api-dot" id="apiDotA"></div>
+      </div>
+      <div class="api-hint">Requise pour l'analyse IA. <a href="https://console.anthropic.com/settings/keys" target="_blank">Obtenir une clé</a> · Stockée en mémoire seulement, non transmise.</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Clé API Google Street View <span style="color:var(--t3);font-size:9px">Optionnelle</span></div>
+      <div class="api-wrap">
+        <input class="api-input" id="gKey" type="password" placeholder="AIzaSy... (affichage photo)">
         <div class="api-dot" id="apiDot"></div>
       </div>
-      <div class="api-hint">Optionnel. Sans clé, l'analyse IA fonctionne (texte). Avec clé : image Street View affichée. → <a href="https://console.cloud.google.com/apis/library/street-view-image-backend.googleapis.com" target="_blank">Google Cloud Console</a></div>
+      <div class="api-hint">Optionnel — affiche la photo Street View à côté du score. <a href="https://console.cloud.google.com/apis/library/street-view-image-backend.googleapis.com" target="_blank">Google Cloud Console</a></div>
     </div>
 
     <div class="stats-bar">
@@ -682,9 +690,14 @@ async function analyzeOne(id) {
   const bat = BATS.find(b => b.id === id);
   if (!bat) return;
 
+  const aKey = document.getElementById('aKey').value.trim();
+  if (!aKey) {
+    showToast('Entrez votre clé API Anthropic (sk-ant-...)', 'err');
+    document.getElementById('aKey').focus();
+    return;
+  }
   const gKey = document.getElementById('gKey').value.trim();
   // Clé Google optionnelle — sans clé, l'image Street View ne s'affiche pas
-  // mais l'analyse Claude (texte) fonctionne quand même
 
   // Mark as analyzing
   bat.analyzing = true;
@@ -732,7 +745,9 @@ niveau doit être : conforme (8-10) | partiel (5-7) | non_conforme (0-4) | indet
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        'x-api-key': aKey,
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
@@ -804,6 +819,11 @@ async function analyzeAll() {
 // ─────────────────────────────────────────────
 //  API KEY FEEDBACK
 // ─────────────────────────────────────────────
+document.getElementById('aKey').addEventListener('input', function() {
+  const dot = document.getElementById('apiDotA');
+  const v = this.value.trim();
+  dot.className = 'api-dot' + (v.startsWith('sk-ant-') ? ' ok' : '');
+});
 document.getElementById('gKey').addEventListener('input', function() {
   const dot = document.getElementById('apiDot');
   const v = this.value.trim();
@@ -824,4 +844,3 @@ function showToast(msg, type = 'ok') {
 </script>
 </body>
 </html>
-
