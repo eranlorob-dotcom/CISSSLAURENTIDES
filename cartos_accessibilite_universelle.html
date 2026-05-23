@@ -1,0 +1,356 @@
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans)}
+#root{display:flex;flex-direction:column;height:580px;background:var(--color-background-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);flex-shrink:0}
+.topbar-l{display:flex;align-items:center;gap:8px}
+.tag{font-size:10px;font-weight:500;background:var(--color-background-info);color:var(--color-text-info);padding:2px 8px;border-radius:var(--border-radius-md);letter-spacing:.8px}
+.t-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.t-sub{font-size:11px;color:var(--color-text-secondary)}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:270px;flex-shrink:0;display:flex;flex-direction:column;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow:hidden}
+.sb-stats{display:flex;gap:0;flex-shrink:0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.stat{flex:1;text-align:center;padding:6px 4px;border-right:0.5px solid var(--color-border-tertiary)}
+.stat:last-child{border-right:none}
+.stat-n{font-size:16px;font-weight:500}
+.stat-l{font-size:9px;color:var(--color-text-secondary)}
+.n-c{color:#15803d}.n-p{color:#b45309}.n-x{color:#b91c1c}.n-i{color:var(--color-text-secondary)}
+.blist{flex:1;overflow-y:auto;padding:6px}
+.bcard{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;margin-bottom:4px;cursor:pointer;background:var(--color-background-primary);transition:border-color .15s}
+.bcard:hover{border-color:var(--color-border-info)}
+.bcard.active{border-color:var(--color-border-info);background:var(--color-background-info)}
+.bc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px}
+.bc-name{font-size:11.5px;font-weight:500;color:var(--color-text-primary);line-height:1.3}
+.bc-type{font-size:10px;color:var(--color-text-secondary)}
+.sbadge{font-size:11px;font-weight:500;padding:2px 7px;border-radius:var(--border-radius-md);flex-shrink:0}
+.sbadge.c{background:var(--color-background-success);color:var(--color-text-success)}
+.sbadge.p{background:var(--color-background-warning);color:var(--color-text-warning)}
+.sbadge.x{background:var(--color-background-danger);color:var(--color-text-danger)}
+.sbadge.i{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.bc-addr{font-size:10px;color:var(--color-text-secondary);margin-bottom:5px;line-height:1.35}
+.bc-btns{display:flex;gap:4px}
+.btn-run{flex:1;font-size:11px;font-weight:500;padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-info);color:var(--color-text-info);cursor:pointer;transition:opacity .15s}
+.btn-run:hover{opacity:.8}
+.btn-run:disabled{opacity:.35;cursor:not-allowed}
+.btn-fly{font-size:11px;padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer}
+.btn-fly:hover{color:var(--color-text-info)}
+.mini-bar{display:flex;gap:2px;margin-top:5px}
+.mseg{flex:1;height:3px;border-radius:2px;background:var(--color-border-tertiary)}
+.mseg.c{background:#15803d}.mseg.p{background:#b45309}.mseg.x{background:#b91c1c}
+.sb-footer{padding:8px;border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0}
+.btn-all{width:100%;padding:7px;font-size:12px;font-weight:500;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);cursor:pointer;transition:opacity .15s}
+.btn-all:hover{opacity:.85}
+.btn-all:disabled{opacity:.4;cursor:not-allowed}
+.note-all{font-size:9.5px;color:var(--color-text-secondary);text-align:center;margin-top:4px}
+.map-col{flex:1;position:relative;overflow:hidden}
+#map{width:100%;height:100%}
+.legend{position:absolute;bottom:10px;right:10px;z-index:1000;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:10px}
+.leg-ttl{font-size:9px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:5px}
+.leg-i{display:flex;align-items:center;gap:6px;color:var(--color-text-secondary);margin-bottom:3px}
+.leg-d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.apanel{position:absolute;left:0;right:0;bottom:0;height:250px;background:var(--color-background-secondary);border-top:1.5px solid var(--color-border-info);z-index:2000;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.apanel.open{transform:translateY(0)}
+.ap-hdr{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);flex-shrink:0}
+.ap-title{font-size:12.5px;font-weight:500;color:var(--color-text-primary);flex:1}
+.ap-bname{font-size:10px;color:var(--color-text-secondary)}
+.ap-nivel{font-size:10px;font-weight:500;padding:2px 8px;border-radius:var(--border-radius-md)}
+.ap-nivel.c{background:var(--color-background-success);color:var(--color-text-success)}
+.ap-nivel.p{background:var(--color-background-warning);color:var(--color-text-warning)}
+.ap-nivel.x{background:var(--color-background-danger);color:var(--color-text-danger)}
+.ap-nivel.i{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.ap-close{background:none;border:none;color:var(--color-text-secondary);font-size:16px;cursor:pointer;padding:2px 6px;line-height:1}
+.ap-body{flex:1;overflow:hidden;display:flex}
+.col-score{width:190px;flex-shrink:0;border-right:0.5px solid var(--color-border-tertiary);padding:10px 12px;overflow-y:auto}
+.score-big{text-align:center;margin-bottom:10px}
+.score-n{font-size:36px;font-weight:500;line-height:1}
+.score-d{font-size:16px;color:var(--color-text-secondary)}
+.score-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
+.crit-row{margin-bottom:7px}
+.crit-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.crit-name{font-size:10px;color:var(--color-text-secondary)}
+.crit-val{font-size:10px;font-weight:500}
+.cbar{height:3px;background:var(--color-border-tertiary);border-radius:2px;overflow:hidden}
+.cbar-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.crit-note{font-size:9.5px;color:var(--color-text-secondary);margin-top:2px;line-height:1.35}
+.col-obs{flex:1;padding:10px 14px;overflow-y:auto}
+.col-obs::-webkit-scrollbar{width:3px}
+.obs-ttl{font-size:9px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;margin-top:8px}
+.obs-ttl:first-child{margin-top:0}
+.obs-txt{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.obs-ul{list-style:none}
+.obs-ul li{font-size:11px;color:var(--color-text-secondary);padding-left:14px;position:relative;margin-bottom:2px;line-height:1.4}
+.obs-ul.pos li::before{content:'✓';position:absolute;left:0;color:#15803d;font-size:10px}
+.obs-ul.neg li::before{content:'✗';position:absolute;left:0;color:#b91c1c;font-size:10px}
+.obs-note{font-size:10px;color:var(--color-text-secondary);font-style:italic;padding:6px 9px;background:var(--color-background-info);border-left:2px solid var(--color-border-info);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;margin-top:6px;line-height:1.4}
+.loading-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:3000;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.loading-overlay.show{display:flex}
+.spin{width:28px;height:28px;border-radius:50%;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-size:12px;color:#fff}
+.toast{position:absolute;top:10px;right:10px;z-index:4000;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:11.5px;color:var(--color-text-primary);max-width:240px;transform:translateX(120%);transition:transform .25s ease;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.toast.show{transform:translateX(0)}
+.toast.ok{border-color:var(--color-border-success);color:var(--color-text-success)}
+.toast.err{border-color:var(--color-border-danger);color:var(--color-text-danger)}
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<div id="root">
+  <div class="topbar">
+    <div class="topbar-l">
+      <span class="tag">C.A.R.T.O.S.</span>
+      <div>
+        <div class="t-title">Accessibilité universelle — Bâtiments municipaux</div>
+        <div class="t-sub">Pré-audit virtuel par IA · Laurentides · CISSS-DSP</div>
+      </div>
+    </div>
+  </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sb-stats">
+        <div class="stat"><div class="stat-n n-c" id="sC">0</div><div class="stat-l">Conforme</div></div>
+        <div class="stat"><div class="stat-n n-p" id="sP">0</div><div class="stat-l">Partiel</div></div>
+        <div class="stat"><div class="stat-n n-x" id="sX">0</div><div class="stat-l">Non conf.</div></div>
+        <div class="stat"><div class="stat-n n-i" id="sI">8</div><div class="stat-l">N/A</div></div>
+      </div>
+      <div class="blist" id="blist"></div>
+      <div class="sb-footer">
+        <button class="btn-all" id="btnAll" onclick="analyzeAll()">⚡ Analyser tous les bâtiments ↗</button>
+        <div class="note-all">~8 appels API · résultats indicatifs</div>
+      </div>
+    </aside>
+    <div class="map-col">
+      <div id="map"></div>
+      <div class="legend">
+        <div class="leg-ttl">Score AU</div>
+        <div class="leg-i"><div class="leg-d" style="background:#15803d"></div>Conforme (8–10)</div>
+        <div class="leg-i"><div class="leg-d" style="background:#b45309"></div>Partiel (5–7)</div>
+        <div class="leg-i"><div class="leg-d" style="background:#b91c1c"></div>Non conforme (0–4)</div>
+        <div class="leg-i"><div class="leg-d" style="background:#888"></div>Non analysé</div>
+      </div>
+      <div class="apanel" id="apanel">
+        <div class="ap-hdr">
+          <div style="flex:1">
+            <div class="ap-title" id="apTitle">—</div>
+            <div class="ap-bname" id="apBname">—</div>
+          </div>
+          <div class="ap-nivel i" id="apNivel">N/A</div>
+          <button class="ap-close" onclick="closePanel()">✕</button>
+        </div>
+        <div class="ap-body">
+          <div class="col-score">
+            <div class="score-big">
+              <div><span class="score-n" id="scoreN">—</span><span class="score-d">/10</span></div>
+              <div class="score-lbl" id="scoreLbl" style="color:var(--color-text-secondary)">En attente</div>
+            </div>
+            <div id="critList"></div>
+          </div>
+          <div class="col-obs" id="colObs">
+            <div style="color:var(--color-text-secondary);font-size:11px;padding-top:4px">Sélectionnez un bâtiment et lancez l'analyse.</div>
+          </div>
+        </div>
+      </div>
+      <div class="loading-overlay" id="loading">
+        <div class="spin"></div>
+        <div class="load-txt" id="loadTxt">Analyse en cours…</div>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const BATS=[
+  {id:1,nom:"Hôtel de ville de Saint-Jérôme",mun:"Saint-Jérôme",type:"Hôtel de ville",lat:45.7738,lng:-74.0043,addr:"2, rue de l'Hôtel-de-Ville, Saint-Jérôme, QC"},
+  {id:2,nom:"Bibliothèque Gilles-Corbeil",mun:"Saint-Jérôme",type:"Bibliothèque",lat:45.7759,lng:-74.0062,addr:"185, rue Labelle, Saint-Jérôme, QC"},
+  {id:3,nom:"Hôtel de ville de Sainte-Agathe-des-Monts",mun:"Sainte-Agathe-des-Monts",type:"Hôtel de ville",lat:46.0487,lng:-74.2785,addr:"50, rue St-Joseph, Ste-Agathe-des-Monts, QC"},
+  {id:4,nom:"Hôtel de ville de Mont-Tremblant",mun:"Mont-Tremblant",type:"Hôtel de ville",lat:46.1158,lng:-74.5955,addr:"1145, rue de Saint-Jovite, Mont-Tremblant, QC"},
+  {id:5,nom:"Hôtel de ville de Mirabel",mun:"Mirabel",type:"Hôtel de ville",lat:45.6502,lng:-74.0882,addr:"14111, rue Saint-Jean, Mirabel, QC"},
+  {id:6,nom:"Hôtel de ville de Lachute",mun:"Lachute",type:"Hôtel de ville",lat:45.6538,lng:-74.3390,addr:"380, rue Bethany, Lachute, QC"},
+  {id:7,nom:"Hôtel de ville de Saint-Sauveur",mun:"Saint-Sauveur",type:"Hôtel de ville",lat:45.9032,lng:-74.1698,addr:"100, av. de l'Église, Saint-Sauveur, QC"},
+  {id:8,nom:"Hôtel de ville de Sainte-Thérèse",mun:"Sainte-Thérèse",type:"Hôtel de ville",lat:45.6459,lng:-73.8368,addr:"6, rue de l'Hôtel-de-Ville, Sainte-Thérèse, QC"}
+];
+const CRIT=[
+  {key:"entree_accessible",label:"Entrée accessible",max:2},
+  {key:"obstacles_entree",label:"Absence d'obstacles",max:2},
+  {key:"stationnement_adapte",label:"Stationnement PMR",max:2},
+  {key:"cheminement_pieton",label:"Cheminement piéton",max:2},
+  {key:"porte_signalisation",label:"Porte & signalisation",max:2}
+];
+
+const map=L.map('map',{center:[46.0,-74.2],zoom:8,zoomControl:true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:19}).addTo(map);
+
+const markers={};
+function markerColor(bat){
+  if(!bat.result)return'#888';
+  const n=bat.result.niveau;
+  if(n==='conforme')return'#15803d';
+  if(n==='partiel')return'#b45309';
+  if(n==='non_conforme')return'#b91c1c';
+  return'#888';
+}
+function makeIcon(color,score){
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40"><path d="M16 2C9.4 2 4 7.4 4 14c0 10 12 24 12 24S28 24 28 14C28 7.4 22.6 2 16 2z" fill="${color}" stroke="white" stroke-width="1.5"/><circle cx="16" cy="14" r="7" fill="rgba(255,255,255,0.25)"/><text x="16" y="18" text-anchor="middle" font-family="system-ui" font-size="${score!==null?'8':'10'}" font-weight="600" fill="white">${score!==null?score:'?'}</text></svg>`;
+  return L.divIcon({html:svg,className:'',iconSize:[32,40],iconAnchor:[16,40],popupAnchor:[0,-40]});
+}
+BATS.forEach(bat=>{
+  const m=L.marker([bat.lat,bat.lng],{icon:makeIcon(markerColor(bat),null)}).addTo(map)
+    .bindPopup(`<b style="font-size:12px">${bat.nom}</b><br><span style="font-size:10px;color:#666">${bat.type} · ${bat.mun}</span>`);
+  m.on('click',()=>{if(bat.result)showPanel(bat);else flyTo(bat.id);});
+  markers[bat.id]=m;
+});
+
+function renderCards(){
+  const el=document.getElementById('blist');el.innerHTML='';
+  BATS.forEach(bat=>{
+    const r=bat.result;
+    const cls=r?(r.niveau==='conforme'?'c':r.niveau==='partiel'?'p':r.niveau==='non_conforme'?'x':'i'):'i';
+    const sd=r?r.score_total:'—';
+    const segs=CRIT.map(c=>{
+      if(!r)return`<div class="mseg"></div>`;
+      const v=r.criteres[c.key]?.score??0;
+      const sc=v===2?'c':v===1?'p':'x';
+      return`<div class="mseg ${sc}"></div>`;
+    }).join('');
+    const div=document.createElement('div');
+    div.className=`bcard${bat.active?' active':''}`;
+    div.id=`bcard-${bat.id}`;
+    div.innerHTML=`
+      <div class="bc-top">
+        <div><div class="bc-name">${bat.nom}</div><div class="bc-type">${bat.type}</div></div>
+        <div class="sbadge ${cls}">${sd}</div>
+      </div>
+      <div class="bc-addr">${bat.addr}</div>
+      <div class="bc-btns">
+        <button class="btn-run" onclick="analyzeOne(${bat.id})" ${bat.analyzing?'disabled':''}>
+          ${bat.analyzing?'⏳ Analyse…':r?'↺ Réanalyser':'▶ Analyser'}
+        </button>
+        <button class="btn-fly" onclick="flyTo(${bat.id})">⌖</button>
+      </div>
+      ${r?`<div class="mini-bar">${segs}</div>`:''}`;
+    div.addEventListener('click',e=>{if(e.target.tagName==='BUTTON')return;flyTo(bat.id);if(bat.result)showPanel(bat);});
+    el.appendChild(div);
+  });
+}
+renderCards();
+
+function updateStats(){
+  let c=0,p=0,x=0,i=0;
+  BATS.forEach(b=>{if(!b.result){i++;return;}const n=b.result.niveau;if(n==='conforme')c++;else if(n==='partiel')p++;else if(n==='non_conforme')x++;else i++;});
+  document.getElementById('sC').textContent=c;
+  document.getElementById('sP').textContent=p;
+  document.getElementById('sX').textContent=x;
+  document.getElementById('sI').textContent=i;
+}
+
+function flyTo(id){
+  const bat=BATS.find(b=>b.id===id);if(!bat)return;
+  map.flyTo([bat.lat,bat.lng],15,{duration:1.2});
+  markers[id].openPopup();
+}
+
+function showPanel(bat){
+  const r=bat.result;
+  const cls=r.niveau==='conforme'?'c':r.niveau==='partiel'?'p':r.niveau==='non_conforme'?'x':'i';
+  const nLbl={conforme:'Conforme',partiel:'Partiel',non_conforme:'Non conforme',indetermine:'Indéterminé'}[r.niveau]||'N/A';
+  const scoreColor=r.niveau==='conforme'?'#15803d':r.niveau==='partiel'?'#b45309':'#b91c1c';
+  document.getElementById('apTitle').textContent=bat.nom;
+  document.getElementById('apBname').textContent=`${bat.type} · ${bat.mun}`;
+  const nv=document.getElementById('apNivel');nv.textContent=nLbl;nv.className=`ap-nivel ${cls}`;
+  document.getElementById('scoreN').textContent=r.score_total;
+  document.getElementById('scoreN').style.color=scoreColor;
+  document.getElementById('scoreLbl').textContent=nLbl;
+  document.getElementById('scoreLbl').style.color=scoreColor;
+  document.getElementById('critList').innerHTML=CRIT.map(c=>{
+    const cv=r.criteres[c.key];const score=cv?.score??0;const note=cv?.note||'';
+    const pct=(score/c.max)*100;
+    const fc=score===c.max?'#15803d':score>0?'#b45309':'#b91c1c';
+    return`<div class="crit-row">
+      <div class="crit-top"><span class="crit-name">${c.label}</span><span class="crit-val" style="color:${fc}">${score}/${c.max}</span></div>
+      <div class="cbar"><div class="cbar-fill" style="width:${pct}%;background:${fc}"></div></div>
+      ${note?`<div class="crit-note">${note}</div>`:''}
+    </div>`;
+  }).join('');
+  const pos=(r.elements_positifs||[]).map(e=>`<li>${e}</li>`).join('');
+  const neg=(r.elements_negatifs||[]).map(e=>`<li>${e}</li>`).join('');
+  document.getElementById('colObs').innerHTML=`
+    ${r.observations?`<div class="obs-ttl">Synthèse</div><div class="obs-txt">${r.observations}</div>`:''}
+    ${pos?`<div class="obs-ttl">Points positifs</div><ul class="obs-ul pos">${pos}</ul>`:''}
+    ${neg?`<div class="obs-ttl">Lacunes identifiées</div><ul class="obs-ul neg">${neg}</ul>`:''}
+    ${r.limites_analyse?`<div class="obs-note">${r.limites_analyse}</div>`:''}
+    <div style="margin-top:8px;font-size:9.5px;color:var(--color-text-secondary)">Analyse préliminaire IA · Validation terrain requise · Norme CSA B651</div>`;
+  document.getElementById('apanel').classList.add('open');
+}
+function closePanel(){document.getElementById('apanel').classList.remove('open');}
+
+async function analyzeOne(id){
+  const bat=BATS.find(b=>b.id===id);if(!bat)return;
+  bat.analyzing=true;renderCards();
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('loadTxt').textContent=`Analyse de ${bat.mun}…`;
+  const prompt=`Tu réalises un pré-audit d'accessibilité universelle (AU) pour le bâtiment municipal suivant :
+Nom : ${bat.nom}
+Type : ${bat.type}
+Municipalité : ${bat.mun}
+Adresse : ${bat.addr}
+Région : Laurentides, Québec
+
+Évalue chaque critère sur 0-2 points (total /10) selon la norme CSA B651 et le contexte typique de ce bâtiment :
+- entree_accessible (0-2) : entrée principale de plain-pied ou rampe conforme
+- obstacles_entree (0-2) : absence de marches bloquantes
+- stationnement_adapte (0-2) : stationnement PMR réglementaire
+- cheminement_pieton (0-2) : cheminement trottoir→entrée
+- porte_signalisation (0-2) : porte automatique et signalétique AU
+
+Réponds UNIQUEMENT avec ce JSON strict (aucun texte, aucune balise) :
+{"criteres":{"entree_accessible":{"score":0,"note":""},"obstacles_entree":{"score":0,"note":""},"stationnement_adapte":{"score":0,"note":""},"cheminement_pieton":{"score":0,"note":""},"porte_signalisation":{"score":0,"note":""}},"score_total":0,"niveau":"partiel","observations":"","elements_positifs":[],"elements_negatifs":[],"limites_analyse":"Pré-audit textuel — validation par inspection terrain requise (norme CSA B651)"}
+niveau = conforme (8-10) | partiel (5-7) | non_conforme (0-4) | indetermine`;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        system:'Tu es un expert en accessibilité universelle des bâtiments publics au Québec. Tu réponds UNIQUEMENT en JSON valide strict, sans texte avant/après, sans balises markdown.',
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||`HTTP ${resp.status}`);}
+    const data=await resp.json();
+    const raw=data.content.map(c=>c.text||'').join('').trim();
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const result=JSON.parse(clean);
+    if(typeof result.score_total!=='number')throw new Error('JSON invalide');
+    bat.result=result;
+    markers[bat.id].setIcon(makeIcon(markerColor(bat),result.score_total));
+    markers[bat.id].setPopupContent(`<b style="font-size:12px">${bat.nom}</b><br><span style="font-size:10px;color:#666">${bat.type} · ${bat.mun}</span><br><b style="color:${markerColor(bat)}">${result.score_total}/10 — ${result.niveau}</b>`);
+    updateStats();renderCards();showPanel(bat);
+    const nLbl={conforme:'Conforme',partiel:'Partiel',non_conforme:'Non conforme',indetermine:'Indéterminé'}[result.niveau];
+    showToast(`${bat.mun} : ${result.score_total}/10 — ${nLbl}`,'ok');
+  }catch(e){
+    console.error(e);
+    showToast(`Erreur : ${e.message}`,'err');
+  }finally{
+    bat.analyzing=false;
+    document.getElementById('loading').classList.remove('show');
+    renderCards();
+  }
+}
+
+let allRunning=false;
+async function analyzeAll(){
+  if(allRunning)return;allRunning=true;
+  document.getElementById('btnAll').disabled=true;
+  for(const bat of BATS){await analyzeOne(bat.id);await new Promise(r=>setTimeout(r,600));}
+  allRunning=false;document.getElementById('btnAll').disabled=false;
+}
+
+let toastT;
+function showToast(msg,type='ok'){
+  const el=document.getElementById('toast');el.textContent=msg;el.className=`toast show ${type}`;
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),4000);
+}
+</script>
