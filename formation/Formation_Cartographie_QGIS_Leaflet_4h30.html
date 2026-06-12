@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartographie Interactive et Géoweb — Formation 4h30</title>
+<style>
+  :root {
+    --primary: #1a5276;
+    --accent: #2e86ab;
+    --light: #eaf2f8;
+    --text: #2c3e50;
+    --border: #d5dbdb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    background: #fff;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2rem;
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  h1 + h2 {
+    border: none;
+    color: var(--accent);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+  }
+  h2 {
+    color: var(--primary);
+    font-size: 1.35rem;
+    margin-top: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  thead th, thead td { background: var(--primary); color: #fff; }
+  tbody tr:nth-child(even) { background: var(--light); }
+  ul, ol { padding-left: 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  li p { margin: 0; }
+  a { color: var(--accent); }
+  strong { color: var(--primary); }
+  @media print {
+    body { max-width: 100%; padding: 0; }
+    h2 { page-break-after: avoid; }
+    table, ul, ol { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<h1 id="cartographie-interactive-et-géoweb">Cartographie Interactive et
+Géoweb</h1>
+<h2 id="formation-4h30-pour-professionnels-de-santé-publique">Formation
+4h30 pour professionnels de santé publique</h2>
+<p><em>QGIS + Leaflet.js + IA (Claude) + GitHub Pages</em></p>
+<h2 id="information-générale">Information générale</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Durée</strong></th>
+<th>4h30 (avec pause de 20 minutes)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Public cible</strong></td>
+<td>Professionnels de santé publique, planificateurs, décideurs</td>
+</tr>
+<tr class="even">
+<td><strong>Prérequis</strong></td>
+<td>Connaissances SIG de base ou expérience avec des données
+spatiales</td>
+</tr>
+<tr class="odd">
+<td><strong>Logiciels</strong></td>
+<td>QGIS + VS Code + Git + navigateur web + compte GitHub (gratuit)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="description">Description</h2>
+<p>Cette formation intensive combine QGIS pour préparer les données
+spatiales, Leaflet pour créer des cartes web interactives, Claude (IA)
+pour accélérer l'apprentissage et le debugging, et GitHub Pages pour
+publier en ligne. Les participants apprendront à transformer des données
+de santé publique en représentations cartographiques interactives
+partagées sur le web.</p>
+<h2 id="objectifs-dapprentissage">Objectifs d'apprentissage</h2>
+<ul>
+<li><p>Comprendre la chaîne de production QGIS → GeoJSON → Leaflet →
+GitHub</p></li>
+<li><p>Préparer et visualiser des données spatiales en santé publique
+avec QGIS</p></li>
+<li><p>Créer une carte web interactive avec Leaflet.js</p></li>
+<li><p>Utiliser Claude (IA) pour déboguer et apprendre les concepts
+techniques</p></li>
+<li><p>Publier et tester votre carte en ligne via GitHub Pages</p></li>
+<li><p>Évaluer les avantages et limites de ces outils pour vos contextes
+de travail</p></li>
+</ul>
+<h2 id="programme-de-la-journée">Programme de la journée</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 40%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Durée</strong></th>
+<th><strong>Module</strong></th>
+<th><strong>Contenu clé</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>40 min</td>
+<td><strong>Introduction au Géoweb et à l'IA</strong></td>
+<td>Évolution SIG → Web ; Architecture client-serveur ; GeoJSON ;
+Introduction Claude (IA)</td>
+</tr>
+<tr class="even">
+<td>1h15</td>
+<td><strong>QGIS – Préparation des données</strong></td>
+<td>Importer données ; Créer choroplèthes ; Exporter GeoJSON ; Exemple
+santé publique</td>
+</tr>
+<tr class="odd">
+<td>20 min</td>
+<td>Pause</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>1h45</td>
+<td><strong>Leaflet.js + GitHub Pages</strong></td>
+<td>HTML/CSS/JS ; Charger GeoJSON ; Popups ; GitHub Pages ; Publier en
+ligne ; Tests</td>
+</tr>
+</tbody>
+</table>
+<h2 id="thématiques-clés-abordées">Thématiques clés abordées</h2>
+<ul>
+<li><p>Architecture client-serveur et protocoles du Web (GeoJSON, API
+REST)</p></li>
+<li><p>Préparation de données spatiales en QGIS (import, nettoyage,
+export GeoJSON)</p></li>
+<li><p>Programmation d'interfaces interactives avec Leaflet.js
+(JavaScript simple)</p></li>
+<li><p>Utiliser Claude (IA) pour l'apprentissage : poser des questions,
+déboguer du code, générer des extraits</p></li>
+<li><p>Publier sur GitHub Pages : cloner, modifier, commit/push, tester
+en ligne</p></li>
+<li><p>Cas d'application en santé publique : accessibilité, santé
+mentale, équité géospatiale</p></li>
+<li><p>Enjeux éthiques : représentation spatiale, vie privée,
+interprétation des données</p></li>
+</ul>
+<h2 id="rôle-de-claude-ia-dans-la-formation">Rôle de Claude (IA) dans la
+formation</h2>
+<p><strong>Apprentissage accompagné</strong></p>
+<p>Claude aide à comprendre les concepts : expliquez un terme QGIS ou du
+JavaScript et Claude propose une explication claire avec des
+exemples.</p>
+<p><strong>Déboggage et correction</strong></p>
+<p>Vous avez une erreur en JavaScript ? Collez le code et la trace
+d'erreur à Claude, qui explique le problème et propose une
+correction.</p>
+<p><strong>Génération de code</strong></p>
+<p>Claude génère des portions de code Leaflet (popups, légendre, styles)
+à partir de descriptions en français.</p>
+<p><strong>Exploration créative</strong></p>
+<p>Vous avez une idée pour votre carte ? Claude peut vous aider à la
+structurer, proposer des outils, ou générer un prototype.</p>
+<h2 id="publication-sur-github-pages">Publication sur GitHub Pages</h2>
+<p>À la fin de la formation, chaque participant publiera sa carte en
+ligne via GitHub Pages (service gratuit). Les étapes incluent :</p>
+<ol type="1">
+<li><p>Créer un compte GitHub (5 minutes)</p></li>
+<li><p>Cloner ou créer un dépôt (repository)</p></li>
+<li><p>Ajouter votre fichier HTML avec la carte Leaflet</p></li>
+<li><p>Committer et pusher les changements (git commands)</p></li>
+<li><p>Activer GitHub Pages (une case à cocher)</p></li>
+<li><p>Accéder à votre carte en ligne via une URL unique (ex:
+votreusername.github.io/votre-carto)</p></li>
+<li><p>Tester et partager la carte avec vos collègues</p></li>
+</ol>
+<h2 id="ressources-et-outils">Ressources et outils</h2>
+<h2 id="logiciels-et-services-tous-gratuits">Logiciels et services (tous
+gratuits)</h2>
+<ul>
+<li><p>QGIS 3.34+ (www.qgis.org)</p></li>
+<li><p>Visual Studio Code (www.code.visualstudio.com)</p></li>
+<li><p>Compte GitHub (github.com)</p></li>
+<li><p>Claude (gratuit à claude.ai ou via API pour intégrations
+avancées)</p></li>
+<li><p>Navigateur web moderne (Chrome, Firefox, Safari)</p></li>
+</ul>
+<h2 id="documentation-référence">Documentation référence</h2>
+<ul>
+<li><p>QGIS Official Documentation : docs.qgis.org</p></li>
+<li><p>Leaflet.js Quick Start :
+leafletjs.com/examples/quick-start</p></li>
+<li><p>GeoJSON Specification : geojson.org</p></li>
+<li><p>GitHub Pages : pages.github.com</p></li>
+<li><p>Claude Help : claude.ai/help ou support.anthropic.com</p></li>
+<li><p>Exemples de cartes web en santé publique : <a
+href="https://arcg.is/0XnePz">https://arcg.is/0XnePz</a></p></li>
+</ul>
+<h2 id="exemples-de-cas-dusage-en-santé-publique">Exemples de cas
+d'usage en santé publique</h2>
+<ul>
+<li><p>Accessibilité aux services de santé par secteur (carte des
+délais, disparités géographiques)</p></li>
+<li><p>Distribution de problèmes de santé mentale par quartier avec
+tendances</p></li>
+<li><p>Couverture vaccinale par région et comparaisons
+temporelles</p></li>
+<li><p>Cartographie des déterminants sociaux de la santé (pauvreté,
+scolarité, emploi)</p></li>
+<li><p>Environnement et santé : pollution, verdure, accès à espaces
+verts de proximité</p></li>
+</ul>
+<h2 id="critères-de-succès">Critères de succès</h2>
+<p>À la fin de cette formation, vous serez capable de :</p>
+<ol type="1">
+<li><p>Importer un fichier de données spatiales dans QGIS et créer une
+visualisation thématique</p></li>
+<li><p>Exporter des données en format GeoJSON</p></li>
+<li><p>Créer une page HTML avec une carte Leaflet interactive et
+stylisée</p></li>
+<li><p>Ajouter de l'interactivité (popups, info-bulles)</p></li>
+<li><p>Utiliser Claude pour déboguer du code et comprendre les
+concepts</p></li>
+<li><p>Publier et tester votre carte en ligne via GitHub Pages</p></li>
+<li><p>Identifier les forces et faiblesses de ce workflow pour vos
+projets futurs</p></li>
+</ol>
+<h2 id="notes-pratiques">Notes pratiques</h2>
+<p><strong>Avant la formation</strong></p>
+<p>Créer un compte GitHub (gratuit) et tester une connexion internet
+stable. Installer QGIS, VS Code et Git avant de venir.</p>
+<p><strong>Pause et attention</strong></p>
+<p>Une pause de 20 minutes à mi-journée. Des micro-pauses recommandées
+entre les modules.</p>
+<p><strong>Support et fichiers</strong></p>
+<p>Données d'exemple, templates Leaflet et code snippets fournis. Dépôt
+GitHub avec ressources disponible post-formation.</p>
+<p><strong>Niveau technique</strong></p>
+<p>Aucune expérience en programmation requise. Nous insistons sur les
+concepts et la pratique guidée.</p>
+<p><strong>Après la formation</strong></p>
+<p>Accès au formateur par courriel (2 semaines post-formation).
+Ressources d'apprentissage continu et lien vers communautés
+d'apprentissage Leaflet/QGIS.</p>
+</body></html>
