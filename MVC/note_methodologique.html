@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note méthodologique — Milieux de vie complets (MilieuxVie)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  .note-mvc {
+    --eleve: #21AEAD;
+    --modere: #0482D3;
+    --emergent: #140C74;
+    --faible: #777777;
+    --fond: #ffffff;
+    --texte: #1a1a2e;
+    --texte-sec: #555;
+    --bordure: #dce3ea;
+    --text-scale: 1;       /* piloté par les boutons d'accessibilité */
+
+    font-family: 'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+    color: var(--texte);
+    background: var(--fond);
+    line-height: 1.65;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .note-mvc * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* === BARRE D'ACCESSIBILITÉ === */
+  .note-mvc .a11y-barre {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: #ffffff;
+    border-bottom: 1px solid var(--bordure);
+    padding: 8px 24px;
+    box-shadow: 0 1px 4px rgba(20,12,116,0.06);
+  }
+  .note-mvc .a11y-barre .a11y-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--emergent);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .note-mvc .a11y-barre .a11y-label svg { width: 16px; height: 16px; }
+  .note-mvc .a11y-boutons { display: flex; align-items: center; gap: 4px; }
+  .note-mvc .a11y-btn {
+    border: 1px solid var(--bordure);
+    background: #f5f7fa;
+    color: var(--emergent);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    line-height: 1;
+    padding: 6px 10px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .note-mvc .a11y-btn:hover { background: #e6eef5; border-color: var(--modere); }
+  .note-mvc .a11y-btn:focus-visible { outline: 3px solid var(--eleve); outline-offset: 1px; }
+  .note-mvc .a11y-btn.dim  { font-size: 13px; }
+  .note-mvc .a11y-btn.norm { font-size: 15px; }
+  .note-mvc .a11y-btn.aug  { font-size: 18px; }
+  .note-mvc .a11y-btn.reset {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.3px; background: transparent;
+  }
+  .note-mvc .a11y-valeur {
+    font-size: 12px; font-weight: 700; color: var(--modere);
+    min-width: 42px; text-align: center;
+  }
+
+  /* === EN-TÊTE === */
+  .note-mvc .entete {
+    background: linear-gradient(135deg, var(--emergent), var(--modere));
+    color: #fff;
+    padding: 28px 28px 24px;
+    border-radius: 0 0 10px 10px;
+    margin-bottom: 28px;
+  }
+  .note-mvc .entete .etiquette {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    padding: 3px 12px;
+    border-radius: 16px;
+    font-size: calc(11px * var(--text-scale));
+    font-weight: 600;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .note-mvc .entete h1 {
+    font-size: calc(22px * var(--text-scale));
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .note-mvc .entete .sous-titre {
+    font-size: calc(14px * var(--text-scale));
+    opacity: 0.85;
+    font-weight: 300;
+  }
+  .note-mvc .meta-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin-top: 16px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: calc(12px * var(--text-scale));
+  }
+  .note-mvc .meta-grid div { display: flex; gap: 6px; }
+  .note-mvc .meta-grid dt {
+    font-weight: 600;
+    opacity: 0.7;
+    font-size: calc(10px * var(--text-scale));
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+  .note-mvc .meta-grid dd { margin: 0; }
+
+  /* === CONTENU === */
+  .note-mvc .contenu { padding: 0 24px 40px; }
+  .note-mvc section { margin-bottom: 36px; }
+
+  .note-mvc h2 {
+    font-size: calc(17px * var(--text-scale));
+    font-weight: 700;
+    color: var(--emergent);
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 3px solid var(--eleve);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .note-mvc h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--emergent);
+    color: #fff;
+    border-radius: 50%;
+    font-size: calc(12px * var(--text-scale));
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .note-mvc h3 {
+    font-size: calc(14px * var(--text-scale));
+    font-weight: 700;
+    color: var(--modere);
+    margin: 18px 0 6px;
+  }
+  .note-mvc p {
+    margin-bottom: 10px;
+    text-align: justify;
+    font-size: calc(13.5px * var(--text-scale));
+    hyphens: auto;
+  }
+  .note-mvc ul, .note-mvc ol { margin: 0 0 10px 20px; font-size: calc(13.5px * var(--text-scale)); }
+  .note-mvc li { margin-bottom: 4px; }
+
+  /* === TABLEAUX === */
+  .note-mvc table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 16px;
+    font-size: calc(12.5px * var(--text-scale));
+  }
+  .note-mvc thead th {
+    background: var(--emergent);
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 10px;
+    font-size: calc(11px * var(--text-scale));
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .note-mvc thead th:first-child { border-radius: 5px 0 0 0; }
+  .note-mvc thead th:last-child { border-radius: 0 5px 0 0; }
+  .note-mvc tbody td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--bordure);
+    vertical-align: top;
+  }
+  .note-mvc tbody tr:last-child td { border-bottom: none; }
+  .note-mvc tbody tr.total td { font-weight: 700; background: #f5f7fa; }
+  .note-mvc code {
+    background: #eef2f7;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: calc(12px * var(--text-scale));
+    font-family: 'Courier New', monospace;
+  }
+
+  /* === BADGES === */
+  .note-mvc .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: calc(11px * var(--text-scale));
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .note-mvc .badge-complet  { background-color: var(--eleve); }
+  .note-mvc .badge-dev      { background-color: var(--modere); }
+  .note-mvc .badge-incomplet{ background-color: var(--faible); }
+
+  /* === ENCADRÉS === */
+  .note-mvc .encadre {
+    background: #f0f7fa;
+    border-left: 4px solid var(--eleve);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: calc(13px * var(--text-scale));
+  }
+  .note-mvc .encadre.attention {
+    background: #fef8f0;
+    border-left-color: #e8a838;
+  }
+  .note-mvc .encadre strong { color: var(--emergent); }
+
+  .note-mvc .formule {
+    background: #f5f7fa;
+    border: 1px solid var(--bordure);
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin: 10px 0;
+    font-family: 'Courier New', monospace;
+    font-size: calc(12.5px * var(--text-scale));
+    text-align: center;
+    color: var(--emergent);
+    font-weight: 600;
+  }
+  .note-mvc .formule .note { display:block; font-family: inherit; font-weight: 400; font-size: calc(11px * var(--text-scale)); color: var(--texte-sec); margin-top: 5px; }
+
+  .note-mvc .pied {
+    text-align: center;
+    font-size: calc(11px * var(--text-scale));
+    color: var(--faible);
+    padding: 16px 24px;
+    border-top: 1px solid var(--bordure);
+  }
+</style>
+</head>
+<body>
+<div class="note-mvc">
+
+  <!-- BARRE D'ACCESSIBILITÉ -->
+  <div class="a11y-barre" role="region" aria-label="Réglage de la taille du texte">
+    <span class="a11y-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M5 19l4-12 4 12M6.5 15h5"/><path d="M14 19l3-9 3 9M15 16h4"/>
+      </svg>
+      Taille du texte
+    </span>
+    <div class="a11y-boutons">
+      <button type="button" class="a11y-btn dim" onclick="mvcTaille(-0.1)" aria-label="Diminuer la taille du texte">A−</button>
+      <button type="button" class="a11y-btn norm" onclick="mvcTaille(0.1)" aria-label="Augmenter la taille du texte">A+</button>
+      <span class="a11y-valeur" id="mvc-scale-val" aria-live="polite">100&nbsp;%</span>
+      <button type="button" class="a11y-btn reset" onclick="mvcReset()" aria-label="Rétablir la taille normale du texte">Réinitialiser</button>
+    </div>
+  </div>
+
+  <!-- EN-TÊTE -->
+  <div class="entete">
+    <span class="etiquette">Note méthodologique</span>
+    <h1>Outil de cartographie des milieux de vie complets</h1>
+    <div class="sous-titre">MilieuxVie</div>
+    <dl class="meta-grid">
+      <div><dt>Direction</dt><dd>Santé publique — CISSS des Laurentides</dd></div>
+      <div><dt>Version</dt><dd>v14 — Mai 2026</dd></div>
+      <div><dt>Couverture</dt><dd>RSS 15 — 93 unités</dd></div>
+      <div><dt>Échelle</dt><dd>Immeuble résidentiel</dd></div>
+    </dl>
+  </div>
+
+  <div class="contenu">
+
+    <section>
+      <h2><span class="num">1</span> Contexte et objectifs</h2>
+      <p>MilieuxVie est un outil de cartographie interactive autonome développé dans le cadre du projet C.A.R.T.O.S. (Cartographie et Analyse des Risques Territoriaux et des Opportunités de Santé). Il vise à mesurer et à visualiser l'accessibilité aux services de proximité dans les 93 unités territoriales de la région des Laurentides (RSS 15), à l'échelle de chaque immeuble résidentiel. L'outil s'inscrit dans le courant des milieux de vie complets (MVC), concept issu des domaines de l'aménagement du territoire et de la santé publique, et opérationnalisé ici à partir du cadre de référence de Vivre en Ville (2026).</p>
+      <p>Il permet de :</p>
+      <ul>
+        <li>quantifier le score MVC de chaque municipalité ou périmètre d'urbanisation ;</li>
+        <li>identifier les paramètres de services en déficit ;</li>
+        <li>comparer les unités territoriales entre elles selon leur type de milieu (dense, intermédiaire, rural) ;</li>
+        <li>fournir des données probantes pour les évaluations d'impact sur la santé (EIS) et les révisions de plans d'urbanisme.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="num">2</span> Sources de données</h2>
+
+      <h3>2.1 Rôle foncier municipal (MAMH, 2026)</h3>
+      <p>Les immeubles résidentiels sont issus du rôle d'évaluation foncière municipal 2026, compilé par le Ministère des Affaires municipales et de l'Habitation (MAMH). La couche utilisée est le fichier GeoJSON des immeubles résidentiels géoréférencés par municipalité.</p>
+      <table>
+        <thead><tr><th>Variable</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Fichier source</strong></td><td><code>immeubles_residentiels2026_muni.geojson</code></td></tr>
+          <tr><td><strong>Unité d'observation</strong></td><td>Immeuble résidentiel (point)</td></tr>
+          <tr><td><strong>Champs utilisés</strong></td><td>géométrie (coordonnées), <code>nb_logements</code>, <code>MUS_CO_GEO</code></td></tr>
+          <tr><td><strong>Couverture</strong></td><td>234 466 immeubles — 305 827 logements — 93 unités territoriales</td></tr>
+          <tr><td><strong>Année</strong></td><td>2026 (mise à jour du rôle triennal)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.2 Limites municipales (MELCCFP — MRN-BAGQ, 2025-10)</h3>
+      <p>Les polygones municipaux proviennent du fichier de découpage administratif produit par le MELCCFP, version V2025-10, dans le cadre du produit SDA20K du Bureau de l'arpentage et de la géomatique du Québec (MRN-BAGQ).</p>
+      <table>
+        <thead><tr><th>Variable</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Fichier source</strong></td><td><code>munic_2.geojson</code></td></tr>
+          <tr><td><strong>Code produit</strong></td><td>SDA20K (Sectorisation des divisions administratives, 20K)</td></tr>
+          <tr><td><strong>Version</strong></td><td>V2025-10 (octobre 2025)</td></tr>
+          <tr><td><strong>Source institutionnelle</strong></td><td>MRN-BAGQ (Ministère des Ressources naturelles)</td></tr>
+          <tr><td><strong>Champs clés</strong></td><td><code>MUS_CO_GEO</code>, <code>MUS_NM_MUN</code>, <code>MUS_NM_MRC</code>, <code>MUS_VA_SUP</code>, <code>sup_new</code></td></tr>
+          <tr><td><strong>Système de coordonnées</strong></td><td>WGS84 — EPSG:4326</td></tr>
+        </tbody>
+      </table>
+      <div class="encadre attention">
+        <strong>Note sur la superficie (sup_new).</strong> Le champ <code>sup_new</code> a été calculé pour représenter la superficie des milieux habités au sein de chaque municipalité, et non la superficie totale du territoire municipal (<code>MUS_VA_SUP</code>). Pour les municipalités à urbanisation compacte, les deux valeurs convergent ; pour les municipalités à habitat dispersé (ex. Sainte-Sophie, Saint-Colomban), <code>sup_new</code> peut être sensiblement plus petite, reflétant la concentration réelle des logements dans un milieu bâti restreint.
+      </div>
+
+      <h3>2.3 OpenStreetMap — Overpass API</h3>
+      <p>Les équipements et services de proximité sont extraits d'OpenStreetMap (OSM) via l'API Overpass, au moment de l'analyse (requête en temps réel). Les données OSM constituent une base de données géographiques collaborative, mise à jour en continu. Leur couverture est variable selon les paramètres et les territoires.</p>
+      <table>
+        <thead><tr><th>Variable</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Source</strong></td><td>OpenStreetMap — © contributeurs OSM (licence ODbL)</td></tr>
+          <tr><td><strong>Interface de requête</strong></td><td>Overpass API (overpass-api.de)</td></tr>
+          <tr><td><strong>Mode d'extraction</strong></td><td>Requêtes par type de nœud/relation dans un rayon défini</td></tr>
+          <tr><td><strong>Date de référence</strong></td><td>Données au moment de l'exécution de l'analyse</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2><span class="num">3</span> Paramètres de milieux de vie complets</h2>
+      <p>L'outil évalue 12 paramètres de services et d'aménagement, définis conformément au cadre opérationnel de Vivre en Ville (VeV, 2026). Chaque paramètre correspond à une catégorie de service ou d'infrastructure accessible à pied ou à vélo depuis les immeubles résidentiels.</p>
+      <table>
+        <thead><tr><th style="width:40px">#</th><th>Paramètre</th><th>Services inclus</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Alimentation</strong></td><td>Épiceries, marchés, supermarchés</td></tr>
+          <tr><td>2</td><td><strong>Service de garde</strong></td><td>CPE, garderies, milieux familiaux</td></tr>
+          <tr><td>3</td><td><strong>École primaire</strong></td><td>Écoles primaires (publiques et privées)</td></tr>
+          <tr><td>4</td><td><strong>École secondaire</strong></td><td>Écoles secondaires (publiques et privées)</td></tr>
+          <tr><td>5</td><td><strong>Espaces naturels</strong></td><td>Parcs, espaces verts, forêts urbaines</td></tr>
+          <tr><td>6</td><td><strong>Loisirs et sport</strong></td><td>Arénas, gymnases, centres communautaires</td></tr>
+          <tr><td>7</td><td><strong>Équipements culturels</strong></td><td>Bibliothèques, musées, salles de spectacle</td></tr>
+          <tr><td>8</td><td><strong>Soins de santé 1<sup>re</sup> ligne</strong></td><td>Cliniques, GMF, CLSC, pharmacies avec consultation</td></tr>
+          <tr><td>9</td><td><strong>Pharmacie</strong></td><td>Pharmacies (vente)</td></tr>
+          <tr><td>10</td><td><strong>Transport en commun</strong></td><td>Arrêts de bus, gares</td></tr>
+          <tr><td>11</td><td><strong>Mobilité partagée</strong></td><td>Vélopartage, autopartage, BIXI</td></tr>
+          <tr><td>12</td><td><strong>Réseau cyclable</strong></td><td>Pistes et bandes cyclables désignées</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2><span class="num">4</span> Méthode de calcul</h2>
+
+      <h3>4.1 Score MVC par immeuble</h3>
+      <p>Pour chaque immeuble résidentiel, l'outil interroge l'API Overpass et vérifie si au moins un équipement de chaque paramètre se trouve dans un rayon de marche défini. Le résultat pour chaque paramètre est binaire : 1 (au moins un équipement accessible) ou 0 (aucun équipement dans le rayon). Le score MVC de l'immeuble est la moyenne des 12 paramètres, exprimée en pourcentage (0 à 100 %).</p>
+
+      <h3>4.2 Classification des milieux et rayons adaptatifs</h3>
+      <p>Pour tenir compte de la réalité territoriale contrastée des Laurentides (banlieues denses vs territoires ruraux), l'outil applique une classification des milieux basée sur la densité résidentielle, calculée comme suit :</p>
+      <div class="formule">
+        densité (log/km²) = nb_logements ÷ superficie_milieu_habité
+        <span class="note">où superficie_milieu_habité = sup_new si disponible, sinon MUS_VA_SUP (superficie officielle MELCCFP).</span>
+      </div>
+      <table>
+        <thead><tr><th>Milieu</th><th>Seuil densité</th><th>Rayon d'analyse</th><th>Profil type</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dense</strong></td><td>≥ 100 logements/km²</td><td>800 m (marche)</td><td>Milieu urbain compact</td></tr>
+          <tr><td><strong>Intermédiaire</strong></td><td>10 – 99,9 log/km²</td><td>1 500 m (vélo/marche)</td><td>Banlieue ou village structuré</td></tr>
+          <tr><td><strong>Rural</strong></td><td>&lt; 10 log/km²</td><td>2 500 m (cyclable)</td><td>Milieu rural dispersé</td></tr>
+        </tbody>
+      </table>
+
+      <h3>4.3 Score MVC municipal</h3>
+      <p>Le score MVC d'une unité territoriale est calculé comme la proportion d'immeubles résidentiels (pondérée par le nombre de logements) dont le score individuel atteint le seuil de 70 % pour chaque paramètre, agrégée en un score composite de 0 à 100 %. Plus précisément : pour chaque paramètre p, on calcule la proportion de logements dont l'immeuble a au moins un équipement de type p dans le rayon applicable. Le score MVC municipal est la moyenne de ces 12 proportions.</p>
+
+      <h3>4.4 Seuils de classification des scores</h3>
+      <table>
+        <thead><tr><th>Catégorie</th><th>Score</th><th>Interprétation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-complet">Complet</span></td><td>≥ 70 %</td><td>Tous les paramètres ou quasi-tous atteints pour la majorité des logements</td></tr>
+          <tr><td><span class="badge badge-dev">En développement</span></td><td>40 – 69 %</td><td>Profil de service partiel ; potentiel d'amélioration</td></tr>
+          <tr><td><span class="badge badge-incomplet">Incomplet</span></td><td>&lt; 40 %</td><td>Déficits multiples ; prioritaire pour l'action publique</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2><span class="num">5</span> Modes d'analyse</h2>
+      <h3>5.1 Mode municipal (régional)</h3>
+      <p>L'analyse est effectuée sur l'ensemble des immeubles résidentiels d'une municipalité ou de la région entière. Tous les logements à l'intérieur du polygone municipal sont inclus. Ce mode permet la comparaison inter-municipale.</p>
+      <h3>5.2 Mode périmètre d'urbanisation (PU)</h3>
+      <p>L'analyse est restreinte aux immeubles situés à l'intérieur d'un périmètre d'urbanisation défini selon les plans d'aménagement (SADR, schémas d'aménagement des MRC). Ce mode cible le milieu bâti principal et élimine la dilution due aux propriétés rurales ou forestières. La source des périmètres d'urbanisation est le fichier de la Communauté métropolitaine de Montréal (CMM) et des MRC de la région. L'outil identifie 89 périmètres d'urbanisation scorés sur 92 dans la région des Laurentides, couvrant 161 544 logements.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">6</span> Limites méthodologiques</h2>
+      <p>Limites à prendre en compte dans l'interprétation :</p>
+      <ul>
+        <li><strong>Dépendance aux données OSM :</strong> la couverture d'OpenStreetMap est incomplète pour certains types d'équipements, notamment la mobilité partagée (vélopartage, autopartage) dans les zones rurales et les municipalités non métropolitaines. Des équipements existants peuvent être absents de la base, entraînant une sous-estimation du score.</li>
+        <li><strong>Biais de géoréférencement :</strong> les points de service OSM ne correspondent pas toujours à l'entrée principale de l'équipement. Des écarts de quelques centaines de mètres sont possibles.</li>
+        <li><strong>Rayon de proximité binaire :</strong> le modèle retient un seuil binaire (accessible / non accessible) dans un rayon fixe. Il ne tient pas compte de la qualité, de la capacité ou des heures d'ouverture des équipements.</li>
+        <li><strong>Classification des milieux habités (sup_new) :</strong> pour les municipalités à habitat fortement dispersé (ex. Sainte-Sophie, Saint-Colomban), la superficie du milieu habité calculée (sup_new) peut être inférieure à l'aire réellement occupée par les résidences, entraînant une surclassification en milieu dense et des rayons d'analyse trop courts.</li>
+        <li><strong>Mobilité partagée en milieu rural :</strong> l'absence généralisée d'autopartage et de vélopartage en milieu rural (score ≈ 0 %) reflète une réalité territoriale réelle mais est renforcée par le sous-référencement dans OSM.</li>
+        <li><strong>Snapshot temporel :</strong> l'analyse est réalisée à un moment donné. Des services récemment ouverts ou fermés peuvent ne pas être reflétés dans OSM.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="num">7</span> Architecture technique</h2>
+      <h3>7.1 Technologies utilisées</h3>
+      <table>
+        <thead><tr><th>Composante</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Environnement</td><td>Application HTML autonome (fichier unique)</td></tr>
+          <tr><td>Cartographie</td><td>Leaflet.js 1.9.4</td></tr>
+          <tr><td>Fond de carte</td><td>CARTO Positron (OpenStreetMap)</td></tr>
+          <tr><td>Données résidentielles</td><td>GeoJSON embarqué (rôle foncier MAMH 2026)</td></tr>
+          <tr><td>Services de proximité</td><td>API Overpass (temps réel)</td></tr>
+          <tr><td>Langage</td><td>JavaScript (ES6+), HTML5, CSS3</td></tr>
+          <tr><td>Déploiement</td><td>GitHub Pages (statique, sans serveur)</td></tr>
+          <tr><td>Typographie</td><td>Source Sans 3 (Google Fonts)</td></tr>
+          <tr><td>Palette</td><td>Palette institutionnelle CISSS des Laurentides</td></tr>
+        </tbody>
+      </table>
+      <h3>7.2 Fichiers de données embarqués</h3>
+      <table>
+        <thead><tr><th>Variable JS</th><th>Source</th><th>Contenu</th></tr></thead>
+        <tbody>
+          <tr><td><code>GEOJSON</code></td><td><code>munic_2.geojson</code></td><td>Polygones municipaux + attributs MELCCFP V2025-10</td></tr>
+          <tr><td><code>BUILDINGS</code></td><td><code>immeubles_residentiels2026_muni.geojson</code></td><td>Immeubles résidentiels géoréférencés (MAMH 2026)</td></tr>
+          <tr><td><code>PU_DATA</code></td><td><code>laurentides_perimetresurb.json</code></td><td>Périmètres d'urbanisation (92 PU)</td></tr>
+          <tr><td><code>TYPO</code></td><td>Paramètres de service</td><td>Requêtes OSM Overpass par type d'équipement</td></tr>
+          <tr><td><code>SCORED</code></td><td>Résultats pré-calculés</td><td>Scores municipaux exportés depuis l'application</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2><span class="num">8</span> Résultats — région des Laurentides (mai 2026)</h2>
+      <table>
+        <thead><tr><th>Indicateur</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Unités territoriales analysées</td><td>93 (76 municipalités, 15 TNO, 2 territoires autochtones)</td></tr>
+          <tr><td>Unités scorées</td><td>79 (85 %)</td></tr>
+          <tr><td>Unités sans données</td><td>14 (4 TNO aquatiques, 9 TNO terrestres, Doncaster Reserve)</td></tr>
+          <tr><td>Score médian (municipal)</td><td>15 %</td></tr>
+          <tr><td>Score moyen (municipal)</td><td>20,1 % (ÉT = 16,4)</td></tr>
+          <tr><td>Score maximum</td><td>60 % — Sainte-Thérèse (MRC Thérèse-De Blainville)</td></tr>
+          <tr><td>Complets (≥ 70 %)</td><td>0 municipalité</td></tr>
+          <tr><td>En développement (40–69 %)</td><td>15 municipalités (19,0 %)</td></tr>
+          <tr><td>Incomplets (&lt; 40 %)</td><td>64 municipalités (81,0 %)</td></tr>
+          <tr><td>Périmètres d'urbanisation scorés</td><td>89 / 92 (97 %)</td></tr>
+          <tr><td>Score médian (PU)</td><td>26 %</td></tr>
+          <tr><td>Périmètres complets (PU ≥ 70 %)</td><td>2 — Sainte-Adèle #80 (74 %) et Mont-Tremblant #60 (74 %)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>8.1 Résultats par type de milieu</h3>
+      <table>
+        <thead><tr><th>Milieu</th><th>n</th><th>Moy.</th><th>Méd.</th><th>Étendue</th></tr></thead>
+        <tbody>
+          <tr><td>Dense (≥ 100 log/km²)</td><td>30</td><td>26,7 %</td><td>26 %</td><td>1 – 60 %</td></tr>
+          <tr><td>Intermédiaire (10 – 100 log/km²)</td><td>32</td><td>19,3 %</td><td>16 %</td><td>2 – 49 %</td></tr>
+          <tr><td>Rural (&lt; 10 log/km²)</td><td>17</td><td>9,8 %</td><td>10 %</td><td>0 – 31 %</td></tr>
+          <tr class="total"><td>Ensemble scoré</td><td>79</td><td>20,1 %</td><td>15 %</td><td>0 – 60 %</td></tr>
+        </tbody>
+      </table>
+
+      <h3>8.2 Paramètres universellement déficitaires</h3>
+      <p>Deux paramètres sont en déficit dans la quasi-totalité des unités territoriales :</p>
+      <div class="encadre attention">
+        <strong>Service de garde.</strong> 0 / 76 municipalités au-dessus du seuil de 70 % ; 89 / 89 périmètres sous la cible.
+      </div>
+      <div class="encadre attention">
+        <strong>Mobilité partagée.</strong> 1 / 76 municipalités au-dessus de 70 % ; 87 / 89 périmètres sous la cible.
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">9</span> Références et crédits</h2>
+      <p>Vivre en Ville (2026). <em>Paramètres des milieux de vie complets — Référentiel opérationnel</em>. Québec : Vivre en Ville.</p>
+      <p>MAMH (2026). <em>Rôle d'évaluation foncière municipal — données géoréférencées</em>. Ministère des Affaires municipales et de l'Habitation du Québec.</p>
+      <p>MELCCFP / MRN-BAGQ (2025). <em>Sectorisation des divisions administratives du Québec, 20K — Version V2025-10</em>. MRN — Bureau de l'arpentage et de la géomatique du Québec.</p>
+      <p>OpenStreetMap (2026). <em>Données cartographiques collaboratives</em>. © les contributeurs d'OpenStreetMap. Licence Open Database License (ODbL).</p>
+      <p>Robitaille, É. (soumis). Milieux de vie complets dans les Laurentides : cartographie interactive à partir du rôle foncier et d'OpenStreetMap. <em>Geographies</em> (MDPI).</p>
+      <table>
+        <thead><tr><th colspan="2">Contact</th></tr></thead>
+        <tbody>
+          <tr><td>Équipe</td><td>Santé et qualité de vie en milieu municipal</td></tr>
+          <tr><td>Direction de santé publique</td><td>Santé Québec Laurentides</td></tr>
+          <tr><td>Courriel</td><td>eric.robitaille.cissslau@ssss.gouv.qc.ca</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="pied">
+      Note méthodologique — MilieuxVie · Projet C.A.R.T.O.S. · Direction de santé publique, CISSS des Laurentides · v14 — Mai 2026
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var scale = 1;
+    var MIN = 0.8, MAX = 2.0;
+    var wrapper = document.querySelector('.note-mvc');
+    var valeur = document.getElementById('mvc-scale-val');
+
+    function appliquer() {
+      wrapper.style.setProperty('--text-scale', scale);
+      valeur.innerHTML = Math.round(scale * 100) + '&nbsp;%';
+    }
+    window.mvcTaille = function (delta) {
+      scale = Math.min(MAX, Math.max(MIN, Math.round((scale + delta) * 100) / 100));
+      appliquer();
+    };
+    window.mvcReset = function () { scale = 1; appliquer(); };
+    appliquer();
+  })();
+</script>
+</body>
+</html>
