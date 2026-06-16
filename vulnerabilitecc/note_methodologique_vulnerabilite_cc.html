@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ▼▼ TITRE DE L'ONGLET ▼▼ -->
+<title>Note méthodologique — Atlas de la vulnérabilité aux changements climatiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     GABARIT C.A.R.T.O.S. — charte unifiée CISSS des Laurentides
+     Tout est scopé sous .note-cartos : aucune fuite de style
+     dans une page ArcGIS Hub. Le texte est piloté par
+     --text-scale (boutons d'accessibilité).
+     ========================================================= */
+  .note-cartos {
+    --eleve: #21AEAD;
+    --modere: #0482D3;
+    --emergent: #140C74;
+    --faible: #777777;
+    --fond: #ffffff;
+    --texte: #1a1a2e;
+    --texte-sec: #555;
+    --bordure: #dce3ea;
+    --text-scale: 1;
+
+    font-family: 'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+    color: var(--texte);
+    background: var(--fond);
+    line-height: 1.65;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .note-cartos * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* === BARRE D'ACCESSIBILITÉ === */
+  .note-cartos .a11y-barre {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: #ffffff; border-bottom: 1px solid var(--bordure);
+    padding: 8px 24px; box-shadow: 0 1px 4px rgba(20,12,116,0.06);
+  }
+  .note-cartos .a11y-barre .a11y-label {
+    font-size: 12px; font-weight: 600; color: var(--emergent);
+    text-transform: uppercase; letter-spacing: 0.4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .note-cartos .a11y-barre .a11y-label svg { width: 16px; height: 16px; }
+  .note-cartos .a11y-boutons { display: flex; align-items: center; gap: 4px; }
+  .note-cartos .a11y-btn {
+    border: 1px solid var(--bordure); background: #f5f7fa; color: var(--emergent);
+    border-radius: 6px; cursor: pointer; font-family: inherit; font-weight: 700;
+    line-height: 1; padding: 6px 10px; transition: background 0.15s, border-color 0.15s;
+  }
+  .note-cartos .a11y-btn:hover { background: #e6eef5; border-color: var(--modere); }
+  .note-cartos .a11y-btn:focus-visible { outline: 3px solid var(--eleve); outline-offset: 1px; }
+  .note-cartos .a11y-btn.dim  { font-size: 13px; }
+  .note-cartos .a11y-btn.norm { font-size: 15px; }
+  .note-cartos .a11y-btn.reset {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.3px; background: transparent;
+  }
+  .note-cartos .a11y-valeur { font-size: 12px; font-weight: 700; color: var(--modere); min-width: 42px; text-align: center; }
+
+  /* === EN-TÊTE === */
+  .note-cartos .entete {
+    background: linear-gradient(135deg, var(--emergent), var(--modere));
+    color: #fff; padding: 28px 28px 24px; border-radius: 0 0 10px 10px; margin-bottom: 28px;
+  }
+  .note-cartos .entete .etiquette {
+    display: inline-block; background: rgba(255,255,255,0.18);
+    padding: 3px 12px; border-radius: 16px; font-size: calc(11px * var(--text-scale));
+    font-weight: 600; letter-spacing: 0.7px; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .note-cartos .entete h1 { font-size: calc(22px * var(--text-scale)); font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
+  .note-cartos .entete .sous-titre { font-size: calc(14px * var(--text-scale)); opacity: 0.85; font-weight: 300; }
+  .note-cartos .meta-grid {
+    display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 16px;
+    background: rgba(255,255,255,0.1); border-radius: 6px; padding: 10px 14px;
+    font-size: calc(12px * var(--text-scale));
+  }
+  .note-cartos .meta-grid div { display: flex; gap: 6px; }
+  .note-cartos .meta-grid dt {
+    font-weight: 600; opacity: 0.7; font-size: calc(10px * var(--text-scale));
+    text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap;
+  }
+  .note-cartos .meta-grid dd { margin: 0; }
+
+  /* === CONTENU === */
+  .note-cartos .contenu { padding: 0 24px 40px; }
+  .note-cartos section { margin-bottom: 36px; }
+  .note-cartos h2 {
+    font-size: calc(17px * var(--text-scale)); font-weight: 700; color: var(--emergent);
+    margin-bottom: 12px; padding-bottom: 5px; border-bottom: 3px solid var(--eleve);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .note-cartos h2 .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; background: var(--emergent); color: #fff;
+    border-radius: 50%; font-size: calc(12px * var(--text-scale)); font-weight: 700; flex-shrink: 0;
+  }
+  .note-cartos h3 { font-size: calc(14px * var(--text-scale)); font-weight: 700; color: var(--modere); margin: 18px 0 6px; }
+  .note-cartos p { margin-bottom: 10px; text-align: justify; font-size: calc(13.5px * var(--text-scale)); hyphens: auto; }
+  .note-cartos ul, .note-cartos ol { margin: 0 0 10px 20px; font-size: calc(13.5px * var(--text-scale)); }
+  .note-cartos li { margin-bottom: 4px; }
+
+  /* === TABLEAUX === */
+  .note-cartos table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; font-size: calc(12.5px * var(--text-scale)); }
+  .note-cartos thead th {
+    background: var(--emergent); color: #fff; font-weight: 600; text-align: left;
+    padding: 8px 10px; font-size: calc(11px * var(--text-scale)); text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .note-cartos thead th:first-child { border-radius: 5px 0 0 0; }
+  .note-cartos thead th:last-child { border-radius: 0 5px 0 0; }
+  .note-cartos tbody td { padding: 7px 10px; border-bottom: 1px solid var(--bordure); vertical-align: top; }
+  .note-cartos tbody tr:last-child td { border-bottom: none; }
+  .note-cartos tbody tr.total td { font-weight: 700; background: #f5f7fa; }
+  .note-cartos code { background: #eef2f7; padding: 1px 5px; border-radius: 3px; font-size: calc(12px * var(--text-scale)); font-family: 'Courier New', monospace; }
+
+  /* === BADGES (4 niveaux de la charte) === */
+  .note-cartos .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 10px; color: #fff;
+    font-size: calc(11px * var(--text-scale)); font-weight: 600; letter-spacing: 0.2px; white-space: nowrap;
+  }
+  .note-cartos .badge-eleve    { background-color: var(--eleve); }
+  .note-cartos .badge-modere   { background-color: var(--modere); }
+  .note-cartos .badge-emergent { background-color: var(--emergent); }
+  .note-cartos .badge-faible   { background-color: var(--faible); }
+
+  /* === ENCADRÉS === */
+  .note-cartos .encadre {
+    background: #f0f7fa; border-left: 4px solid var(--eleve); border-radius: 0 6px 6px 0;
+    padding: 12px 16px; margin: 12px 0; font-size: calc(13px * var(--text-scale));
+  }
+  .note-cartos .encadre.attention { background: #fef8f0; border-left-color: #e8a838; }
+  .note-cartos .encadre strong { color: var(--emergent); }
+
+  /* === FORMULE === */
+  .note-cartos .formule {
+    background: #f5f7fa; border: 1px solid var(--bordure); border-radius: 6px;
+    padding: 10px 16px; margin: 10px 0; font-family: 'Courier New', monospace;
+    font-size: calc(12.5px * var(--text-scale)); text-align: center; color: var(--emergent); font-weight: 600;
+  }
+
+  /* === PIED === */
+  .note-cartos .pied {
+    text-align: center; font-size: calc(11px * var(--text-scale)); color: var(--faible);
+    padding: 16px 24px; border-top: 1px solid var(--bordure);
+  }
+</style>
+</head>
+<body>
+<div class="note-cartos">
+
+  <!-- ════════ BARRE D'ACCESSIBILITÉ (ne pas modifier) ════════ -->
+  <div class="a11y-barre" role="region" aria-label="Réglage de la taille du texte">
+    <span class="a11y-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M5 19l4-12 4 12M6.5 15h5"/><path d="M14 19l3-9 3 9M15 16h4"/>
+      </svg>
+      Taille du texte
+    </span>
+    <div class="a11y-boutons">
+      <button type="button" class="a11y-btn dim" onclick="ncTaille(-0.1)" aria-label="Diminuer la taille du texte">A−</button>
+      <button type="button" class="a11y-btn norm" onclick="ncTaille(0.1)" aria-label="Augmenter la taille du texte">A+</button>
+      <span class="a11y-valeur" id="nc-scale-val" aria-live="polite">100&nbsp;%</span>
+      <button type="button" class="a11y-btn reset" onclick="ncReset()" aria-label="Rétablir la taille normale du texte">Réinitialiser</button>
+    </div>
+  </div>
+
+  <!-- ════════ EN-TÊTE ════════ -->
+  <div class="entete">
+    <span class="etiquette">Note méthodologique</span>
+    <h1>Atlas interactif de la vulnérabilité aux changements climatiques</h1>
+    <div class="sous-titre">Région des Laurentides (RSS 15) · Projet C.A.R.T.O.S.</div>
+    <dl class="meta-grid">
+      <div><dt>Direction</dt><dd>Santé publique — CISSS des Laurentides</dd></div>
+      <div><dt>Version</dt><dd>v1 — Juin 2026</dd></div>
+      <div><dt>Couverture</dt><dd>RSS 15 — 873 AD · 93 municipalités · 8 MRC</dd></div>
+      <div><dt>Échelle</dt><dd>Aire de diffusion, municipale et MRC</dd></div>
+    </dl>
+  </div>
+
+  <div class="contenu">
+
+    <section>
+      <h2><span class="num">1</span> Contexte et objectifs</h2>
+      <p>Cet outil interactif s'inscrit dans le projet <strong>C.A.R.T.O.S.</strong> de la Direction de santé publique du CISSS des Laurentides. Il rassemble, dans une même interface cartographique, trois familles d'information sur la vulnérabilité aux changements climatiques : un atlas de référence de la vulnérabilité sociale produit par l'Université Laval, un indice climatique composite calculé par télédétection (Google Earth Engine), et un indicateur de verdissement fondé sur la règle du 3-30-300. L'objectif est de soutenir les acteurs municipaux et régionaux dans le repérage des milieux les plus exposés et dans la priorisation des mesures d'adaptation.</p>
+      <p>L'application permet de :</p>
+      <ul>
+        <li>visualiser, à plusieurs échelles territoriales, les composantes de la vulnérabilité (exposition, sensibilité, capacité d'adaptation) ;</li>
+        <li>croiser une lecture <em>sociale</em> (atlas) et une lecture <em>biophysique</em> (climat, végétation) de la vulnérabilité ;</li>
+        <li>repérer les milieux prioritaires pour le verdissement, l'accès aux parcs et la lutte aux îlots de chaleur ;</li>
+        <li>exporter les données agrégées (GeoJSON) pour des analyses locales en SIG.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="num">2</span> Structure de l'outil et sources de données</h2>
+      <p>L'application est organisée en trois modules thématiques, chacun consultable selon trois échelles d'analyse (aire de diffusion, municipalité, MRC) lorsque la donnée le permet :</p>
+      <p>
+        <span class="badge badge-modere">Atlas de vulnérabilité</span>&nbsp;
+        <span class="badge badge-emergent">Indice composite (CVI)</span>&nbsp;
+        <span class="badge badge-eleve">Verdissement 3-30-300</span>
+      </p>
+
+      <h3>2.1 Atlas de la vulnérabilité (Université Laval, 2018)</h3>
+      <p>Couche de référence à l'échelle de l'aire de diffusion (AD), déclinée pour deux familles d'aléas : les <strong>vagues de chaleur</strong> et les <strong>aléas hydrométéorologiques</strong> (inondations et apparentés). Pour chaque aléa, quatre indices sont disponibles : sensibilité, capacité à faire face, vulnérabilité brute (sensibilité − capacité) et vulnérabilité relative (combinaison des quintiles de sensibilité et des terciles de capacité). Pour la chaleur s'ajoutent les indices produits à la demande de l'INSPQ (maladies chroniques, climatisation supposée).</p>
+      <table>
+        <thead><tr><th>Variable</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Couches sources</strong></td><td><code>Vagues_De_Chaleur</code>, <code>Aleas_Hydrometeorologiques</code></td></tr>
+          <tr><td><strong>Unité spatiale</strong></td><td>Aire de diffusion (873 AD)</td></tr>
+          <tr><td><strong>Sources</strong></td><td>Recensement Canada 2016 ; MSSS, MSP, MEES (2016) ; BDTQ 2008 ; CERFO 2013 ; Hydro-Québec 2016 ; INSPQ 2016-2017</td></tr>
+          <tr><td><strong>Traitement</strong></td><td>Département de géographie, Université Laval (2018)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.2 Indice climatique composite (CVI)</h3>
+      <p>Indice de vulnérabilité climatique calculé dans Google Earth Engine selon une logique inspirée du cadre du GIEC (exposition, sensibilité, capacité d'adaptation) et d'une pondération de type analyse multicritère (AHP). Les composantes sont dérivées de produits satellitaires pour l'année 2023.</p>
+      <table>
+        <thead><tr><th>Composante</th><th>Produit / source</th><th>Résolution</th></tr></thead>
+        <tbody>
+          <tr><td>Précipitations (exposition)</td><td>CHIRPS Daily (UCSB-CHG), 2023</td><td>~ 1 km</td></tr>
+          <tr><td>Chaleur de surface (exposition)</td><td>MODIS LST — MOD11A1, mai-juin 2023</td><td>1 km</td></tr>
+          <tr><td>Pente (sensibilité)</td><td>SRTM — USGS/SRTMGL1_003</td><td>~ 30 m → 1 km</td></tr>
+          <tr><td>Indice de végétation (sensibilité)</td><td>MODIS NDVI — MOD13A2, 2023</td><td>1 km</td></tr>
+          <tr><td>Occupation du sol (sensibilité)</td><td>ESA WorldCover v100</td><td>10 m → 1 km</td></tr>
+          <tr><td>Densité de population (capacité)</td><td>GPWv4.11 (CIESIN)</td><td>~ 1 km</td></tr>
+        </tbody>
+      </table>
+      <p>Zone d'étude (boîte englobante) : longitudes −76,20 à −73,50 ; latitudes 45,40 à 48,10. Exports en <code>EPSG:4326</code>.</p>
+
+      <h3>2.3 Verdissement — règle du 3-30-300</h3>
+      <p>Couche matricielle à 100 m de résolution (<code>EPSG:3347</code>) déclinant l'application de la règle du 3-30-300 en foresterie urbaine : 3 arbres visibles depuis chaque logement, 30 % de couvert végétal dans le voisinage et un espace vert à moins de 300 m. Six bandes sont mobilisées.</p>
+      <table>
+        <thead><tr><th>Bande</th><th>Description</th><th>Plage</th></tr></thead>
+        <tbody>
+          <tr><td><code>canopy_pct</code></td><td>Pourcentage de couvert végétal</td><td>0 – 100 %</td></tr>
+          <tr><td><code>dist_parc</code></td><td>Distance au parc le plus proche</td><td>0 – 2000 m</td></tr>
+          <tr><td><code>crit_3 / crit_30 / crit_300</code></td><td>Atteinte de chaque critère (binaire)</td><td>0 ou 1</td></tr>
+          <tr><td><code>crit_count</code></td><td>Nombre de critères atteints</td><td>0 – 3</td></tr>
+        </tbody>
+      </table>
+
+      <div class="encadre attention">
+        <strong>Note.</strong> Les couches ne partagent pas la même temporalité ni la même résolution : l'atlas social repose sur le recensement de 2016, tandis que l'indice composite mobilise des données climatiques de 2023 à une résolution de 1 km. Leur superposition relève d'une lecture complémentaire et non d'une équivalence directe.
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">3</span> Méthode de calcul</h2>
+
+      <h3>3.1 Indice composite</h3>
+      <p>Chaque variable est d'abord ramenée sur une échelle de 0 à 1 par normalisation robuste (min-max bornée sur la zone d'étude). Les composantes sont ensuite combinées par moyenne pondérée, puis l'indice final est lui-même normalisé.</p>
+      <div class="formule">Exposition = 0,5 · Précipitations + 0,5 · Chaleur de surface</div>
+      <div class="formule">Sensibilité = 0,3 · Pente + 0,3 · NDVI + 0,4 · Occupation du sol</div>
+      <div class="formule">Capacité d'adaptation = Densité de population (normalisée)</div>
+      <div class="formule">CVI = norm( Exposition + Sensibilité − Capacité d'adaptation )</div>
+      <table>
+        <thead><tr><th>Composante</th><th>Variables et poids</th></tr></thead>
+        <tbody>
+          <tr><td>Exposition</td><td>Précipitations 0,5 ; chaleur de surface 0,5</td></tr>
+          <tr><td>Sensibilité</td><td>Pente 0,3 ; NDVI 0,3 ; occupation du sol 0,4</td></tr>
+          <tr><td>Capacité d'adaptation</td><td>Densité de population 1,0</td></tr>
+        </tbody>
+      </table>
+
+      <h3>3.2 Agrégation zonale aux échelles AD, municipale et MRC</h3>
+      <p>Les rasters sont ramenés aux unités territoriales par <strong>statistiques zonales</strong> : pour chaque zone, on calcule la moyenne des pixels qui l'intersectent (option <code>all_touched</code> activée), en excluant les valeurs manquantes. Le calcul est effectué sur les géométries originales (non simplifiées) des aires de diffusion, des 93 municipalités et des 8 MRC (obtenues par fusion des municipalités). La couche 3-30-300 étant en <code>EPSG:3347</code>, les zones sont reprojetées avant le calcul.</p>
+
+      <h3>3.3 Classification cartographique</h3>
+      <p>Deux logiques coexistent selon le module :</p>
+      <ul>
+        <li><strong>Indicateurs continus</strong> (CVI et composantes, 3-30-300) : classification en <strong>quintiles</strong> recalculés pour chaque échelle d'affichage, en cinq classes (Très faible → Très élevée). La palette verte-à-rouge de l'auteur est utilisée pour le CVI, l'exposition et la sensibilité ; elle est inversée pour la capacité d'adaptation (une valeur élevée étant favorable) ; une rampe verte séquentielle est employée pour le verdissement.</li>
+        <li><strong>Atlas de vulnérabilité</strong> : classes qualitatives d'origine, avec la symbologie de référence de l'Université Laval et de l'INSPQ.</li>
+      </ul>
+      <div class="encadre">
+        <strong>Pourquoi des quintiles ?</strong> Les moyennes zonales resserrent fortement l'étendue des valeurs (le CVI varie de 0,38 à 0,94 à l'échelle des AD). Une classification en quintiles fait mieux ressortir les contrastes territoriaux qu'un simple étirement 0-1.
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">4</span> Fonctionnalités de l'application</h2>
+      <ul>
+        <li><strong>Sélecteur d'échelle</strong> — bascule entre aire de diffusion, municipalité et MRC pour les indicateurs continus.</li>
+        <li><strong>Faits saillants</strong> — palmarès des MRC et des municipalités (plus et moins préoccupantes) pour l'indicateur affiché, avec moyenne régionale et bornes.</li>
+        <li><strong>Téléchargement GeoJSON</strong> — export de l'indice complet par AD, municipalité ou MRC (CRS84), prêt pour ArcGIS / QGIS.</li>
+        <li><strong>Fond de carte</strong> — choix clair ou foncé ; <strong>réglage de la taille du texte</strong> et infobulles détaillées par unité.</li>
+      </ul>
+      <div class="encadre attention">
+        <strong>Géométries d'affichage.</strong> Les contours sont simplifiés (~ 8 %, méthode de Visvalingam) pour la fluidité web. Ils conviennent à la consultation mais ne doivent pas servir à des mesures de superficie ou de longueur.
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">5</span> Résultats — synthèse régionale</h2>
+      <div class="encadre">
+        <strong>Un gradient nord-sud net.</strong> Le CVI médian s'établit à 0,63 à l'échelle des aires de diffusion (étendue 0,38 – 0,94). La vulnérabilité composite croît du nord rural vers le sud urbanisé de la région.
+      </div>
+      <table>
+        <thead><tr><th>MRC</th><th>CVI moyen</th></tr></thead>
+        <tbody>
+          <tr><td>Mirabel</td><td>0,717</td></tr>
+          <tr><td>Thérèse-De Blainville</td><td>0,673</td></tr>
+          <tr><td>Deux-Montagnes</td><td>0,659</td></tr>
+          <tr><td>La Rivière-du-Nord</td><td>0,625</td></tr>
+          <tr><td>Argenteuil</td><td>0,613</td></tr>
+          <tr><td>Les Laurentides</td><td>0,600</td></tr>
+          <tr><td>Les Pays-d'en-Haut</td><td>0,600</td></tr>
+          <tr><td>Antoine-Labelle</td><td>0,477</td></tr>
+        </tbody>
+      </table>
+      <h3>5.1 Couverture des indicateurs (aires de diffusion)</h3>
+      <table>
+        <thead><tr><th>Indicateur</th><th>AD couvertes</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td>Vulnérabilité (CVI)</td><td>873 / 873</td><td><span class="badge badge-eleve">Complète</span></td></tr>
+          <tr><td>Exposition</td><td>823 / 873</td><td><span class="badge badge-modere">Partielle</span></td></tr>
+          <tr><td>Sensibilité</td><td>812 / 873</td><td><span class="badge badge-modere">Partielle</span></td></tr>
+          <tr><td>Capacité d'adaptation</td><td>823 / 873</td><td><span class="badge badge-modere">Partielle</span></td></tr>
+          <tr><td>Verdissement 3-30-300</td><td>872 / 873</td><td><span class="badge badge-eleve">Quasi complète</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2><span class="num">6</span> Limites méthodologiques</h2>
+      <ul>
+        <li><strong>Étendue des rasters :</strong> l'exposition, la sensibilité et la capacité d'adaptation ne couvrent pas une cinquantaine d'AD à l'extrême ouest (hors emprise de ces exports) ; ces zones apparaissent en gris.</li>
+        <li><strong>Définition de la capacité d'adaptation :</strong> elle repose ici sur la seule densité de population, de sorte qu'une forte densité réduit mécaniquement la vulnérabilité. En contexte de chaleur et de santé, ce choix mérite d'être nuancé, la densité pouvant aussi accroître l'exposition (îlots de chaleur).</li>
+        <li><strong>Traitement du NDVI :</strong> dans la formule de sensibilité, un indice de végétation élevé augmente la sensibilité, ce qui est contre-intuitif puisque la végétation est généralement protectrice. La direction de cette variable gagnerait à être validée.</li>
+        <li><strong>Normalisation relative :</strong> les valeurs sont bornées sur la zone d'étude ; elles sont relatives aux Laurentides et ne sont pas directement comparables à d'autres régions.</li>
+        <li><strong>Effet d'échelle (MAUP) :</strong> des pixels de 1 km agrégés sur des AD parfois petites introduisent un lissage ; le volet biophysique (CVI) et le volet social (atlas) ne partagent pas la même résolution.</li>
+        <li><strong>Décalage temporel :</strong> recensement 2016 pour l'atlas, données climatiques 2023 pour l'indice composite.</li>
+        <li><strong>Incertitudes de télédétection :</strong> couvert végétal et occupation du sol sont dérivés d'images satellitaires, avec les erreurs de classification associées.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="num">7</span> Références et crédits</h2>
+      <p>Groupe d'experts intergouvernemental sur l'évolution du climat (GIEC) — cadre conceptuel de la vulnérabilité (exposition, sensibilité, capacité d'adaptation).</p>
+      <p>Konijnendijk, C. C. (2023). <em>Evidence-based guidelines for greener, healthier, more resilient neighbourhoods : introducing the 3-30-300 rule.</em> Journal of Forestry Research.</p>
+      <p>Université Laval, Département de géographie (2018), en collaboration avec l'INSPQ — indices de vulnérabilité aux vagues de chaleur et aux aléas hydrométéorologiques (RSS 15).</p>
+      <p>Produits satellitaires : CHIRPS (UCSB-CHG) ; MODIS MOD11A1 et MOD13A2 (NASA) ; SRTM (USGS) ; ESA WorldCover v100 ; GPWv4.11 (CIESIN).</p>
+      <table>
+        <thead><tr><th colspan="2">Contact</th></tr></thead>
+        <tbody>
+          <tr><td>Direction de santé publique</td><td>CISSS des Laurentides</td></tr>
+          <tr><td>Courriel</td><td>eric.robitaille.cissslau@ssss.gouv.qc.ca</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="pied">
+      Note méthodologique — Atlas de la vulnérabilité aux changements climatiques · Projet C.A.R.T.O.S. · Direction de santé publique, CISSS des Laurentides · v1 — Juin 2026
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ MOTEUR D'ACCESSIBILITÉ (ne pas modifier) ════════ -->
+<script>
+  (function () {
+    var scale = 1, MIN = 0.8, MAX = 2.0;
+    var wrapper = document.querySelector('.note-cartos');
+    var valeur = document.getElementById('nc-scale-val');
+    function appliquer() {
+      wrapper.style.setProperty('--text-scale', scale);
+      valeur.innerHTML = Math.round(scale * 100) + '&nbsp;%';
+    }
+    window.ncTaille = function (delta) {
+      scale = Math.min(MAX, Math.max(MIN, Math.round((scale + delta) * 100) / 100));
+      appliquer();
+    };
+    window.ncReset = function () { scale = 1; appliquer(); };
+    appliquer();
+  })();
+</script>
+</body>
+</html>
