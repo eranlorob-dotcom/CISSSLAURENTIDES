@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription — Formation Cartographie interactive et géoweb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --marine-deep:#072a3d;
+    --marine:#0b3a53;
+    --teal:#1f8a98;
+    --teal-bright:#2bb3c0;
+    --gold:#d4a437;
+    --ink:#22343a;
+    --muted:#5d7178;
+    --line:#d7e3e6;
+    --paper:#f4f8f9;
+    --white:#ffffff;
+    --error:#b3402f;
+    --ok:#1f7a52;
+    --fs:1rem;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  html{font-size:var(--fs)}
+  body{
+    margin:0;
+    font-family:"Source Sans 3",system-ui,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Accessibilité — contrôle de taille de police (signature CARTOS) */
+  .a11y{
+    position:sticky;top:0;z-index:20;
+    display:flex;justify-content:flex-end;align-items:center;gap:.5rem;
+    padding:.4rem .9rem;
+    background:var(--marine-deep);
+    color:#cfe3e8;font-size:.85rem;
+  }
+  .a11y span{opacity:.85}
+  .a11y button{
+    font-family:inherit;cursor:pointer;
+    border:1px solid rgba(255,255,255,.3);
+    background:transparent;color:#eaf4f6;
+    border-radius:6px;padding:.15rem .6rem;line-height:1;
+  }
+  .a11y button:hover{background:rgba(255,255,255,.12)}
+  .a11y button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 1.1rem 3rem}
+
+  /* En-tête — dégradé marine→teal, filet doré */
+  header.hero{
+    margin:0 -1.1rem;
+    padding:2.4rem 1.6rem 1.9rem;
+    background:linear-gradient(135deg,var(--marine-deep) 0%,var(--marine) 45%,var(--teal) 130%);
+    color:#eaf4f6;
+    border-bottom:4px solid var(--gold);
+  }
+  .hero .eyebrow{
+    font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin:0 0 .5rem;
+  }
+  .hero h1{
+    font-size:clamp(1.55rem,4.2vw,2.3rem);
+    font-weight:900;line-height:1.12;margin:0 0 .55rem;letter-spacing:-.01em;
+  }
+  .hero p.lede{margin:0;color:#cfe3e8;max-width:54ch;font-size:1.02rem}
+  .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.15rem}
+  .chip{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+    padding:.32rem .7rem;border-radius:999px;font-size:.86rem;font-weight:600;
+  }
+  .chip b{color:var(--gold);font-weight:700}
+
+  /* Formulaire */
+  form{margin-top:1.6rem}
+  fieldset{
+    border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--white);padding:1.3rem 1.3rem 1.45rem;margin:0 0 1.1rem;
+  }
+  legend{
+    font-weight:700;color:var(--marine);padding:0 .5rem;font-size:1.08rem;
+    display:flex;align-items:baseline;gap:.55rem;
+  }
+  legend .n{
+    font-size:.78rem;color:var(--teal);font-weight:700;
+    border:1.5px solid var(--teal);border-radius:50%;
+    width:1.5rem;height:1.5rem;display:inline-flex;align-items:center;justify-content:center;
+  }
+  .field{margin-top:1.05rem}
+  .field:first-of-type{margin-top:.7rem}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media (max-width:540px){.row{grid-template-columns:1fr}}
+  label.lab{display:block;font-weight:600;margin-bottom:.32rem;font-size:.95rem}
+  .req{color:var(--error);font-weight:700}
+  .hint{display:block;color:var(--muted);font-size:.85rem;margin-top:.25rem}
+  input[type=text],input[type=email],select,textarea{
+    width:100%;font-family:inherit;font-size:1rem;color:var(--ink);
+    background:var(--white);border:1.5px solid var(--line);border-radius:8px;
+    padding:.6rem .7rem;
+  }
+  textarea{min-height:84px;resize:vertical}
+  input:focus-visible,select:focus-visible,textarea:focus-visible{
+    outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(43,179,192,.22);
+  }
+
+  .opts{display:grid;gap:.5rem;margin-top:.2rem}
+  .opt{
+    display:flex;gap:.65rem;align-items:flex-start;
+    border:1.5px solid var(--line);border-radius:8px;padding:.6rem .75rem;cursor:pointer;
+  }
+  .opt:hover{border-color:var(--teal-bright);background:#f1fafb}
+  .opt input{margin-top:.18rem;accent-color:var(--teal);width:1.05rem;height:1.05rem;flex:none}
+  .opt .ot{font-weight:600}
+  .opt .od{display:block;color:var(--muted);font-weight:400;font-size:.88rem}
+  .opt:has(input:checked){border-color:var(--teal);background:#ecf8f9}
+  .opt:has(input:focus-visible){box-shadow:0 0 0 3px rgba(43,179,192,.22)}
+
+  .consent{display:flex;gap:.65rem;align-items:flex-start;font-size:.95rem}
+  .consent input{margin-top:.2rem;accent-color:var(--teal);width:1.1rem;height:1.1rem;flex:none}
+
+  .actions{margin-top:.4rem}
+  button.submit{
+    font-family:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;
+    color:var(--white);background:var(--teal);border:none;border-radius:9px;
+    padding:.85rem 1.6rem;letter-spacing:.01em;
+    transition:background .15s ease,transform .05s ease;
+  }
+  button.submit:hover{background:var(--marine)}
+  button.submit:active{transform:translateY(1px)}
+  button.submit:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  button.submit[disabled]{background:var(--muted);cursor:progress}
+
+  #status{margin-top:1.1rem;border-radius:8px;padding:0;font-size:.97rem}
+  #status.show{padding:.85rem 1rem}
+  #status.ok{background:#e7f5ee;border:1px solid #b6dcc6;color:var(--ok)}
+  #status.err{background:#fbece9;border:1px solid #e6c1ba;color:var(--error)}
+  #status h3{margin:.1rem 0 .3rem;font-size:1.02rem}
+  #status p{margin:0}
+
+  footer{margin-top:1.8rem;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:1.1rem}
+  footer a{color:var(--teal)}
+  .panel-hidden{display:none}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+  }
+</style>
+</head>
+<body>
+
+  <div class="a11y" role="group" aria-label="Taille du texte">
+    <span>Taille du texte</span>
+    <button type="button" id="fsDown" aria-label="Réduire la taille du texte">A−</button>
+    <button type="button" id="fsReset" aria-label="Taille du texte par défaut">A</button>
+    <button type="button" id="fsUp" aria-label="Augmenter la taille du texte">A+</button>
+  </div>
+
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">Communauté de pratique · Santé Québec Laurentides</p>
+      <h1>Cartographie interactive et géoweb</h1>
+      <p class="lede">Formation 4 h 30 pour professionnels de santé publique : QGIS, Leaflet.js, l'IA comme appui à l'apprentissage, et publication via GitHub Pages.</p>
+      <div class="chips">
+        <span class="chip"><b>Date</b> 8 juillet 2026</span>
+        <span class="chip"><b>Format</b> à distance, par Teams</span>
+        <span class="chip"><b>Durée</b> 4 h 30 (avec pause)</span>
+      </div>
+    </header>
+
+    <form id="reg" novalidate>
+
+      <fieldset>
+        <legend><span class="n">1</span> Coordonnées</legend>
+        <div class="row">
+          <div class="field">
+            <label class="lab" for="prenom">Prénom <span class="req">*</span></label>
+            <input type="text" id="prenom" name="prenom" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label class="lab" for="nom">Nom <span class="req">*</span></label>
+            <input type="text" id="nom" name="nom" autocomplete="family-name" required>
+          </div>
+        </div>
+        <div class="field">
+          <label class="lab" for="courriel">Courriel professionnel <span class="req">*</span></label>
+          <input type="email" id="courriel" name="courriel" autocomplete="email" required>
+          <span class="hint">La confirmation d'inscription sera envoyée à cette adresse.</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="n">2</span> Profil professionnel</legend>
+        <div class="field">
+          <label class="lab" for="organisation">Organisation ou établissement <span class="req">*</span></label>
+          <input type="text" id="organisation" name="organisation" autocomplete="organization" required>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label class="lab" for="fonction">Fonction ou titre</label>
+            <input type="text" id="fonction" name="fonction" autocomplete="organization-title">
+          </div>
+          <div class="field">
+            <label class="lab" for="territoire">Territoire ou MRC</label>
+            <input type="text" id="territoire" name="territoire" placeholder="ex. : MRC de Papineau">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="n">3</span> Cohorte souhaitée</legend>
+        <div class="opts" role="radiogroup" aria-label="Cohorte souhaitée">
+          <label class="opt">
+            <input type="radio" name="cohorte" value="8 juillet 2026 (Teams)" checked>
+            <span><span class="ot">8 juillet 2026 — par Teams</span><span class="od">Cohorte principale annoncée à la communauté de pratique.</span></span>
+          </label>
+          <label class="opt">
+            <input type="radio" name="cohorte" value="Automne 2026">
+            <span><span class="ot">Automne 2026</span><span class="od">Cohorte ultérieure ; les dates seront communiquées.</span></span>
+          </label>
+          <label class="opt">
+            <input type="radio" name="cohorte" value="Indifférent">
+            <span><span class="ot">Indifférent</span><span class="od">Inscrivez-moi à la prochaine cohorte disponible.</span></span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="n">4</span> Profil technique et prérequis</legend>
+        <div class="field">
+          <label class="lab" for="niveau">Niveau d'expérience avec les SIG / données spatiales</label>
+          <select id="niveau" name="niveau">
+            <option value="Aucune">Aucune expérience</option>
+            <option value="Notions de base" selected>Notions de base</option>
+            <option value="Intermédiaire">Intermédiaire</option>
+            <option value="Avancée">Avancée</option>
+          </select>
+          <span class="hint">Aucune expérience en programmation n'est requise.</span>
+        </div>
+        <div class="field">
+          <label class="lab">Préparatifs déjà effectués (cochez ce qui s'applique)</label>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="prerequis" value="Compte GitHub créé"><span class="ot">Compte GitHub créé</span></label>
+            <label class="opt"><input type="checkbox" name="prerequis" value="QGIS installé"><span class="ot">QGIS 3.34+ installé</span></label>
+            <label class="opt"><input type="checkbox" name="prerequis" value="VS Code + Git installés"><span class="ot">VS Code et Git installés</span></label>
+            <label class="opt"><input type="checkbox" name="prerequis" value="Connexion stable confirmée"><span class="ot">Connexion internet stable confirmée</span></label>
+          </div>
+          <span class="hint">Pas d'inquiétude si rien n'est encore prêt : les consignes d'installation suivront avant la formation.</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="n">5</span> Besoins et questions</legend>
+        <div class="field">
+          <label class="lab" for="besoins">Besoins particuliers (accessibilité, accommodements)</label>
+          <textarea id="besoins" name="besoins"></textarea>
+        </div>
+        <div class="field">
+          <label class="lab" for="commentaires">Questions ou commentaires</label>
+          <textarea id="commentaires" name="commentaires"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="n">6</span> Consentement</legend>
+        <label class="consent">
+          <input type="checkbox" id="consent" name="consent" required>
+          <span>J'autorise la collecte des renseignements ci-dessus aux seules fins de la gestion de mon inscription et de l'organisation de la formation. <span class="req">*</span></span>
+        </label>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" class="submit" id="submitBtn">Confirmer mon inscription</button>
+      </div>
+
+      <div id="status" role="status" aria-live="polite"></div>
+    </form>
+
+    <footer>
+      <p>Programme complet de la formation :
+        <a href="https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/formation/Formation_Cartographie_QGIS_Leaflet_4h30.html" target="_blank" rel="noopener">consulter le détail des modules</a>.</p>
+      <p>Projet C.A.R.T.O.S. — Direction de santé publique, Santé Québec Laurentides.</p>
+    </footer>
+  </div>
+
+<script>
+  /* ====== CONFIGURATION ======
+     Collez ici l'URL de votre application web Google Apps Script
+     (voir README.md, étape « Déployer le script »). */
+  const SCRIPT_URL = "COLLER_ICI_URL_APPS_SCRIPT";
+  /* ============================ */
+
+  // Contrôle de taille de police
+  const root = document.documentElement;
+  const sizes = [0.9, 1.0, 1.125, 1.25];
+  let idx = 1;
+  const applyFS = () => root.style.setProperty('--fs', sizes[idx] + 'rem');
+  document.getElementById('fsUp').onclick   = () => { idx = Math.min(idx+1, sizes.length-1); applyFS(); };
+  document.getElementById('fsDown').onclick = () => { idx = Math.max(idx-1, 0); applyFS(); };
+  document.getElementById('fsReset').onclick = () => { idx = 1; applyFS(); };
+
+  const form = document.getElementById('reg');
+  const btn = document.getElementById('submitBtn');
+  const statusEl = document.getElementById('status');
+
+  function setStatus(type, title, msg){
+    statusEl.className = 'show ' + type;
+    statusEl.innerHTML = '<h3>' + title + '</h3><p>' + msg + '</p>';
+    statusEl.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+
+    if (SCRIPT_URL.startsWith('COLLER')){
+      setStatus('err','Configuration requise',
+        'L\u2019URL du script n\u2019a pas encore \u00e9t\u00e9 ajout\u00e9e. Voir le fichier README.md, \u00e9tape de d\u00e9ploiement.');
+      return;
+    }
+
+    // Rassembler les données
+    const payload = new URLSearchParams();
+    payload.append('prenom', form.prenom.value.trim());
+    payload.append('nom', form.nom.value.trim());
+    payload.append('courriel', form.courriel.value.trim());
+    payload.append('organisation', form.organisation.value.trim());
+    payload.append('fonction', form.fonction.value.trim());
+    payload.append('territoire', form.territoire.value.trim());
+    payload.append('cohorte', (form.querySelector('input[name="cohorte"]:checked')||{}).value || '');
+    payload.append('niveau', form.niveau.value);
+    const prereq = [...form.querySelectorAll('input[name="prerequis"]:checked')].map(c=>c.value).join(' ; ');
+    payload.append('prerequis', prereq);
+    payload.append('besoins', form.besoins.value.trim());
+    payload.append('commentaires', form.commentaires.value.trim());
+
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = 'Envoi en cours\u2026';
+
+    try{
+      // Requête « simple » (form-urlencoded) : pas de préflight CORS.
+      await fetch(SCRIPT_URL, { method:'POST', body: payload });
+      form.reset();
+      setStatus('ok','Inscription envoyée',
+        'Merci ! Votre inscription a bien été transmise. Un courriel de confirmation vous sera acheminé. Les détails de connexion Teams et les consignes d\u2019installation suivront avant la formation.');
+    }catch(err){
+      setStatus('err','L\u2019envoi a échoué',
+        'La transmission n\u2019a pas pu être complétée. Vérifiez votre connexion et réessayez. Si le problème persiste, écrivez à l\u2019organisateur de la formation.');
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
+</script>
+</body>
+</html>
