@@ -191,7 +191,7 @@
     <dl class="meta-grid">
       <div><dt>Direction</dt><dd>Santé publique — CISSS des Laurentides</dd></div>
       <div><dt>Affiliation</dt><dd>CISSS Laurentides / ESPUM, UdeM / CReSP / CARES-INRS</dd></div>
-      <div><dt>Version</dt><dd>v1 — Juin 2026</dd></div>
+      <div><dt>Version</dt><dd>v2 — Juin 2026</dd></div>
       <div><dt>Échelles</dt><dd>877 AD · 89 mun. · 8 MRC</dd></div>
     </dl>
   </div>
@@ -202,9 +202,9 @@
       <h2><span class="num">1</span> Présentation et portée</h2>
       <p>L'application cartographique présente, pour la région des Laurentides (région sociosanitaire 15), un portrait de l'habitation, une estimation des besoins futurs en logements et une lecture de ces besoins sous l'angle de l'équité. Elle s'adresse aux personnes élues et aux professionnelles et professionnels de l'aménagement à l'échelle municipale et régionale.</p>
       <p>La démarche s'inspire de deux cadres reconnus : l'Orientation gouvernementale en aménagement du territoire n<sup>o</sup> 4 (MAMH, 2025) et la HNR Method du ministère du Logement de la Colombie-Britannique. L'application en retient le cœur commun — la croissance anticipée des ménages — et y ajoute une lentille d'équité.</p>
-      <p>Le besoin en logements repose directement sur les projections de ménages de l'ISQ (édition 2025), la source officielle, et l'outil affiche aussi bien les croissances que les décroissances projetées. Outre la carte interactive, l'application comprend un onglet Faits saillants qui synthétise les résultats régionaux et propose une carte-synthèse par municipalité (section 6).</p>
+      <p>Le besoin en logements repose directement sur les projections de ménages de l'ISQ (édition 2025), la source officielle, converties en logements à construire (section 4) ; l'outil affiche aussi bien les croissances que les décroissances projetées. Outre la carte interactive, l'application comprend un onglet Faits saillants qui synthétise les résultats régionaux et propose une carte-synthèse par municipalité (section 6), ainsi qu'un export des données en GeoJSON aux trois échelles (section 7).</p>
       <div class="encadre">
-        <strong>Portée.</strong> Outil d'aide à la décision, non réglementaire. Le « besoin » chiffré correspond à la composante croissance des ménages — la plus importante en volume — et non à l'ensemble du besoin réglementaire (qui inclurait aussi les besoins impérieux, l'itinérance et l'ajustement du taux d'inoccupation ; voir section 8).
+        <strong>Portée.</strong> Outil d'aide à la décision, non réglementaire. Le « besoin » chiffré correspond aux <strong>logements à construire</strong> pour absorber la croissance des ménages — la composante la plus importante en volume — ajustée d'un coussin d'inoccupation (taux cible de 3 %, section 4.3). Il ne couvre pas l'ensemble du besoin réglementaire, qui inclurait aussi les besoins impérieux, l'itinérance, le remplacement du parc vétuste et le rattrapage d'un éventuel déficit (voir section 9).
       </div>
     </section>
 
@@ -221,7 +221,7 @@
           <tr><td>Limites administratives</td><td>MRN / Données Québec (SDA)</td><td>—</td><td>2025</td></tr>
         </tbody>
       </table>
-      <p><em>Note :</em> le besoin provient désormais directement des projections de ménages de l'ISQ. Les données Environics ne servent plus qu'au portrait et à la désagrégation du besoin vers l'AD (section 4.4).</p>
+      <p><em>Note :</em> le besoin provient désormais directement des projections de ménages de l'ISQ. Les données Environics ne servent plus qu'au portrait et à la désagrégation du besoin vers l'AD (section 4.5).</p>
     </section>
 
     <section>
@@ -241,27 +241,35 @@
     </section>
 
     <section>
-      <h2><span class="num">4</span> Le besoin en logements : la croissance des ménages</h2>
+      <h2><span class="num">4</span> Le besoin en logements : des ménages aux logements à construire</h2>
 
       <h3>4.1 Principe</h3>
-      <p>Le besoin estimé correspond au nombre de logements requis pour accueillir la croissance anticipée des ménages sur un horizon de 20 ans (2021 → 2041), conformément à l'horizon des schémas d'aménagement. Un ménage occupe un logement ; le nombre de ménages additionnels donne le nombre de logements à prévoir.</p>
+      <p>Le besoin estimé correspond au nombre de <strong>logements à construire</strong> pour accueillir la croissance anticipée des ménages sur un horizon de 20 ans (2021 → 2041), conformément à l'horizon des schémas d'aménagement. Le calcul se fait en deux temps : on établit d'abord la croissance projetée des ménages (le besoin démographique de base), puis on la convertit en logements à construire en tenant compte d'un coussin d'inoccupation nécessaire au bon fonctionnement du marché (section 4.3).</p>
 
       <h3>4.2 Source : les projections de ménages de l'ISQ</h3>
-      <p>Le besoin repose directement sur les projections de ménages privés de l'ISQ (édition 2025), diffusées à la fois par MRC et par municipalité, selon trois scénarios — Référence, Fort et Faible. Le besoin est simplement l'écart entre 2041 et 2021 :</p>
-      <div class="formule">Besoin (2021–2041) = Ménages ISQ (2041) − Ménages ISQ (2021)</div>
-      <p>Le scénario Référence sert de valeur principale ; Fort et Faible bornent la fourchette. Aucune conversion n'est nécessaire : on emploie les ménages projetés tels que produits par l'ISQ. À l'échelle régionale, le nombre de ménages passe d'environ 279 300 (2021) à 328 800 (2041), soit une hausse de +17,7 % au scénario de référence.</p>
+      <p>La croissance des ménages repose directement sur les projections de ménages privés de l'ISQ (édition 2025), diffusées à la fois par MRC et par municipalité, selon trois scénarios — Référence, Fort et Faible. Elle correspond à l'écart entre 2041 et 2021 :</p>
+      <div class="formule">Croissance des ménages (2021–2041) = Ménages ISQ (2041) − Ménages ISQ (2021)</div>
+      <p>Le scénario Référence sert de valeur principale ; Fort et Faible bornent la fourchette. À l'échelle régionale, le nombre de ménages passe d'environ 279 300 (2021) à 328 800 (2041), soit une croissance de +49 500 ménages (+17,7 %) au scénario de référence.</p>
       <p><strong>Couverture :</strong> les 8 MRC et 78 municipalités sont couvertes par les projections de l'ISQ. Onze très petites municipalités et territoires non organisés (TNO) sans ménages permanents n'y figurent pas ; ils sont signalés « projection non disponible » plutôt que forcés à une valeur.</p>
 
-      <h3>4.3 Pourquoi les ménages croissent plus vite que la population</h3>
+      <h3>4.3 Des ménages aux logements à construire</h3>
+      <p>Un parc résidentiel sain n'est jamais occupé à 100 % : une part des logements doit demeurer vacante pour permettre la mobilité résidentielle et éviter une surchauffe des loyers. Pour loger la croissance des ménages tout en maintenant un marché fluide, il faut donc bâtir un peu plus que le nombre de ménages additionnels. On convertit la croissance des ménages en logements à construire en la divisant par le complément du taux d'inoccupation cible (<code>v</code>) :</p>
+      <div class="formule">Logements à construire = Croissance des ménages ÷ (1 − v),&nbsp;&nbsp;avec v = 3 %</div>
+      <p>Le seuil de 3 % est le point d'équilibre généralement retenu au Québec et au Canada pour un marché locatif fonctionnel (SCHL ; Stratégie québécoise en habitation, MAMH). Le facteur d'ajustement est donc de 1,031. Cette logique « démographique » — confronter le stock de logements à la demande des ménages en tenant compte d'un taux d'inoccupation cible — est celle employée notamment par le Directeur parlementaire du budget pour estimer l'écart d'offre. À l'échelle régionale, la croissance de +49 500 ménages correspond ainsi à environ <strong>+51 000 logements à construire</strong> d'ici 2041 (scénario de référence).</p>
+      <div class="encadre attention">
+        <strong>Paramètre posé, non mesuré localement.</strong> Les taux d'inoccupation observés ne sont publiés par la SCHL que pour les centres de bonne taille ; pour les petites municipalités rurales, le 3 % est appliqué uniformément comme <em>cible</em> et non comme mesure locale. L'origine précise de ce seuil est par ailleurs débattue, certaines analyses estimant qu'un taux davantage favorable aux locataires se situerait plus haut. Un seul facteur est retenu (le coussin d'inoccupation) ; le remplacement du parc et le rattrapage d'un déficit existant ne sont pas inclus (section 9), de sorte que le besoin réel est généralement <em>supérieur</em> à la valeur affichée.
+      </div>
+
+      <h3>4.4 Pourquoi les ménages croissent plus vite que la population</h3>
       <p>La projection de ménages de l'ISQ n'est pas une simple transposition de la projection de population : elle laisse évoluer le taux de chefs de ménage selon la structure d'âge. Comme la population vieillit et que les ménages plus âgés sont plus petits, le nombre de ménages croît plus rapidement que la population. C'est pourquoi le +17,7 % de ménages dépasse la croissance de population correspondante (de l'ordre de +14 %). Une version antérieure de l'outil convertissait la population en ménages à taux constant, ce qui sous-estimait cet effet ; le recours direct aux projections de ménages de l'ISQ le corrige.</p>
 
-      <h3>4.4 Descente à l'échelle de l'AD</h3>
+      <h3>4.5 Descente à l'échelle de l'AD</h3>
       <p>L'ISQ ne projette pas les ménages à l'échelle de l'AD. La croissance projetée de chaque municipalité est donc répartie entre ses AD au prorata de leur part — en conservant le signe — dans la variation locale anticipée par les données Environics :</p>
-      <div class="formule">Besoin (AD) = Besoin ISQ (municipalité) × Part signée de l'AD dans la variation Environics</div>
-      <p>Le total des AD demeure ainsi égal au chiffre municipal de l'ISQ, et la répartition fine peut comporter des décroissances là où le patron local en indique. À cette échelle, le besoin est présenté comme indicatif (incertitude infra-municipale élevée).</p>
+      <div class="formule">Croissance des ménages (AD) = Croissance ISQ (municipalité) × Part signée de l'AD dans la variation Environics</div>
+      <p>Le total des AD demeure ainsi égal au chiffre municipal de l'ISQ, et la répartition fine peut comporter des décroissances là où le patron local en indique. Le facteur d'inoccupation (section 4.3) s'applique ensuite de façon identique à chaque échelle pour obtenir les logements à construire. À cette échelle, le besoin est présenté comme indicatif (incertitude infra-municipale élevée).</p>
 
-      <h3>4.5 Croissances et décroissances</h3>
-      <p>Le mode Besoin utilise une échelle de couleur divergente, avec un seuil à zéro : des tons rouge et orangé signalent les décroissances de ménages, des tons verts et dorés les croissances. Au scénario de référence, 19 municipalités et 178 AD sont en décroissance projetée — incluant des banlieues matures (Sainte-Thérèse, Rosemère) et des municipalités de villégiature des secteurs nord. La fiche d'une unité affiche les trois scénarios, les valeurs négatives apparaissant en rouge.</p>
+      <h3>4.6 Croissances et décroissances</h3>
+      <p>Le mode Besoin utilise une échelle de couleur divergente, avec un seuil à zéro : des tons rouge et orangé signalent les décroissances de ménages, des tons verts et dorés les croissances. Au scénario de référence, 19 municipalités et 178 AD sont en décroissance projetée — incluant des banlieues matures (Sainte-Thérèse, Rosemère) et des municipalités de villégiature des secteurs nord. La fiche d'une unité affiche les trois scénarios, les valeurs négatives apparaissant en rouge. La carte classe les unités selon le <em>taux</em> de croissance des ménages, tandis que les fiches et cartes-synthèses affichent le <em>nombre</em> de logements à construire. Le coussin d'inoccupation ne s'applique qu'aux besoins positifs : pour les unités en décroissance, la valeur affichée correspond à la baisse de ménages elle-même.</p>
     </section>
 
     <section>
@@ -271,7 +279,7 @@
         <li><strong>Axe horizontal — le besoin :</strong> la croissance des ménages (section 4). Les secteurs en décroissance se classent dans le tiers inférieur.</li>
         <li><strong>Axe vertical — la vulnérabilité :</strong> au choix, la défavorisation matérielle (INSPQ), le revenu médian (faible = vulnérable) ou la part de ménages locataires.</li>
       </ul>
-      <p>Chaque axe est découpé en trois classes d'effectifs égaux (terciles), produisant une grille bivariée à neuf cases. La case réunissant un besoin élevé et une vulnérabilité élevée est mise en évidence : c'est la « priorité équité ».</p>
+      <p>Chaque axe est découpé en trois classes d'effectifs égaux (terciles), produisant une grille bivariée à neuf cases. La case réunissant un besoin élevé et une vulnérabilité élevée est mise en évidence : c'est la « priorité équité ». Comme le facteur d'inoccupation est uniforme, le classement par terciles est identique qu'il porte sur la croissance des ménages ou sur les logements à construire.</p>
 
       <table class="grille-equite">
         <thead>
@@ -311,24 +319,40 @@
       <p>L'onglet Faits saillants offre une synthèse calculée en direct pour le scénario ISQ sélectionné (modifiable dans l'onglet). Il comprend trois niveaux de lecture.</p>
 
       <h3>6.1 Indicateurs régionaux</h3>
-      <p>Six indicateurs résument la RSS 15 (sommes des MRC) : ménages en 2021 ; ménages projetés en 2041 ; logements à prévoir d'ici 2041 (écart, en nombre et en %) ; fourchette Faible–Fort ; nombre de municipalités en priorité équité ; et nombre de municipalités en décroissance de ménages.</p>
+      <p>Six indicateurs résument la RSS 15 (sommes des MRC) : ménages en 2021 ; ménages projetés en 2041 ; logements à construire d'ici 2041 (en nombre, accompagné du pourcentage de croissance des ménages) ; fourchette Faible–Fort ; nombre de municipalités en priorité équité ; et nombre de municipalités en décroissance de ménages.</p>
 
       <h3>6.2 Classements</h3>
       <p>Quatre palmarès cliquables (chacun situant la municipalité sur la carte) : plus forte croissance en logements, plus forte décroissance en logements, plus forte croissance en pourcentage, et municipalités en priorité équité.</p>
 
       <h3>6.3 Cartes-synthèses municipales</h3>
-      <p>Une carte-synthèse par municipalité (89), classée par ampleur du besoin, affiche les ménages, la tenure, la défavorisation et le besoin d'ici 2041. Les municipalités en priorité équité sont bordées d'or, celles en décroissance bordées de rouge (besoin négatif). Un champ de recherche filtre la liste ; un clic recentre la carte sur la municipalité et ouvre sa fiche.</p>
+      <p>Une carte-synthèse par municipalité (89), classée par ampleur du besoin, affiche les ménages, la tenure, la défavorisation et les logements à construire d'ici 2041. Les municipalités en priorité équité sont bordées d'or, celles en décroissance bordées de rouge (besoin négatif). Un champ de recherche filtre la liste ; un clic recentre la carte sur la municipalité et ouvre sa fiche.</p>
 
       <h3>6.4 Définition de la « priorité équité »</h3>
       <p>Une municipalité est en priorité équité lorsqu'elle se situe simultanément dans le tiers supérieur de la croissance des ménages et de la défavorisation matérielle. Le classement est recalculé à chaque changement de scénario.</p>
     </section>
 
     <section>
-      <h2><span class="num">7</span> Limites et précautions</h2>
+      <h2><span class="num">7</span> Export des données (GeoJSON)</h2>
+      <p>Trois boutons de téléchargement — un par échelle d'analyse (MRC, municipalité, AD) — permettent d'exporter les données en GeoJSON directement depuis le panneau de l'application. L'export s'effectue entièrement côté client (aucun serveur) et produit un fichier <code>FeatureCollection</code> par échelle.</p>
+      <p>Chaque fichier reprend l'ensemble des propriétés sources de l'échelle (ménages, mode d'occupation, défavorisation, type de construction, projections ISQ brutes…) et y ajoute les indicateurs calculés par l'outil, pour les <strong>trois scénarios ISQ</strong> :</p>
+      <table>
+        <thead><tr><th>Champ ajouté</th><th>Contenu</th></tr></thead>
+        <tbody>
+          <tr><td><code>croissance_men_ref</code> · <code>_fort</code> · <code>_faible</code></td><td>Croissance des ménages 2021→2041 (nombre entier)</td></tr>
+          <tr><td><code>logements_ref</code> · <code>_fort</code> · <code>_faible</code></td><td>Logements à construire = croissance ÷ (1 − 3 %), arrondis</td></tr>
+          <tr><td><code>besoin_pct_ref</code> · <code>_fort</code> · <code>_faible</code></td><td>Croissance des ménages, en pourcentage</td></tr>
+        </tbody>
+      </table>
+      <p>Un bloc <code>metadata</code> rappelle la source ISQ et la formule du besoin, de sorte que le fichier reste auto-documenté lorsqu'il est partagé. Les coordonnées sont en <strong>EPSG:4326 (WGS84)</strong> ; le fichier se charge donc sans reprojection dans QGIS ou ArcGIS. Les trois scénarios sont toujours inclus, indépendamment de celui affiché à l'écran, et les unités en décroissance conservent une valeur de logements égale à la baisse de ménages (le coussin d'inoccupation ne s'appliquant qu'aux besoins positifs).</p>
+    </section>
+
+    <section>
+      <h2><span class="num">8</span> Limites et précautions</h2>
       <ul>
         <li><strong>Besoin à l'AD indicatif :</strong> l'ISQ ne projetant pas à l'AD, le besoin y est réparti depuis le total municipal (signé) selon le patron Environics ; à lire comme une répartition, non comme un chiffre par AD. Le portrait et l'équité, observés, demeurent solides à l'AD.</li>
+        <li><strong>Taux d'inoccupation cible posé :</strong> le coussin de 3 % est un paramètre conventionnel appliqué uniformément, et non une mesure locale (section 4.3). Le besoin retient un seul facteur d'ajustement.</li>
         <li><strong>Deux estimations de ménages 2021 :</strong> le besoin emploie la base 2021 de l'ISQ ; le portrait et la tenure reposent sur l'estimation Environics de l'année courante. Les deux diffèrent légèrement (environ 279 000 contre 297 000 pour la région).</li>
-        <li><strong>Composante unique :</strong> l'outil chiffre la croissance des ménages, non l'ensemble des composantes du besoin réglementaire.</li>
+        <li><strong>Composante principale :</strong> l'outil chiffre les logements à construire pour absorber la croissance des ménages (coussin d'inoccupation inclus), non l'ensemble des composantes du besoin réglementaire.</li>
         <li><strong>Classes relatives :</strong> les classements et la priorité équité reposent sur des terciles : ils situent les municipalités les unes par rapport aux autres, non par rapport à un seuil absolu.</li>
         <li><strong>Couverture ISQ partielle :</strong> onze TNO et très petites municipalités sont sans projection de ménages (« non disponible »).</li>
         <li><strong>Outil non réglementaire :</strong> aide à la décision et au dialogue, sans valeur de schéma d'aménagement.</li>
@@ -336,21 +360,24 @@
     </section>
 
     <section>
-      <h2><span class="num">8</span> Améliorations prévues</h2>
+      <h2><span class="num">9</span> Améliorations prévues</h2>
       <ul>
-        <li><strong>Composantes additionnelles du besoin :</strong> besoins impérieux (recensement / HART), itinérance (dénombrement régional du MSSS) et ajustement du taux d'inoccupation (SCHL), pour s'approcher d'un besoin total au sens des méthodes du MAMH et de la C.-B.</li>
+        <li><strong>Composantes additionnelles du besoin :</strong> besoins impérieux (recensement / HART), itinérance (dénombrement régional du MSSS), remplacement du parc vétuste et rattrapage d'un éventuel déficit, pour s'approcher d'un besoin total au sens des méthodes du MAMH et de la C.-B. (le coussin d'inoccupation, lui, est désormais intégré — section 4.3).</li>
         <li><strong>Ventilation par type et par âge :</strong> exploiter les projections de ménages de l'ISQ par groupe d'âge (déjà dans les fichiers) pour anticiper les besoins selon les types de logements.</li>
         <li><strong>Axes de vulnérabilité supplémentaires :</strong> intégrer les besoins impérieux comme axe d'équité.</li>
-        <li><strong>Export des faits saillants :</strong> exportation des classements et cartes-synthèses (PDF ou tableur) pour les rencontres avec les partenaires.</li>
+        <li><strong>Export des faits saillants :</strong> exportation des classements et cartes-synthèses (PDF ou tableur), en complément de l'export GeoJSON des données déjà offert (section 7).</li>
       </ul>
     </section>
 
     <section>
-      <h2><span class="num">9</span> Sources et références</h2>
+      <h2><span class="num">10</span> Sources et références</h2>
       <p>Institut de la statistique du Québec (2025). <em>Projections de ménages privés, scénarios 2025 — MRC et municipalités du Québec, 2021-2051</em>.</p>
       <p>Institut de la statistique du Québec (2025). <em>Perspectives démographiques du Québec et de ses régions, mise à jour 2025</em>.</p>
       <p>Ministère des Affaires municipales et de l'Habitation (2025). <em>Diagnostic, besoins et moyens en matière d'habitation — document d'accompagnement, OGAT n<sup>o</sup> 4</em>.</p>
+      <p>Ministère des Affaires municipales et de l'Habitation (2024). <em>Stratégie québécoise en habitation</em>.</p>
       <p>Ministry of Housing (Colombie-Britannique) (2024). <em>Guidelines for Housing Needs Reports — HNR Method Technical Guidance</em>.</p>
+      <p>Société canadienne d'hypothèques et de logement (SCHL). <em>Enquête sur les logements locatifs / Rapport sur le marché locatif</em>.</p>
+      <p>Directeur parlementaire du budget (2025). <em>Formation de ménages et stock de logements : estimation de l'écart de l'offre de logements en 2035</em>.</p>
       <p>Institut national de santé publique du Québec. <em>Indice de défavorisation matérielle et sociale</em>.</p>
       <p>Statistique Canada. <em>Recensement de la population 2021</em>.</p>
       <p>Environics Analytics / Esri. <em>Données d'enrichissement démographique et résidentiel</em>.</p>
@@ -365,7 +392,7 @@
     </section>
 
     <div class="pied">
-      Note méthodologique — Diagnostic habitation et équité territoriale · Direction de santé publique, CISSS des Laurentides · v1 — Juin 2026
+      Note méthodologique — Diagnostic habitation et équité territoriale · Direction de santé publique, CISSS des Laurentides · v2 — Juin 2026
     </div>
 
   </div>
