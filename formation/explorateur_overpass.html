@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Explorateur Overpass (OSM) — CISSS des Laurentides</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== Charte CISSS-DSP (voir references/identite.md) ===== */
+:root{
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+  --accent:var(--teal); --accent2:var(--blue);
+  --fs:1rem;
+}
+body.theme-light{
+  --bg:#ffffff; --bg2:#f4f6fc; --panel:#ffffff; --panel2:#eef1fb;
+  --line:#d8def0; --line2:#e6eaf7; --ink:#14143a; --ink2:#3a3f6e; --muted:#7a80a8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Source Sans 3",system-ui,sans-serif;font-size:var(--fs);
+  background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+.mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+a{color:var(--teal)}
+
+/* ===== Shell ===== */
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+header.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;
+  background:linear-gradient(100deg,var(--bg2) 0%,#161354 60%,#1c2a8a 100%);
+  border-bottom:1px solid var(--line);z-index:1200}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.mark{width:40px;height:40px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
+  background:radial-gradient(circle at 32% 28%,var(--teal),var(--navy) 75%);
+  box-shadow:0 0 0 1px #21aead33,inset 0 0 14px #00000040}
+.mark svg{width:22px;height:22px}
+.title h1{font-size:1.22rem;font-weight:700;line-height:1.12}
+.title h1 span{color:var(--teal)}
+.title p{font-size:.8rem;color:var(--ink2);font-weight:400;margin-top:2px}
+.spacer{flex:1 1 auto}
+.tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;letter-spacing:.4px;padding:4px 11px;border-radius:999px;
+  background:#21aead1f;color:var(--teal);border:1px solid #21aead40;white-space:nowrap}
+.fontctl{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.fontctl button{background:transparent;border:0;color:var(--ink2);cursor:pointer;width:30px;height:30px;font:inherit;font-weight:700}
+.fontctl button:hover{background:#ffffff14;color:var(--ink)}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink2);
+  border-radius:9px;padding:7px 12px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--teal);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ===== Main ===== */
+.main{position:relative;display:grid;grid-template-columns:400px 1fr;min-height:0;transition:grid-template-columns .3s ease}
+.main.collapsed{grid-template-columns:0 1fr}
+.panel{width:400px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;
+  padding:18px 18px 26px;scrollbar-width:thin;scrollbar-color:var(--line) transparent;transition:transform .3s ease}
+.panel::-webkit-scrollbar{width:8px}
+.panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.main.collapsed .panel{transform:translateX(-100%)}
+#map{position:relative;height:100%;width:100%;background:var(--bg);outline:none}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.leaflet-control-attribution{background:#070620cc!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--teal)!important}
+
+/* ===== Panneau ===== */
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:700;margin:20px 0 9px;display:flex;align-items:center;gap:8px}
+.eyebrow:first-of-type{margin-top:4px}
+.eyebrow .num{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--teal);color:#04201f;font-size:.7rem;font-weight:900}
+.intro{font-size:.86rem;color:var(--ink2);line-height:1.55;margin-bottom:2px}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.cat{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;padding:9px 10px;cursor:pointer;font-size:.84rem;font-weight:600;color:var(--ink2);transition:border-color .15s,transform .12s}
+.cat:hover{border-color:var(--teal-l);transform:translateY(-1px);color:var(--ink)}
+.cat.active{border-color:var(--teal);box-shadow:0 0 0 1px var(--teal);color:var(--white)}
+.cat .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+.cat .em{font-size:1rem}
+textarea#ql{width:100%;height:148px;resize:vertical;background:var(--bg2);color:var(--ink);
+  border:1px solid var(--line);border-radius:10px;padding:11px 12px;
+  font-family:"JetBrains Mono",monospace;font-size:.78rem;line-height:1.5;tab-size:2}
+textarea#ql:focus{outline:none;border-color:var(--teal)}
+textarea#ql::selection{background:#21aead55}
+.row{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.row label{font-size:.76rem;color:var(--muted)}
+select#endpoint{flex:1;appearance:none;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  border-radius:9px;padding:7px 10px;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer}
+select#endpoint:focus{outline:none;border-color:var(--teal)}
+.run{width:100%;margin-top:10px;background:var(--teal);color:#04201f;border:0;border-radius:10px;
+  padding:11px;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer}
+.run:hover{background:var(--teal-l)}
+.run:disabled{background:var(--line);color:var(--muted);cursor:not-allowed}
+.status{margin-top:11px;font-size:.84rem;line-height:1.5;color:var(--ink2);min-height:20px}
+.status .count{font-family:"JetBrains Mono";font-size:1.5rem;font-weight:700;color:var(--teal)}
+.status.err{color:#ff9a9a}
+.status.warn{color:#f0c46a}
+.results-list{margin-top:10px;max-height:230px;overflow-y:auto;scrollbar-width:thin}
+.res{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid var(--line2);font-size:.82rem;cursor:pointer}
+.res:hover{color:var(--white)}
+.res .rdot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.res .rn{flex:1;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res:hover .rn{color:var(--white)}
+.res .rt{font-size:.68rem;color:var(--muted)}
+
+/* ===== Légende (bas-gauche) ===== */
+#legend{position:absolute;bottom:20px;left:20px;z-index:600;background:var(--panel);
+  background:color-mix(in srgb,var(--panel) 96%,transparent);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:12px;padding:12px 15px;min-width:190px}
+.legend-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px}
+.legend-item{display:flex;align-items:center;gap:9px;font-size:.84rem;color:var(--ink2)}
+.legend-item .lsw{width:14px;height:14px;border-radius:50%;border:1px solid #ffffff66;flex:0 0 auto}
+.legend-sub{font-size:.7rem;color:var(--muted);margin-top:7px}
+
+/* ===== Méthodo ===== */
+#methodo{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:600}
+#methodo-btn{background:var(--panel);border:1px solid var(--line);color:var(--ink2);
+  padding:7px 15px;border-radius:999px;font:inherit;font-size:.78rem;cursor:pointer}
+#methodo-btn:hover{color:var(--ink);border-color:var(--teal)}
+#methodo-content{display:none;position:absolute;bottom:42px;left:50%;transform:translateX(-50%);
+  width:min(580px,92vw);background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;font-size:.82rem;line-height:1.6;color:var(--ink2);box-shadow:0 12px 40px #0008;max-height:72vh;overflow-y:auto}
+#methodo-content.show{display:block}
+#methodo-content h4{color:var(--ink);font-size:.95rem;margin:12px 0 6px}
+#methodo-content h4:first-child{margin-top:0}
+#methodo-content code{font-family:"JetBrains Mono",monospace;font-size:.76rem;color:var(--teal);
+  background:var(--panel2);padding:1px 6px;border-radius:5px}
+#methodo-content pre{background:var(--bg2);border:1px solid var(--line2);border-radius:9px;padding:11px 13px;
+  margin:8px 0;overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:.74rem;line-height:1.5;color:var(--ink2)}
+#methodo-content ul{margin:8px 0 8px 18px}
+#methodo-content li{margin-bottom:5px}
+.src{font-size:.72rem;color:var(--muted);line-height:1.5;border-top:1px solid var(--line2);padding-top:10px;margin-top:12px}
+
+/* ===== Tooltip ===== */
+.poi-tooltip{background:var(--panel2)!important;border:1px solid var(--line)!important;color:var(--ink)!important;
+  border-radius:9px!important;padding:9px 13px!important;font-family:"Source Sans 3"!important;
+  font-size:.8rem!important;box-shadow:0 6px 20px #0007!important;max-width:260px}
+.poi-tooltip .tt-nom{font-weight:700;font-size:.92rem}
+.poi-tooltip .tt-tag{color:var(--muted);font-size:.72rem;margin-top:2px}
+.poi-tooltip .tt-tag b{color:var(--teal-l);font-weight:600}
+.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{border-color:transparent!important}
+
+/* ===== Bascule + responsive ===== */
+#panel-toggle{position:absolute;top:14px;left:400px;z-index:700;background:var(--panel);
+  border:1px solid var(--line);color:var(--ink);width:26px;height:34px;border-radius:0 8px 8px 0;
+  cursor:pointer;font-size:13px;transition:left .3s ease}
+#panel-toggle.shifted{left:0}
+@media(max-width:800px){
+  .main{grid-template-columns:1fr}
+  .main.collapsed{grid-template-columns:1fr}
+  .panel{position:absolute;inset:auto 0 0 0;width:auto;height:62vh;border-right:none;border-top:1px solid var(--line);z-index:800}
+  .main.collapsed .panel{transform:translateY(100%)}
+  #panel-toggle{display:none}
+  #legend{bottom:auto;top:14px;left:14px}
+  #methodo{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.4"/></svg></div>
+      <div class="title">
+        <h1>Explorateur <span>Overpass</span></h1>
+        <p>Module 3 — interroger OpenStreetMap en direct (Laurentides)</p>
+      </div>
+    </div>
+    <span class="badge">FORMATION GÉOWEB</span>
+    <div class="spacer"></div>
+    <div class="tools">
+      <div class="fontctl"><button onclick="setFont(-1)" title="Réduire le texte">A−</button><button onclick="setFont(1)" title="Agrandir le texte">A+</button></div>
+      <button class="btn" onclick="toggleTheme()" id="theme-btn">☾ Thème</button>
+      <button class="btn" onclick="exportGeoJSON()" id="export-btn" disabled>⬇ GeoJSON</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="panel" id="panel">
+      <div class="eyebrow"><span class="num">1</span> Choisir un type de lieu</div>
+      <p class="intro">Chaque bouton remplit une requête <span class="mono">Overpass QL</span> que vous pouvez ensuite modifier.</p>
+      <div class="cat-grid" id="cats"></div>
+
+      <div class="eyebrow"><span class="num">2</span> Requête Overpass QL</div>
+      <p class="intro">La requête interroge la <strong>zone visible</strong> sur la carte (déplacez/zoomez pour changer la zone), puis cliquez sur Lancer.</p>
+      <textarea id="ql" spellcheck="false"></textarea>
+      <div class="row">
+        <label for="endpoint">Serveur :</label>
+        <select id="endpoint">
+          <option value="https://overpass-api.de/api/interpreter">overpass-api.de (officiel)</option>
+          <option value="https://overpass.private.coffee/api/interpreter">overpass.private.coffee (miroir)</option>
+        </select>
+      </div>
+      <button class="run" id="run" onclick="runQuery()">▶ Lancer la requête</button>
+
+      <div class="eyebrow"><span class="num">3</span> Résultats</div>
+      <div class="status" id="status">Choisissez un type de lieu, puis lancez la requête.</div>
+      <div class="results-list" id="results"></div>
+    </aside>
+
+    <div id="map">
+      <button id="panel-toggle" onclick="togglePanel()">◀</button>
+      <div id="legend">
+        <div class="legend-title">Couche affichée</div>
+        <div class="legend-item"><span class="lsw" id="lg-sw" style="background:var(--teal)"></span><span id="lg-lab">—</span></div>
+        <div class="legend-sub" id="lg-sub">Aucun résultat pour l'instant</div>
+      </div>
+      <div id="methodo">
+        <button id="methodo-btn" onclick="toggleMethodo()">ⓘ Comprendre l'API Overpass</button>
+        <div id="methodo-content">
+          <h4>Qu'est-ce que l'API Overpass ?</h4>
+          <p>Overpass est une API <strong>en lecture seule</strong> qui interroge la base de données d'OpenStreetMap. On lui envoie une requête écrite en <em>Overpass QL</em> et elle renvoie les objets correspondants (souvent en JSON).</p>
+          <h4>Trois types d'objets OSM</h4>
+          <ul>
+            <li><code>node</code> — un point (ex. une pharmacie, un arrêt de bus)</li>
+            <li><code>way</code> — une ligne ou un polygone (ex. le contour d'un hôpital, une rue)</li>
+            <li><code>relation</code> — un groupe d'objets (ex. un parcours d'autobus)</li>
+          </ul>
+          <p>Chaque objet porte des <strong>étiquettes</strong> (tags) clé=valeur, comme <code>amenity=pharmacy</code>. Le raccourci <code>nwr</code> interroge les trois types à la fois.</p>
+          <h4>Anatomie de la requête</h4>
+          <pre>[out:json][timeout:25];
+(
+  nwr[amenity=pharmacy](45.7,-74.1,45.9,-73.9);
+);
+out center;</pre>
+          <p><code>[out:json]</code> = format de sortie · les 4 nombres = la zone <code>(sud,ouest,nord,est)</code> · <code>out center;</code> donne un point central aux polygones, pratique pour les afficher.</p>
+          <h4>L'appel en JavaScript (ce que fait cet outil)</h4>
+          <pre>fetch('https://overpass-api.de/api/interpreter', {
+  method: 'POST',
+  body: 'data=' + encodeURIComponent(requete)
+})
+.then(r => r.json())
+.then(data => { /* data.elements */ });</pre>
+          <h4>Bon voisinage</h4>
+          <p>Le serveur public est gratuit mais partagé : limitez la zone (zoom suffisant), évitez les requêtes répétées inutiles, et créditez toujours OpenStreetMap. Pour un usage intensif, on héberge sa propre instance.</p>
+          <p class="src">
+            Sources : OpenStreetMap (données sous licence ODbL) · API Overpass (overpass-api.de) · miroir Private.coffee · CISSS des Laurentides — Direction de santé publique · Mise à jour 2026-06-30
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Charte : helpers ===== */
+var CAT=['#21AEAD','#0482D3','#5b54c0','#5fd0cf','#6aa6e8','#0b6e6c','#6aa6e8','#9aa0d0'];
+function fmt(n){return n==null?'—':Number(n).toLocaleString('fr-CA');}
+
+/* ===== Catalogue de catégories (étiquettes OSM) ===== */
+var CATEGORIES=[
+  {id:'pharmacy', em:'💊', nom:'Pharmacies',      sel:['nwr[amenity=pharmacy]']},
+  {id:'hospital', em:'🏥', nom:'Hôpitaux',        sel:['nwr[amenity=hospital]']},
+  {id:'clinic',   em:'🩺', nom:'Cliniques / CLSC',sel:['nwr[amenity=clinic]','nwr[healthcare=centre]']},
+  {id:'doctors',  em:'🧑‍⚕️', nom:'Médecins',     sel:['nwr[amenity=doctors]']},
+  {id:'dentist',  em:'🦷', nom:'Dentistes',       sel:['nwr[amenity=dentist]']},
+  {id:'school',   em:'🏫', nom:'Écoles',          sel:['nwr[amenity=school]']},
+  {id:'bus',      em:'🚌', nom:'Arrêts de bus',   sel:['node[highway=bus_stop]']},
+  {id:'grocery',  em:'🛒', nom:'Épiceries',       sel:['nwr[shop=supermarket]','nwr[shop=convenience]']},
+  {id:'park',     em:'🌳', nom:'Parcs',           sel:['nwr[leisure=park]']},
+  {id:'bike',     em:'🚲', nom:'Stationn. vélo',  sel:['node[amenity=bicycle_parking]']}
+];
+CATEGORIES.forEach(function(c,i){c.color=CAT[i%CAT.length];});
+var currentCat=CATEGORIES[0];
+var lastGeoJSON=null;
+
+/* ===== Carte (Laurentides) ===== */
+var isNarrow=window.innerWidth<860;
+var map=L.map('map',{zoomControl:true,minZoom:6,maxZoom:19})
+          .setView([45.78,-74.00], isNarrow?11:12);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · CISSS des Laurentides',
+  maxZoom:19, subdomains:'abcd'}).addTo(map);
+
+var resultLayer=L.layerGroup().addTo(map);
+
+/* ===== Construire la grille de catégories ===== */
+function buildCats(){
+  var host=document.getElementById('cats');
+  CATEGORIES.forEach(function(c){
+    var el=document.createElement('div');
+    el.className='cat'; el.id='cat-'+c.id;
+    el.innerHTML='<span class="dot" style="background:'+c.color+'"></span><span class="em">'+c.em+'</span>'+c.nom;
+    el.onclick=function(){ selectCat(c.id); };
+    host.appendChild(el);
+  });
+}
+function selectCat(id){
+  currentCat=CATEGORIES.find(function(c){return c.id===id;});
+  document.querySelectorAll('.cat').forEach(function(e){e.classList.remove('active');});
+  document.getElementById('cat-'+id).classList.add('active');
+  document.getElementById('ql').value=buildQuery(currentCat);
+  document.getElementById('lg-sw').style.background=currentCat.color;
+  document.getElementById('lg-lab').textContent=currentCat.em+' '+currentCat.nom;
+}
+
+/* ===== Construire la requête QL sur la zone visible ===== */
+function buildQuery(cat){
+  var b=map.getBounds();
+  var s=b.getSouth().toFixed(4), w=b.getWest().toFixed(4),
+      n=b.getNorth().toFixed(4), e=b.getEast().toFixed(4);
+  var box='('+s+','+w+','+n+','+e+')';
+  var body=cat.sel.map(function(sel){return '  '+sel+box+';';}).join('\n');
+  return '[out:json][timeout:25];\n(\n'+body+'\n);\nout center;';
+}
+/* Quand on bouge la carte, rafraîchir la bbox dans la requête (sans relancer) */
+map.on('moveend',function(){
+  if(currentCat) document.getElementById('ql').value=buildQuery(currentCat);
+});
+
+/* ===== Lancer la requête ===== */
+function setStatus(html,cls){var s=document.getElementById('status');s.className='status'+(cls?' '+cls:'');s.innerHTML=html;}
+function runQuery(){
+  if(map.getZoom()<9){ setStatus('Zoomez davantage (zoom ≥ 9) pour limiter la zone et garder la requête rapide.','warn'); return; }
+  var q=document.getElementById('ql').value.trim();
+  var endpoint=document.getElementById('endpoint').value;
+  var btn=document.getElementById('run'); btn.disabled=true; btn.textContent='⏳ Requête en cours…';
+  setStatus('Interrogation d\'OpenStreetMap…');
+  resultLayer.clearLayers();
+  document.getElementById('results').innerHTML='';
+  fetch(endpoint,{method:'POST',body:'data='+encodeURIComponent(q)})
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status+(r.status===429?' (trop de requêtes — patientez puis réessayez)':'')); return r.json(); })
+    .then(function(data){ render(data.elements||[]); })
+    .catch(function(err){ setStatus('Erreur : '+err.message+'.<br>Essayez l\'autre serveur, réduisez la zone, ou réessayez dans un instant.','err'); })
+    .finally(function(){ btn.disabled=false; btn.textContent='▶ Lancer la requête'; });
+}
+
+/* ===== Afficher les résultats ===== */
+function coordsOf(el){
+  if(el.type==='node') return [el.lat, el.lon];
+  if(el.center) return [el.center.lat, el.center.lon];
+  return null;
+}
+function labelOf(el){
+  var t=el.tags||{};
+  return t.name || t['name:fr'] || t.operator || t.brand || '(sans nom)';
+}
+function render(elements){
+  var feats=[], list=document.getElementById('results'), shown=0;
+  list.innerHTML='';
+  elements.forEach(function(el){
+    var c=coordsOf(el); if(!c) return;
+    var nom=labelOf(el), t=el.tags||{};
+    L.circleMarker(c,{radius:6,fillColor:currentCat.color,fillOpacity:.82,weight:1.4,color:'#ffffff88',opacity:.9})
+      .addTo(resultLayer)
+      .bindTooltip(tooltipHTML(nom,t),{className:'poi-tooltip',direction:'top',offset:[0,-6]});
+    feats.push({type:'Feature',
+      properties:Object.assign({osm_id:el.type+'/'+el.id, nom:nom}, t),
+      geometry:{type:'Point',coordinates:[c[1],c[0]]}});
+    if(shown<150){
+      var r=document.createElement('div'); r.className='res';
+      r.innerHTML='<span class="rdot" style="background:'+currentCat.color+'"></span><span class="rn">'+escapeHTML(nom)+'</span><span class="rt mono">'+el.type+'</span>';
+      r.onclick=(function(cc){return function(){ map.setView(cc,Math.max(map.getZoom(),15)); };})(c);
+      list.appendChild(r); shown++;
+    }
+  });
+  lastGeoJSON={type:'FeatureCollection',features:feats};
+  document.getElementById('export-btn').disabled=feats.length===0;
+  if(feats.length===0){
+    setStatus('Aucun résultat dans cette zone. Élargissez la vue ou changez de type de lieu.','warn');
+    document.getElementById('lg-sub').textContent='0 résultat';
+  }else{
+    setStatus('<span class="count">'+fmt(feats.length)+'</span> '+(feats.length>1?'lieux trouvés':'lieu trouvé')+' pour <strong>'+currentCat.nom+'</strong>.');
+    document.getElementById('lg-sub').textContent=fmt(feats.length)+' résultat'+(feats.length>1?'s':'')+(shown<feats.length?' (liste tronquée à 150)':'');
+  }
+}
+function tooltipHTML(nom,t){
+  var rows='';
+  ['amenity','healthcare','shop','leisure','highway','operator','opening_hours','phone','addr:street'].forEach(function(k){
+    if(t[k]) rows+='<div class="tt-tag"><b>'+k+'</b> = '+escapeHTML(t[k])+'</div>';
+  });
+  return '<div class="tt-nom">'+escapeHTML(nom)+'</div>'+rows;
+}
+function escapeHTML(s){return String(s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+
+/* ===== Export GeoJSON ===== */
+function exportGeoJSON(){
+  if(!lastGeoJSON) return;
+  var out=Object.assign({metadata:{source:'OpenStreetMap via Overpass API (ODbL)',
+    couche:currentCat.nom, organisme:'CISSS des Laurentides — DSP', date:'2026-06-30'}}, lastGeoJSON);
+  var blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='overpass_'+currentCat.id+'.geojson'; a.click();
+}
+
+/* ===== Contrôles UI ===== */
+var fs=1;
+function setFont(d){fs=Math.max(.85,Math.min(1.3,fs+d*.08));document.documentElement.style.setProperty('--fs',fs+'rem');}
+function toggleMethodo(){document.getElementById('methodo-content').classList.toggle('show');}
+function toggleTheme(){
+  document.body.classList.toggle('theme-light');
+  var light=document.body.classList.contains('theme-light');
+  document.getElementById('theme-btn').textContent=light?'☀ Thème':'☾ Thème';
+}
+var panelOpen=true;
+function togglePanel(){
+  panelOpen=!panelOpen;
+  document.querySelector('.main').classList.toggle('collapsed',!panelOpen);
+  var t=document.getElementById('panel-toggle');
+  t.classList.toggle('shifted',!panelOpen); t.textContent=panelOpen?'◀':'▶';
+}
+
+/* ===== Démarrage ===== */
+buildCats();
+selectCat('pharmacy');
+</script>
+</body>
+</html>
