@@ -1,0 +1,44 @@
+# Mots-clés de veille — organisés par thème
+# Tu peux ajouter/retirer des lignes librement. Une requête par ligne.
+# FR et EN mélangés volontairement (couverture plus large sur PubMed/Semantic Scholar).
+
+scientifique:
+  # Requêtes envoyées à PubMed et Semantic Scholar
+  - "built environment AND health"
+  - "health impact assessment urban planning"
+  - "walkability health outcomes"
+  - "active transportation public health"
+  - "3-30-300 urban greening"
+  - "urban densification health"
+  - "food desert OR food swamp"
+  - "milieux de vie favorables santé"
+  - "rural health territorial planning"
+  - "climate vulnerability urban health"
+  - "universal accessibility urban design"
+  - "health geomatics OR geospatial health"
+  - "neighborhood built environment physical activity"
+  - "aménagement territoire santé publique"
+
+medias:
+  # Mots-clés cherchés dans les flux RSS et Google News
+  - "aménagement du territoire"
+  - "urbanisme santé"
+  - "densification"
+  - "transport actif"
+  - "désert alimentaire"
+  - "îlot de chaleur"
+  - "accessibilité universelle"
+  - "3-30-300"
+  - "verdissement urbain"
+  - "évaluation impact santé"
+  - "santé publique environnement bâti"
+  - "urban planning health"
+
+# Nombre max de résultats à considérer par source, par exécution
+limites:
+  pubmed_max_results: 15
+  semantic_scholar_max_results: 15
+  rss_max_par_flux: 10
+
+# Fenêtre temporelle pour la littérature scientifique (jours)
+fenetre_jours_scientifique: 8

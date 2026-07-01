@@ -1,0 +1,14 @@
+# Flux RSS des médias à surveiller
+# Ajoute/retire des flux librement.
+
+flux:
+  - nom: "Radio-Canada - Actualités"
+    url: "https://ici.radio-canada.ca/rss/4159"
+  - nom: "Le Devoir - Actualités"
+    url: "https://www.ledevoir.com/rss/section/actualites.xml"
+  - nom: "La Presse - Actualités"
+    url: "https://www.lapresse.ca/actualites/rss"
+  - nom: "Google News - environnement bâti santé (QC)"
+    url: "https://news.google.com/rss/search?q=am%C3%A9nagement+urbain+sant%C3%A9+publique+when:8d&hl=fr-CA&gl=CA&ceid=CA:fr"
+  - nom: "Google News - urbanisme densification (QC)"
+    url: "https://news.google.com/rss/search?q=densification+urbaine+Qu%C3%A9bec+when:8d&hl=fr-CA&gl=CA&ceid=CA:fr"
