@@ -229,11 +229,12 @@ Consignes :
 
 # ---------- Email ----------
 
-def send_email(html_body, subject, gmail_user, gmail_app_password, recipient, titre_digest):
+def send_email(html_body, subject, gmail_user, gmail_app_password, recipients, titre_digest):
+    """recipients : liste de chaînes (adresses courriel)."""
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = gmail_user
-    msg["To"] = recipient
+    msg["To"] = ", ".join(recipients)
 
     full_html = f"""
     <html>
@@ -253,7 +254,7 @@ def send_email(html_body, subject, gmail_user, gmail_app_password, recipient, ti
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(gmail_user, gmail_app_password)
-        server.sendmail(gmail_user, recipient, msg.as_string())
+        server.sendmail(gmail_user, recipients, msg.as_string())
 
 
 # ---------- Main ----------
@@ -262,7 +263,8 @@ def main():
     anthropic_key = os.environ["ANTHROPIC_API_KEY"]
     gmail_user = os.environ["GMAIL_USER"]
     gmail_app_password = os.environ["GMAIL_APP_PASSWORD"]
-    recipient = os.environ["RECIPIENT_EMAIL"]
+    # RECIPIENT_EMAIL peut contenir une ou plusieurs adresses séparées par des virgules
+    recipients = [addr.strip() for addr in os.environ["RECIPIENT_EMAIL"].split(",") if addr.strip()]
 
     keywords_cfg, rss_cfg = load_config()
     limites = keywords_cfg["limites"]
@@ -296,7 +298,7 @@ def main():
 
     print("Envoi du courriel...")
     subject = f"{titre_digest} — {datetime.now().strftime('%d %b %Y')}"
-    send_email(html_digest, subject, gmail_user, gmail_app_password, recipient, titre_digest)
+    send_email(html_digest, subject, gmail_user, gmail_app_password, recipients, titre_digest)
 
     print("Terminé.")
 
