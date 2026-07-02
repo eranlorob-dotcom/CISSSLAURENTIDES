@@ -1,0 +1,30 @@
+name: Veille hebdomadaire - environnements alimentaires
+
+on:
+  schedule:
+    # Tous les mardis à 7h00 heure de Montréal (11h00 UTC, ou 12h00 UTC en hiver EST)
+    - cron: "0 11 * * 2"
+  workflow_dispatch: {}
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du repo
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer les dépendances
+        run: pip install -r veille-alimentaire/requirements.txt
+
+      - name: Exécuter la veille
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER_ALIMENTAIRE }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD_ALIMENTAIRE }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL_ALIMENTAIRE }}
+        run: python veille-alimentaire/scripts/veille.py
