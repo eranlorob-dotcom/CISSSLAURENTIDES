@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'écosystème de transfert de connaissances — DSP des Laurentides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#140C74;
+    --navy-deep:#0B0645;
+    --teal:#21AEAD;
+    --teal-dark:#0F8584;
+    --lteal:#90F1E9;
+    --blue:#0482D3;
+    --mist:#E8FCFA;
+    --ink:#2B2B36;
+    --muted:#6C6C7A;
+    --line:#D8E8E6;
+    --card:#FFFFFF;
+    
+    /* Couleurs pour les chantiers en équipe */
+    --chantier: #E85D04;
+    --chantier-bg: #FFECD1;
+    --chantier-text: #9D3900;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:#F5FBFA;
+    color:var(--ink);
+    line-height:1.45;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px 64px}
+
+  /* ---------- entête ---------- */
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:44px 0 52px;
+    position:relative;
+    overflow:hidden;
+  }
+  header .wrap{padding-bottom:0}
+  .kicker{
+    font-size:.72rem;font-weight:700;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--lteal);margin-bottom:14px;
+  }
+  header h1{
+    font-size:clamp(1.6rem,3.6vw,2.5rem);
+    font-weight:900;line-height:1.12;max-width:21ch;
+  }
+  header p.lede{
+    margin-top:14px;max-width:62ch;font-size:1.02rem;color:#D8D4F5;
+  }
+  /* motif tirets diagonaux Santé Québec */
+  .rain{position:absolute;top:-10px;right:-10px;width:300px;height:190px;pointer-events:none}
+  .rain span{
+    position:absolute;height:11px;border-radius:6px;
+    transform:rotate(-45deg);
+  }
+  .rain .t{background:var(--lteal)} .rain .b{background:var(--blue)}
+  .rain span:nth-child(1){width:105px;left:12px; top:88px}
+  .rain span:nth-child(2){width:70px; left:74px; top:44px}
+  .rain span:nth-child(3){width:96px; left:126px;top:96px}
+  .rain span:nth-child(4){width:52px; left:186px;top:46px}
+  .rain span:nth-child(5){width:72px; left:216px;top:112px}
+  .rain i{position:absolute;width:12px;height:12px;border-radius:50%}
+  .rain i:nth-of-type(1){background:var(--lteal);left:52px;top:146px}
+  .rain i:nth-of-type(2){background:var(--blue); left:160px;top:158px}
+  .rain i:nth-of-type(3){background:var(--lteal);left:262px;top:84px}
+
+  /* ---------- étages ---------- */
+  .stage{margin-top:44px}
+  .stage-head{
+    display:flex;align-items:baseline;gap:14px;margin-bottom:16px;
+  }
+  .stage-head h2{
+    font-size:.78rem;font-weight:700;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--teal-dark);white-space:nowrap;
+  }
+  .stage-head .rule{flex:1;height:1px;background:var(--line)}
+  .stage-head .why{
+    font-size:.8rem;color:var(--muted);font-style:italic;white-space:nowrap;
+  }
+  @media (max-width:720px){.stage-head .why{display:none}}
+
+  .row{display:grid;gap:16px}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .cols-4{grid-template-columns:repeat(4,1fr)}
+  .cols-2{grid-template-columns:1fr 1fr}
+  @media (max-width:820px){.cols-3,.cols-4{grid-template-columns:1fr 1fr}}
+  @media (max-width:540px){.cols-2,.cols-3,.cols-4{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    box-shadow:0 2px 10px rgba(20,12,116,.05);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(20,12,116,.11)}
+  .card h3{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .card p{font-size:.86rem;color:var(--muted)}
+  .card .tag{
+    display:inline-block;font-size:.66rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;
+    color:var(--teal-dark);background:var(--mist);
+    border-radius:20px;padding:3px 10px;margin-bottom:9px;
+  }
+  .card.dark{background:var(--navy);border-color:var(--navy)}
+  .card.dark h3{color:#fff}
+  .card.dark p{color:#C9C4F0}
+  .card.dark .tag{background:rgba(144,241,233,.16);color:var(--lteal)}
+  .card.mist{background:var(--mist);border-color:#CBEEE9}
+
+  /* ---------- indicateur de chantier ---------- */
+  .card.chantier {
+    border: 2px dashed var(--chantier);
+  }
+  .chantier-badge {
+    display: inline-block;
+    font-size: .66rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--chantier-text);
+    background: var(--chantier-bg);
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  /* connecteur vertical entre étages */
+  .flow{
+    display:flex;justify-content:center;padding:6px 0 0;
+  }
+  .flow svg{display:block}
+
+  /* ---------- lien signature note ⟷ outil ---------- */
+  .duo{
+    display:grid;grid-template-columns:1fr auto 1fr;
+    gap:0;align-items:stretch;
+  }
+  .duo .card{position:relative;z-index:1}
+  .link-bridge{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 6px;min-width:118px;
+  }
+  .link-bridge .arrows{
+    color:var(--teal);font-weight:900;font-size:1.5rem;line-height:1;
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+  @media (prefers-reduced-motion: reduce){.link-bridge .arrows{animation:none}}
+  .link-bridge .lbl{
+    margin-top:6px;font-size:.66rem;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--teal-dark);text-align:center;max-width:17ch;
+  }
+  @media (max-width:640px){
+    .duo{grid-template-columns:1fr}
+    .link-bridge{flex-direction:row;gap:10px;padding:10px 0;min-width:0}
+    .link-bridge .arrows{transform:rotate(90deg)}
+    .link-bridge .lbl{margin-top:0;max-width:none}
+  }
+
+  .derives, .strip{margin-top:16px}
+  .derives .card, .strip .card{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px}
+  .derives h3, .strip h3{margin:0}
+  .pill{
+    font-size:.8rem;font-weight:600;color:var(--navy);
+    background:#fff;border:1px solid #BFE9E3;border-radius:20px;
+    padding:5px 14px;
+  }
+
+  /* ---------- hub : portes d'entrée ---------- */
+  .hub-doors{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .door{
+    font-size:.76rem;font-weight:700;color:#fff;
+    background:var(--teal);border-radius:8px;padding:5px 12px;
+  }
+  .card.dark .door{background:rgba(144,241,233,.18);color:var(--lteal)}
+
+  /* ---------- publics ---------- */
+  .pub .fmt{
+    margin-top:9px;font-size:.74rem;font-weight:700;
+    color:var(--teal-dark);
+  }
+  .pub .fmt::before{content:"Format privilégié — ";font-weight:400;color:var(--muted)}
+
+  /* ---------- bandeau littérature ---------- */
+  .evidence{
+    margin-top:52px;background:var(--navy);border-radius:16px;
+    padding:30px 30px 26px;color:#fff;position:relative;overflow:hidden;
+  }
+  .evidence h2{
+    font-size:1.15rem;font-weight:900;margin-bottom:4px;
+  }
+  .evidence .sub{font-size:.86rem;color:#C9C4F0;margin-bottom:20px}
+  .evidence .row{gap:14px}
+  .finding{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(144,241,233,.25);
+    border-radius:10px;padding:14px 16px;
+  }
+  .finding p{font-size:.86rem;color:#EDEBFA}
+  .finding cite{
+    display:block;margin-top:8px;font-style:normal;
+    font-size:.72rem;font-weight:700;color:var(--lteal);
+  }
+
+  /* ---------- lexique ---------- */
+  .lexicon{
+    margin-top:52px;
+    border-top:1px solid var(--line);
+    padding-top:30px;
+  }
+  .lexicon h2{
+    font-size:1.15rem;font-weight:900;color:var(--navy);margin-bottom:16px;
+  }
+  .lexicon-grid{
+    display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px;
+  }
+  .term{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+  }
+  .term dt{
+    font-size:.86rem;font-weight:700;color:var(--teal-dark);margin-bottom:4px;
+  }
+  .term dd{
+    font-size:.82rem;color:var(--muted);margin-left:0;
+  }
+
+  footer{
+    margin-top:30px;font-size:.74rem;color:var(--muted);
+    display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:space-between;
+  }
+
+  @media print{
+    body{background:#fff}
+    .card,.evidence{box-shadow:none}
+    .card:hover{transform:none}
+    header{padding:26px 0 30px}
+    .stage{margin-top:26px;break-inside:avoid}
+    .evidence{margin-top:30px;break-inside:avoid}
+    .link-bridge .arrows{animation:none}
+    .card.chantier {border:1px solid var(--chantier)}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="rain" aria-hidden="true">
+    <span class="t"></span><span class="b"></span><span class="t"></span><span class="t"></span><span class="b"></span>
+    <i></i><i></i><i></i>
+  </div>
+  <div class="wrap">
+    <div class="kicker">Direction de santé publique · CISSS des Laurentides</div>
+    <h1>L'écosystème de transfert de connaissances</h1>
+    <p class="lede">Aucun document ne porte seul le transfert vers les décideurs de l'aménagement du territoire.
+    Notes de politique, outils cartographiques, hub web et dispositifs relationnels se répartissent les rôles —
+    c'est la combinaison qui agit.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= ÉTAGE 1 : FONDATIONS ================= -->
+  <section class="stage" aria-label="Fondations">
+    <div class="stage-head">
+      <h2>Fondations</h2>
+      <div class="rule"></div>
+      <span class="why">ce qui alimente tout le reste</span>
+    </div>
+    <div class="row cols-3">
+      <div class="card mist">
+        <h3>Données probantes</h3>
+        <p>Littérature scientifique sur l'environnement bâti et la santé, synthèses et revues.</p>
+      </div>
+      <div class="card mist">
+        <h3>Données locales</h3>
+        <p>Indicateurs par MRC et municipalité — le facteur le plus robuste pour susciter l'usage.</p>
+      </div>
+      <div class="card mist">
+        <h3>Démarches ÉIS</h3>
+        <p>Évaluations d'impact sur la santé menées avec les municipalités : ancrage terrain et relations.</p>
+      </div>
+    </div>
+    <div class="strip">
+      <div class="card mist">
+        <h3>Domaines d'expertise</h3>
+        <span class="pill">Alimentation territoriale</span>
+        <span class="pill">Loisir actif et mobilité active</span>
+        <span class="pill">Développement social</span>
+        <span class="pill">Environnement</span>
+        <span class="pill">Changements climatiques</span>
+        <span class="pill">Aménagement du territoire</span>
+        <span class="pill">Surveillance de données</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="flow" aria-hidden="true">
+    <svg width="26" height="34" viewBox="0 0 26 34"><path d="M13 0v24M4 17l9 11 9-11" fill="none" stroke="#21AEAD" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- ================= ÉTAGE 2 : PRODUCTION ================= -->
+  <section class="stage" style="margin-top:6px" aria-label="Production">
+    <div class="stage-head">
+      <h2>Production</h2>
+      <div class="rule"></div>
+      <span class="why">une référence technique, des formats qui en dérivent</span>
+    </div>
+
+    <div class="duo">
+      <div class="card">
+        <span class="tag">Document de référence</span>
+        <h3>Note de politique</h3>
+        <p>Cadrage de l'enjeu, argumentaire complet, méthodologie, recommandations actionnables
+        avec porteurs et horizons. Calibrée pour les professionnels.</p>
+      </div>
+
+      <div class="link-bridge" role="img" aria-label="Lien bidirectionnel entre la note et l'outil cartographique">
+        <div class="arrows">&#8646;</div>
+        <div class="lbl">Lien bidirectionnel systématique</div>
+      </div>
+
+      <div class="card">
+        <span class="tag">Exploration autonome</span>
+        <h3>Outil cartographique interactif</h3>
+        <p>Le décideur manipule lui-même les données de son territoire. Accessible aux élus
+        comme aux professionnels, accompagné de sa note méthodologique.</p>
+      </div>
+    </div>
+
+    <div class="derives">
+      <div class="card mist chantier">
+        <h3>Dérivés ciblés <span class="chantier-badge">🚧 À travailler en équipe</span></h3>
+        <span class="pill">One-pager pour les élus</span>
+        <span class="pill">Format narratif pour le milieu communautaire</span>
+        <span class="pill">Présentation pour les conseils municipaux</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="flow" aria-hidden="true">
+    <svg width="26" height="34" viewBox="0 0 26 34"><path d="M13 0v24M4 17l9 11 9-11" fill="none" stroke="#21AEAD" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- ================= ÉTAGE 3 : DIFFUSION ET RELATION ================= -->
+  <section class="stage" style="margin-top:6px" aria-label="Diffusion et relation">
+    <div class="stage-head">
+      <h2>Diffusion et relation</h2>
+      <div class="rule"></div>
+      <span class="why">le canal numérique et le canal humain, ensemble</span>
+    </div>
+    <div class="row cols-2">
+      <div class="card dark chantier">
+        <span class="tag">Canal numérique</span>
+        <h3>Hub web <span class="chantier-badge">🚧 À travailler en équipe</span></h3>
+        <p>Porte d'entrée commune : les publics sont nommés dès l'accueil et chacun arrive
+        par le chemin qui lui parle.</p>
+        <div class="hub-doors">
+          <span class="door">Évaluations d'impact (ÉIS)</span>
+          <span class="door">Outils cartographiques</span>
+          <span class="door">Domaines d'intervention</span>
+        </div>
+      </div>
+      <div class="card dark">
+        <span class="tag">Canal humain</span>
+        <h3>Dispositifs relationnels</h3>
+        <p>Agentes de liaison — connexion entre les acteurs du territoire et accompagnement des
+        municipalités —, présentations aux conseils, dialogues et tables de concertation,
+        communautés de pratique.</p>
+        <div class="hub-doors">
+          <span class="door">Agentes de liaison : le courtage de connaissances incarné</span>
+          <span class="door">Contact direct, pas seulement un envoi</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="flow" aria-hidden="true">
+    <svg width="26" height="34" viewBox="0 0 26 34"><path d="M13 0v24M4 17l9 11 9-11" fill="none" stroke="#21AEAD" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- ================= ÉTAGE 4 : PUBLICS ================= -->
+  <section class="stage" style="margin-top:6px" aria-label="Publics">
+    <div class="stage-head">
+      <h2>Publics</h2>
+      <div class="rule"></div>
+      <span class="why">chacun rejoint par la bonne combinaison</span>
+    </div>
+    <div class="row cols-4">
+      <div class="card pub">
+        <h3>Élus municipaux</h3>
+        <p>Lecture en quelques minutes, entre deux points à l'ordre du jour.</p>
+        <div class="fmt">one-pager + carte simple</div>
+      </div>
+      <div class="card pub">
+        <h3>Urbanistes et MRC</h3>
+        <p>Ont besoin de la méthodologie et des arguments pour justifier les choix.</p>
+        <div class="fmt">note technique + outil</div>
+      </div>
+      <div class="card pub">
+        <h3>Équipes municipales</h3>
+        <p>Traduisent les recommandations dans les schémas et plans d'urbanisme.</p>
+        <div class="fmt">outil + accompagnement</div>
+      </div>
+      <div class="card pub">
+        <h3>Organismes communautaires</h3>
+        <p>Sensibles à l'équité et aux retombées concrètes pour les populations.</p>
+        <div class="fmt">format narratif</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BANDEAU LITTÉRATURE ================= -->
+  <section class="evidence" aria-label="Ce que dit la littérature">
+    <h2>Ce que dit la littérature</h2>
+    <p class="sub">Synthèse exploratoire — environ 2,4 M d'articles repérés, 50 retenus pour l'analyse.</p>
+    <div class="row cols-3">
+      <div class="finding">
+        <p>Les notes de politique sont jugées utiles et crédibles, mais changent rarement, à elles seules, l'usage réel des données probantes.</p>
+        <cite>Arnautu et Dagenais, 2021 · Chapman et al., 2021</cite>
+      </div>
+      <div class="finding">
+        <p>Les données locales et le ciblage du public sont les facteurs les plus robustes pour susciter l'utilisation.</p>
+        <cite>Dodson et al., 2024 · Lgé-Elegbede et al., 2020</cite>
+      </div>
+      <div class="finding">
+        <p>Les dispositifs hybrides — note + dialogue + outils visuels + collaboration — surpassent les documents isolés.</p>
+        <cite>Ogbonnaya et al., 2021 · Gouais et al., 2024 · Hooper et al., 2021</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LEXIQUE ================= -->
+  <section class="lexicon" aria-label="Lexique">
+    <h2>Petit lexique pratique</h2>
+    <dl class="lexicon-grid">
+      <div class="term">
+        <dt>ÉIS (Évaluation d'impact sur la santé)</dt>
+        <dd>Démarche préventive menée avec les municipalités visant à évaluer les conséquences potentielles d'un projet, d'un programme ou d'une politique sur la santé de la population.</dd>
+      </div>
+      <div class="term">
+        <dt>Données probantes</dt>
+        <dd>Connaissances issues de la recherche scientifique validée (études, synthèses, revues de littérature) utilisées pour appuyer les prises de décision.</dd>
+      </div>
+      <div class="term">
+        <dt>Note de politique (Policy brief)</dt>
+        <dd>Document de référence ciblé qui résume les données probantes sur un enjeu spécifique et propose des recommandations d'action concrètes pour les décideurs et professionnels.</dd>
+      </div>
+      <div class="term">
+        <dt>Courtage de connaissances (incarné)</dt>
+        <dd>Rôle d'intermédiaire, assuré par une personne (ex: agente de liaison), pour faciliter le partage, la vulgarisation et l'utilisation des connaissances entre les experts et le milieu preneur.</dd>
+      </div>
+      <div class="term">
+        <dt>One-pager</dt>
+        <dd>Document de communication ou de transfert ultra-synthétique tenant sur une seule page, conçu pour une appropriation rapide (très utilisé pour les élus).</dd>
+      </div>
+    </dl>
+  </section>
+
+  <footer>
+    <span>Direction de santé publique · CISSS des Laurentides — Santé Québec Laurentides</span>
+    <span>Schéma de travail · juillet 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>
