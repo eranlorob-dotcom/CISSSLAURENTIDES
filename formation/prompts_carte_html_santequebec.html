@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompts — Carte HTML Santé Québec Laurentides</title>
+  <style>
+    :root {
+      --sq-violet: #140C74;
+      --sq-turquoise: #21AEAD;
+      --sq-bleu: #0482D3;
+      --sq-blanc: #FFFFFF;
+      --fond: #F6F8FC;
+      --texte: #1D2433;
+      --muted: #5A6478;
+      --bordure: rgba(20, 12, 116, 0.16);
+      --ombre: 0 12px 30px rgba(20, 12, 116, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--texte);
+      background:
+        radial-gradient(900px 420px at 90% -10%, rgba(33, 174, 173, .18), transparent 58%),
+        radial-gradient(760px 420px at -10% 12%, rgba(4, 130, 211, .16), transparent 54%),
+        var(--fond);
+      line-height: 1.5;
+    }
+
+    header {
+      color: var(--sq-blanc);
+      background: linear-gradient(135deg, var(--sq-violet) 0%, var(--sq-bleu) 62%, var(--sq-turquoise) 100%);
+      padding: 34px 22px 30px;
+    }
+
+    .wrap { max-width: 1120px; margin: 0 auto; }
+
+    .signature {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.10);
+    }
+
+    .pastille {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--sq-turquoise);
+      box-shadow: 16px 0 0 var(--sq-blanc), 32px 0 0 var(--sq-bleu);
+      margin-right: 32px;
+    }
+
+    h1 {
+      margin: 18px 0 8px;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .intro {
+      max-width: 78ch;
+      margin: 0;
+      font-size: 1.05rem;
+      opacity: .95;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(246,248,252,.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--bordure);
+      padding: 14px 22px;
+    }
+
+    .toolbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #search {
+      flex: 1 1 280px;
+      border: 1px solid var(--bordure);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      outline: none;
+      background: var(--sq-blanc);
+    }
+
+    #search:focus {
+      border-color: var(--sq-bleu);
+      box-shadow: 0 0 0 4px rgba(4, 130, 211, .14);
+    }
+
+    .btn-top {
+      color: var(--sq-blanc);
+      background: var(--sq-violet);
+      border-radius: 12px;
+      text-decoration: none;
+      padding: 11px 14px;
+      font-weight: 800;
+      font-size: .92rem;
+    }
+
+    main { padding: 24px 22px 70px; }
+
+    .notice {
+      background: var(--sq-blanc);
+      border: 1px solid var(--bordure);
+      border-left: 6px solid var(--sq-turquoise);
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      box-shadow: var(--ombre);
+    }
+
+    .notice strong { color: var(--sq-violet); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .prompt-card {
+      background: var(--sq-blanc);
+      border: 1px solid var(--bordure);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--ombre);
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .prompt-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      background: linear-gradient(90deg, rgba(20,12,116,.08), rgba(33,174,173,.10));
+      border-bottom: 1px solid var(--bordure);
+    }
+
+    .numero {
+      min-width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sq-blanc);
+      background: var(--sq-violet);
+      font-weight: 900;
+    }
+
+    h2 {
+      color: var(--sq-violet);
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.25;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px 18px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #26324A;
+      background: #FBFCFF;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: .9rem;
+      flex: 1;
+    }
+
+    .copy-btn {
+      cursor: pointer;
+      border: 0;
+      background: var(--sq-bleu);
+      color: var(--sq-blanc);
+      padding: 12px 14px;
+      font-weight: 800;
+      font-size: .95rem;
+    }
+
+    .copy-btn:hover { background: var(--sq-violet); }
+
+    .empty {
+      display: none;
+      text-align: center;
+      color: var(--muted);
+      padding: 36px;
+      background: var(--sq-blanc);
+      border: 1px dashed var(--bordure);
+      border-radius: 16px;
+    }
+
+    footer {
+      border-top: 1px solid var(--bordure);
+      background: var(--sq-blanc);
+      color: var(--muted);
+      padding: 20px 22px;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 820px) {
+      .grid { grid-template-columns: 1fr; }
+      .toolbar-inner { align-items: stretch; }
+      .btn-top { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <header id="top">
+    <div class="wrap">
+      <div class="signature"><span class="pastille"></span>Santé Québec · Laurentides</div>
+      <h1>Banque de prompts pour améliorer une carte HTML</h1>
+      <p class="intro">Prompts prêts à copier-coller pour guider des apprenant.es dans l’amélioration d’un fichier HTML de base : ajout d’une barre latérale, affichage des données au clic, intégration du dictionnaire, graphique et amélioration visuelle.</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="toolbar-inner">
+      <input id="search" type="search" placeholder="Filtrer les prompts…" aria-label="Filtrer les prompts">
+      <a class="btn-top" href="#top">Haut de page</a>
+    </div>
+  </div>
+
+  <main>
+    <div class="wrap">
+      <section class="notice">
+        <strong>Utilisation pédagogique :</strong> commencer par le prompt 1, puis ajouter progressivement les prompts 2, 3, 4, 7 et 9 pour construire une interface plus complète.
+      </section>
+
+      <section class="grid" id="promptGrid" aria-label="Liste des prompts">
+        
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">1</span>
+          <h2>1. Ajouter une barre latérale</h2>
+        </div>
+        <pre><code>À partir de ce fichier HTML de carte Leaflet, peux-tu ajouter une barre latérale à gauche pour améliorer la présentation de l’information?
+
+La barre doit utiliser une charte visuelle Santé Québec — Laurentides avec les couleurs suivantes :
+- #140C74
+- #21AEAD
+- #0482D3
+- #FFFFFF
+
+La carte doit rester visible à droite. La barre latérale doit contenir :
+- un en-tête avec le titre de la carte;
+- un court texte explicatif;
+- une zone qui affichera les données d’un territoire lorsqu’on clique sur la carte.
+
+Ne modifie pas la logique de coloration de la carte ni la légende existante.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 1">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">2</span>
+          <h2>2. Afficher les informations au clic</h2>
+        </div>
+        <pre><code>Peux-tu modifier le fichier HTML pour que, lorsqu’on clique sur une municipalité de la carte, les informations de ce territoire s’affichent dans la barre latérale à gauche?
+
+Je veux que la barre affiche :
+- le nom de la municipalité;
+- le nom de la MRC;
+- la population 2021;
+- le nombre de ménages;
+- la superficie;
+- la densité de population;
+- l’indice de défavorisation matérielle;
+- l’indice de défavorisation sociale.
+
+Les informations doivent être présentées de façon claire, avec des libellés lisibles, pas seulement les noms techniques des variables.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 2">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">3</span>
+          <h2>3. Utiliser le dictionnaire de données</h2>
+        </div>
+        <pre><code>Voici un dictionnaire de données pour le fichier GeoJSON.
+
+Peux-tu utiliser ce dictionnaire pour structurer la barre latérale de la carte?
+
+Je veux que les données du territoire sélectionné soient regroupées par sections :
+1. Identifiants et géographie
+2. Population et ménages
+3. Tenure et types de logement
+4. Groupes d’âge
+5. Projections de ménages
+6. Projections ISQ
+7. Défavorisation
+
+Chaque section doit être repliable/dépliable. Les libellés doivent être compréhensibles pour un public non technique.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 3">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">4</span>
+          <h2>4. Retirer les noms techniques</h2>
+        </div>
+        <pre><code>Peux-tu améliorer la barre latérale pour qu’elle n’affiche pas les noms techniques des variables du GeoJSON?
+
+Par exemple, au lieu d’afficher :
+- pop2021
+- menages
+- defav_mat
+
+Je veux afficher :
+- Population totale en 2021
+- Nombre de ménages privés
+- Indice de défavorisation matérielle
+
+Garde les valeurs, mais remplace les noms de variables par des libellés clairs.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 4">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">5</span>
+          <h2>5. Améliorer la mise en page</h2>
+        </div>
+        <pre><code>Peux-tu améliorer la mise en page de la fiche du territoire dans la barre latérale?
+
+Je veux :
+- un en-tête clair avec le nom de la municipalité;
+- des blocs visuels pour chaque grande catégorie de données;
+- des valeurs alignées à droite;
+- des titres de sections en couleur #140C74;
+- des accents graphiques en #21AEAD et #0482D3;
+- une présentation professionnelle, sobre et lisible.
+
+La fiche doit être facile à lire pour une personne qui consulte rapidement la carte.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 5">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">6</span>
+          <h2>6. Ajouter une carte d’identité</h2>
+        </div>
+        <pre><code>Peux-tu ajouter au début de la barre latérale une carte d’identité du territoire sélectionné?
+
+Cette carte doit afficher en priorité :
+- Municipalité
+- MRC
+- Population 2021
+- Ménages
+- Superficie
+- Densité de population
+
+Présente ces informations dans un bloc résumé avant les sections détaillées.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 6">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">7</span>
+          <h2>7. Mettre en évidence le territoire</h2>
+        </div>
+        <pre><code>Peux-tu modifier la carte pour que le territoire sélectionné soit mis en évidence lorsqu’on clique dessus?
+
+Je veux :
+- un contour plus épais;
+- une couleur de contour #140C74;
+- une opacité légèrement plus forte;
+- que l’ancien territoire sélectionné revienne à son style normal lorsqu’on clique sur un nouveau territoire.
+
+La fiche de la barre latérale doit aussi se mettre à jour automatiquement.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 7">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">8</span>
+          <h2>8. Simplifier les popups</h2>
+        </div>
+        <pre><code>Peux-tu simplifier les popups de la carte?
+
+Je veux que le popup contienne seulement :
+- le nom de la municipalité;
+- la défavorisation matérielle;
+- la défavorisation sociale;
+- une courte phrase disant que les détails sont disponibles dans la barre latérale.
+
+Le détail complet doit être affiché dans la barre latérale, pas dans le popup.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 8">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">9</span>
+          <h2>9. Ajouter un graphique</h2>
+        </div>
+        <pre><code>Peux-tu ajouter un graphique dans la barre latérale?
+
+Le graphique doit permettre de comparer les municipalités selon une variable choisie :
+- défavorisation matérielle;
+- défavorisation sociale;
+- population 2021;
+- nombre de ménages;
+- densité de population.
+
+Ajoute un menu déroulant pour choisir la variable. Le graphique doit afficher le top 10 des territoires selon la variable sélectionnée.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 9">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">10</span>
+          <h2>10. Version pédagogique</h2>
+        </div>
+        <pre><code>Peux-tu rendre la barre latérale plus pédagogique pour des apprenant.es?
+
+Ajoute :
+- un court texte expliquant ce qu’est la défavorisation matérielle;
+- un court texte expliquant ce qu’est la défavorisation sociale;
+- une note indiquant que des valeurs plus élevées représentent généralement une défavorisation plus importante;
+- une mise en page claire avec des encadrés d’information.
+
+Garde le ton simple et accessible.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 10">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">11</span>
+          <h2>11. Améliorer l’accessibilité</h2>
+        </div>
+        <pre><code>Peux-tu améliorer l’accessibilité du fichier HTML?
+
+Je veux :
+- une structure HTML plus sémantique;
+- des contrastes suffisants;
+- des tailles de texte lisibles;
+- des attributs aria pertinents pour la barre latérale et la carte;
+- une navigation plus claire au clavier lorsque possible;
+- une mise en page adaptée aux écrans plus petits.
+
+Garde la charte de couleurs Santé Québec — Laurentides.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 11">Copier le prompt</button>
+      </article>
+      <article class="prompt-card">
+        <div class="prompt-head">
+          <span class="numero">12</span>
+          <h2>12. Prompt complet recommandé</h2>
+        </div>
+        <pre><code>À partir de mon fichier HTML de base contenant une carte Leaflet, peux-tu créer une version améliorée avec une barre latérale à gauche?
+
+Objectif :
+Améliorer la présentation de l’information et afficher les données du territoire lorsqu’on clique sur une municipalité.
+
+Contraintes visuelles :
+Utilise une charte Santé Québec — Laurentides avec les couleurs :
+- #140C74
+- #21AEAD
+- #0482D3
+- #FFFFFF
+
+Fonctionnalités attendues :
+1. La carte demeure à droite.
+2. Une barre latérale apparaît à gauche.
+3. Au chargement, la barre indique de cliquer sur une municipalité.
+4. Lorsqu’on clique sur un territoire, la barre affiche une fiche complète.
+5. La fiche doit utiliser des libellés compréhensibles, pas les noms techniques du GeoJSON.
+6. Les informations doivent être regroupées selon le dictionnaire de données.
+7. Les sections doivent être repliables.
+8. Les valeurs manquantes doivent être affichées par un tiret.
+9. Le territoire sélectionné doit être mis en évidence sur la carte.
+10. Ajoute un graphique comparatif dans la barre latérale avec un menu permettant de choisir une variable.
+11. Conserve la légende et les popups existants, mais simplifie les popups si nécessaire.
+12. Le résultat doit être un fichier HTML complet et fonctionnel.
+
+Important :
+Le fichier GeoJSON s’appelle laurentides_defavorisation.geojson et doit être lu depuis le même dossier que le HTML.</code></pre>
+        <button class="copy-btn" type="button" aria-label="Copier le prompt 12">Copier le prompt</button>
+      </article>
+      </section>
+      <p class="empty" id="empty">Aucun prompt ne correspond à votre recherche.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">Charte utilisée : #140C74 · #21AEAD · #0482D3 · #FFFFFF</div>
+  </footer>
+
+  <script>
+    const search = document.getElementById('search');
+    const cards = Array.from(document.querySelectorAll('.prompt-card'));
+    const empty = document.getElementById('empty');
+
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      let visible = 0;
+      cards.forEach(card => {
+        const match = card.textContent.toLowerCase().includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      empty.style.display = visible ? 'none' : 'block';
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const text = btn.parentElement.querySelector('code').innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = btn.textContent;
+          btn.textContent = 'Copié!';
+          setTimeout(() => btn.textContent = original, 1300);
+        } catch(e) {
+          alert('Copie impossible automatiquement. Sélectionnez le texte du prompt manuellement.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
