@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'art de la carte claire — Guide QGIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Charte officielle CISSS des Laurentides — Direction de santé publique */
+    --navy:#140C74;
+    --teal:#21AEAD;
+    --blue:#0482D3;
+    --white:#FFFFFF;
+    --teal-d:#178f8e;
+    --teal-l:#5fd0cf;
+    --blue-d:#0366a6;
+    --blue-l:#6aa6e8;
+    --indigo:#5b54c0;
+
+    /* Tokens dérivés pour ce document */
+    --ink:#140C74;
+    --ink-2:#0A0850;
+    --paper:#F4F6FC;
+    --paper-2:#FFFFFF;
+    --paper-line:#D8DEF0;
+    --amber:#0482D3;
+    --amber-soft:#EAF1FE;
+    --teal-soft:#DFF6F5;
+    --red:#9C3B30;
+    --red-soft:#F4E3E0;
+    --grid:#C7D6ED;
+    --text:#14143A;
+    --text-soft:#7A80A8;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:var(--ink);}
+  img,svg{max-width:100%;display:block;}
+
+  /* ---- ruban de coordonnées décoratif ---- */
+  .tick-strip{
+    display:flex;
+    justify-content:space-between;
+    padding:0.4rem 1.5rem;
+    background:var(--ink-2);
+    color:#9FB4C8;
+    font-size:0.65rem;
+    letter-spacing:0.08em;
+  }
+  .tick-strip span{opacity:0.8;}
+
+  /* ---- nav ---- */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--ink);
+    color:var(--paper);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .nav-inner{
+    max-width:1100px;margin:0 auto;
+    display:flex;align-items:center;gap:1rem;
+    padding:0.85rem 1.5rem;
+  }
+  .nav-title{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;
+    white-space:nowrap;
+  }
+  .nav-compass{width:26px;height:26px;flex-shrink:0;}
+  .plate-nav{
+    display:flex;gap:0.25rem;overflow-x:auto;
+    padding:0 1.5rem 0.6rem;
+    max-width:1100px;margin:0 auto;
+    scrollbar-width:thin;
+  }
+  .plate-nav a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:#B9C6D3;
+    text-decoration:none;
+    white-space:nowrap;
+    padding:0.35rem 0.6rem;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:3px;
+  }
+  .plate-nav a:hover{border-color:var(--amber);color:var(--amber-soft);}
+
+  /* ---- hero ---- */
+  .hero{
+    background:radial-gradient(ellipse at top right, #2A2296 0%, var(--ink-2) 60%);
+    color:var(--paper);
+    padding:4.5rem 1.5rem 5rem;
+  }
+  .hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr;gap:3rem;align-items:center;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;letter-spacing:0.12em;
+    color:var(--amber-soft);text-transform:uppercase;
+    margin-bottom:1rem;
+  }
+  .hero h1{font-size:clamp(2.1rem,4vw,3.2rem);line-height:1.08;margin:0 0 1.2rem;font-weight:600;}
+  .hero p.lead{font-size:1.05rem;color:#CBD9E4;max-width:46ch;}
+  .hero .howto{
+    margin-top:2rem;padding:1rem 1.2rem;
+    border-left:3px solid var(--amber);
+    background:rgba(255,255,255,0.05);
+    font-size:0.9rem;color:#D6E0E8;
+  }
+  .hero-compass-wrap{display:flex;justify-content:center;}
+
+  /* ---- plates (sections) ---- */
+  .plate{
+    max-width:960px;margin:0 auto;
+    padding:5rem 1.5rem;
+    border-top:1px solid var(--paper-line);
+    position:relative;
+  }
+  .plate-num{
+    font-family:'Fraunces',serif;
+    font-size:5.5rem;
+    color:var(--paper-line);
+    font-weight:600;
+    line-height:1;
+    position:absolute;
+    top:4.2rem;right:1.5rem;
+    user-select:none;
+  }
+  .plate-head{max-width:640px;margin-bottom:2.5rem;}
+  .plate-eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;
+    letter-spacing:0.1em;color:var(--teal);text-transform:uppercase;
+    margin-bottom:0.6rem;
+  }
+  .plate h2{font-size:clamp(1.5rem,2.6vw,2rem);margin:0 0 0.9rem;font-weight:600;}
+  .plate p.dek{color:var(--text-soft);font-size:1.02rem;max-width:56ch;}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem;align-items:start;}
+  @media(max-width:760px){.grid-2{grid-template-columns:1fr;}.hero-inner{grid-template-columns:1fr;}.hero-compass-wrap{order:-1;max-width:160px;margin:0 auto;}}
+
+  .card{
+    background:var(--paper-2);
+    border:1px solid var(--paper-line);
+    border-radius:6px;
+    padding:1.4rem 1.5rem;
+  }
+  .card h3{font-size:1rem;margin:0 0 0.6rem;font-weight:600;}
+  .card p{margin:0;font-size:0.94rem;color:var(--text-soft);}
+
+  .tip{
+    margin-top:1.6rem;
+    display:flex;gap:0.9rem;
+    padding:1rem 1.2rem;
+    background:var(--amber-soft);
+    border-radius:6px;
+    border-left:3px solid var(--amber);
+  }
+  .tip .label{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;color:#0366a6;text-transform:uppercase;display:block;margin-bottom:0.25rem;}
+  .tip p{margin:0;font-size:0.92rem;}
+
+  .qgis-path{
+    display:inline-flex;align-items:center;gap:0.4rem;
+    font-family:'IBM Plex Mono',monospace;font-size:0.82rem;
+    background:var(--ink);color:#DCE7EF;
+    padding:0.35rem 0.7rem;border-radius:4px;
+    margin:0.4rem 0.3rem 0.4rem 0;
+  }
+
+  ul.feature-list{list-style:none;margin:1.4rem 0 0;padding:0;display:grid;gap:0.9rem;}
+  ul.feature-list li{display:flex;gap:0.8rem;align-items:flex-start;font-size:0.95rem;}
+  ul.feature-list .num{
+    font-family:'IBM Plex Mono',monospace;font-size:0.75rem;
+    background:var(--ink);color:var(--paper);
+    width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
+  }
+
+  /* avant / après */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:1.6rem;}
+  @media(max-width:600px){.compare{grid-template-columns:1fr;}}
+  .compare .col{border-radius:6px;overflow:hidden;border:1px solid var(--paper-line);}
+  .compare .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.06em;
+    padding:0.45rem 0.8rem;text-transform:uppercase;
+  }
+  .tag.bad{background:var(--red-soft);color:#7A251C;}
+  .tag.good{background:var(--teal-soft);color:#124F49;}
+
+  /* checklist */
+  .checklist{list-style:none;margin:1.6rem 0 0;padding:0;display:grid;gap:0.6rem;}
+  .checklist li{
+    display:flex;align-items:center;gap:0.8rem;
+    padding:0.7rem 1rem;background:var(--paper-2);
+    border:1px solid var(--paper-line);border-radius:6px;
+    font-size:0.94rem;cursor:pointer;transition:background .15s;
+  }
+  .checklist li:hover{background:var(--teal-soft);}
+  .checklist input{width:18px;height:18px;accent-color:var(--teal);flex-shrink:0;}
+  .checklist li.done span{text-decoration:line-through;color:var(--text-soft);}
+  .progress-line{margin-top:1rem;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--text-soft);}
+
+  /* footer / closing */
+  .closing{
+    background:var(--ink-2);color:var(--paper);
+    padding:4rem 1.5rem 3rem;text-align:center;
+  }
+  .closing h2{font-size:1.6rem;margin:0 0 0.8rem;}
+  .closing p{color:#B9C6D3;max-width:52ch;margin:0 auto;}
+  .back-top{
+    display:inline-block;margin-top:2rem;
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;
+    color:var(--amber-soft);text-decoration:none;
+    border:1px solid rgba(255,255,255,0.2);
+    padding:0.5rem 1rem;border-radius:4px;
+  }
+  footer.credit{
+    text-align:center;padding:1.2rem;font-size:0.72rem;
+    color:#7D8A94;background:var(--ink-2);
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  .swatch-row{display:flex;gap:6px;margin-top:0.6rem;flex-wrap:wrap;}
+  .swatch{width:28px;height:28px;border-radius:4px;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div class="tick-strip mono">
+  <span>45°34'N</span><span>73°52'O</span><span>ÉCH. 1:1</span><span>DATUM NAD83</span><span>QGIS 4.0</span>
+</div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <svg class="nav-compass" viewBox="0 0 60 60"><g style="fill:none;stroke:#21AEAD;stroke-width:1.6"><circle cx="30" cy="30" r="26"/></g><path d="M30 8 L36 30 L30 52 L24 30 Z" style="fill:#21AEAD"/><path d="M8 30 L30 24 L52 30 L30 36 Z" style="fill:#0482D3"/><text x="30" y="8" text-anchor="middle" style="font-family:'IBM Plex Mono',monospace;font-size:6px;fill:#21AEAD">N</text></svg>
+    <span class="nav-title">L'art de la carte claire</span>
+  </div>
+  <nav class="plate-nav mono">
+    <a href="#p1">01 · Fondamentaux</a>
+    <a href="#p2">02 · Couleurs</a>
+    <a href="#p3">03 · Classification</a>
+    <a href="#p4">04 · Typographie</a>
+    <a href="#p5">05 · Mise en page</a>
+    <a href="#p6">06 · Erreurs fréquentes</a>
+    <a href="#p7">07 · Vérification</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Guide pratique · Cartographie avec QGIS 4.0</div>
+      <h1>Une carte se comprend<br>en trois secondes,<br>ou elle ne se comprend pas.</h1>
+      <p class="lead">Sept planches pour transformer un fichier de données en carte qui parle clairement — couleurs, classification, typographie et mise en page, avec les manipulations QGIS qui vont avec.</p>
+      <div class="howto">
+        <strong>Comment utiliser ce guide :</strong> chaque planche est autonome. Lisez-les dans l'ordre pour un survol complet, ou sautez directement à ce dont vous avez besoin via le menu du haut.
+      </div>
+    </div>
+    <div class="hero-compass-wrap">
+      <svg viewBox="0 0 220 220" width="220" height="220">
+        <circle cx="110" cy="110" r="95" style="fill:none;stroke:#C7D6ED;stroke-width:1"/>
+        <circle cx="110" cy="110" r="70" style="fill:none;stroke:#C7D6ED;stroke-width:1"/>
+        <g style="stroke:#C7D6ED;stroke-width:1">
+          <line x1="110" y1="8" x2="110" y2="212"/>
+          <line x1="8" y1="110" x2="212" y2="110"/>
+        </g>
+        <path d="M110 30 L124 110 L110 190 L96 110 Z" style="fill:#21AEAD"/>
+        <path d="M30 110 L110 96 L190 110 L110 124 Z" style="fill:#5b54c0"/>
+        <circle cx="110" cy="110" r="6" style="fill:#F4F6FC"/>
+        <text x="110" y="24" text-anchor="middle" style="font-family:'IBM Plex Mono',monospace;font-size:13px;fill:#21AEAD">N</text>
+        <text x="110" y="204" text-anchor="middle" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#0482D3">S</text>
+        <text x="18" y="114" text-anchor="middle" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#0482D3">O</text>
+        <text x="202" y="114" text-anchor="middle" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#0482D3">E</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- PLANCHE 01 -->
+<section class="plate" id="p1">
+  <div class="plate-num">01</div>
+  <div class="plate-head">
+    <div class="plate-eyebrow">Planche 01</div>
+    <h2>Les fondamentaux du langage cartographique</h2>
+    <p class="dek">Avant d'ouvrir la mise en page de QGIS, la vraie première question est : qu'est-ce que cette carte doit faire comprendre, à qui, en combien de temps ?</p>
+  </div>
+
+  <p>Une carte n'est pas un export de données, c'est un message visuel. Deux cartes peuvent contenir exactement la même information et pourtant l'une se lit d'un coup d'œil pendant que l'autre demande un effort de déchiffrage. La différence tient rarement à la qualité des données — elle tient à la hiérarchie visuelle : ce que l'œil voit en premier, en second, en troisième.</p>
+
+  <div class="tip">
+    <div>
+      <span class="label">Règle des trois secondes</span>
+      <p>Montrez votre carte à quelqu'un pendant trois secondes, puis cachez-la. Si cette personne ne peut pas résumer le message principal, la carte a probablement trop d'éléments qui rivalisent pour l'attention.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:2.4rem;font-size:1.05rem;">Les six éléments essentiels</h3>
+  <p style="color:var(--text-soft);font-size:0.94rem;max-width:56ch;">Une carte destinée à être diffusée (rapport, présentation, note de politique) devrait toujours contenir ces six repères — ni plus, ni moins :</p>
+
+  <svg viewBox="0 0 640 320" style="margin-top:1.4rem;background:var(--paper-2);border:1px solid var(--paper-line);border-radius:8px;">
+    <rect x="20" y="20" width="600" height="280" style="fill:none;stroke:var(--grid);stroke-width:1"/>
+    <rect x="20" y="20" width="600" height="36" style="fill:var(--teal-soft)"/>
+    <text x="35" y="43" style="font-family:'Fraunces',serif;font-size:15px;fill:#124F49">① Titre — l'affirmation, pas la description</text>
+
+    <rect x="20" y="56" width="440" height="200" style="fill:#EEF1FB"/>
+    <text x="35" y="80" style="font-family:'IBM Plex Mono',monospace;font-size:11px;fill:#7A80A8">② Corps de la carte</text>
+    <circle cx="140" cy="170" r="34" style="fill:#5fd0cf;opacity:0.8"/>
+    <circle cx="240" cy="130" r="20" style="fill:#21AEAD;opacity:0.8"/>
+    <circle cx="320" cy="200" r="26" style="fill:#140C74;opacity:0.8"/>
+
+    <rect x="460" y="56" width="160" height="200" style="fill:var(--paper-2);stroke:var(--grid)"/>
+    <text x="472" y="76" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#7A80A8">③ Légende</text>
+    <rect x="472" y="88" width="14" height="14" style="fill:#5fd0cf"/><text x="492" y="99" style="font-size:10px;font-family:Inter;fill:#14143A">faible</text>
+    <rect x="472" y="108" width="14" height="14" style="fill:#21AEAD"/><text x="492" y="119" style="font-size:10px;font-family:Inter;fill:#14143A">moyen</text>
+    <rect x="472" y="128" width="14" height="14" style="fill:#140C74"/><text x="492" y="139" style="font-size:10px;font-family:Inter;fill:#14143A">élevé</text>
+
+    <text x="472" y="168" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#7A80A8">④ Échelle</text>
+    <line x1="472" y1="182" x2="540" y2="182" style="stroke:#14143A;stroke-width:2"/>
+    <text x="472" y="196" style="font-size:9px;font-family:Inter;fill:#7A80A8">0 — 5 km</text>
+
+    <text x="472" y="220" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#7A80A8">⑤ Orientation</text>
+    <path d="M505 226 L512 244 L505 254 L498 244 Z" style="fill:#14143A"/>
+
+    <rect x="20" y="264" width="600" height="36" style="fill:#F4F6FC"/>
+    <text x="35" y="286" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#7A80A8">⑥ Source, date, système de référence — toujours en petit, jamais absent</text>
+  </svg>
+
+  <div class="tip" style="background:var(--teal-soft);border-left-color:var(--teal);">
+    <div>
+      <span class="label" style="color:#124F49;">À retenir</span>
+      <p>Si un élément n'aide pas à comprendre le message, retirez-le. Une grille de coordonnées dense, un fond satellite chargé ou une police décorative ajoutent rarement de l'information — ils ajoutent du bruit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANCHE 02 -->
+<section class="plate" id="p2">
+  <div class="plate-num">02</div>
+  <div class="plate-head">
+    <div class="plate-eyebrow">Planche 02</div>
+    <h2>Choisir sa palette de couleurs</h2>
+    <p class="dek">La couleur n'est pas une décoration : c'est une encodage. Le mauvais type de palette peut faire mentir des données parfaitement justes.</p>
+    <p style="font-size:0.82rem;color:var(--text-soft);margin-top:0.6rem;">Nuanciers illustrés avec la palette officielle CISSS des Laurentides — Direction de santé publique (marine · teal · bleu).</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Qualitative</h3>
+      <p>Pour des catégories sans ordre logique (types de zonage, modes de transport, occupation du sol).</p>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#21AEAD"></div>
+        <div class="swatch" style="background:#0482D3"></div>
+        <div class="swatch" style="background:#5b54c0"></div>
+        <div class="swatch" style="background:#5fd0cf"></div>
+        <div class="swatch" style="background:#6aa6e8"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Séquentielle</h3>
+      <p>Pour une variable ordonnée du faible au fort (densité, revenu, distance à un service).</p>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#eafaf9"></div>
+        <div class="swatch" style="background:#5fd0cf"></div>
+        <div class="swatch" style="background:#21AEAD"></div>
+        <div class="swatch" style="background:#0482D3"></div>
+        <div class="swatch" style="background:#140C74"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Divergente</h3>
+      <p>Pour une variable avec un point neutre significatif (croissance/décroissance, écart à une moyenne).</p>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#140C74"></div>
+        <div class="swatch" style="background:#5b54c0"></div>
+        <div class="swatch" style="background:#EEF1FB"></div>
+        <div class="swatch" style="background:#5fd0cf"></div>
+        <div class="swatch" style="background:#21AEAD"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>À éviter</h3>
+      <p>Une rampe arc-en-ciel (rouge-jaune-vert-bleu) pour une variable ordonnée : l'œil ne perçoit pas d'ordre naturel dans ces teintes.</p>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#D64545"></div>
+        <div class="swatch" style="background:#E8B23C"></div>
+        <div class="swatch" style="background:#5FA85C"></div>
+        <div class="swatch" style="background:#3E7FBF"></div>
+        <div class="swatch" style="background:#7C5CA6"></div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="feature-list">
+    <li><span class="num">1</span><span>Limitez-vous à 5 ou 6 classes maximum — au-delà, l'œil ne distingue plus les teintes adjacentes.</span></li>
+    <li><span class="num">2</span><span>Vérifiez la lisibilité en niveaux de gris ou avec un simulateur de daltonisme avant de diffuser une carte officielle.</span></li>
+    <li><span class="num">3</span><span>Gardez la même famille de couleurs si vous produisez une série de cartes comparables (ex. une carte par MRC).</span></li>
+  </ul>
+
+  <div style="margin-top:1.6rem;">
+    <span class="qgis-path">Propriétés de la couche → Symbologie → Graduée → Rampe de couleurs</span>
+  </div>
+</section>
+
+<!-- PLANCHE 03 -->
+<section class="plate" id="p3">
+  <div class="plate-num">03</div>
+  <div class="plate-head">
+    <div class="plate-eyebrow">Planche 03</div>
+    <h2>Classer ses données (la discrétisation)</h2>
+    <p class="dek">La même donnée, classée différemment, peut raconter trois histoires différentes. Le choix de la méthode n'est jamais neutre.</p>
+  </div>
+
+  <p>QGIS propose plusieurs modes pour découper une variable continue en classes de couleur. Sur les mêmes données, chaque méthode met en évidence un aspect différent :</p>
+
+  <div class="grid-2" style="margin-top:1.4rem;">
+    <div class="card">
+      <h3>Quantiles</h3>
+      <p>Répartit le même nombre d'unités dans chaque classe. Utile pour comparer des rangs, mais peut regrouper des valeurs très différentes dans une même couleur.</p>
+      <svg viewBox="0 0 200 100" style="margin-top:0.8rem;">
+        <g>
+          <rect x="0" y="0" width="38" height="100" style="fill:#eafaf9"/>
+          <rect x="40" y="0" width="38" height="100" style="fill:#5fd0cf"/>
+          <rect x="80" y="0" width="38" height="100" style="fill:#21AEAD"/>
+          <rect x="120" y="0" width="38" height="100" style="fill:#0482D3"/>
+          <rect x="160" y="0" width="38" height="100" style="fill:#140C74"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Intervalles égaux</h3>
+      <p>Découpe la plage de valeurs en tranches de largeur identique. Simple à interpréter, mais sensible aux valeurs extrêmes.</p>
+      <svg viewBox="0 0 200 100" style="margin-top:0.8rem;">
+        <g>
+          <rect x="0" y="0" width="120" height="100" style="fill:#eafaf9"/>
+          <rect x="120" y="0" width="40" height="100" style="fill:#5fd0cf"/>
+          <rect x="160" y="0" width="24" height="100" style="fill:#0482D3"/>
+          <rect x="184" y="0" width="16" height="100" style="fill:#140C74"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Seuils naturels (Jenks)</h3>
+      <p>Cherche les regroupements naturels dans les données. Souvent le meilleur choix par défaut pour révéler des sous-groupes réels.</p>
+      <svg viewBox="0 0 200 100" style="margin-top:0.8rem;">
+        <g>
+          <rect x="0" y="0" width="70" height="100" style="fill:#eafaf9"/>
+          <rect x="70" y="0" width="20" height="100" style="fill:#5fd0cf"/>
+          <rect x="90" y="0" width="60" height="100" style="fill:#21AEAD"/>
+          <rect x="150" y="0" width="15" height="100" style="fill:#0482D3"/>
+          <rect x="165" y="0" width="35" height="100" style="fill:#140C74"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Manuel</h3>
+      <p>Vous fixez vous-même les seuils — indispensable quand des valeurs repères existent déjà (ex. un seuil réglementaire, une moyenne provinciale).</p>
+      <svg viewBox="0 0 200 100" style="margin-top:0.8rem;">
+        <g>
+          <rect x="0" y="0" width="50" height="100" style="fill:#eafaf9"/>
+          <rect x="50" y="0" width="50" height="100" style="fill:#21AEAD"/>
+          <rect x="100" y="0" width="50" height="100" style="fill:#0482D3"/>
+          <rect x="150" y="0" width="50" height="100" style="fill:#140C74"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div>
+      <span class="label">À retenir</span>
+      <p>Essayez toujours deux méthodes de classification sur vos données avant de figer une carte. Si le message change radicalement d'une méthode à l'autre, c'est le signe qu'il faut être transparent sur le choix fait — ou explorer pourquoi les données sont aussi sensibles au découpage.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:1.2rem;">
+    <span class="qgis-path">Symbologie → Graduée → Mode → Quantile / Intervalles égaux / Seuils naturels (Jenks) / Manuel</span>
+  </div>
+</section>
+
+<!-- PLANCHE 04 -->
+<section class="plate" id="p4">
+  <div class="plate-num">04</div>
+  <div class="plate-head">
+    <div class="plate-eyebrow">Planche 04</div>
+    <h2>Typographie et étiquettes</h2>
+    <p class="dek">Le texte d'une carte doit se lire sans effort, même posé sur un fond coloré et complexe.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="font-family:'Fraunces',serif;font-size:1.3rem;">Titre principal</h3>
+      <p style="font-size:0.85rem;">Une seule police d'accroche, en gras, jamais tout en majuscules sur plus de quelques mots.</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.95rem;">Étiquettes de la carte</h3>
+      <p style="font-size:0.85rem;">Police neutre et lisible à petite taille (sans empattement), avec un halo blanc ou sombre pour se détacher du fond.</p>
+    </div>
+  </div>
+
+  <p style="margin-top:1.6rem;">Deux polices suffisent presque toujours : une pour les titres, une pour tout le reste (étiquettes, légende, notes). Ajouter une troisième police décorative brouille la hiérarchie au lieu de la renforcer.</p>
+
+  <div class="tip">
+    <div>
+      <span class="label">Astuce QGIS</span>
+      <p>Dans les paramètres d'étiquette d'une couche, l'onglet <em>Halo du texte</em> ajoute un contour clair autour du texte — indispensable pour garder les noms de lieux lisibles sur un fond choroplèthe foncé.</p>
+    </div>
+  </div>
+  <span class="qgis-path">Propriétés de la couche → Étiquettes → Texte → Halo</span>
+</section>
+
+<!-- PLANCHE 05 -->
+<section class="plate" id="p5">
+  <div class="plate-num">05</div>
+  <div class="plate-head">
+    <div class="plate-eyebrow">Planche 05</div>
+    <h2>Composer la mise en page (QGIS 4.0)</h2>
+    <p class="dek">La mise en page — anciennement le « composeur d'impression » — est l'endroit où tous les éléments de la planche 01 prennent leur place définitive.</p>
+  </div>
+
+  <svg viewBox="0 0 640 380" style="background:var(--paper-2);border:1px solid var(--paper-line);border-radius:8px;">
+    <rect x="20" y="20" width="600" height="340" style="fill:none;stroke:var(--grid);stroke-width:1;stroke-dasharray:4 3"/>
+    <rect x="220" y="34" width="200" height="30" style="fill:var(--teal-soft)"/>
+    <text x="320" y="54" text-anchor="middle" style="font-family:'Fraunces',serif;font-size:13px;fill:#124F49">Titre de la carte</text>
+
+    <rect x="36" y="80" width="480" height="230" style="fill:#EEF1FB;stroke:var(--grid)"/>
+    <text x="50" y="100" style="font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#7A80A8">Élément « carte »</text>
+    <circle cx="180" cy="200" r="40" style="fill:#5fd0cf;opacity:.8"/>
+    <circle cx="280" cy="160" r="24" style="fill:#21AEAD;opacity:.8"/>
+    <circle cx="380" cy="240" r="30" style="fill:#140C74;opacity:.8"/>
+
+    <rect x="530" y="80" width="90" height="120" style="fill:var(--paper-2);stroke:var(--grid)"/>
+    <text x="540" y="98" style="font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#7A80A8">Légende</text>
+    <rect x="540" y="108" width="10" height="10" style="fill:#5fd0cf"/>
+    <rect x="540" y="124" width="10" height="10" style="fill:#21AEAD"/>
+    <rect x="540" y="140" width="10" height="10" style="fill:#140C74"/>
+
+    <line x1="530" y1="230" x2="600" y2="230" style="stroke:#14143A;stroke-width:2"/>
+    <text x="530" y="244" style="font-family:'IBM Plex Mono',monospace;font-size:8px;fill:#7A80A8">0—5 km</text>
+
+    <path d="M563 258 L570 276 L563 286 L556 276 Z" style="fill:#14143A"/>
+    <text x="563" y="298" text-anchor="middle" style="font-family:'IBM Plex Mono',monospace;font-size:8px;fill:#7A80A8">N</text>
+
+    <rect x="36" y="322" width="584" height="20" style="fill:#F4F6FC"/>
+    <text x="46" y="336" style="font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#7A80A8">Source : [à compléter] · Système de référence : NAD83 MTM 8 · [date]</text>
+  </svg>
+
+  <h3 style="margin-top:2.2rem;font-size:1.05rem;">Les étapes</h3>
+  <ul class="feature-list">
+    <li><span class="num">1</span><span>Charger et symboliser toutes les couches dans le canevas principal avant d'ouvrir la mise en page — la mise en page reflète l'état du canevas au moment de l'ajout.</span></li>
+    <li><span class="num">2</span><span>Ouvrir <span class="qgis-path" style="margin:0;">Projet → Nouvelle mise en page…</span> et donner un nom.</span></li>
+    <li><span class="num">3</span><span>Ajouter la carte : outil <em>Ajouter un élément carte</em>, puis dessiner le rectangle.</span></li>
+    <li><span class="num">4</span><span>Ajouter le titre : outil <em>Ajouter un objet étiquette</em>, positionné au-dessus de la carte.</span></li>
+    <li><span class="num">5</span><span>Ajouter la légende, l'échelle et l'orientation via leurs outils respectifs — filtrer la légende pour ne garder que les couches pertinentes.</span></li>
+    <li><span class="num">6</span><span>Verrouiller chaque élément une fois sa position finale (clic droit → Verrouiller) pour éviter de le déplacer par accident.</span></li>
+    <li><span class="num">7</span><span>Exporter en PDF à au moins 300 ppp pour un rendu net à l'impression : <span class="qgis-path" style="margin:0;">Mise en page → Exporter en PDF</span>.</span></li>
+  </ul>
+</section>
+
+<!-- PLANCHE 06 -->
+<section class="plate" id="p6">
+  <div class="plate-num">06</div>
+  <div class="plate-head">
+    <div class="plate-eyebrow">Planche 06</div>
+    <h2>Les erreurs les plus fréquentes</h2>
+    <p class="dek">Presque toutes les cartes maladroites partagent les mêmes symptômes — faciles à repérer une fois qu'on les connaît.</p>
+  </div>
+
+  <div class="compare">
+    <div class="col">
+      <div class="tag bad">à éviter</div>
+      <div class="card" style="border:none;border-radius:0;">
+        <p>Trop de couches visibles en même temps, sans hiérarchie de contraste entre le fond et le sujet principal.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="tag good">préférable</div>
+      <div class="card" style="border:none;border-radius:0;">
+        <p>Un fond discret et neutre, une seule couche thématique mise en évidence par la couleur.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="tag bad">à éviter</div>
+      <div class="card" style="border:none;border-radius:0;">
+        <p>Une légende générée automatiquement, avec les noms de champs bruts de la table attributaire (« dens_pop_2021 »).</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="tag good">préférable</div>
+      <div class="card" style="border:none;border-radius:0;">
+        <p>Une légende reformulée en langage clair (« Densité de population, 2021 — hab./km² »).</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="tag bad">à éviter</div>
+      <div class="card" style="border:none;border-radius:0;">
+        <p>Un titre descriptif et neutre : « Carte de la densité de population ».</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="tag good">préférable</div>
+      <div class="card" style="border:none;border-radius:0;">
+        <p>Un titre qui porte le message : « La densité de population se concentre le long de l'axe de la 15 ».</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANCHE 07 -->
+<section class="plate" id="p7">
+  <div class="plate-num">07</div>
+  <div class="plate-head">
+    <div class="plate-eyebrow">Planche 07</div>
+    <h2>Liste de vérification avant l'export</h2>
+    <p class="dek">Un dernier passage avant d'exporter en PDF — cochez au fur et à mesure.</p>
+  </div>
+
+  <ul class="checklist" id="checklist">
+    <li><input type="checkbox"><span>Le titre porte un message, pas seulement une description</span></li>
+    <li><input type="checkbox"><span>La palette correspond au type de variable (qualitative, séquentielle ou divergente)</span></li>
+    <li><input type="checkbox"><span>Le nombre de classes est raisonnable (5 à 6 maximum)</span></li>
+    <li><input type="checkbox"><span>La légende utilise un langage clair, sans noms de champs bruts</span></li>
+    <li><input type="checkbox"><span>L'échelle et l'orientation sont présentes et lisibles</span></li>
+    <li><input type="checkbox"><span>La source des données, la date et le système de référence sont indiqués</span></li>
+    <li><input type="checkbox"><span>Le texte reste lisible sur le fond (halo appliqué si nécessaire)</span></li>
+    <li><input type="checkbox"><span>Tous les éléments de la mise en page sont verrouillés</span></li>
+    <li><input type="checkbox"><span>L'export est fait à une résolution suffisante (≥ 300 ppp pour l'impression)</span></li>
+  </ul>
+  <div class="progress-line" id="progress">0 / 9 vérifiés</div>
+</section>
+
+<section class="closing">
+  <svg width="46" height="46" viewBox="0 0 60 60" style="margin:0 auto 1.2rem;"><g style="fill:none;stroke:#21AEAD;stroke-width:1.6"><circle cx="30" cy="30" r="26"/></g><path d="M30 8 L36 30 L30 52 L24 30 Z" style="fill:#21AEAD"/><path d="M8 30 L30 24 L52 30 L30 36 Z" style="fill:#0482D3"/></svg>
+  <h2 class="serif">Une bonne carte se peaufine, elle ne se devine pas</h2>
+  <p>Reprenez chaque planche pour la prochaine carte que vous produirez — la clarté vient rarement du premier essai.</p>
+  <a class="back-top" href="#p1">↑ Retour au début du guide</a>
+</section>
+
+<footer class="credit">Guide pédagogique — cartographie avec QGIS 4.0</footer>
+
+<script>
+  const items = document.querySelectorAll('#checklist li');
+  const progress = document.getElementById('progress');
+  function updateProgress(){
+    const total = items.length;
+    const done = document.querySelectorAll('#checklist li.done').length;
+    progress.textContent = done + ' / ' + total + ' vérifiés';
+  }
+  items.forEach(li => {
+    const cb = li.querySelector('input');
+    li.addEventListener('click', (e) => {
+      if(e.target !== cb){ cb.checked = !cb.checked; }
+      li.classList.toggle('done', cb.checked);
+      updateProgress();
+    });
+  });
+</script>
+
+</body>
+</html>
