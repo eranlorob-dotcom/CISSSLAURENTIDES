@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dictionnaire de données — Défavorisation Laurentides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+
+  --accent:var(--teal); --accent2:var(--blue);
+  --warn:#e8a13a;
+  --fs:1rem;
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(33,174,173,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(4,130,211,.10), transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Source Sans 3', system-ui, sans-serif;
+  font-size:var(--fs);
+  line-height:1.5;
+  min-height:100vh;
+}
+.wrap{ max-width:1080px; margin:0 auto; padding:28px 22px 80px; }
+
+/* En-tete */
+header.head{
+  border-bottom:1px solid var(--line);
+  padding-bottom:20px; margin-bottom:26px;
+}
+.badgeline{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.dot{ width:11px; height:11px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 4px rgba(33,174,173,.18); }
+.kicker{ font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-l); font-weight:700; }
+h1{ font-size:1.7rem; font-weight:900; margin:.1em 0 .15em; letter-spacing:-.01em; }
+.sub{ color:var(--ink2); font-size:1.02rem; max-width:70ch; }
+.signature{ color:var(--muted); font-size:.85rem; margin-top:10px; }
+
+.badges{ display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+.badge{
+  background:var(--panel); border:1px solid var(--line);
+  border-radius:999px; padding:6px 13px; font-size:.85rem; color:var(--ink2);
+  display:inline-flex; align-items:center; gap:7px;
+}
+.badge b{ font-family:'JetBrains Mono', monospace; color:var(--white); font-weight:500; font-variant-numeric:tabular-nums; }
+
+/* Barre outils */
+.toolbar{
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  margin:22px 0 18px; position:sticky; top:0; z-index:5;
+  background:linear-gradient(var(--bg) 70%, transparent);
+  padding:10px 0 12px;
+}
+.search{
+  flex:1 1 260px; min-width:200px;
+  background:var(--panel); border:1px solid var(--line); border-radius:10px;
+  padding:10px 14px; color:var(--ink); font-family:inherit; font-size:1rem;
+}
+.search::placeholder{ color:var(--muted); }
+.search:focus{ outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(33,174,173,.18); }
+.fsctrl{ display:flex; gap:6px; align-items:center; }
+.fsctrl span{ color:var(--muted); font-size:.8rem; margin-right:2px; }
+.fsctrl button{
+  width:34px; height:34px; border-radius:9px; cursor:pointer;
+  background:var(--panel); border:1px solid var(--line); color:var(--ink);
+  font-family:inherit; font-size:1rem; font-weight:700;
+}
+.fsctrl button:hover{ border-color:var(--teal); color:var(--teal-l); }
+
+/* Sections */
+.group{ margin:30px 0 8px; }
+.group h2{
+  font-size:1.12rem; font-weight:700; margin:0 0 3px;
+  display:flex; align-items:center; gap:10px;
+}
+.group h2::before{ content:""; width:4px; height:1.05em; border-radius:2px; background:var(--accent); }
+.group .gdesc{ color:var(--muted); font-size:.9rem; margin:0 0 12px; }
+
+/* Table / cartes de champ */
+table{ width:100%; border-collapse:collapse; }
+thead th{
+  text-align:left; font-size:.72rem; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--muted); font-weight:700; padding:6px 12px; border-bottom:1px solid var(--line);
+}
+tbody tr{ border-bottom:1px solid var(--line2); }
+tbody tr:hover{ background:rgba(24,26,82,.45); }
+td{ padding:11px 12px; vertical-align:top; }
+.champ{ font-family:'JetBrains Mono', monospace; font-size:.92rem; color:var(--teal-l); font-weight:500; white-space:nowrap; }
+.type{
+  font-family:'JetBrains Mono', monospace; font-size:.78rem; color:var(--ink2);
+  background:var(--panel2); border:1px solid var(--line); border-radius:6px;
+  padding:2px 8px; white-space:nowrap;
+}
+.type.texte{ color:var(--blue-l); }
+.type.null{ color:var(--warn); }
+.manq{ font-family:'JetBrains Mono', monospace; font-variant-numeric:tabular-nums; text-align:center; }
+.manq b{ color:var(--warn); }
+.manq .zero{ color:var(--muted); }
+.desc{ color:var(--ink); font-size:.96rem; }
+.desc small{ color:var(--muted); display:block; margin-top:2px; font-size:.82rem; }
+
+.flag{
+  display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.04em;
+  padding:2px 7px; border-radius:5px; margin-left:8px; vertical-align:middle;
+  background:rgba(232,161,58,.14); color:var(--warn); border:1px solid rgba(232,161,58,.4);
+}
+.flag.key{ background:rgba(33,174,173,.14); color:var(--teal-l); border-color:rgba(33,174,173,.4); }
+
+col.c-champ{ width:24%; }
+col.c-type{ width:12%; }
+col.c-manq{ width:9%; }
+
+/* Encadre notes */
+.notes{
+  margin-top:40px; background:var(--panel); border:1px solid var(--line);
+  border-left:3px solid var(--teal); border-radius:12px; padding:20px 24px;
+}
+.notes h2{ font-size:1.1rem; margin:0 0 12px; }
+.notes ol{ margin:0; padding-left:20px; }
+.notes li{ margin-bottom:12px; color:var(--ink2); }
+.notes li b{ color:var(--ink); }
+code.inl{ font-family:'JetBrains Mono', monospace; font-size:.85em; background:var(--panel2);
+  border:1px solid var(--line); border-radius:5px; padding:1px 6px; color:var(--teal-l); }
+
+.sources{ margin-top:26px; color:var(--muted); font-size:.82rem; border-top:1px solid var(--line); padding-top:16px; }
+
+.empty{ display:none; text-align:center; color:var(--muted); padding:40px; font-style:italic; }
+
+@media (max-width:720px){
+  col.c-champ,col.c-type,col.c-manq{ width:auto; }
+  thead{ display:none; }
+  table,tbody,tr,td{ display:block; width:100%; }
+  tbody tr{ padding:10px 0; }
+  td{ padding:3px 4px; }
+  .champ{ font-size:1rem; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div class="badgeline">
+      <span class="dot"></span>
+      <span class="kicker">C.A.R.T.O.S. · Dictionnaire de données</span>
+    </div>
+    <h1>Défavorisation — Laurentides</h1>
+    <p class="sub">Description des champs du jeu de données <code class="inl">laurentides_defavorisation.geojson</code>. Les interprétations sont déduites des noms de variables et des valeurs ; les champs à confirmer sont signalés.</p>
+    <p class="signature">CISSS des Laurentides — Direction de santé publique</p>
+    <div class="badges">
+      <span class="badge">Entités : <b>93</b> municipalités</span>
+      <span class="badge">Champs : <b>54</b></span>
+      <span class="badge">Indice : <b>Pampalon</b> (notes factorielles)</span>
+      <span class="badge">Projection : <b>CRS84</b> (EPSG:4326)</span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <input type="text" id="search" class="search" placeholder="Filtrer les champs (nom ou description)…" aria-label="Filtrer les champs">
+    <div class="fsctrl">
+      <span>Taille</span>
+      <button id="fsMinus" title="Réduire la taille du texte" aria-label="Réduire">A−</button>
+      <button id="fsPlus" title="Augmenter la taille du texte" aria-label="Augmenter">A+</button>
+    </div>
+  </div>
+
+  <div id="dico"></div>
+  <p class="empty" id="empty">Aucun champ ne correspond à votre recherche.</p>
+
+  <p class="sources">Sources : Statistique Canada (recensement 2021) · ISQ (projections de ménages 2025) · Indice de défavorisation Pampalon (INSPQ) · CISSS des Laurentides — Direction de santé publique · Dictionnaire généré 2026-07-06</p>
+
+</div>
+
+<script>
+const GROUPES = [
+  {
+    titre:"Identifiants et géographie",
+    desc:"Clés d'identification et attributs spatiaux de base.",
+    champs:[
+      ["fid","entier",0,"Identifiant interne de l'entité (Feature ID généré par QGIS).",""],
+      ["muni_code","texte",0,"Code géographique de la municipalité.","Ex. 73030"],
+      ["muni_nom","texte",0,"Nom de la municipalité.","Champ à utiliser pour les popups","key"],
+      ["mrc_nom","texte",0,"Nom de la MRC de rattachement.",""],
+      ["mrc_code","texte",0,"Code de la MRC.","Ex. 73"],
+      ["superficie_km2","décimal",0,"Superficie du territoire, en kilomètres carrés.",""],
+      ["densite_hab_km2","décimal",4,"Densité de population (habitants par km²).",""]
+    ]
+  },
+  {
+    titre:"Population et ménages",
+    desc:"Recensement 2021 — effectifs et caractéristiques socio-économiques.",
+    champs:[
+      ["pop2021","entier",4,"Population totale en 2021.",""],
+      ["menages","entier",4,"Nombre de ménages privés.",""],
+      ["revenu_median_approx","entier",4,"Revenu médian approximatif.","Ménages ou particuliers : à confirmer"],
+      ["faible_revenu_n","entier",4,"Nombre de personnes ou ménages à faible revenu.",""],
+      ["seul_n","entier",4,"Nombre de personnes vivant seules.",""],
+      ["rpa_n","entier",4,"Nombre en résidence privée pour aînés (RPA).",""]
+    ]
+  },
+  {
+    titre:"Tenure et types de logement",
+    desc:"Statut d'occupation et typologie résidentielle.",
+    champs:[
+      ["prop_n","entier",4,"Nombre de ménages propriétaires.",""],
+      ["prop_pct","décimal",4,"Pourcentage de propriétaires.",""],
+      ["loc_n","entier",4,"Nombre de ménages locataires.",""],
+      ["loc_pct","décimal",4,"Pourcentage de locataires.",""],
+      ["condo_n","entier",4,"Nombre de logements en copropriété (condos).",""],
+      ["t_indiv","entier",4,"Logements de type maison individuelle (unifamiliale détachée).",""],
+      ["t_jumele","entier",4,"Logements de type maison jumelée.",""],
+      ["t_rangee","entier",4,"Logements de type maison en rangée.",""],
+      ["t_appart","entier",4,"Logements de type appartement.",""],
+      ["t_duplex","entier",4,"Logements de type duplex.",""]
+    ]
+  },
+  {
+    titre:"Groupes d'âge",
+    desc:"Effectifs de population par tranche d'âge (2021).",
+    champs:[
+      ["a_15_24","entier",4,"Population de 15 à 24 ans.",""],
+      ["a_25_34","entier",4,"Population de 25 à 34 ans.",""],
+      ["a_35_44","entier",4,"Population de 35 à 44 ans.",""],
+      ["a_45_54","entier",4,"Population de 45 à 54 ans.",""],
+      ["a_55_64","entier",4,"Population de 55 à 64 ans.",""],
+      ["a_65_74","entier",4,"Population de 65 à 74 ans.",""],
+      ["a_75p","entier",4,"Population de 75 ans et plus.",""]
+    ]
+  },
+  {
+    titre:"Projections de ménages",
+    desc:"Horizons de projection et métadonnées de méthode.",
+    champs:[
+      ["menages_proj5","entier",4,"Ménages projetés à 5 ans.",""],
+      ["croissance_men_5a","entier",4,"Croissance des ménages sur 5 ans (nombre).",""],
+      ["pop_proj_2041","entier",5,"Population projetée en 2041.",""],
+      ["menages_proj_2041","entier",5,"Ménages projetés en 2041.",""],
+      ["croissance_men_2021_2041","entier",5,"Croissance des ménages 2021 → 2041 (nombre).",""],
+      ["croissance_men_2021_2041_pct","décimal",16,"Croissance des ménages 2021 → 2041 (pourcentage).",""],
+      ["menages_proj_2045","entier",5,"Ménages projetés en 2045.",""],
+      ["proj_methode","texte",5,"Méthode de projection employée.","Ex. headship_constant … environics"],
+      ["proj_officielle","texte",4,"Étiquette de la projection officielle retenue.",""],
+      ["proj_source","texte",4,"Source des projections.","Ex. ISQ ménages 2025 officiel"]
+    ]
+  },
+  {
+    titre:"Projections ISQ",
+    desc:"Institut de la statistique du Québec — scénarios de ménages.",
+    champs:[
+      ["isq_men_2021","entier",15,"Ménages ISQ, base 2021.",""],
+      ["isq_men_2041_ref","entier",15,"Ménages ISQ 2041, scénario de référence.",""],
+      ["isq_men_2041_fort","entier",15,"Ménages ISQ 2041, scénario fort.",""],
+      ["isq_men_2041_faible","entier",15,"Ménages ISQ 2041, scénario faible.",""],
+      ["isq_croiss_men_2041_ref","entier",15,"Croissance ISQ des ménages vers 2041 (référence).",""]
+    ]
+  },
+  {
+    titre:"Défavorisation (indice Pampalon)",
+    desc:"Notes factorielles de défavorisation matérielle et sociale.",
+    champs:[
+      ["defav_mat","décimal",4,"Indice de défavorisation matérielle (note factorielle, numérique).","Version numérique — préférable pour cartographier","key"],
+      ["defav_soc","décimal",4,"Indice de défavorisation sociale (note factorielle, numérique).","Version numérique — préférable pour cartographier","key"],
+      ["defav_mat_2","texte",4,"Défavorisation matérielle, mêmes valeurs mais stockées en texte.","Doublon texte de defav_mat"],
+      ["defav_soc_2","texte",4,"Défavorisation sociale, mêmes valeurs mais stockées en texte.","Doublon texte de defav_soc"]
+    ]
+  }
+];
+
+const dico = document.getElementById('dico');
+const N = 93;
+
+function typeClass(t){
+  if(t==='texte') return 'type texte';
+  if(t==='null') return 'type null';
+  return 'type';
+}
+function flagHtml(f){
+  if(f==='key') return '<span class="flag key">clé carto</span>';
+  if(f==='warn') return '<span class="flag">à nettoyer</span>';
+  return '';
+}
+function manqHtml(m){
+  if(m===0) return '<span class="zero">0</span>';
+  if(m===N) return '<b>'+m+'</b>';
+  return '<b>'+m+'</b>';
+}
+
+function render(){
+  dico.innerHTML = '';
+  GROUPES.forEach(g=>{
+    const sec = document.createElement('section');
+    sec.className='group';
+    let rows='';
+    g.champs.forEach(c=>{
+      const [nom,type,manq,desc,note,flag] = c;
+      rows += '<tr data-search="'+(nom+' '+desc+' '+(note||'')).toLowerCase()+'">'+
+        '<td><span class="champ">'+nom+'</span>'+flagHtml(flag)+'</td>'+
+        '<td><span class="'+typeClass(type)+'">'+type+'</span></td>'+
+        '<td class="manq">'+manqHtml(manq)+'</td>'+
+        '<td class="desc">'+desc+(note?'<small>'+note+'</small>':'')+'</td>'+
+      '</tr>';
+    });
+    sec.innerHTML =
+      '<h2>'+g.titre+'</h2><p class="gdesc">'+g.desc+'</p>'+
+      '<table><colgroup><col class="c-champ"><col class="c-type"><col class="c-manq"><col></colgroup>'+
+      '<thead><tr><th>Champ</th><th>Type</th><th>Manq.</th><th>Description</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table>';
+    dico.appendChild(sec);
+  });
+}
+render();
+
+// Recherche / filtre
+const search = document.getElementById('search');
+const empty = document.getElementById('empty');
+search.addEventListener('input', ()=>{
+  const q = search.value.trim().toLowerCase();
+  let anyVisible = false;
+  document.querySelectorAll('.group').forEach(sec=>{
+    let visibleInSec = 0;
+    sec.querySelectorAll('tbody tr').forEach(tr=>{
+      const match = !q || tr.dataset.search.includes(q);
+      tr.style.display = match ? '' : 'none';
+      if(match){ visibleInSec++; anyVisible = true; }
+    });
+    sec.style.display = visibleInSec ? '' : 'none';
+  });
+  empty.style.display = anyVisible ? 'none' : 'block';
+});
+
+// Contrôle de taille de police (accessibilité)
+let fs = 1;
+const root = document.documentElement;
+function applyFs(){ root.style.setProperty('--fs', fs.toFixed(3)+'rem'); }
+document.getElementById('fsPlus').addEventListener('click', ()=>{ fs = Math.min(1.5, fs+0.08); applyFs(); });
+document.getElementById('fsMinus').addEventListener('click', ()=>{ fs = Math.max(0.8, fs-0.08); applyFs(); });
+</script>
+</body>
+</html>
