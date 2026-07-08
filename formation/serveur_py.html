@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procédurier — Serveur HTTP local avec Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#140C74;
+    --teal:#21AEAD;
+    --blue:#0482D3;
+    --navy-deep:#0c0850;
+    --ink:#1b1f2a;
+    --paper:#f6f8fb;
+    --card:#ffffff;
+    --line:#e1e6ee;
+    --muted:#5a6270;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Source Sans 3', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+  }
+  header{
+    background:linear-gradient(120deg, var(--navy) 0%, var(--navy-deep) 55%, var(--blue) 130%);
+    color:#fff;
+    padding:2.6rem 1.5rem 2.2rem;
+    position:relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-60px;
+    width:220px; height:220px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(33,174,173,0.35) 0%, rgba(33,174,173,0) 70%);
+  }
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    font-size:.75rem;
+    font-weight:600;
+    color:var(--teal);
+    margin-bottom:.5rem;
+  }
+  h1{
+    margin:0;
+    font-size:1.7rem;
+    font-weight:700;
+    max-width:640px;
+  }
+  .sub{
+    margin-top:.6rem;
+    color:#cfd9f7;
+    max-width:620px;
+    font-size:.98rem;
+  }
+  main{
+    max-width:760px;
+    margin:0 auto;
+    padding:2rem 1.5rem 4rem;
+  }
+  .command-hero{
+    background:var(--ink);
+    color:#e7f3ff;
+    border-radius:10px;
+    padding:1.1rem 1.3rem;
+    margin:1.6rem 0 2.2rem;
+    font-family:'JetBrains Mono', monospace;
+    font-size:1.05rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    box-shadow:0 8px 24px -10px rgba(20,12,116,0.35);
+  }
+  .command-hero code{color:#7fe0dd;}
+  .copy-btn{
+    background:var(--teal);
+    color:var(--ink);
+    border:none;
+    border-radius:6px;
+    padding:.4rem .7rem;
+    font-size:.75rem;
+    font-weight:600;
+    font-family:'Source Sans 3', sans-serif;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .copy-btn:hover{background:#1c9c9b;}
+  .copy-btn:active{transform:scale(0.96);}
+  section.prereq{
+    border-left:3px solid var(--blue);
+    background:#eef5fc;
+    border-radius:0 8px 8px 0;
+    padding:.9rem 1.1rem;
+    margin-bottom:2rem;
+    font-size:.93rem;
+    color:#2a3550;
+  }
+  section.prereq strong{color:var(--navy);}
+  h2.section-title{
+    font-size:1.05rem;
+    color:var(--navy);
+    margin:0 0 1.1rem;
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .steps{
+    list-style:none;
+    margin:0 0 2.4rem;
+    padding:0;
+    counter-reset:step;
+  }
+  .step{
+    counter-increment:step;
+    position:relative;
+    padding:0 0 1.6rem 2.6rem;
+    border-left:2px solid var(--line);
+    margin-left:14px;
+  }
+  .step:last-child{border-left:2px solid transparent; padding-bottom:0;}
+  .step::before{
+    content:counter(step);
+    position:absolute;
+    left:-15px; top:0;
+    width:28px; height:28px;
+    background:var(--navy);
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.85rem;
+    font-weight:700;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .step h3{
+    margin:0 0 .35rem;
+    font-size:1rem;
+    color:var(--ink);
+  }
+  .step p{margin:.2rem 0; color:var(--muted); font-size:.93rem;}
+  .step .path-box, .step pre{
+    background:#eef1f7;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:.55rem .75rem;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.85rem;
+    color:var(--navy-deep);
+    margin:.5rem 0 0;
+    overflow-x:auto;
+  }
+  .step a.link{color:var(--blue); font-weight:600;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.88rem;
+    background:var(--card);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(20,12,116,0.06);
+  }
+  thead th{
+    background:var(--navy);
+    color:#fff;
+    text-align:left;
+    padding:.65rem .8rem;
+    font-weight:600;
+  }
+  tbody td{
+    padding:.65rem .8rem;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody td:first-child{color:var(--navy); font-weight:600; white-space:nowrap;}
+  tbody code{
+    font-family:'JetBrains Mono', monospace;
+    background:#eef1f7;
+    padding:.1rem .35rem;
+    border-radius:4px;
+    font-size:.82rem;
+  }
+  .usecase{
+    margin-top:2.4rem;
+    background:linear-gradient(135deg, #eafbfa 0%, #eef5fc 100%);
+    border:1px solid #d5eeee;
+    border-radius:10px;
+    padding:1.2rem 1.3rem;
+  }
+  .usecase h2.section-title{margin-bottom:.5rem;}
+  .usecase p{margin:0; font-size:.93rem; color:#2a3550;}
+  footer{
+    text-align:center;
+    font-size:.78rem;
+    color:var(--muted);
+    padding:1.5rem;
+  }
+  @media (max-width:520px){
+    h1{font-size:1.35rem;}
+    .command-hero{flex-direction:column; align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Procédurier · outils géoweb locaux</div>
+  <h1>Lancer un serveur HTTP local avec Python</h1>
+  <p class="sub">Pour tester un outil cartographique HTML (Leaflet, QGIS2Web, etc.) dans un navigateur avant sa mise en ligne.</p>
+</header>
+
+<main>
+
+  <div class="command-hero">
+    <span><code>py -m http.server 8080</code></span>
+    <button class="copy-btn" onclick="copyCmd(this)">Copier</button>
+  </div>
+
+  <section class="prereq">
+    <strong>Prérequis —</strong> Python doit être installé (le lanceur <code style="font-family:'JetBrains Mono',monospace;">py</code> est inclus avec l'installateur officiel sur Windows). Pour vérifier : ouvrir un terminal et taper <code style="font-family:'JetBrains Mono',monospace;">py --version</code>.
+  </section>
+
+  <h2 class="section-title">Étapes</h2>
+  <ol class="steps">
+    <li class="step">
+      <h3>Ouvrir un terminal dans le bon dossier</h3>
+      <p>Dans l'explorateur de fichiers, se placer dans le dossier contenant les fichiers HTML à servir, cliquer dans la barre d'adresse, taper <code style="font-family:'JetBrains Mono',monospace;">cmd</code> puis Entrée.</p>
+      <p>Ou naviguer manuellement depuis un terminal déjà ouvert :</p>
+      <div class="path-box">cd chemin\vers\le\dossier</div>
+    </li>
+    <li class="step">
+      <h3>Lancer le serveur</h3>
+      <p>Taper la commande suivante puis Entrée :</p>
+      <pre>py -m http.server 8080</pre>
+      <p>Le terminal confirme le démarrage avec un message du type <em>« Serving HTTP on … port 8080 »</em>.</p>
+    </li>
+    <li class="step">
+      <h3>Ouvrir le site dans le navigateur</h3>
+      <p>Se rendre à l'une de ces adresses :</p>
+      <div class="path-box">http://localhost:8080<br>http://127.0.0.1:8080</div>
+      <p>Cliquer ensuite sur le fichier <code style="font-family:'JetBrains Mono',monospace;">.html</code> voulu dans la liste affichée.</p>
+    </li>
+    <li class="step">
+      <h3>Arrêter le serveur</h3>
+      <p>Retourner dans le terminal et appuyer sur <code style="font-family:'JetBrains Mono',monospace;">Ctrl + C</code>. Fermer la fenêtre du terminal arrête aussi le serveur.</p>
+    </li>
+  </ol>
+
+  <h2 class="section-title">Dépannage</h2>
+  <table>
+    <thead>
+      <tr><th>Situation</th><th>Solution</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Port 8080 déjà utilisé</td><td>Choisir un autre port : <code>py -m http.server 8081</code></td></tr>
+      <tr><td><code>py</code> non reconnu</td><td>Essayer <code>python -m http.server 8080</code> ou <code>python3 -m http.server 8080</code></td></tr>
+      <tr><td>Erreur de connexion dans le navigateur</td><td>Vérifier que le terminal est resté ouvert — le serveur s'arrête à sa fermeture</td></tr>
+      <tr><td>Servir un dossier précis sans s'y déplacer</td><td><code>py -m http.server 8080 --directory "chemin\vers\dossier"</code></td></tr>
+      <tr><td>Accès depuis un autre appareil du même réseau</td><td>Remplacer <code>localhost</code> par l'adresse IP locale (<code>ipconfig</code> sous Windows)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="usecase">
+    <h2 class="section-title">Cas d'usage typique</h2>
+    <p>Utile pour tester localement un outil cartographique HTML autonome (Leaflet, etc.) avant sa mise en ligne sur GitHub Pages — en particulier lorsque le fichier fait des appels à des données externes (GeoJSON, tuiles) qui nécessitent un vrai serveur plutôt qu'une simple ouverture via <code style="font-family:'JetBrains Mono',monospace;">file://</code>.</p>
+  </div>
+
+</main>
+
+<footer>Direction de santé publique · CISSS des Laurentides</footer>
+
+<script>
+function copyCmd(btn){
+  navigator.clipboard.writeText('py -m http.server 8080').then(()=>{
+    const original = btn.textContent;
+    btn.textContent = 'Copié ✓';
+    setTimeout(()=>{btn.textContent = original;}, 1500);
+  });
+}
+</script>
+
+</body>
+</html>
