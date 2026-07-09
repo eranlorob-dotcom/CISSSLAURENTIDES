@@ -1,0 +1,826 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portrait du logement communautaire — Laurentides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+  --accent:var(--teal); --accent2:var(--blue);
+  --danger:#e2557a;
+  --fs:1rem;
+}
+body.theme-light{
+  --bg:#ffffff; --bg2:#f4f6fc; --panel:#ffffff; --panel2:#eef1fb;
+  --line:#d8def0; --line2:#e6eaf7;
+  --ink:#14143a; --ink2:#3a3f6e; --muted:#7a80a8;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:'Source Sans 3',system-ui,sans-serif;
+  font-size:var(--fs);
+  background:radial-gradient(1200px 600px at 50% -10%,var(--bg2),var(--bg));
+  color:var(--ink); line-height:1.5; padding-bottom:4rem;
+}
+.num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+
+/* ---- En-tête institutionnel ---- */
+header{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,var(--panel),transparent);
+  padding:1.4rem 1.25rem 1.1rem;
+}
+.head-in{max-width:860px;margin:0 auto;display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.accent-bar{width:6px;align-self:stretch;min-height:56px;border-radius:6px;
+  background:linear-gradient(180deg,var(--teal),var(--blue));flex:0 0 auto}
+.head-txt{flex:1 1 320px}
+h1{font-size:1.5rem;font-weight:800;margin:0 0 .15rem;letter-spacing:-.01em}
+.sig{color:var(--muted);font-size:.9rem}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--teal-l);border:1px solid var(--line);border-radius:999px;padding:.2rem .6rem;margin-bottom:.4rem}
+.head-tools{display:flex;gap:.4rem;align-items:center;margin-left:auto}
+.icon-btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink2);
+  border-radius:8px;min-width:34px;height:34px;padding:0 .55rem;cursor:pointer;font-weight:600;font-size:.9rem}
+.icon-btn:hover{border-color:var(--accent);color:var(--ink)}
+
+/* ---- Contenu ---- */
+main{max-width:860px;margin:1.3rem auto 0;padding:0 1.25rem}
+.intro{color:var(--ink2);font-size:.98rem;background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--teal);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1.3rem}
+.intro b{color:var(--ink)}
+.intro .time{color:var(--teal-l);font-weight:600}
+
+section.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:1.15rem 1.15rem 1.25rem;margin-bottom:1.15rem}
+.sec-head{display:flex;align-items:baseline;gap:.6rem;margin:0 0 .9rem}
+.sec-no{font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:500;font-size:1.05rem}
+.sec-title{font-size:1.18rem;font-weight:700;margin:0}
+.sec-sub{color:var(--muted);font-size:.9rem;margin:.15rem 0 0;font-weight:400}
+.opt-tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:.1rem .5rem;margin-left:.4rem}
+
+.field{margin-bottom:.95rem}
+.field.inline-hidden{display:none}
+label.q{display:block;font-weight:600;margin-bottom:.35rem;font-size:.96rem}
+label.q .req{color:var(--teal-l);margin-left:.15rem}
+.hint{color:var(--muted);font-size:.85rem;margin:-.2rem 0 .4rem}
+input[type=text],input[type=email],input[type=number],select,textarea{
+  width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--ink);
+  border-radius:9px;padding:.6rem .7rem;font:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(33,174,173,.18)}
+input.err,select.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(226,85,122,.18)}
+textarea{min-height:78px;resize:vertical}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55%;background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:2rem}
+
+/* segmented oui/non */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{background:var(--bg2);color:var(--ink2);border:0;padding:.5rem 1.1rem;cursor:pointer;font:inherit;font-weight:600}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--teal);color:#04121a}
+
+/* chips (choix multiples) */
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{border:1px solid var(--line);background:var(--bg2);color:var(--ink2);border-radius:999px;
+  padding:.4rem .8rem;cursor:pointer;font-size:.9rem;user-select:none}
+.chip[aria-pressed=true]{background:linear-gradient(180deg,var(--blue),var(--blue-d));color:#fff;border-color:transparent}
+.chip:hover{border-color:var(--accent)}
+
+/* cartes répétables */
+.entry{border:1px solid var(--line2);background:var(--panel2);border-radius:12px;padding:1rem;margin-bottom:.85rem;position:relative}
+.entry-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
+.entry-head .lbl{font-weight:700;color:var(--teal-l)}
+.rm{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;
+  width:30px;height:30px;cursor:pointer;font-size:1rem;line-height:1}
+.rm:hover{border-color:var(--danger);color:var(--danger)}
+.add-btn{background:var(--bg2);border:1px dashed var(--line);color:var(--ink2);border-radius:10px;
+  padding:.6rem 1rem;cursor:pointer;font:inherit;font-weight:600;width:100%}
+.add-btn:hover{border-color:var(--accent);color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+
+.geo-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.geo-btn{background:var(--bg2);border:1px solid var(--line);color:var(--ink2);border-radius:9px;padding:.55rem .8rem;cursor:pointer;font:inherit;font-weight:600}
+.geo-btn:hover{border-color:var(--accent);color:var(--ink)}
+.geo-val{color:var(--teal-l);font-size:.85rem}
+
+/* barre récap */
+.tally{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;
+  background:rgba(11,9,48,.92);backdrop-filter:blur(6px);border:1px solid var(--line);
+  border-radius:12px;padding:.6rem .9rem;margin-bottom:1.1rem}
+body.theme-light .tally{background:rgba(244,246,252,.94)}
+.tally .k{color:var(--muted);font-size:.82rem}
+.tally .v{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--ink)}
+
+/* actions */
+.actions{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.15rem;margin-bottom:1.4rem}
+.actions h3{margin:0 0 .3rem;font-size:1.05rem}
+.actions p{color:var(--muted);font-size:.88rem;margin:0 0 .9rem}
+.btn-row{display:flex;flex-wrap:wrap;gap:.6rem}
+.btn{border:0;border-radius:10px;padding:.7rem 1.1rem;cursor:pointer;font:inherit;font-weight:700;font-size:.95rem}
+.btn.primary{background:linear-gradient(180deg,var(--teal),var(--teal-d));color:#04121a}
+.btn.ghost{background:var(--bg2);border:1px solid var(--line);color:var(--ink2)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.draft-line{display:flex;align-items:center;gap:.6rem;margin-top:.9rem;color:var(--muted);font-size:.82rem}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block}
+.link{color:var(--blue-l);cursor:pointer;text-decoration:underline;background:none;border:0;font:inherit;padding:0}
+
+footer{max-width:860px;margin:0 auto;padding:1rem 1.25rem 2rem;color:var(--muted);font-size:.82rem;text-align:center}
+
+/* modal carte */
+.modal{position:fixed;inset:0;background:rgba(4,4,20,.72);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}
+.modal.open{display:flex}
+.modal-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(720px,100%);overflow:hidden;display:flex;flex-direction:column;max-height:92vh}
+.modal-top{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid var(--line)}
+.modal-top b{font-size:1rem}
+#map{height:min(60vh,440px);width:100%}
+.modal-tools{display:flex;gap:.6rem;padding:.8rem 1rem;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.modal-hint{color:var(--muted);font-size:.85rem;flex:1 1 200px}
+.leaflet-container{background:var(--bg)}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%) translateY(2rem);
+  background:var(--navy);border:1px solid var(--teal);color:#fff;padding:.7rem 1.1rem;border-radius:10px;
+  opacity:0;transition:.25s;z-index:1100;font-weight:600;font-size:.92rem;pointer-events:none;max-width:90vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.err-msg{color:var(--danger);font-size:.82rem;margin-top:.3rem;display:none}
+.err-msg.show{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-in">
+    <div class="accent-bar"></div>
+    <div class="head-txt">
+      <span class="badge">Habitation &amp; milieu de vie</span>
+      <h1>Portrait du logement communautaire — Laurentides</h1>
+      <div class="sig">CISSS des Laurentides — Direction de santé publique</div>
+    </div>
+    <div class="head-tools">
+      <button class="icon-btn" id="fsDown" title="Réduire le texte">A−</button>
+      <button class="icon-btn" id="fsUp" title="Agrandir le texte">A+</button>
+      <button class="icon-btn" id="themeBtn" title="Thème clair / sombre">☀︎</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    Ce court questionnaire sert à dresser et à tenir à jour un portrait <b>cartographiable</b> des logements
+    communautaires <b>en opération</b> et <b>en projet</b> sur le territoire. Il <b>complète</b> les répertoires
+    existants (ex.&nbsp;la liste des OSBL et coopératives de la DSL) plutôt que de les remplacer.
+    <div style="margin-top:.5rem"><span class="time">⏱ 5 à 10 minutes.</span> Remplissez <b>seulement les sections
+    qui vous concernent</b>. Votre brouillon est enregistré automatiquement dans ce navigateur&nbsp;: vous pouvez
+    fermer et revenir plus tard.</div>
+  </div>
+
+  <div class="tally" id="tally">
+    <span><span class="k">Immeubles recensés&nbsp;</span><span class="v num" id="t_imm">0</span></span>
+    <span><span class="k">Logements en opération&nbsp;</span><span class="v num" id="t_log">0</span></span>
+    <span><span class="k">Projets&nbsp;</span><span class="v num" id="t_proj">0</span></span>
+    <span><span class="k">Logements prévus&nbsp;</span><span class="v num" id="t_prev">0</span></span>
+  </div>
+
+  <!-- 1. Identification -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">1</span><h2 class="sec-title">Identification</h2></div>
+    <div class="field">
+      <label class="q">Nom de l'organisme / organisation <span class="req">*</span></label>
+      <input type="text" data-path="ident.nom_organisme" id="nom_organisme">
+      <div class="err-msg" data-for="nom_organisme">Champ requis.</div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label class="q">Type d'organisme <span class="req">*</span></label>
+        <select data-path="ident.type_organisme" id="type_organisme" data-toggle="type_org_autre" data-toggle-val="autre"></select>
+        <div class="err-msg" data-for="type_organisme">Champ requis.</div>
+      </div>
+      <div class="field inline-hidden" id="wrap_type_org_autre">
+        <label class="q">Précisez le type</label>
+        <input type="text" data-path="ident.type_org_autre">
+      </div>
+    </div>
+    <div class="field">
+      <label class="q">Vous répondez surtout à titre de… <span class="req">*</span></label>
+      <div class="hint">Sert à orienter les sections pertinentes.</div>
+      <select data-path="ident.role_repondant" id="role_repondant"></select>
+      <div class="err-msg" data-for="role_repondant">Champ requis.</div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label class="q">MRC <span class="req">*</span></label>
+        <select data-path="ident.mrc" id="mrc"></select>
+        <div class="err-msg" data-for="mrc">Champ requis.</div>
+      </div>
+      <div class="field">
+        <label class="q">Municipalité</label>
+        <input type="text" data-path="ident.municipalite">
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label class="q">Nom du répondant <span class="req">*</span></label>
+        <input type="text" data-path="ident.nom_repondant" id="nom_repondant">
+        <div class="err-msg" data-for="nom_repondant">Champ requis.</div>
+      </div>
+      <div class="field">
+        <label class="q">Fonction / titre</label>
+        <input type="text" data-path="ident.fonction">
+      </div>
+    </div>
+    <div class="field">
+      <label class="q">Courriel <span class="req">*</span></label>
+      <input type="email" data-path="ident.courriel" id="courriel">
+      <div class="err-msg" data-for="courriel">Courriel valide requis.</div>
+    </div>
+  </section>
+
+  <!-- 2. Parc existant -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">2</span><h2 class="sec-title">Logements communautaires en opération</h2></div>
+    <div class="field">
+      <label class="q">Gérez-vous ou connaissez-vous précisément des logements communautaires en opération sur votre territoire&nbsp;? <span class="req">*</span></label>
+      <div class="hint">Répondez «&nbsp;Non&nbsp;» si vous n'avez pas cette information — d'autres répondants la fourniront.</div>
+      <div class="seg" id="seg_parc" role="group">
+        <button type="button" data-val="oui" aria-pressed="false">Oui</button>
+        <button type="button" data-val="non" aria-pressed="false">Non</button>
+      </div>
+      <div class="err-msg" data-for="seg_parc">Veuillez répondre.</div>
+    </div>
+    <div id="parc_block" class="inline-hidden">
+      <div id="immeubles"></div>
+      <button type="button" class="add-btn" id="add_imm">＋ Ajouter un immeuble / projet en opération</button>
+    </div>
+  </section>
+
+  <!-- 3. Projets -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">3</span><h2 class="sec-title">Projets à venir</h2></div>
+    <div class="field">
+      <label class="q">Des projets de logements communautaires sont-ils planifiés ou en développement sur votre territoire&nbsp;? <span class="req">*</span></label>
+      <div class="seg" id="seg_proj" role="group">
+        <button type="button" data-val="oui" aria-pressed="false">Oui</button>
+        <button type="button" data-val="non" aria-pressed="false">Non</button>
+      </div>
+      <div class="err-msg" data-for="seg_proj">Veuillez répondre.</div>
+    </div>
+    <div id="proj_block" class="inline-hidden">
+      <div id="projets"></div>
+      <button type="button" class="add-btn" id="add_proj">＋ Ajouter un projet</button>
+    </div>
+  </section>
+
+  <!-- 4. Regard du milieu -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">4</span><h2 class="sec-title">Regard du milieu</h2><span class="opt-tag">Facultatif</span></div>
+    <p class="sec-sub" style="margin-bottom:1rem">Surtout pour les organisateurs·trices communautaires et partenaires terrain qui connaissent bien les besoins. Les gestionnaires peuvent la sauter.</p>
+    <div class="field">
+      <label class="q">Principaux besoins en logement communautaire sur votre territoire</label>
+      <div class="hint">Ciblez jusqu'à vos 3 priorités.</div>
+      <div class="chips" id="chips_besoins"></div>
+    </div>
+    <div class="field inline-hidden" id="wrap_besoins_autre">
+      <label class="q">Précisez</label><input type="text" data-path="besoins.besoins_autre">
+    </div>
+    <div class="field">
+      <label class="q">Principaux obstacles au développement de logements communautaires</label>
+      <div class="chips" id="chips_obstacles"></div>
+    </div>
+    <div class="field inline-hidden" id="wrap_obstacles_autre">
+      <label class="q">Précisez</label><input type="text" data-path="besoins.obstacles_autre">
+    </div>
+    <div class="field">
+      <label class="q">Souhaitez-vous être recontacté·e au sujet de ce portrait&nbsp;?</label>
+      <div class="seg" id="seg_collab" role="group">
+        <button type="button" data-val="oui" aria-pressed="false">Oui</button>
+        <button type="button" data-val="non" aria-pressed="false">Non</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="q">Commentaires</label>
+      <textarea data-path="besoins.commentaires"></textarea>
+    </div>
+  </section>
+
+  <!-- Actions -->
+  <div class="actions">
+    <h3>Terminer</h3>
+    <p>Aucun serveur n'est requis&nbsp;: vos réponses sont transmises par courriel ou téléchargées en fichier.
+       Destinataire actuel&nbsp;: <b id="dest_lbl"></b>.</p>
+    <div class="btn-row">
+      <button class="btn primary" id="send_gmail">📧 Envoyer par Gmail</button>
+      <button class="btn ghost" id="send_mailto">✉️ Logiciel de courriel</button>
+      <button class="btn ghost" id="dl_json">⬇️ Télécharger (JSON)</button>
+      <button class="btn ghost" id="dl_csv">⬇️ Télécharger (CSV)</button>
+      <button class="btn ghost" id="copy_sum">📋 Copier le résumé</button>
+    </div>
+    <div class="draft-line">
+      <span class="dot"></span><span id="draft_state">Brouillon enregistré automatiquement.</span>
+      <button class="link" id="clear_draft">Effacer le brouillon</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  © OpenStreetMap · CARTO · CISSS des Laurentides — Direction de santé publique · Outil interne
+</footer>
+
+<!-- Modal carte -->
+<div class="modal" id="mapModal">
+  <div class="modal-box">
+    <div class="modal-top"><b>Situer sur la carte</b><button class="icon-btn" id="mapClose">✕</button></div>
+    <div id="map"></div>
+    <div class="modal-tools">
+      <span class="modal-hint">Cliquez sur la carte pour placer le point, ou déplacez le marqueur.</span>
+      <button class="geo-btn" id="geoLocate">📍 Ma position</button>
+      <button class="btn ghost" id="mapClear">Retirer</button>
+      <button class="btn primary" id="mapConfirm">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ======================================================================
+   CONFIGURATION — à ajuster par l'équipe
+   ====================================================================== */
+const COLLECTE_EMAIL = "prenom.nom@ssss.gouv.qc.ca";  // ⬅️ REMPLACER par l'adresse de collecte
+const STORAGE_KEY = "portrait_logement_laurentides_v2";
+
+/* ---- Listes de choix (miroir du XLSForm v2) ---- */
+const L = {
+  type_org:[["obnl_habitation","OBNL d'habitation"],["cooperative","Coopérative d'habitation"],
+    ["office_habitation","Office d'habitation (OMH / OH)"],["mrc","MRC"],["municipalite","Municipalité"],
+    ["organisme_communautaire","Organisme communautaire"],["cdc","Corporation de développement communautaire (CDC)"],
+    ["grh","Groupe de ressources en habitation (GRH)"],["autre","Autre"]],
+  role:[["gestionnaire","Gestionnaire / porteur de projet de logement"],
+    ["intervenant","Organisateur·trice communautaire ou partenaire du milieu"],
+    ["municipal","Acteur municipal / MRC"],["les_deux","Plusieurs de ces rôles"]],
+  mrc:[["argenteuil","MRC d'Argenteuil"],["deux_montagnes","MRC de Deux-Montagnes"],
+    ["therese_de_blainville","MRC de Thérèse-De Blainville"],["mirabel","Ville de Mirabel"],
+    ["riviere_du_nord","MRC de La Rivière-du-Nord"],["pays_den_haut","MRC des Pays-d'en-Haut"],
+    ["laurentides_mrc","MRC des Laurentides"],["antoine_labelle","MRC d'Antoine-Labelle"]],
+  type_logement:[["hlm","HLM (Habitation à loyer modique)"],["coop","Coopérative d'habitation"],
+    ["osbl","OSBL d'habitation"],["psl","PSL (Programme de supplément au loyer)"],
+    ["abordable","Logement abordable (non subventionné)"],["mixte","Projet mixte (plusieurs types)"],["autre","Autre"]],
+  programme:[["acceslogis","AccèsLogis Québec"],["phaq","Programme d'habitation abordable Québec (PHAQ)"],
+    ["icrl","Initiative pour la création rapide de logements (ICRL)"],["fnh","Fonds national de co-investissement (FNCIH)"],
+    ["programme_municipal","Programme municipal"],["schl","Autre programme SCHL"],["shq","Autre programme SHQ"],["autre","Autre"]],
+  clientele:[["personnes_agees","Personnes aînées (65+)"],["familles","Familles"],["personnes_seules","Personnes seules"],
+    ["handicap","Personnes vivant avec un handicap"],["sante_mentale","Problèmes de santé mentale"],
+    ["itinerance","Itinérance ou à risque"],["femmes_violentees","Femmes victimes de violence"],
+    ["jeunes","Jeunes (18-30 ans)"],["autochtones","Personnes autochtones"],["immigrants","Immigrantes ou réfugiées"],
+    ["mixte","Clientèle mixte / sans restriction"],["autre","Autre"]],
+  etape:[["ideation","Idéation / réflexion préliminaire"],["etude_besoins","Étude de besoins réalisée"],
+    ["recherche_terrain","Recherche de terrain"],["terrain_acquis","Terrain acquis"],
+    ["montage_financier","Montage financier en cours"],["demande_financement","Demande de financement déposée"],
+    ["financement_confirme","Financement confirmé"],["plans_architecture","Plans et devis en cours"],
+    ["permis","En attente de permis"],["construction","En construction"]],
+  echeancier:[["moins_1_an","Moins d'un an"],["1_2_ans","1 à 2 ans"],["2_3_ans","2 à 3 ans"],
+    ["3_5_ans","3 à 5 ans"],["plus_5_ans","Plus de 5 ans"],["indetermine","Indéterminé"]],
+  besoins:[["logements_aines","Logements adaptés pour aînés"],["logements_familles","Logements familles (grands logements)"],
+    ["logements_personnes_seules","Logements personnes seules"],["logements_adaptes","Logements adaptés (mobilité réduite)"],
+    ["logements_soutien","Logements avec soutien communautaire"],["logements_itinerance","Transition / itinérance"],
+    ["renovation_parc","Rénovation du parc existant"],["supplement_loyer","Plus de suppléments au loyer"],["autre","Autre"]],
+  obstacles:[["manque_financement","Manque de financement gouvernemental"],["cout_construction","Coût élevé de construction"],
+    ["manque_terrain","Manque de terrains disponibles / abordables"],["zonage","Zonage ou réglementation municipale"],
+    ["opposition_citoyenne","Opposition citoyenne (NIMBY)"],["main_oeuvre","Pénurie de main-d'œuvre"],
+    ["capacite_organisationnelle","Capacité organisationnelle limitée"],["delais_approbation","Délais d'approbation"],
+    ["manque_expertise","Manque d'expertise locale"],["infrastructure","Limites d'infrastructures"],["autre","Autre"]]
+};
+const labelOf = (list,code)=>{const f=L[list].find(x=>x[0]===code);return f?f[1]:code;};
+
+/* ---- État ---- */
+let state = {
+  ident:{}, a_parc:"", immeubles:[], projets_planifies:"", projets:[],
+  besoins:{besoins:[],besoins_autre:"",obstacles:[],obstacles_autre:"",collaboration:"",commentaires:""}
+};
+
+/* ---- Utilitaires ---- */
+const $ = s=>document.querySelector(s);
+const $$ = s=>[...document.querySelectorAll(s)];
+const fmt = n => (n==null||n==="")?"—":Number(n).toLocaleString('fr-CA');
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2600);}
+function setByPath(obj,path,val){const p=path.split(".");let o=obj;for(let i=0;i<p.length-1;i++)o=o[p[i]]=o[p[i]]||{};o[p[p.length-1]]=val;}
+function getByPath(obj,path){return path.split(".").reduce((o,k)=>o&&o[k],obj);}
+
+function fillSelect(sel,list,ph){
+  sel.innerHTML = `<option value="">${ph||"— Choisir —"}</option>` +
+    list.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
+}
+
+/* ---- Autosave ---- */
+let saveTimer=null;
+function autosave(){
+  updateTally();
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      $("#draft_state").textContent="Brouillon enregistré ✓ "+new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
+    }catch(e){ $("#draft_state").textContent="(enregistrement local indisponible dans ce contexte)"; }
+  },400);
+}
+function loadDraft(){
+  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)return JSON.parse(raw);}catch(e){}
+  return null;
+}
+
+/* ---- Tally ---- */
+function updateTally(){
+  $("#t_imm").textContent = fmt(state.immeubles.length);
+  $("#t_log").textContent = fmt(state.immeubles.reduce((s,x)=>s+(parseInt(x.nb)||0),0));
+  $("#t_proj").textContent = fmt(state.projets.length);
+  $("#t_prev").textContent = fmt(state.projets.reduce((s,x)=>s+(parseInt(x.nb)||0),0));
+}
+
+/* ======================================================================
+   Construction des cartes répétables
+   ====================================================================== */
+function chipGroup(container, list, arr, onAutre){
+  container.innerHTML="";
+  list.forEach(([v,l])=>{
+    const b=document.createElement("button");
+    b.type="button";b.className="chip";b.textContent=l;
+    b.setAttribute("aria-pressed", arr.includes(v));
+    b.onclick=()=>{
+      const i=arr.indexOf(v);
+      if(i>=0)arr.splice(i,1);else arr.push(v);
+      b.setAttribute("aria-pressed", arr.includes(v));
+      if(v==="autre"&&onAutre)onAutre(arr.includes("autre"));
+      autosave();
+    };
+    container.appendChild(b);
+  });
+}
+
+function buildImmeuble(obj){
+  const card=document.createElement("div");card.className="entry";
+  card.innerHTML=`
+    <div class="entry-head"><span class="lbl">Immeuble / projet</span><button type="button" class="rm" title="Retirer">✕</button></div>
+    <div class="field"><label class="q">Nom du projet / immeuble <span class="req">*</span></label>
+      <input type="text" class="f-nom"></div>
+    <div class="field"><label class="q">Adresse (numéro, rue, municipalité)</label><input type="text" class="f-adr"></div>
+    <div class="field"><label class="q">Localisation</label>
+      <div class="geo-row"><button type="button" class="geo-btn f-geo">📍 Situer sur la carte</button>
+        <span class="geo-val f-geoval num"></span></div></div>
+    <div class="grid2">
+      <div class="field"><label class="q">Type de logement <span class="req">*</span></label><select class="f-type"></select></div>
+      <div class="field f-typeautre-wrap inline-hidden"><label class="q">Précisez le type</label><input type="text" class="f-typeautre"></div>
+    </div>
+    <div class="field"><label class="q">Nombre total de logements <span class="req">*</span></label>
+      <input type="number" min="1" class="f-nb num" style="max-width:180px"></div>
+    <div class="field"><label class="q">Clientèle(s) cible(s)</label><div class="chips f-clients"></div></div>
+    <div class="field f-cliautre-wrap inline-hidden"><label class="q">Précisez la clientèle</label><input type="text" class="f-cliautre"></div>
+    <div class="field"><label class="q">Programme de financement principal (si connu)</label><select class="f-prog"></select></div>
+  `;
+  const q=s=>card.querySelector(s);
+  q(".f-nom").value=obj.nom||"";
+  q(".f-adr").value=obj.adresse||"";
+  fillSelect(q(".f-type"),L.type_logement); q(".f-type").value=obj.type||"";
+  fillSelect(q(".f-prog"),L.programme,"— Non précisé —"); q(".f-prog").value=obj.programme||"";
+  q(".f-nb").value=obj.nb||"";
+  q(".f-typeautre").value=obj.type_autre||"";
+  q(".f-cliautre").value=obj.cli_autre||"";
+  obj.clienteles=obj.clienteles||[];
+  const toggleTypeAutre=()=>q(".f-typeautre-wrap").classList.toggle("inline-hidden", q(".f-type").value!=="autre");
+  const toggleCliAutre=on=>q(".f-cliautre-wrap").classList.toggle("inline-hidden", !on);
+  toggleTypeAutre(); toggleCliAutre(obj.clienteles.includes("autre"));
+  chipGroup(q(".f-clients"),L.clientele,obj.clienteles,toggleCliAutre);
+  updateGeoLabel(q(".f-geoval"),obj);
+
+  q(".f-nom").oninput=e=>{obj.nom=e.target.value;autosave();};
+  q(".f-adr").oninput=e=>{obj.adresse=e.target.value;autosave();};
+  q(".f-nb").oninput=e=>{obj.nb=e.target.value;autosave();};
+  q(".f-type").onchange=e=>{obj.type=e.target.value;toggleTypeAutre();autosave();};
+  q(".f-typeautre").oninput=e=>{obj.type_autre=e.target.value;autosave();};
+  q(".f-cliautre").oninput=e=>{obj.cli_autre=e.target.value;autosave();};
+  q(".f-prog").onchange=e=>{obj.programme=e.target.value;autosave();};
+  q(".f-geo").onclick=()=>openMap(obj,q(".f-geoval"));
+  q(".rm").onclick=()=>{state.immeubles.splice(state.immeubles.indexOf(obj),1);card.remove();autosave();};
+  card._nomInput=q(".f-nom"); card._typeSel=q(".f-type"); card._nbInput=q(".f-nb"); card._obj=obj;
+  $("#immeubles").appendChild(card);
+  return card;
+}
+
+function buildProjet(obj){
+  const card=document.createElement("div");card.className="entry";
+  card.innerHTML=`
+    <div class="entry-head"><span class="lbl">Projet à venir</span><button type="button" class="rm" title="Retirer">✕</button></div>
+    <div class="field"><label class="q">Nom du projet <span class="req">*</span></label><input type="text" class="f-nom"></div>
+    <div class="field"><label class="q">Localisation prévue (si connue)</label><input type="text" class="f-adr"></div>
+    <div class="field"><label class="q">Localisation sur la carte</label>
+      <div class="geo-row"><button type="button" class="geo-btn f-geo">📍 Situer sur la carte</button>
+        <span class="geo-val f-geoval num"></span></div></div>
+    <div class="grid2">
+      <div class="field"><label class="q">Type de logement prévu <span class="req">*</span></label><select class="f-type"></select></div>
+      <div class="field f-typeautre-wrap inline-hidden"><label class="q">Précisez le type</label><input type="text" class="f-typeautre"></div>
+    </div>
+    <div class="field"><label class="q">Nombre de logements prévus <span class="req">*</span></label>
+      <input type="number" min="1" class="f-nb num" style="max-width:180px"></div>
+    <div class="field"><label class="q">Clientèle(s) cible(s) du projet</label><div class="chips f-clients"></div></div>
+    <div class="field f-cliautre-wrap inline-hidden"><label class="q">Précisez la clientèle</label><input type="text" class="f-cliautre"></div>
+    <div class="grid2">
+      <div class="field"><label class="q">Étape actuelle</label><select class="f-etape"></select></div>
+      <div class="field"><label class="q">Échéancier prévu (si connu)</label><select class="f-ech"></select></div>
+    </div>
+  `;
+  const q=s=>card.querySelector(s);
+  q(".f-nom").value=obj.nom||"";
+  q(".f-adr").value=obj.adresse||"";
+  fillSelect(q(".f-type"),L.type_logement); q(".f-type").value=obj.type||"";
+  fillSelect(q(".f-etape"),L.etape,"— Non précisé —"); q(".f-etape").value=obj.etape||"";
+  fillSelect(q(".f-ech"),L.echeancier,"— Non précisé —"); q(".f-ech").value=obj.echeancier||"";
+  q(".f-nb").value=obj.nb||"";
+  q(".f-typeautre").value=obj.type_autre||"";
+  q(".f-cliautre").value=obj.cli_autre||"";
+  obj.clienteles=obj.clienteles||[];
+  const toggleTypeAutre=()=>q(".f-typeautre-wrap").classList.toggle("inline-hidden", q(".f-type").value!=="autre");
+  const toggleCliAutre=on=>q(".f-cliautre-wrap").classList.toggle("inline-hidden", !on);
+  toggleTypeAutre(); toggleCliAutre(obj.clienteles.includes("autre"));
+  chipGroup(q(".f-clients"),L.clientele,obj.clienteles,toggleCliAutre);
+  updateGeoLabel(q(".f-geoval"),obj);
+
+  q(".f-nom").oninput=e=>{obj.nom=e.target.value;autosave();};
+  q(".f-adr").oninput=e=>{obj.adresse=e.target.value;autosave();};
+  q(".f-nb").oninput=e=>{obj.nb=e.target.value;autosave();};
+  q(".f-type").onchange=e=>{obj.type=e.target.value;toggleTypeAutre();autosave();};
+  q(".f-typeautre").oninput=e=>{obj.type_autre=e.target.value;autosave();};
+  q(".f-cliautre").oninput=e=>{obj.cli_autre=e.target.value;autosave();};
+  q(".f-etape").onchange=e=>{obj.etape=e.target.value;autosave();};
+  q(".f-ech").onchange=e=>{obj.echeancier=e.target.value;autosave();};
+  q(".f-geo").onclick=()=>openMap(obj,q(".f-geoval"));
+  q(".rm").onclick=()=>{state.projets.splice(state.projets.indexOf(obj),1);card.remove();autosave();};
+  card._nomInput=q(".f-nom"); card._typeSel=q(".f-type"); card._nbInput=q(".f-nb"); card._obj=obj;
+  $("#projets").appendChild(card);
+  return card;
+}
+
+function updateGeoLabel(span,obj){
+  span.textContent = (obj.lat!=null&&obj.lng!=null)
+    ? "✓ "+Number(obj.lat).toFixed(5)+", "+Number(obj.lng).toFixed(5) : "";
+}
+
+/* ======================================================================
+   Carte (modal Leaflet)
+   ====================================================================== */
+let map=null, marker=null, mapTarget=null, mapTargetSpan=null;
+function initMap(){
+  map=L.map('map',{zoomControl:true}).setView([46.0,-74.5],8);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · CISSS des Laurentides',
+    maxZoom:18, subdomains:'abcd'}).addTo(map);
+  map.on('click',e=>placeMarker(e.latlng.lat,e.latlng.lng));
+}
+function placeMarker(lat,lng){
+  if(!marker){marker=L.marker([lat,lng],{draggable:true}).addTo(map);
+    marker.on('dragend',()=>{const p=marker.getLatLng();mapTarget._tmp={lat:p.lat,lng:p.lng};});
+  } else marker.setLatLng([lat,lng]);
+  mapTarget._tmp={lat,lng};
+}
+function openMap(obj,span){
+  mapTarget=obj; mapTargetSpan=span; obj._tmp=null;
+  $("#mapModal").classList.add("open");
+  if(!map){initMap();}
+  setTimeout(()=>{map.invalidateSize();
+    if(marker){map.removeLayer(marker);marker=null;}
+    if(obj.lat!=null&&obj.lng!=null){placeMarker(obj.lat,obj.lng);map.setView([obj.lat,obj.lng],13);}
+    else map.setView([46.0,-74.5],8);
+  },60);
+}
+function closeMap(){$("#mapModal").classList.remove("open");}
+$("#mapClose").onclick=closeMap;
+$("#mapConfirm").onclick=()=>{
+  const t=mapTarget._tmp || (mapTarget.lat!=null?{lat:mapTarget.lat,lng:mapTarget.lng}:null);
+  if(t){mapTarget.lat=t.lat;mapTarget.lng=t.lng;updateGeoLabel(mapTargetSpan,mapTarget);autosave();}
+  closeMap();
+};
+$("#mapClear").onclick=()=>{
+  mapTarget.lat=null;mapTarget.lng=null;mapTarget._tmp=null;
+  if(marker){map.removeLayer(marker);marker=null;}
+  updateGeoLabel(mapTargetSpan,mapTarget);autosave();closeMap();
+};
+$("#geoLocate").onclick=()=>{
+  if(!navigator.geolocation){toast("Géolocalisation non disponible");return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    placeMarker(p.coords.latitude,p.coords.longitude);map.setView([p.coords.latitude,p.coords.longitude],14);
+  },()=>toast("Position refusée ou indisponible"));
+};
+
+/* ======================================================================
+   Segments Oui/Non
+   ====================================================================== */
+function bindSeg(id,onSet,initial){
+  const seg=$("#"+id);
+  const set=v=>{[...seg.children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.val===v));onSet(v);};
+  [...seg.children].forEach(b=>b.onclick=()=>{set(b.dataset.val);autosave();});
+  if(initial)set(initial);
+  return set;
+}
+
+/* ======================================================================
+   Validation + résumé
+   ====================================================================== */
+function showErr(id,on){const inp=document.getElementById(id);const m=document.querySelector(`.err-msg[data-for="${id}"]`);
+  if(inp)inp.classList.toggle("err",on); if(m)m.classList.toggle("show",on);}
+function validate(){
+  let ok=true, first=null;
+  const req=[["nom_organisme",v=>v],["type_organisme",v=>v],["role_repondant",v=>v],["mrc",v=>v],
+    ["nom_repondant",v=>v],["courriel",v=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)]];
+  req.forEach(([id,test])=>{const val=(document.getElementById(id).value||"").trim();
+    const good=test(val);showErr(id,!good);if(!good){ok=false;first=first||document.getElementById(id);}});
+  if(!state.a_parc){showErr("seg_parc",true);ok=false;first=first||$("#seg_parc");}else showErr("seg_parc",false);
+  if(!state.projets_planifies){showErr("seg_proj",true);ok=false;first=first||$("#seg_proj");}else showErr("seg_proj",false);
+  // entrées répétables
+  const checkEntries=(wrapId,arr)=>{
+    [...$("#"+wrapId).children].forEach(card=>{
+      const o=card._obj;if(!o)return;
+      const bad=!(o.nom&&o.nom.trim())|| !o.type || !(parseInt(o.nb)>0);
+      card._nomInput.classList.toggle("err",!(o.nom&&o.nom.trim()));
+      card._typeSel.classList.toggle("err",!o.type);
+      card._nbInput.classList.toggle("err",!(parseInt(o.nb)>0));
+      if(bad){ok=false;first=first||card;}
+    });
+  };
+  if(state.a_parc==="oui")checkEntries("immeubles");
+  if(state.projets_planifies==="oui")checkEntries("projets");
+  if(!ok){toast("Veuillez compléter les champs surlignés.");
+    (first.scrollIntoView?first:first).scrollIntoView({behavior:"smooth",block:"center"});}
+  return ok;
+}
+
+function buildSummary(){
+  const i=state.ident, li=[];
+  li.push("PORTRAIT DU LOGEMENT COMMUNAUTAIRE — LAURENTIDES");
+  li.push("Réponse transmise le "+new Date().toLocaleString('fr-CA'));
+  li.push("");
+  li.push("== IDENTIFICATION ==");
+  li.push("Organisme : "+(i.nom_organisme||""));
+  li.push("Type : "+(i.type_organisme?labelOf('type_org',i.type_organisme):"")+(i.type_org_autre?" ("+i.type_org_autre+")":""));
+  li.push("Rôle du répondant : "+(i.role_repondant?labelOf('role',i.role_repondant):""));
+  li.push("MRC : "+(i.mrc?labelOf('mrc',i.mrc):"")+"  |  Municipalité : "+(i.municipalite||""));
+  li.push("Répondant : "+(i.nom_repondant||"")+(i.fonction?" — "+i.fonction:""));
+  li.push("Courriel : "+(i.courriel||""));
+  li.push("");
+  li.push("== LOGEMENTS EN OPÉRATION == ("+(state.a_parc||"—")+")");
+  if(state.a_parc==="oui"){
+    state.immeubles.forEach((o,n)=>{
+      li.push("  • Immeuble "+(n+1)+" : "+(o.nom||""));
+      li.push("    Adresse : "+(o.adresse||"")+(o.lat!=null?"  [geo "+Number(o.lat).toFixed(5)+","+Number(o.lng).toFixed(5)+"]":""));
+      li.push("    Type : "+(o.type?labelOf('type_logement',o.type):"")+(o.type_autre?" ("+o.type_autre+")":"")+"  |  Logements : "+(o.nb||""));
+      if(o.clienteles&&o.clienteles.length)li.push("    Clientèles : "+o.clienteles.map(c=>labelOf('clientele',c)).join(", ")+(o.cli_autre?" ("+o.cli_autre+")":""));
+      if(o.programme)li.push("    Programme : "+labelOf('programme',o.programme));
+    });
+    li.push("  TOTAL logements recensés : "+state.immeubles.reduce((s,x)=>s+(parseInt(x.nb)||0),0));
+  }
+  li.push("");
+  li.push("== PROJETS À VENIR == ("+(state.projets_planifies||"—")+")");
+  if(state.projets_planifies==="oui"){
+    state.projets.forEach((o,n)=>{
+      li.push("  • Projet "+(n+1)+" : "+(o.nom||""));
+      li.push("    Localisation : "+(o.adresse||"")+(o.lat!=null?"  [geo "+Number(o.lat).toFixed(5)+","+Number(o.lng).toFixed(5)+"]":""));
+      li.push("    Type : "+(o.type?labelOf('type_logement',o.type):"")+(o.type_autre?" ("+o.type_autre+")":"")+"  |  Logements prévus : "+(o.nb||""));
+      if(o.clienteles&&o.clienteles.length)li.push("    Clientèles : "+o.clienteles.map(c=>labelOf('clientele',c)).join(", ")+(o.cli_autre?" ("+o.cli_autre+")":""));
+      if(o.etape)li.push("    Étape : "+labelOf('etape',o.etape));
+      if(o.echeancier)li.push("    Échéancier : "+labelOf('echeancier',o.echeancier));
+    });
+  }
+  const b=state.besoins;
+  li.push("");
+  li.push("== REGARD DU MILIEU (facultatif) ==");
+  if(b.besoins.length)li.push("Besoins : "+b.besoins.map(c=>labelOf('besoins',c)).join(", ")+(b.besoins_autre?" ("+b.besoins_autre+")":""));
+  if(b.obstacles.length)li.push("Obstacles : "+b.obstacles.map(c=>labelOf('obstacles',c)).join(", ")+(b.obstacles_autre?" ("+b.obstacles_autre+")":""));
+  if(b.collaboration)li.push("Recontacter : "+b.collaboration);
+  if(b.commentaires)li.push("Commentaires : "+b.commentaires);
+  return li.join("\n");
+}
+
+function toCSV(){
+  // Une ligne par immeuble et par projet, avec les infos d'identification répétées
+  const i=state.ident, rows=[];
+  const head=["type_entree","organisme","type_org","role","mrc","municipalite","repondant","fonction","courriel",
+    "nom","adresse","lat","lng","type_logement","type_autre","nb_logements","clienteles","clientele_autre",
+    "programme","etape","echeancier"];
+  const base=[i.nom_organisme||"",i.type_organisme||"",i.role_repondant||"",i.mrc||"",i.municipalite||"",
+    i.nom_repondant||"",i.fonction||"",i.courriel||""];
+  const push=(t,o)=>rows.push([t,...base,o.nom||"",o.adresse||"",o.lat??"",o.lng??"",o.type||"",o.type_autre||"",
+    o.nb||"",(o.clienteles||[]).join("|"),o.cli_autre||"",o.programme||"",o.etape||"",o.echeancier||""]);
+  if(state.a_parc==="oui")state.immeubles.forEach(o=>push("operation",o));
+  if(state.projets_planifies==="oui")state.projets.forEach(o=>push("projet",o));
+  if(!rows.length)rows.push(["identification_seule",...base,"","","","","","","","","","","",""]);
+  const esc=v=>{v=(v==null?"":String(v));return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  return [head.join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");
+}
+
+function download(name,content,mime){
+  const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function fileStamp(){const o=state.ident.nom_organisme||"reponse";
+  return o.replace(/[^\w\-]+/g,"_").slice(0,40)+"_"+new Date().toISOString().slice(0,10);}
+
+/* ---- Actions ---- */
+$("#send_gmail").onclick=()=>{if(!validate())return;
+  const su=encodeURIComponent("Portrait logement communautaire — "+(state.ident.nom_organisme||""));
+  const body=encodeURIComponent(buildSummary());
+  const url="https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent(COLLECTE_EMAIL)+"&su="+su+"&body="+body;
+  window.open(url,"_blank");toast("Fenêtre Gmail ouverte. Pensez à cliquer sur Envoyer.");};
+$("#send_mailto").onclick=()=>{if(!validate())return;
+  const su=encodeURIComponent("Portrait logement communautaire — "+(state.ident.nom_organisme||""));
+  const body=encodeURIComponent(buildSummary());
+  const link="mailto:"+encodeURIComponent(COLLECTE_EMAIL)+"?subject="+su+"&body="+body;
+  if(link.length>1900)toast("Réponse volumineuse : préférez le téléchargement en pièce jointe.");
+  window.location.href=link;};
+$("#dl_json").onclick=()=>{if(!validate())return;
+  download(fileStamp()+".json",JSON.stringify(state,null,2),"application/json");toast("Fichier JSON téléchargé.");};
+$("#dl_csv").onclick=()=>{if(!validate())return;
+  download(fileStamp()+".csv","\uFEFF"+toCSV(),"text/csv;charset=utf-8");toast("Fichier CSV téléchargé.");};
+$("#copy_sum").onclick=async()=>{try{await navigator.clipboard.writeText(buildSummary());toast("Résumé copié.");}
+  catch(e){toast("Copie impossible — utilisez le téléchargement.");}};
+$("#clear_draft").onclick=()=>{
+  if(!confirm("Effacer le brouillon et réinitialiser le formulaire ?"))return;
+  try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
+  location.reload();
+};
+
+/* ======================================================================
+   Accessibilité : taille de police + thème
+   ====================================================================== */
+let fs=1;
+function applyFs(){document.documentElement.style.setProperty('--fs',fs.toFixed(2)+'rem');}
+$("#fsUp").onclick=()=>{fs=Math.min(1.4,fs+0.1);applyFs();};
+$("#fsDown").onclick=()=>{fs=Math.max(0.85,fs-0.1);applyFs();};
+$("#themeBtn").onclick=()=>{document.body.classList.toggle('theme-light');
+  $("#themeBtn").textContent=document.body.classList.contains('theme-light')?'☾':'☀︎';
+  if(map)setTimeout(()=>map.invalidateSize(),50);};
+
+/* ======================================================================
+   Initialisation
+   ====================================================================== */
+function bindPathInputs(){
+  $$("[data-path]").forEach(inp=>{
+    const path=inp.dataset.path;
+    const v=getByPath(state,path); if(v!=null)inp.value=v;
+    inp.addEventListener("input",()=>{setByPath(state,path,inp.value);
+      const tog=inp.dataset.toggle;
+      if(tog)$("#wrap_"+tog).classList.toggle("inline-hidden",inp.value!==inp.dataset.toggleVal);
+      autosave();});
+    if(inp.dataset.toggle)$("#wrap_"+inp.dataset.toggle).classList.toggle("inline-hidden",inp.value!==inp.dataset.toggleVal);
+  });
+}
+
+function init(){
+  $("#dest_lbl").textContent=COLLECTE_EMAIL;
+  fillSelect($("#type_organisme"),L.type_org);
+  fillSelect($("#role_repondant"),L.role);
+  fillSelect($("#mrc"),L.mrc);
+
+  const saved=loadDraft();
+  if(saved)state=Object.assign(state,saved);
+  state.besoins=state.besoins||{besoins:[],obstacles:[]};
+  state.besoins.besoins=state.besoins.besoins||[];
+  state.besoins.obstacles=state.besoins.obstacles||[];
+
+  bindPathInputs();
+
+  // gates
+  const setParc=bindSeg("seg_parc",v=>{state.a_parc=v;$("#parc_block").classList.toggle("inline-hidden",v!=="oui");},state.a_parc);
+  const setProj=bindSeg("seg_proj",v=>{state.projets_planifies=v;$("#proj_block").classList.toggle("inline-hidden",v!=="oui");},state.projets_planifies);
+  bindSeg("seg_collab",v=>{state.besoins.collaboration=v;},state.besoins.collaboration);
+
+  // restore entrées
+  (state.immeubles||[]).forEach(o=>buildImmeuble(o));
+  (state.projets||[]).forEach(o=>buildProjet(o));
+
+  // chips besoins/obstacles
+  const toggleB=on=>$("#wrap_besoins_autre").classList.toggle("inline-hidden",!on);
+  const toggleO=on=>$("#wrap_obstacles_autre").classList.toggle("inline-hidden",!on);
+  chipGroup($("#chips_besoins"),L.besoins,state.besoins.besoins,toggleB);
+  chipGroup($("#chips_obstacles"),L.obstacles,state.besoins.obstacles,toggleO);
+  toggleB(state.besoins.besoins.includes("autre"));toggleO(state.besoins.obstacles.includes("autre"));
+
+  $("#add_imm").onclick=()=>{const o={clienteles:[]};state.immeubles.push(o);const c=buildImmeuble(o);
+    c._nomInput.focus();autosave();};
+  $("#add_proj").onclick=()=>{const o={clienteles:[]};state.projets.push(o);const c=buildProjet(o);
+    c._nomInput.focus();autosave();};
+
+  updateTally();
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
