@@ -232,7 +232,7 @@ textarea.txt{min-height:78px;line-height:1.5}
       </div>
 
       <div class="src">
-        Sources : Affectations et périmètres d'urbanisation (schémas d'aménagement des MRC) · Limites municipales MELCCFP V2025-10 (MRN-BAGQ) · CISSS des Laurentides — Direction de santé publique · Mise à jour 2026-06-23
+        Sources : Affectations et périmètres d'urbanisation (schémas d'aménagement des MRC) · Limites municipales MELCCFP V2025-10 (MRN-BAGQ) · Santé Québec Laurentides — Direction de santé publique · Mise à jour 2026-06-23
       </div>
     </aside>
 
@@ -252,7 +252,7 @@ textarea.txt{min-height:78px;line-height:1.5}
           <p>Les <b>affectations urbaines et résidentielles</b> proviennent des schémas d'aménagement et de développement (SAD) des MRC. Elles délimitent les secteurs destinés au développement urbain et résidentiel.</p>
           <p>L'objectif de cette consultation est de <b>valider ce découpage</b> avec les MRC avant son intégration éventuelle dans l'outil MilieuxVie, qui évalue l'accessibilité aux services de proximité (milieux de vie complets).</p>
           <p>Les <b>périmètres d'urbanisation</b> sont affichés à titre de comparaison : ils représentent l'échelle actuellement utilisée dans MilieuxVie.</p>
-          <div class="src">Sources : SAD des MRC · MELCCFP V2025-10 (MRN-BAGQ) · CISSS des Laurentides — DSP · 2026-06-23</div>
+          <div class="src">Sources : SAD des MRC · MELCCFP V2025-10 (MRN-BAGQ) ·Santé Québec Laurentides — DSP · 2026-06-23</div>
         </div>
       </div>
     </div>
@@ -272,7 +272,7 @@ textarea.txt{min-height:78px;line-height:1.5}
     <div class="row">
       <button class="btn" id="modal-close" style="flex:1">Fermer</button>
     </div>
-    <p class="hint" style="margin-top:12px">Si votre messagerie ne s'ouvre pas, copiez le texte ou téléchargez le fichier et transmettez-le à <b>eric.robitaille@umontreal.ca</b>.</p>
+    <p class="hint" style="margin-top:12px">Si votre messagerie ne s'ouvre pas, copiez le texte ou téléchargez le fichier et transmettez-le à <b>eric.robitaille.cissslau@ssss.gouv.qc.ca</b>.</p>
   </div>
 </div>
 
@@ -293,7 +293,7 @@ var fmt = function(n,d){ return (n==null)?'—':Number(n).toLocaleString('fr-CA'
 /* ============ MAP ============ */
 var map = L.map('map',{zoomControl:true,attributionControl:true}).setView([46.3,-74.6],8);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · CISSS des Laurentides',
+  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · Santé Québec Laurentides',
   maxZoom:18, subdomains:'abcd'
 }).addTo(map);
 
@@ -444,7 +444,7 @@ function buildSummary(){
   else { STATE.annotations.forEach(function(a,i){ L.push((i+1)+'. '+a.zone); L.push('   → '+a.text); }); }
   L.push('');
   L.push('='.repeat(52));
-  L.push('Transmis via l\'outil de consultation C.A.R.T.O.S. — CISSS des Laurentides, DSP');
+  L.push('Transmis via l\'outil de consultation. — Santé Québec Laurentides, DSP');
   return L.join('\n');
 }
 
