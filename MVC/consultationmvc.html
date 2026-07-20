@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Consultation MRC — Note de politique « Milieux de vie complets » — CISSS des Laurentides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Marque (charte CISSS-DSP) */
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+
+  /* Thème sombre marine (option) */
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+
+  --accent:var(--teal); --accent2:var(--blue);
+  --fs:1rem;
+}
+/* Variante claire (défaut pour ce questionnaire) */
+body.theme-light{
+  --bg:#ffffff; --bg2:#f4f6fc; --panel:#ffffff; --panel2:#eef1fb;
+  --line:#d8def0; --line2:#e6eaf7;
+  --ink:#14143a; --ink2:#3a3f6e; --muted:#7a80a8;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg2); color:var(--ink);
+  font-family:'Source Sans 3',system-ui,sans-serif; font-size:var(--fs);
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.num{font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums}
+a{color:var(--blue); text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ---- En-tête institutionnel ---- */
+header{
+  background:var(--navy); color:var(--white);
+  padding:22px clamp(16px,4vw,44px) 0;
+  border-bottom:4px solid var(--teal);
+  position:relative;
+}
+.kicker{font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--teal-l); margin:0}
+header h1{font-size:clamp(1.35rem,3.4vw,2rem); font-weight:900; line-height:1.12; margin:6px 0 2px; max-width:60ch}
+.subtitle{color:#cfd3f5; font-weight:400; margin:0 0 18px; max-width:70ch}
+.hd-tools{position:absolute; top:20px; right:clamp(16px,4vw,44px); display:flex; gap:8px; align-items:center}
+.badge{
+  display:inline-block; background:var(--teal); color:var(--navy);
+  font-weight:700; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+  padding:4px 10px; border-radius:999px;
+}
+.tbtn{
+  background:rgba(255,255,255,.1); color:var(--white); border:1px solid rgba(255,255,255,.22);
+  border-radius:8px; min-width:34px; height:34px; padding:0 10px; cursor:pointer;
+  font-family:inherit; font-size:.9rem; font-weight:600; line-height:1;
+}
+.tbtn:hover{background:rgba(255,255,255,.2)}
+
+/* ---- Corps ---- */
+main{max-width:900px; margin:0 auto; padding:clamp(16px,4vw,40px)}
+.intro{
+  background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--teal);
+  border-radius:12px; padding:16px 20px; margin:0 0 22px; color:var(--ink2);
+}
+.intro p{margin:.4em 0}
+
+/* Rappel repliable */
+details.recall{
+  background:var(--panel2); border:1px solid var(--line2); border-radius:12px;
+  margin:0 0 26px; overflow:hidden;
+}
+details.recall>summary{
+  cursor:pointer; padding:13px 18px; font-weight:700; color:var(--ink); list-style:none;
+  display:flex; align-items:center; gap:10px;
+}
+details.recall>summary::-webkit-details-marker{display:none}
+details.recall>summary::before{content:'▸'; color:var(--teal); font-size:.9em; transition:transform .15s}
+details.recall[open]>summary::before{transform:rotate(90deg)}
+.recall-body{padding:2px 20px 18px; color:var(--ink2); font-size:.95em}
+.recall-body h4{margin:14px 0 4px; color:var(--ink); font-size:.95rem}
+.recall-body ul{margin:.3em 0; padding-left:1.2em}
+.recall-body li{margin:.15em 0}
+
+/* Sections & questions */
+section.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:14px;
+  padding:20px clamp(16px,3vw,26px); margin:0 0 20px;
+}
+.sec-head{display:flex; align-items:baseline; gap:12px; margin:0 0 6px}
+.sec-num{font-family:'JetBrains Mono',monospace; color:var(--teal); font-weight:500; font-size:1.05rem}
+.sec-head h2{font-size:1.18rem; font-weight:800; margin:0; color:var(--ink)}
+.sec-desc{color:var(--muted); margin:0 0 16px; font-size:.95em}
+
+.q{margin:0 0 20px}
+.q:last-child{margin-bottom:4px}
+.q>label.qlabel,.q>.qlabel{display:block; font-weight:600; color:var(--ink); margin:0 0 8px}
+.q .hint{font-weight:400; color:var(--muted); font-size:.9em}
+
+/* Champs */
+input[type=text],input[type=email],select,textarea{
+  width:100%; background:var(--bg); color:var(--ink);
+  border:1px solid var(--line); border-radius:9px; padding:10px 12px;
+  font-family:inherit; font-size:1em;
+}
+body.theme-light input[type=text],
+body.theme-light input[type=email],
+body.theme-light select,
+body.theme-light textarea{background:#fff}
+textarea{min-height:82px; resize:vertical; line-height:1.45}
+input:focus,select:focus,textarea:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(33,174,173,.22)}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+
+/* Choix radio / case, en « pills » */
+.choices{display:flex; flex-direction:column; gap:8px}
+.choices.row{flex-direction:row; flex-wrap:wrap}
+.opt{
+  display:flex; align-items:flex-start; gap:10px; cursor:pointer;
+  border:1px solid var(--line); border-radius:10px; padding:10px 13px;
+  background:var(--bg2); transition:border-color .12s, background .12s;
+}
+body.theme-light .opt{background:#fbfcff}
+.opt:hover{border-color:var(--teal-l)}
+.opt input{margin-top:2px; accent-color:var(--teal); width:17px; height:17px; flex:0 0 auto}
+.opt.checked{border-color:var(--teal); background:rgba(33,174,173,.10)}
+.opt span{color:var(--ink2)}
+.opt.checked span{color:var(--ink); font-weight:600}
+.scale{display:flex; gap:8px; flex-wrap:wrap}
+.scale .opt{flex-direction:column; align-items:center; text-align:center; min-width:92px; gap:6px; flex:1}
+.scale .opt small{color:var(--muted); font-size:.78rem; line-height:1.15}
+
+/* ---- Barre d'envoi ---- */
+.send{
+  background:var(--panel); border:1px solid var(--line); border-radius:14px;
+  padding:20px clamp(16px,3vw,26px); margin:0 0 40px;
+}
+.summary{
+  background:var(--bg); border:1px dashed var(--line); border-radius:10px;
+  padding:14px 16px; max-height:260px; overflow:auto; white-space:pre-wrap;
+  font-size:.86rem; color:var(--ink2); margin:0 0 16px;
+}
+body.theme-light .summary{background:#f7f9ff}
+.actions{display:flex; gap:10px; flex-wrap:wrap}
+.btn{
+  border:none; border-radius:10px; padding:12px 20px; cursor:pointer;
+  font-family:inherit; font-size:1rem; font-weight:700; line-height:1;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn.primary{background:var(--teal); color:var(--navy)}
+.btn.primary:hover{background:var(--teal-l)}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--teal); color:var(--teal)}
+.sent-note{color:var(--muted); font-size:.88em; margin:14px 0 0}
+.warn{color:#e0684f; font-weight:600; font-size:.9em; margin:10px 0 0; display:none}
+
+footer{
+  max-width:900px; margin:0 auto; padding:0 clamp(16px,4vw,40px) 44px;
+  color:var(--muted); font-size:.82rem; border-top:1px solid var(--line); padding-top:18px;
+}
+footer strong{color:var(--ink2)}
+.toast{
+  position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+  background:var(--navy); color:#fff; padding:11px 20px; border-radius:10px;
+  font-weight:600; box-shadow:0 8px 30px rgba(0,0,0,.3); opacity:0; pointer-events:none;
+  transition:opacity .2s, transform .2s; z-index:50; border:1px solid var(--teal);
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body class="theme-light">
+
+<header>
+  <div class="hd-tools">
+    <span class="badge">Consultation</span>
+    <button class="tbtn" id="fsDown" title="Réduire la taille du texte" aria-label="Réduire le texte">A−</button>
+    <button class="tbtn" id="fsUp" title="Agrandir la taille du texte" aria-label="Agrandir le texte">A+</button>
+    <button class="tbtn" id="themeBtn" title="Basculer clair / sombre" aria-label="Basculer le thème">◐</button>
+  </div>
+  <p class="kicker">Santé Québec Laurentides · Direction de santé publique</p>
+  <h1>Note de politique — Milieux de vie complets</h1>
+  <p class="subtitle">Consultation des MRC · votre avis sur la note « La ville des 15 minutes et les milieux de vie complets comme leviers d'adaptation aux changements climatiques et de réduction des inégalités sociales de santé »</p>
+</header>
+
+<main>
+  <div class="intro">
+    <p>La Direction de santé publique sollicite l'avis des MRC sur la <strong>note de politique</strong> qui vous a été transmise. Vos commentaires nous aideront à valider les constats, à ajuster les pistes d'action et à mieux les arrimer à la réalité de votre territoire.</p>
+    <p>Ce questionnaire porte <strong>uniquement sur la note de politique</strong>. Le découpage des affectations urbaines et résidentielles fait l'objet d'une consultation distincte&nbsp;: <a href="https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/logements/validation_affectations_laurentides.html" target="_blank" rel="noopener">application de validation des affectations ↗</a>. L'outil cartographique des milieux de vie complets est aussi consultable&nbsp;: <a href="https://cissslaurentides.hub.arcgis.com/pages/milieux-de-vie-complets~19a05aebd6854e148c5ac12e199824ab" target="_blank" rel="noopener">portrait MilieuxVie ↗</a>.</p>
+    <p>Vos réponses ne sont pas transmises automatiquement&nbsp;: à la fin, vous ouvrez le courriel prérempli, ou vous copiez / téléchargez le texte pour l'envoyer à la DSP.</p>
+  </div>
+
+  <details class="recall">
+    <summary>Rappel — les constats clés de la note</summary>
+    <div class="recall-body">
+      <h4>Un cadre en 15 paramètres (Vivre en Ville, 2026), en 3 dimensions</h4>
+      <ul>
+        <li><strong>Habitation</strong> (4)&nbsp;: diversité des logements, part locative, disponibilité, abordabilité pérenne.</li>
+        <li><strong>Destinations de proximité</strong> (7)&nbsp;: alimentation, garde, école, nature, loisirs, santé, activités complémentaires.</li>
+        <li><strong>Mobilité</strong> (4)&nbsp;: infrastructures piétonnes et cyclables, transport collectif, mobilité partagée.</li>
+      </ul>
+      <h4>Portrait régional</h4>
+      <ul>
+        <li>Aucun territoire n'atteint le seuil de complétude de <span class="num">70&nbsp;%</span>&nbsp;; score médian municipal de <span class="num">15&nbsp;%</span>.</li>
+        <li>À l'échelle des périmètres d'urbanisation, la médiane monte à <span class="num">29&nbsp;%</span>&nbsp;; 5 périmètres atteignent ≥&nbsp;<span class="num">70&nbsp;%</span> (Mont-Laurier <span class="num">79</span>, Mont-Tremblant et Sainte-Adèle <span class="num">74</span>, Lachute <span class="num">73</span>, Blainville <span class="num">70</span>).</li>
+        <li>Gradient nord-sud marqué&nbsp;; déficits quasi généralisés en mobilité partagée (<span class="num">3&nbsp;%</span>), garde subventionnée (<span class="num">4&nbsp;%</span>) et pharmacie de proximité (<span class="num">8&nbsp;%</span>).</li>
+      </ul>
+      <h4>Les 5 pistes d'action proposées</h4>
+      <ul>
+        <li>1 · Portrait-diagnostic de chaque milieu et priorisation.</li>
+        <li>2 · Gains rapides sur les paramètres faibles (autopartage, garde, pharmacie).</li>
+        <li>3 · Verdissement prioritaire des secteurs vulnérables.</li>
+        <li>4 · Concentrer services et densification dans les périmètres d'urbanisation.</li>
+        <li>5 · Protéger l'abordabilité pérenne (cible de 20&nbsp;% à but non lucratif).</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 1 · Identification -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-num">1</span><h2>Votre identification</h2></div>
+    <p class="sec-desc">Pour rattacher votre avis au bon territoire et pouvoir vous recontacter au besoin.</p>
+    <div class="q">
+      <span class="qlabel">Votre MRC <span class="hint">(obligatoire)</span></span>
+      <select id="mrc">
+        <option value="">— Sélectionnez votre MRC —</option>
+        <option>MRC d'Antoine-Labelle</option>
+        <option>MRC d'Argenteuil</option>
+        <option>MRC de Deux-Montagnes</option>
+        <option>MRC de La Rivière-du-Nord</option>
+        <option>MRC des Laurentides</option>
+        <option>MRC des Pays-d'en-Haut</option>
+        <option>MRC de Thérèse-De Blainville</option>
+        <option>Ville de Mirabel</option>
+        <option>Autre / plusieurs MRC</option>
+      </select>
+    </div>
+    <div class="grid2">
+      <div class="q"><label class="qlabel" for="nom">Nom</label><input type="text" id="nom" placeholder="Prénom Nom"></div>
+      <div class="q"><label class="qlabel" for="fonction">Fonction</label><input type="text" id="fonction" placeholder="ex. aménagiste, DG, urbaniste"></div>
+    </div>
+    <div class="q"><label class="qlabel" for="courriel">Courriel</label><input type="email" id="courriel" placeholder="prenom.nom@mrc.qc.ca"></div>
+  </section>
+
+  <!-- 2 · Appréciation générale -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-num">2</span><h2>Appréciation générale de la note</h2></div>
+    <div class="q" data-q="Clarté et utilité générale">
+      <span class="qlabel">Dans l'ensemble, la note est claire et utile pour votre travail d'aménagement.</span>
+      <div class="scale" data-name="q_general">
+        <label class="opt"><input type="radio" name="q_general" value="Tout à fait d'accord"><small>Tout à fait d'accord</small></label>
+        <label class="opt"><input type="radio" name="q_general" value="Plutôt d'accord"><small>Plutôt d'accord</small></label>
+        <label class="opt"><input type="radio" name="q_general" value="Plutôt en désaccord"><small>Plutôt en désaccord</small></label>
+        <label class="opt"><input type="radio" name="q_general" value="Pas du tout d'accord"><small>Pas du tout d'accord</small></label>
+      </div>
+    </div>
+    <div class="q" data-q="Commentaire — appréciation générale">
+      <label class="qlabel" for="c_general">Ce qui vous a le plus (ou le moins) parlé <span class="hint">(facultatif)</span></label>
+      <textarea id="c_general"></textarea>
+    </div>
+  </section>
+
+  <!-- 3 · Message clé -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-num">3</span><h2>Le message clé</h2></div>
+    <p class="sec-desc">La note défend l'idée que le « milieu de vie complet » (15 paramètres mesurables) est un cadre plus adapté et directement applicable aux collectivités laurentiennes que la stricte « ville des 15 minutes ».</p>
+    <div class="q" data-q="Accord avec le message clé (MVC vs ville 15 min)">
+      <span class="qlabel">Ce cadre vous semble pertinent pour votre MRC.</span>
+      <div class="choices" data-name="q_cadre">
+        <label class="opt"><input type="radio" name="q_cadre" value="Oui, tel quel"><span>Oui, tel quel</span></label>
+        <label class="opt"><input type="radio" name="q_cadre" value="Oui, avec réserves"><span>Oui, avec réserves (précisez ci-dessous)</span></label>
+        <label class="opt"><input type="radio" name="q_cadre" value="Non"><span>Non (précisez ci-dessous)</span></label>
+      </div>
+    </div>
+    <div class="q" data-q="Commentaire — message clé">
+      <label class="qlabel" for="c_cadre">Précisions <span class="hint">(facultatif)</span></label>
+      <textarea id="c_cadre"></textarea>
+    </div>
+  </section>
+
+  <!-- 4 · Portrait régional / scores -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-num">4</span><h2>Le portrait de votre territoire</h2></div>
+    <p class="sec-desc">La note attribue des scores de complétude par MRC et par périmètre d'urbanisation (à partir des données ouvertes d'OpenStreetMap et du rôle foncier).</p>
+    <div class="q" data-q="Justesse du portrait pour votre MRC">
+      <span class="qlabel">Le portrait dressé correspond à ce que vous connaissez de votre territoire.</span>
+      <div class="choices" data-name="q_portrait">
+        <label class="opt"><input type="radio" name="q_portrait" value="Fidèle"><span>Oui, il est fidèle</span></label>
+        <label class="opt"><input type="radio" name="q_portrait" value="Globalement fidèle, quelques écarts"><span>Globalement fidèle, mais quelques écarts</span></label>
+        <label class="opt"><input type="radio" name="q_portrait" value="Plusieurs écarts importants"><span>Plusieurs écarts importants</span></label>
+        <label class="opt"><input type="radio" name="q_portrait" value="Ne peut se prononcer"><span>Je ne peux pas me prononcer</span></label>
+      </div>
+    </div>
+    <div class="q" data-q="Écarts / corrections de données à signaler">
+      <label class="qlabel" for="c_portrait">Écarts, services manquants ou données à corriger pour votre territoire <span class="hint">(facultatif)</span></label>
+      <textarea id="c_portrait" placeholder="ex. un service existe mais n'apparaît pas ; un périmètre mal délimité…"></textarea>
+    </div>
+  </section>
+
+  <!-- 5 · Paramètres et seuils -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-num">5</span><h2>Les 15 paramètres et leurs seuils</h2></div>
+    <p class="sec-desc">Les seuils de distance (ex. alimentation à 800 m, garde à 400 m) sont adaptés au type de milieu (dense, intermédiaire, rural).</p>
+    <div class="q" data-q="Pertinence des paramètres et seuils pour votre milieu">
+      <span class="qlabel">Les paramètres et les seuils sont adaptés à la réalité de votre milieu.</span>
+      <div class="choices" data-name="q_seuils">
+        <label class="opt"><input type="radio" name="q_seuils" value="Adaptés"><span>Oui, adaptés</span></label>
+        <label class="opt"><input type="radio" name="q_seuils" value="À ajuster en partie"><span>En partie — certains seuils sont à revoir</span></label>
+        <label class="opt"><input type="radio" name="q_seuils" value="Peu adaptés"><span>Peu adaptés à mon milieu (surtout rural)</span></label>
+      </div>
+    </div>
+    <div class="q" data-q="Ajustements de paramètres / seuils suggérés">
+      <label class="qlabel" for="c_seuils">Quels paramètres ou seuils ajusteriez-vous&nbsp;? <span class="hint">(facultatif)</span></label>
+      <textarea id="c_seuils"></textarea>
+    </div>
+  </section>
+
+  <!-- 6 · Pistes d'action -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-num">6</span><h2>Les pistes d'action</h2></div>
+    <p class="sec-desc">Parmi les cinq pistes proposées, indiquez celles qui vous semblent <strong>prioritaires et réalistes</strong> pour votre MRC (plusieurs choix possibles).</p>
+    <div class="q" data-q="Pistes jugées prioritaires">
+      <div class="choices" data-name="q_pistes" data-multi="1">
+        <label class="opt"><input type="checkbox" name="q_pistes" value="1 · Portrait-diagnostic et priorisation"><span>1 · Établir le portrait-diagnostic de chaque milieu et prioriser</span></label>
+        <label class="opt"><input type="checkbox" name="q_pistes" value="2 · Gains rapides (autopartage, garde, pharmacie)"><span>2 · Cibler les gains rapides sur les paramètres les plus faibles</span></label>
+        <label class="opt"><input type="checkbox" name="q_pistes" value="3 · Verdir les secteurs vulnérables"><span>3 · Verdir en priorité les secteurs vulnérables</span></label>
+        <label class="opt"><input type="checkbox" name="q_pistes" value="4 · Concentrer services et densification dans les périmètres"><span>4 · Concentrer services et densification dans les périmètres d'urbanisation</span></label>
+        <label class="opt"><input type="checkbox" name="q_pistes" value="5 · Protéger l'abordabilité pérenne (20 % OBNL)"><span>5 · Protéger l'abordabilité pérenne des logements</span></label>
+      </div>
+    </div>
+    <div class="q" data-q="Freins à la mise en œuvre">
+      <label class="qlabel" for="c_freins">Principaux freins à la mise en œuvre dans votre MRC <span class="hint">(réglementaires, financiers, ruraux…)</span></label>
+      <textarea id="c_freins"></textarea>
+    </div>
+  </section>
+
+  <!-- 7 · Manques et collaboration -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-num">7</span><h2>Éléments manquants et suite</h2></div>
+    <div class="q" data-q="Éléments manquants ou corrections factuelles">
+      <label class="qlabel" for="c_manques">Un enjeu, un exemple ou une donnée qui manque à la note&nbsp;? Une correction factuelle&nbsp;? <span class="hint">(facultatif)</span></label>
+      <textarea id="c_manques"></textarea>
+    </div>
+    <div class="q" data-q="Intérêt à collaborer">
+      <span class="qlabel">Votre MRC souhaiterait-elle poursuivre la collaboration (atelier, accompagnement, données)&nbsp;?</span>
+      <div class="choices row" data-name="q_collab">
+        <label class="opt"><input type="radio" name="q_collab" value="Oui"><span>Oui</span></label>
+        <label class="opt"><input type="radio" name="q_collab" value="Peut-être"><span>Peut-être</span></label>
+        <label class="opt"><input type="radio" name="q_collab" value="Non"><span>Non</span></label>
+      </div>
+    </div>
+    <div class="q" data-q="Commentaire général libre">
+      <label class="qlabel" for="c_libre">Commentaire général libre <span class="hint">(facultatif)</span></label>
+      <textarea id="c_libre" style="min-height:110px"></textarea>
+    </div>
+  </section>
+
+  <!-- Envoi -->
+  <div class="send">
+    <div class="sec-head"><span class="sec-num">✉</span><h2>Transmettre votre avis</h2></div>
+    <p class="sec-desc">Vérifiez le résumé ci-dessous, puis choisissez votre mode d'envoi. Vos réponses restent sur votre appareil tant que vous ne les transmettez pas.</p>
+    <div class="summary" id="summary" aria-live="polite"></div>
+    <div class="actions">
+      <button class="btn primary" id="mailBtn">✉ Ouvrir dans ma messagerie</button>
+      <button class="btn ghost" id="copyBtn">⧉ Copier le texte</button>
+      <button class="btn ghost" id="dlBtn">⭳ Télécharger (.txt)</button>
+    </div>
+    <p class="warn" id="warn">Veuillez sélectionner votre MRC avant de transmettre.</p>
+    <p class="sent-note">Si votre messagerie ne s'ouvre pas, copiez le texte ou téléchargez le fichier et transmettez-le à <strong>eric.robitaille.cissslau@ssss.gouv.qc.ca</strong>.</p>
+  </div>
+</main>
+
+<footer>
+  <p><strong>Consultation — Note de politique « Milieux de vie complets »</strong><br>
+  Santé Québec Laurentides — Direction de santé publique · Équipe Santé et qualité de vie en milieux municipaux (EIS).<br>
+  Destinataire des avis&nbsp;: eric.robitaille.cissslau@ssss.gouv.qc.ca · Mise à jour 2026-06-18.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+var EMAIL = "eric.robitaille.cissslau@ssss.gouv.qc.ca";
+var STORE = "mvc_consultation_v1";
+var $ = function(s,c){return (c||document).querySelector(s);};
+var $$ = function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s));};
+
+/* ---- Taille de police (A- / A+) ---- */
+var fs = 1;
+function applyFs(){document.documentElement.style.setProperty('--fs', fs.toFixed(3)+'rem');}
+$('#fsUp').onclick = function(){fs = Math.min(1.5, fs+0.08); applyFs(); save();};
+$('#fsDown').onclick = function(){fs = Math.max(0.82, fs-0.08); applyFs(); save();};
+
+/* ---- Thème clair / sombre ---- */
+$('#themeBtn').onclick = function(){document.body.classList.toggle('theme-light'); save();};
+
+/* ---- État visuel des options cochées ---- */
+function refreshChecked(){
+  $$('.opt').forEach(function(o){
+    var i = $('input', o);
+    if(i) o.classList.toggle('checked', i.checked);
+  });
+}
+document.addEventListener('change', function(e){
+  if(e.target && e.target.matches('input[type=radio],input[type=checkbox]')) refreshChecked();
+  build(); save();
+});
+document.addEventListener('input', function(e){
+  if(e.target && e.target.matches('textarea,input[type=text],input[type=email]')){ build(); save(); }
+});
+
+/* ---- Lecture des réponses ---- */
+function radioVal(name){var el = $('input[name="'+name+'"]:checked'); return el ? el.value : '';}
+function checkVals(name){return $$('input[name="'+name+'"]:checked').map(function(e){return e.value;});}
+
+function gather(){
+  return {
+    mrc: $('#mrc').value,
+    nom: $('#nom').value.trim(),
+    fonction: $('#fonction').value.trim(),
+    courriel: $('#courriel').value.trim(),
+    general: radioVal('q_general'),
+    c_general: $('#c_general').value.trim(),
+    cadre: radioVal('q_cadre'),
+    c_cadre: $('#c_cadre').value.trim(),
+    portrait: radioVal('q_portrait'),
+    c_portrait: $('#c_portrait').value.trim(),
+    seuils: radioVal('q_seuils'),
+    c_seuils: $('#c_seuils').value.trim(),
+    pistes: checkVals('q_pistes'),
+    c_freins: $('#c_freins').value.trim(),
+    c_manques: $('#c_manques').value.trim(),
+    collab: radioVal('q_collab'),
+    c_libre: $('#c_libre').value.trim()
+  };
+}
+
+function line(label, val){ return val ? (label+" : "+val+"\n") : (label+" : —\n"); }
+
+function buildText(){
+  var d = gather();
+  var t = "";
+  t += "CONSULTATION — NOTE DE POLITIQUE « MILIEUX DE VIE COMPLETS »\n";
+  t += "Direction de santé publique — Santé Québec Laurentides\n";
+  t += "————————————————————————————————————————\n\n";
+  t += "IDENTIFICATION\n";
+  t += line("MRC / territoire", d.mrc);
+  t += line("Nom", d.nom);
+  t += line("Fonction", d.fonction);
+  t += line("Courriel", d.courriel);
+  t += "\nAPPRÉCIATION GÉNÉRALE\n";
+  t += line("Note claire et utile", d.general);
+  t += line("Commentaire", d.c_general);
+  t += "\nMESSAGE CLÉ (cadre milieu de vie complet)\n";
+  t += line("Cadre pertinent pour la MRC", d.cadre);
+  t += line("Précisions", d.c_cadre);
+  t += "\nPORTRAIT DU TERRITOIRE\n";
+  t += line("Portrait fidèle", d.portrait);
+  t += line("Écarts / corrections", d.c_portrait);
+  t += "\nPARAMÈTRES ET SEUILS\n";
+  t += line("Seuils adaptés au milieu", d.seuils);
+  t += line("Ajustements suggérés", d.c_seuils);
+  t += "\nPISTES D'ACTION\n";
+  t += line("Pistes prioritaires", d.pistes.length ? d.pistes.join(" ; ") : "");
+  t += line("Freins à la mise en œuvre", d.c_freins);
+  t += "\nÉLÉMENTS MANQUANTS ET SUITE\n";
+  t += line("Manques / corrections", d.c_manques);
+  t += line("Intérêt à collaborer", d.collab);
+  t += line("Commentaire général", d.c_libre);
+  t += "\n————————————————————————————————————————\n";
+  t += "Transmis via le questionnaire de consultation MRC.\n";
+  return t;
+}
+
+function build(){ $('#summary').textContent = buildText(); }
+
+/* ---- Validation légère ---- */
+function ok(){
+  var mrc = $('#mrc').value;
+  $('#warn').style.display = mrc ? 'none' : 'block';
+  return !!mrc;
+}
+
+/* ---- Actions d'envoi ---- */
+$('#mailBtn').onclick = function(){
+  if(!ok()) return;
+  var d = gather();
+  var subject = "Consultation — Note de politique Milieux de vie complets — " + (d.mrc || "MRC");
+  var href = "mailto:"+EMAIL+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(buildText());
+  window.location.href = href;
+  toast("Ouverture de votre messagerie…");
+};
+$('#copyBtn').onclick = function(){
+  var txt = buildText();
+  function done(){toast("Texte copié — collez-le dans un courriel à "+EMAIL);}
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done, fallbackCopy);
+  } else { fallbackCopy(); }
+  function fallbackCopy(){
+    var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta);
+    ta.select(); try{document.execCommand('copy'); done();}catch(e){toast("Copie impossible — utilisez « Télécharger ».");}
+    document.body.removeChild(ta);
+  }
+};
+$('#dlBtn').onclick = function(){
+  var d = gather();
+  var name = "consultation_MVC_" + (d.mrc ? d.mrc.replace(/[^\w]+/g,"_") : "MRC") + ".txt";
+  var blob = new Blob([buildText()], {type:"text/plain;charset=utf-8"});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); setTimeout(function(){URL.revokeObjectURL(a.href);}, 1500);
+  toast("Fichier téléchargé.");
+};
+
+/* ---- Toast ---- */
+var toastT;
+function toast(msg){
+  var el = $('#toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(function(){el.classList.remove('show');}, 3200);
+}
+
+/* ---- Sauvegarde locale (dégradation gracieuse) ---- */
+function save(){
+  try{
+    var d = gather();
+    d._fs = fs; d._light = document.body.classList.contains('theme-light');
+    localStorage.setItem(STORE, JSON.stringify(d));
+  }catch(e){/* stockage indisponible : sans effet */}
+}
+function restore(){
+  var raw; try{ raw = localStorage.getItem(STORE); }catch(e){ return; }
+  if(!raw) return;
+  var d; try{ d = JSON.parse(raw); }catch(e){ return; }
+  if(typeof d._fs === 'number'){ fs = d._fs; applyFs(); }
+  if(d._light === false){ document.body.classList.remove('theme-light'); }
+  function setV(id,v){ var el = $(id); if(el && v) el.value = v; }
+  setV('#mrc',d.mrc); setV('#nom',d.nom); setV('#fonction',d.fonction); setV('#courriel',d.courriel);
+  setV('#c_general',d.c_general); setV('#c_cadre',d.c_cadre); setV('#c_portrait',d.c_portrait);
+  setV('#c_seuils',d.c_seuils); setV('#c_freins',d.c_freins); setV('#c_manques',d.c_manques); setV('#c_libre',d.c_libre);
+  function setR(name,v){ if(!v) return; var el = $('input[name="'+name+'"][value="'+(''+v).replace(/"/g,'\\"')+'"]'); if(el) el.checked = true; }
+  setR('q_general',d.general); setR('q_cadre',d.cadre); setR('q_portrait',d.portrait);
+  setR('q_seuils',d.seuils); setR('q_collab',d.collab);
+  (d.pistes||[]).forEach(function(v){ var el = $('input[name="q_pistes"][value="'+v.replace(/"/g,'\\"')+'"]'); if(el) el.checked = true; });
+}
+
+/* ---- Init ---- */
+restore(); applyFs(); refreshChecked(); build();
+</script>
+</body>
+</html>
