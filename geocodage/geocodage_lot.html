@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Géocodage en lot — CISSS des Laurentides</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== Charte CISSS-DSP ===== */
+:root{
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+  --accent:var(--teal); --accent2:var(--blue);
+  --fs:1rem;
+}
+body.theme-light{
+  --bg:#ffffff; --bg2:#f4f6fc; --panel:#ffffff; --panel2:#eef1fb;
+  --line:#d8def0; --line2:#e6eaf7; --ink:#14143a; --ink2:#3a3f6e; --muted:#7a80a8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Source Sans 3",system-ui,sans-serif;font-size:var(--fs);
+  background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+.mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+a{color:var(--teal)}
+
+/* ===== Shell ===== */
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+header.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;
+  background:linear-gradient(100deg,var(--bg2) 0%,#161354 60%,#1c2a8a 100%);
+  border-bottom:1px solid var(--line);z-index:1200}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.mark{width:40px;height:40px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
+  background:radial-gradient(circle at 32% 28%,var(--teal),var(--navy) 75%);
+  box-shadow:0 0 0 1px #21aead33,inset 0 0 14px #00000040}
+.mark svg{width:22px;height:22px}
+.title h1{font-size:1.22rem;font-weight:700;line-height:1.12}
+.title h1 span{color:var(--teal)}
+.title p{font-size:.8rem;color:var(--ink2);font-weight:400;margin-top:2px}
+.spacer{flex:1 1 auto}
+.tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tools select{appearance:none;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  border-radius:9px;padding:7px 12px;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer}
+.tools select:focus{outline:none;border-color:var(--teal)}
+.badge{font-size:.72rem;font-weight:700;letter-spacing:.4px;padding:4px 11px;border-radius:999px;
+  background:#21aead1f;color:var(--teal);border:1px solid #21aead40;white-space:nowrap}
+.fontctl{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.fontctl button{background:transparent;border:0;color:var(--ink2);cursor:pointer;width:30px;height:32px;font:inherit;font-weight:700}
+.fontctl button:hover{background:#ffffff14;color:var(--ink)}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink2);
+  border-radius:9px;padding:7px 12px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;min-height:32px}
+.btn:hover{border-color:var(--teal);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primaire{background:linear-gradient(120deg,var(--teal-d),var(--blue-d));color:var(--white);border-color:transparent}
+.btn.primaire:hover{filter:brightness(1.12);color:var(--white)}
+.btn.plein{width:100%;justify-content:center;padding:11px 14px;font-size:.95rem}
+
+/* ===== Main ===== */
+.main{position:relative;display:grid;grid-template-columns:380px 1fr;min-height:0;transition:grid-template-columns .3s ease}
+.main.collapsed{grid-template-columns:0 1fr}
+.panel{width:380px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;
+  padding:18px 18px 26px;scrollbar-width:thin;scrollbar-color:var(--line) transparent;transition:transform .3s ease}
+.panel::-webkit-scrollbar{width:8px}
+.panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.main.collapsed .panel{transform:translateX(-100%)}
+#map{position:relative;height:100%;width:100%;background:var(--bg);outline:none}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.leaflet-control-attribution{background:#070620cc!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--teal)!important}
+
+/* ===== Panneau : sections ===== */
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:700;margin:20px 0 7px;
+  display:flex;align-items:center;gap:8px}
+.eyebrow:first-child{margin-top:2px}
+.eyebrow .num{width:19px;height:19px;border-radius:6px;background:#21aead22;border:1px solid #21aead50;
+  display:grid;place-items:center;font-family:"JetBrains Mono",monospace;font-size:.66rem;flex:0 0 auto}
+.aide{font-size:.76rem;color:var(--muted);line-height:1.5;margin-bottom:9px}
+textarea{width:100%;min-height:132px;resize:vertical;background:var(--panel2);color:var(--ink);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:.84rem;line-height:1.55}
+textarea:focus{outline:none;border-color:var(--teal)}
+input[type=text],input[type=password],select.bloc{width:100%;background:var(--panel2);color:var(--ink);
+  border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:inherit;font-size:.86rem;appearance:none}
+input:focus,select.bloc:focus{outline:none;border-color:var(--teal)}
+select.bloc{cursor:pointer;font-weight:600}
+.rangee{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.rangee .btn{flex:1 1 auto}
+.coche{display:flex;align-items:flex-start;gap:9px;font-size:.82rem;color:var(--ink2);margin-top:10px;cursor:pointer;line-height:1.45}
+.coche input{margin-top:3px;accent-color:var(--teal);width:15px;height:15px;flex:0 0 auto}
+.note{font-size:.74rem;color:var(--muted);line-height:1.5;margin-top:9px;border-left:2px solid var(--line);padding-left:10px}
+.note.alerte{border-left-color:var(--indigo);color:var(--ink2)}
+.compteur{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--muted);margin-top:6px;text-align:right}
+
+/* ===== Progression ===== */
+.progress{margin-top:12px;display:none}
+.progress.actif{display:block}
+.prog-bg{height:8px;background:var(--line2);border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,var(--blue),var(--teal));transition:width .25s ease}
+.prog-txt{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:6px}
+.prog-txt b{font-family:"JetBrains Mono",monospace;color:var(--ink2);font-weight:500}
+
+/* ===== Statistiques ===== */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.stat{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:12px;padding:10px 12px}
+.stat .v{font-family:"JetBrains Mono",monospace;font-size:1.5rem;font-weight:500;line-height:1.1}
+.stat .l{font-size:.72rem;color:var(--muted);margin-top:1px}
+
+/* ===== Liste de résultats ===== */
+.liste{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ligne{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border-bottom:1px solid var(--line2);
+  cursor:pointer;font-size:.8rem;line-height:1.4}
+.ligne:last-child{border-bottom:0}
+.ligne:hover{background:var(--panel2)}
+.ligne.sel{background:#21aead16;box-shadow:inset 3px 0 0 var(--teal)}
+.pastille{width:10px;height:10px;border-radius:50%;flex:0 0 auto;margin-top:4px}
+.ligne .txt{min-width:0;flex:1}
+.ligne .src-adr{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ligne .res-adr{color:var(--muted);font-size:.73rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ligne .sc{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--ink2);flex:0 0 auto;margin-top:2px}
+
+/* ===== Profil sélection ===== */
+#profil{display:none}
+.hero{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:16px;padding:14px 16px}
+.hero .lab{font-size:.8rem;color:var(--ink2);font-weight:600}
+.hero .big{font-size:1.45rem;font-weight:700;line-height:1.25;letter-spacing:-.3px;color:var(--white);margin:5px 0 3px;word-break:break-word}
+.hero .coord{font-family:"JetBrains Mono",monospace;font-size:1.05rem;color:var(--teal);margin-top:8px}
+.hero .sub{font-size:.8rem;color:var(--muted);margin-top:4px}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin-top:12px;font-size:.79rem}
+.meta dt{color:var(--muted)}
+.meta dd{color:var(--ink2);word-break:break-word}
+.src{margin-top:18px;font-size:.72rem;color:var(--muted);line-height:1.5;border-top:1px solid var(--line2);padding-top:12px}
+
+/* ===== Légende ===== */
+#legend{position:absolute;bottom:20px;left:20px;z-index:600;background:var(--panel);
+  background:color-mix(in srgb,var(--panel) 96%,transparent);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:12px;padding:13px 15px;min-width:200px}
+.legend-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px}
+.legend-item{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.78rem;color:var(--ink2)}
+.legend-sw{width:14px;height:14px;border-radius:50%;border:1px solid #ffffff40;flex:0 0 auto}
+.legend-item b{font-family:"JetBrains Mono",monospace;font-weight:500;margin-left:auto;color:var(--ink)}
+
+/* ===== Méthodo ===== */
+#methodo{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:600}
+#methodo-btn{background:var(--panel);border:1px solid var(--line);color:var(--ink2);
+  padding:7px 15px;border-radius:999px;font:inherit;font-size:.78rem;cursor:pointer}
+#methodo-btn:hover{color:var(--ink);border-color:var(--teal)}
+#methodo-content{display:none;position:absolute;bottom:42px;left:50%;transform:translateX(-50%);
+  width:min(620px,92vw);max-height:70vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:18px 20px;font-size:.82rem;line-height:1.6;color:var(--ink2);box-shadow:0 12px 40px #0008}
+#methodo-content.show{display:block}
+#methodo-content h4{color:var(--ink);font-size:.95rem;margin-bottom:8px}
+#methodo-content h5{color:var(--teal);font-size:.8rem;margin:14px 0 4px;text-transform:uppercase;letter-spacing:.08em}
+#methodo-content p{margin-bottom:7px}
+#methodo-content ul{margin:0 0 7px 18px}
+#methodo-content li{margin-bottom:4px}
+.formula{background:var(--panel2);padding:8px 12px;border-radius:8px;margin:8px 0;
+  font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--teal);word-break:break-all}
+
+/* ===== Tooltip ===== */
+.muni-tooltip{background:var(--panel2)!important;border:1px solid var(--line)!important;color:var(--ink)!important;
+  border-radius:9px!important;padding:9px 13px!important;font-family:"Source Sans 3"!important;
+  font-size:.8rem!important;box-shadow:0 6px 20px #0007!important}
+.muni-tooltip .tt-nom{font-weight:700;font-size:.9rem}
+.muni-tooltip .tt-mrc{color:var(--muted);font-size:.74rem}
+.muni-tooltip .tt-val{font-family:"JetBrains Mono";font-weight:700;font-size:.95rem;margin-top:5px}
+.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{border-color:transparent!important}
+
+/* ===== Avis + bandeau mode manuel ===== */
+.overlay{position:fixed;inset:0;background:#070620e0;z-index:3000;display:grid;place-items:center;padding:20px}
+.overlay.cache{display:none}
+.avis{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 28px;
+  width:min(560px,94vw);max-height:88vh;overflow-y:auto;box-shadow:0 24px 70px #000a}
+.avis h2{font-size:1.15rem;margin-bottom:10px}
+.avis h2 span{color:var(--teal)}
+.avis p{font-size:.86rem;line-height:1.6;color:var(--ink2);margin-bottom:10px}
+.avis ul{margin:0 0 12px 20px;font-size:.85rem;line-height:1.6;color:var(--ink2)}
+.avis li{margin-bottom:5px}
+#bandeau-manuel{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:900;
+  background:var(--panel);border:1px solid var(--teal);color:var(--ink);border-radius:999px;
+  padding:8px 16px;font-size:.8rem;display:none;align-items:center;gap:10px;box-shadow:0 8px 26px #0008}
+#bandeau-manuel.actif{display:flex}
+
+/* ===== Bascule panneau + responsive ===== */
+#panel-toggle{position:absolute;top:14px;left:380px;z-index:700;background:var(--panel);
+  border:1px solid var(--line);color:var(--ink);width:26px;height:34px;border-radius:0 8px 8px 0;
+  cursor:pointer;font-size:13px;transition:left .3s ease}
+#panel-toggle.shifted{left:0}
+@media(max-width:800px){
+  .main{grid-template-columns:1fr}
+  .main.collapsed{grid-template-columns:1fr}
+  .panel{position:absolute;inset:auto 0 0 0;width:auto;height:62vh;border-right:none;border-top:1px solid var(--line);z-index:800}
+  .main.collapsed .panel{transform:translateY(100%)}
+  #panel-toggle{display:none}
+  #legend{bottom:auto;top:14px;left:14px;min-width:0;padding:10px 12px}
+  #methodo{bottom:auto;top:14px;left:auto;right:14px;transform:none}
+  #methodo-content{bottom:auto;top:42px;left:auto;right:0;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Avis de confidentialité (obligatoire au démarrage) ===== -->
+<div class="overlay" id="avis">
+  <div class="avis">
+    <h2>Avant de commencer — <span>protection des renseignements personnels</span></h2>
+    <p>Le géocodage envoie chaque adresse <b>à un service externe</b>, hébergé hors du réseau du CISSS. Cet outil est conçu pour la <b>formation</b> et pour des adresses <b>publiques</b> (installations, écoles, commerces, points de service).</p>
+    <ul>
+      <li>Ne jamais soumettre d'adresses d'usagers, de patients ou de personnes identifiables.</li>
+      <li>Pour des données nominatives : géocodeur interne, instance auto-hébergée, ou traitement en environnement contrôlé, après validation avec le responsable de la protection des renseignements personnels.</li>
+      <li>Une adresse résidentielle seule constitue un renseignement personnel dès qu'elle peut être reliée à une personne (Loi 25).</li>
+    </ul>
+    <p class="mono" style="font-size:.78rem;color:var(--muted)">Aucune donnée n'est enregistrée par cet outil : tout reste dans la mémoire du navigateur et disparaît à la fermeture de l'onglet.</p>
+    <button class="btn primaire plein" onclick="fermerAvis()" style="margin-top:6px">J'ai compris — utiliser des adresses publiques</button>
+  </div>
+</div>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.4"/></svg></div>
+      <div class="title">
+        <h1>Géocodage <span>en lot</span></h1>
+        <p>Transformer une liste d'adresses en coordonnées cartographiables</p>
+      </div>
+    </div>
+    <span class="badge">C.A.R.T.O.S. · Formation géoweb</span>
+    <div class="spacer"></div>
+    <div class="tools">
+      <select id="filtre-prec" title="Filtrer par qualité d'appariement">
+        <option value="">Toutes les qualités</option>
+        <option value="exact">Exact</option>
+        <option value="approx">Approximatif</option>
+        <option value="faible">Faible</option>
+        <option value="manuel">Manuel</option>
+      </select>
+      <div class="fontctl"><button onclick="setFont(-1)" title="Réduire le texte">A−</button><button onclick="setFont(1)" title="Agrandir le texte">A+</button></div>
+      <button class="btn" onclick="exporterCSV()" title="Exporter les résultats en CSV">⬇ CSV</button>
+      <button class="btn" onclick="exportGeoJSON()" title="Exporter les points en GeoJSON">⬇ GeoJSON</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="panel" id="panel">
+
+      <div class="eyebrow"><span class="num mono">1</span>Adresses à géocoder</div>
+      <div class="aide">Une adresse par ligne. Vous pouvez coller depuis Excel ou importer un fichier CSV.</div>
+      <textarea id="entree" spellcheck="false" placeholder="290 rue de Montigny, Saint-Jérôme, QC"></textarea>
+      <div class="compteur" id="compteur">0 adresse</div>
+      <div class="rangee">
+        <button class="btn" onclick="document.getElementById('fichier').click()">📄 Importer un CSV</button>
+        <button class="btn" onclick="chargerExemple()">Jeu d'exemple</button>
+        <input type="file" id="fichier" accept=".csv,.txt" style="display:none">
+      </div>
+      <div id="csv-cols" style="display:none">
+        <div class="aide" style="margin-top:12px">Colonnes à assembler pour former l'adresse (dans l'ordre coché) :</div>
+        <div id="csv-liste"></div>
+        <button class="btn plein" style="margin-top:9px" onclick="appliquerColonnes()">Construire les adresses</button>
+      </div>
+
+      <div class="eyebrow"><span class="num mono">2</span>Service de géocodage</div>
+      <select class="bloc" id="service">
+        <optgroup label="Gratuit — sans clé d'API">
+          <option value="aq" selected>Adresses Québec (MRNF)</option>
+          <option value="osm">Nominatim — OpenStreetMap</option>
+        </optgroup>
+        <optgroup label="Commercial — clé requise">
+          <option value="google">Google Maps Geocoding API</option>
+        </optgroup>
+      </select>
+      <div class="note" id="note-service"></div>
+
+      <div id="bloc-cle" style="display:none">
+        <div class="aide" style="margin-top:12px">Clé d'API Google (jamais enregistrée, conservée en mémoire seulement) :</div>
+        <input type="password" id="cle-google" placeholder="AIza…" autocomplete="off">
+        <div class="note alerte">La clé doit avoir <b>Geocoding API</b> activée et <b>ne pas</b> être restreinte par référent HTTP : les services Web Google n'acceptent que les restrictions par adresse IP. Une clé mal restreinte renvoie <span class="mono">REQUEST_DENIED</span>.</div>
+      </div>
+
+      <label class="coche"><input type="checkbox" id="opt-suffixe" checked><span>Ajouter « Québec, Canada » aux adresses sans province (Nominatim et Google seulement)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-cache" checked><span>Mettre en cache les adresses identiques (évite les requêtes répétées)</span></label>
+
+      <div class="eyebrow"><span class="num mono">3</span>Traitement</div>
+      <button class="btn primaire plein" id="btn-lancer" onclick="lancer(false)">▶ Lancer le géocodage</button>
+      <div class="rangee">
+        <button class="btn" id="btn-pause" onclick="basculerPause()" disabled>⏸ Pause</button>
+        <button class="btn" id="btn-stop" onclick="arreter()" disabled>■ Arrêter</button>
+      </div>
+      <button class="btn plein" id="btn-echecs" onclick="lancer(true)" style="margin-top:8px;display:none">↻ Reprendre les échecs avec le service choisi</button>
+      <div class="progress" id="progress">
+        <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
+        <div class="prog-txt"><span id="prog-etat">En attente…</span><b id="prog-cpt">0 / 0</b></div>
+      </div>
+
+      <div id="bloc-resultats" style="display:none">
+        <div class="eyebrow"><span class="num mono">4</span>Résultats</div>
+        <div class="stats">
+          <div class="stat"><div class="v" id="s-exact" style="color:var(--teal)">0</div><div class="l">Exacts</div></div>
+          <div class="stat"><div class="v" id="s-approx" style="color:var(--blue)">0</div><div class="l">Approximatifs</div></div>
+          <div class="stat"><div class="v" id="s-faible" style="color:var(--indigo)">0</div><div class="l">Faibles</div></div>
+          <div class="stat"><div class="v" id="s-echec" style="color:var(--muted)">0</div><div class="l">Échecs</div></div>
+        </div>
+        <div class="note" id="note-taux"></div>
+        <div class="liste" id="liste"></div>
+      </div>
+
+      <div id="profil">
+        <div class="eyebrow">Enregistrement sélectionné</div>
+        <div class="hero">
+          <div class="lab">Adresse soumise</div>
+          <div class="big" id="p-src">—</div>
+          <div class="coord mono" id="p-coord">—</div>
+          <div class="sub" id="p-prec"></div>
+        </div>
+        <dl class="meta">
+          <dt>Adresse trouvée</dt><dd id="p-trouve">—</dd>
+          <dt>Service</dt><dd id="p-service">—</dd>
+          <dt>Type d'appariement</dt><dd id="p-type">—</dd>
+          <dt>Score</dt><dd id="p-score" class="mono">—</dd>
+        </dl>
+        <div class="rangee">
+          <button class="btn" onclick="modeManuel()">📍 Positionner à la main</button>
+          <button class="btn" onclick="copierCoord()">⧉ Copier lat/lon</button>
+        </div>
+        <div class="src" id="p-note"></div>
+      </div>
+
+      <div class="src">
+        Sources : Adresses Québec (MRNF) · Nominatim — OpenStreetMap (ODbL) · Google Maps Platform ·
+        CISSS des Laurentides — Direction de santé publique · Mise à jour 2026-07-22
+      </div>
+    </aside>
+
+    <div id="map">
+      <button id="panel-toggle" onclick="togglePanel()">◀</button>
+      <div id="bandeau-manuel">📍 Cliquez sur la carte pour positionner l'adresse <button class="btn" onclick="annulerManuel()">Annuler</button></div>
+      <div id="legend">
+        <div class="legend-title">Qualité d'appariement</div>
+        <div class="legend-item"><div class="legend-sw" style="background:#21AEAD"></div><span>Exact (point d'adresse)</span><b id="lg-exact">0</b></div>
+        <div class="legend-item"><div class="legend-sw" style="background:#0482D3"></div><span>Approximatif (rue)</span><b id="lg-approx">0</b></div>
+        <div class="legend-item"><div class="legend-sw" style="background:#5b54c0"></div><span>Faible (localité)</span><b id="lg-faible">0</b></div>
+        <div class="legend-item"><div class="legend-sw" style="background:#5fd0cf"></div><span>Positionné à la main</span><b id="lg-manuel">0</b></div>
+        <div class="legend-item"><div class="legend-sw" style="background:transparent;border-style:dashed;border-color:#8b8fc4;border-radius:50%"></div><span>Échec (non cartographié)</span><b id="lg-echec">0</b></div>
+      </div>
+      <div id="methodo">
+        <button id="methodo-btn" onclick="toggleMethodo()">ⓘ Méthodologie</button>
+        <div id="methodo-content">
+          <h4>Géocodage en lot — méthode et limites</h4>
+          <p>Le géocodage transforme une adresse écrite en coordonnées (latitude, longitude) par appariement avec une base de référence. Chaque adresse est soumise séquentiellement, à un rythme adapté à la politique du service choisi ; les résultats sont normalisés dans un format commun.</p>
+
+          <h5>Les trois services</h5>
+          <ul>
+            <li><b>Adresses Québec (MRNF)</b> — géocodeur officiel du gouvernement du Québec, appuyé sur la géobase AQréseau+ (odonymes officiels, adresses par points et par tranches). Gratuit, sans clé, couverture provinciale complète. C'est le choix à privilégier pour du territoire québécois.</li>
+            <li><b>Nominatim (OpenStreetMap)</b> — géocodeur communautaire mondial. Gratuit et sans clé, mais l'instance publique est financée par des dons : maximum absolu d'<b>une requête par seconde</b>, pas de géocodage en masse, mise en cache des résultats obligatoire. Cet outil applique un délai de 1,1 s et met en cache les adresses identiques. Pour du volume, il faut héberger sa propre instance. Voir la <a href="https://operations.osmfoundation.org/policies/nominatim/" target="_blank" rel="noopener">politique d'utilisation de Nominatim</a>.</li>
+            <li><b>Google Maps Geocoding API</b> — service commercial, très bonne tolérance aux fautes de frappe et aux adresses mal formées. Requiert une clé et une facturation active ; tarifé à l'usage au-delà du crédit mensuel.</li>
+          </ul>
+
+          <h5>Requête envoyée</h5>
+          <div class="formula" id="m-url">—</div>
+
+          <h5>Qualité d'appariement</h5>
+          <ul>
+            <li><b>Exact</b> — point d'adresse identifié (<span class="mono">PointAddress</span>, numéro civique OSM, <span class="mono">ROOFTOP</span>).</li>
+            <li><b>Approximatif</b> — position interpolée le long du segment de rue (<span class="mono">StreetAddress</span>, <span class="mono">RANGE_INTERPOLATED</span>) ou centroïde de rue.</li>
+            <li><b>Faible</b> — seule la localité, le code postal ou un lieu générique a été reconnu. À vérifier systématiquement avant analyse.</li>
+          </ul>
+          <p>Un taux d'appariement exact inférieur à 85 % justifie de nettoyer les adresses en amont (abréviations, accents, numéros d'unité, codes postaux) avant de conclure quoi que ce soit sur la répartition spatiale.</p>
+
+          <h5>Précautions d'analyse</h5>
+          <ul>
+            <li>Ne jamais géocoder de renseignements personnels avec un service externe.</li>
+            <li>Les erreurs de géocodage ne sont pas aléatoires : elles se concentrent en milieu rural et dans les nouveaux développements, ce qui biaise les analyses de desserte.</li>
+            <li>Conserver l'adresse source, le score et le type d'appariement dans le fichier exporté : c'est la trace de qualité qui rend l'analyse reproductible.</li>
+          </ul>
+
+          <p class="src" style="border-top:1px solid var(--line2);padding-top:10px;margin-top:10px">
+            Sources : Adresses Québec — service REST de géocodage, MRNF · Nominatim, OpenStreetMap Foundation (données ODbL) · Google Maps Platform ·
+            CISSS des Laurentides — Direction de santé publique · Mise à jour 2026-07-22
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GÉOCODAGE EN LOT — C.A.R.T.O.S.
+   CISSS des Laurentides, Direction de santé publique
+   Fichier autonome : aucune dépendance hors Leaflet 1.9.4 et Google Fonts.
+   ========================================================================= */
+
+/* ===== Charte : helpers couleur + format ===== */
+var COULEURS = {exact:'#21AEAD', approx:'#0482D3', faible:'#5b54c0', manuel:'#5fd0cf', echec:'#8b8fc4'};
+var LIBELLES = {exact:'Exact', approx:'Approximatif', faible:'Faible', manuel:'Positionné à la main', echec:'Échec'};
+function fmt(n,d){return n==null?'—':Number(n).toLocaleString('fr-CA',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
+
+/* ===== Configuration des services =====
+   delai : millisecondes entre deux requêtes (respect des politiques d'usage) */
+var SERVICES = {
+  aq: {
+    nom:'Adresses Québec (MRNF)', delai:180, cle:false,
+    note:"Géocodeur officiel du gouvernement du Québec, appuyé sur la géobase Adresses Québec (AQréseau+). Gratuit, sans clé, couverture provinciale. Ne géocode que le territoire québécois.",
+    exemple:"…/GeocodeServer/findAddressCandidates?SingleLine={adresse}&outSR=4326&f=json"
+  },
+  osm: {
+    nom:'Nominatim (OpenStreetMap)', delai:1100, cle:false,
+    note:"Service communautaire mondial financé par des dons. Maximum 1 requête/seconde, géocodage en masse interdit, mise en cache exigée. L'outil applique un délai de 1,1 s. Politique : operations.osmfoundation.org/policies/nominatim/",
+    exemple:"https://nominatim.openstreetmap.org/search?q={adresse}&format=jsonv2&limit=1&countrycodes=ca"
+  },
+  google: {
+    nom:'Google Maps Geocoding API', delai:120, cle:true,
+    note:"Service commercial : clé d'API et facturation actives requises. Très tolérant aux adresses imparfaites. Les résultats ne peuvent être conservés hors du contexte d'affichage d'une carte Google (conditions d'utilisation).",
+    exemple:"https://maps.googleapis.com/maps/api/geocode/json?address={adresse}&key={cle}&region=ca"
+  }
+};
+
+/* ===== État ===== */
+var resultats = [];              // enregistrements normalisés
+var cache = {};                  // clé "service|adresse" -> résultat
+var etat = {enCours:false, pause:false, arret:false};
+var selection = null;            // index sélectionné
+var modeClic = false;            // positionnement manuel
+var DATA = {type:'FeatureCollection', features:[]};
+
+/* ===== Carte ===== */
+var map = L.map('map',{zoomControl:true}).setView([46.0,-74.5], 8);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · CISSS des Laurentides',
+  maxZoom:19, subdomains:'abcd'}).addTo(map);
+var couchepoints = L.layerGroup().addTo(map);
+
+/* =========================================================================
+   1. UTILITAIRES RÉSEAU
+   ========================================================================= */
+
+function dormir(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+/* Repli JSONP : utilisé si la politique CORS du serveur bloque fetch().
+   Les services ArcGIS REST acceptent le paramètre "callback". */
+function jsonp(url, delaiMax){
+  return new Promise(function(res, rej){
+    jsonp._i = (jsonp._i || 0) + 1;
+    var nom = 'cartos_cb_' + jsonp._i;
+    var s = document.createElement('script');
+    var minuteur = setTimeout(function(){ nettoyer(); rej(new Error('Délai dépassé')); }, delaiMax || 15000);
+    function nettoyer(){
+      clearTimeout(minuteur);
+      try{ delete window[nom]; }catch(e){ window[nom] = undefined; }
+      if(s.parentNode) s.parentNode.removeChild(s);
+    } // fin nettoyer
+    window[nom] = function(donnees){ nettoyer(); res(donnees); };
+    s.onerror = function(){ nettoyer(); rej(new Error('Requête JSONP refusée')); };
+    s.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + nom;
+    document.head.appendChild(s);
+  }); // fin Promise
+} // fin jsonp
+
+/* Récupère du JSON en tentant fetch() puis, en cas d'échec CORS, JSONP. */
+async function lireJSON(url, avecJsonp){
+  try {
+    var r = await fetch(url);
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } catch(e) {
+    if(avecJsonp) return await jsonp(url);
+    throw e;
+  }
+} // fin lireJSON
+
+/* =========================================================================
+   2. LES TROIS GÉOCODEURS
+   Chacun renvoie un objet normalisé :
+   {ok, lat, lon, trouve, score, precision, type, service}
+   ========================================================================= */
+
+/* --- A. Adresses Québec (MRNF) — gratuit, sans clé ---------------------- */
+var URL_AQ = 'https://servicescarto.mrnf.gouv.qc.ca/pes/rest/services/Territoire/Adresse_Geocodage/GeocodeServer/findAddressCandidates';
+
+async function geocoderAQ(adresse){
+  var url = URL_AQ + '?SingleLine=' + encodeURIComponent(adresse)
+          + '&outFields=*&maxLocations=1&outSR=4326&f=json';
+  var j = await lireJSON(url, true);   // repli JSONP si CORS
+  var c = (j.candidates || [])[0];
+  if(!c || !c.location) return {ok:false, motif:'Aucun candidat trouvé'};
+
+  var a = c.attributes || {};
+  var t = String(a.Addr_type || '').toLowerCase();
+  var precision;
+  if(/pointaddress|subaddress/.test(t))        precision = 'exact';
+  else if(/streetaddress|streetint/.test(t))   precision = 'approx';
+  else if(/streetname|street/.test(t))         precision = 'approx';
+  else if(t)                                   precision = 'faible';
+  else precision = c.score >= 95 ? 'exact' : (c.score >= 80 ? 'approx' : 'faible');
+  if(c.score < 75) precision = 'faible';
+
+  return {ok:true, lat:c.location.y, lon:c.location.x,
+          trouve:c.address || a.Match_addr || adresse,
+          score:Math.round(c.score || 0),
+          precision:precision,
+          type:a.Addr_type || '—'};
+} // fin geocoderAQ
+
+/* --- B. Nominatim (OpenStreetMap) — gratuit, 1 requête/seconde ---------- */
+async function geocoderOSM(adresse){
+  var url = 'https://nominatim.openstreetmap.org/search'
+          + '?q=' + encodeURIComponent(adresse)
+          + '&format=jsonv2&addressdetails=1&limit=1&countrycodes=ca&accept-language=fr';
+  var j = await lireJSON(url, false);
+  var c = (j || [])[0];
+  if(!c) return {ok:false, motif:'Aucun résultat'};
+
+  var ad = c.address || {};
+  var rang = Number(c.place_rank || 0);
+  var precision;
+  if(ad.house_number) precision = 'exact';
+  else if(ad.road || rang >= 26) precision = 'approx';
+  else precision = 'faible';
+
+  /* Nominatim ne renvoie pas de score d'appariement : « importance » mesure la
+     notoriété du lieu, pas la qualité de l'appariement. On dérive donc le score
+     de la précision, pour qu'il reste comparable d'un service à l'autre. */
+  return {ok:true, lat:parseFloat(c.lat), lon:parseFloat(c.lon),
+          trouve:c.display_name || adresse,
+          score:precision === 'exact' ? 100 : (precision === 'approx' ? 80 : 50),
+          precision:precision,
+          type:(c.addresstype || c.type || '—') + ' · rang ' + rang};
+} // fin geocoderOSM
+
+/* --- C. Google Maps Geocoding API — clé requise ------------------------- */
+async function geocoderGoogle(adresse, cle){
+  var url = 'https://maps.googleapis.com/maps/api/geocode/json'
+          + '?address=' + encodeURIComponent(adresse)
+          + '&key=' + encodeURIComponent(cle)
+          + '&language=fr&region=ca&components=country:CA';
+  var j = await lireJSON(url, false);
+
+  if(j.status !== 'OK'){
+    var m = {ZERO_RESULTS:'Aucun résultat',
+             REQUEST_DENIED:'Clé refusée — vérifier l\u2019activation de Geocoding API et les restrictions',
+             OVER_QUERY_LIMIT:'Quota dépassé ou facturation inactive',
+             INVALID_REQUEST:'Requête invalide'}[j.status] || j.status;
+    return {ok:false, motif:m + (j.error_message ? ' — ' + j.error_message : '')};
+  } // fin if statut
+
+  var r = j.results[0];
+  var lt = r.geometry.location_type;
+  var precision = lt === 'ROOFTOP' ? 'exact'
+                : lt === 'RANGE_INTERPOLATED' ? 'approx'
+                : lt === 'GEOMETRIC_CENTER' ? 'approx' : 'faible';
+  if(r.partial_match && precision === 'exact') precision = 'approx';
+
+  return {ok:true, lat:r.geometry.location.lat, lon:r.geometry.location.lng,
+          trouve:r.formatted_address,
+          score:precision === 'exact' ? 100 : (precision === 'approx' ? 80 : 50),
+          precision:precision,
+          type:lt + (r.partial_match ? ' · appariement partiel' : '')};
+} // fin geocoderGoogle
+
+/* --- Aiguillage -------------------------------------------------------- */
+async function geocoder(service, adresse, cle){
+  if(service === 'aq')     return await geocoderAQ(adresse);
+  if(service === 'osm')    return await geocoderOSM(adresse);
+  if(service === 'google') return await geocoderGoogle(adresse, cle);
+  throw new Error('Service inconnu');
+} // fin geocoder
+
+/* =========================================================================
+   3. BOUCLE DE TRAITEMENT
+   ========================================================================= */
+
+function lignesEntree(){
+  return document.getElementById('entree').value
+    .split('\n').map(function(s){ return s.trim(); })
+    .filter(function(s){ return s.length > 0; });
+} // fin lignesEntree
+
+function preparer(adresse, service){
+  /* Le géocodeur provincial attend « adresse, municipalité » : ajouter le pays
+     dégrade l'appariement. Le suffixe ne sert qu'aux services mondiaux. */
+  if(service === 'aq') return adresse;
+  if(!document.getElementById('opt-suffixe').checked) return adresse;
+  var a = adresse.toLowerCase();
+  if(/qu[ée]bec|\bqc\b|canada/.test(a)) return adresse;
+  return adresse + ', Québec, Canada';
+} // fin preparer
+
+async function lancer(seulementEchecs){
+  if(etat.enCours) return;
+
+  var service = document.getElementById('service').value;
+  var cle = document.getElementById('cle-google').value.trim();
+  if(SERVICES[service].cle && !cle){
+    alert('Cette option requiert une clé d\u2019API Google.');
+    return;
+  } // fin if clé manquante
+
+  var aTraiter;
+  if(seulementEchecs){
+    aTraiter = [];
+    for(var k = 0; k < resultats.length; k++){
+      if(!resultats[k].ok) aTraiter.push(k);
+    } // fin for
+    if(!aTraiter.length){ alert('Aucun échec à reprendre.'); return; }
+  } else {
+    var lignes = lignesEntree();
+    if(!lignes.length){ alert('Aucune adresse à géocoder.'); return; }
+    if(service === 'osm' && lignes.length > 100 &&
+       !confirm('Nominatim est un service communautaire à capacité limitée : ' + lignes.length +
+                ' requêtes prendront environ ' + Math.ceil(lignes.length * 1.1 / 60) +
+                ' minutes et sortent du cadre d\u2019un usage léger.\n\n' +
+                'Pour ce volume, privilégiez Adresses Québec.\n\nContinuer quand même ?')){
+      return;
+    } // fin if garde Nominatim
+    resultats = lignes.map(function(a, i){
+      return {no:i + 1, source:a, ok:false, motif:'En attente'};
+    });
+    aTraiter = resultats.map(function(_, i){ return i; });
+  } // fin if/else
+
+  /* --- démarrage --- */
+  etat = {enCours:true, pause:false, arret:false};
+  majBoutons();
+  document.getElementById('progress').classList.add('actif');
+  document.getElementById('bloc-resultats').style.display = 'block';
+  document.getElementById('m-url').textContent = SERVICES[service].exemple;
+
+  var delai = SERVICES[service].delai;
+  var faits = 0;
+
+  for(var i = 0; i < aTraiter.length; i++){
+    if(etat.arret) break;
+    while(etat.pause && !etat.arret){ await dormir(200); }
+    if(etat.arret) break;
+
+    var idx = aTraiter[i];
+    var enr = resultats[idx];
+    var requete = preparer(enr.source, service);
+    var cleCache = service + '|' + requete;
+    var depuisCache = false;
+    var r;
+
+    if(document.getElementById('opt-cache').checked && cache[cleCache]){
+      r = cache[cleCache];
+      depuisCache = true;
+    } else {
+      try {
+        r = await geocoder(service, requete, cle);
+      } catch(e) {
+        r = {ok:false, motif:'Erreur réseau — ' + (e.message || e)};
+      } // fin try
+      if(document.getElementById('opt-cache').checked && r.ok) cache[cleCache] = r;
+    } // fin if cache
+
+    resultats[idx] = Object.assign({no:enr.no, source:enr.source, service:SERVICES[service].nom,
+                                    requete:requete, cache:depuisCache}, r);
+    faits++;
+    majProgression(faits, aTraiter.length, enr.source);
+    dessiner();
+
+    /* Le délai n'est appliqué que si une vraie requête a été envoyée. */
+    if(!depuisCache && i < aTraiter.length - 1) await dormir(delai);
+  } // fin for
+
+  etat.enCours = false;
+  etat.pause = false;
+  majBoutons();
+  document.getElementById('prog-etat').textContent = etat.arret ? 'Interrompu' : 'Terminé';
+  dessiner();
+  cadrer();
+} // fin lancer
+
+function majProgression(faits, total, courante){
+  document.getElementById('prog-fill').style.width = (faits / total * 100) + '%';
+  document.getElementById('prog-cpt').textContent = fmt(faits) + ' / ' + fmt(total);
+  document.getElementById('prog-etat').textContent =
+    (courante.length > 34 ? courante.slice(0, 34) + '…' : courante);
+} // fin majProgression
+
+function basculerPause(){
+  etat.pause = !etat.pause;
+  document.getElementById('btn-pause').textContent = etat.pause ? '▶ Reprendre' : '⏸ Pause';
+} // fin basculerPause
+
+function arreter(){ etat.arret = true; etat.pause = false; } // fin arreter
+
+function majBoutons(){
+  document.getElementById('btn-lancer').disabled = etat.enCours;
+  document.getElementById('btn-pause').disabled = !etat.enCours;
+  document.getElementById('btn-stop').disabled = !etat.enCours;
+  document.getElementById('btn-pause').textContent = '⏸ Pause';
+} // fin majBoutons
+
+/* =========================================================================
+   4. AFFICHAGE : carte, liste, statistiques
+   ========================================================================= */
+
+function filtreActif(){ return document.getElementById('filtre-prec').value; }
+
+function visible(r){
+  var f = filtreActif();
+  if(!f) return true;
+  return r.ok && r.precision === f;
+} // fin visible
+
+function dessiner(){
+  /* --- statistiques --- */
+  var n = {exact:0, approx:0, faible:0, manuel:0, echec:0};
+  resultats.forEach(function(r){
+    if(!r.ok){ n.echec++; return; }
+    n[r.precision] = (n[r.precision] || 0) + 1;
+  });
+  document.getElementById('s-exact').textContent  = fmt(n.exact + n.manuel);
+  document.getElementById('s-approx').textContent = fmt(n.approx);
+  document.getElementById('s-faible').textContent = fmt(n.faible);
+  document.getElementById('s-echec').textContent  = fmt(n.echec);
+  document.getElementById('lg-exact').textContent  = fmt(n.exact);
+  document.getElementById('lg-approx').textContent = fmt(n.approx);
+  document.getElementById('lg-faible').textContent = fmt(n.faible);
+  document.getElementById('lg-manuel').textContent = fmt(n.manuel);
+  document.getElementById('lg-echec').textContent  = fmt(n.echec);
+
+  var total = resultats.length;
+  var apparies = total - n.echec;
+  var taux = total ? (apparies / total * 100) : 0;
+  var msg = 'Taux d\u2019appariement : ' + fmt(taux, 1) + ' % (' + fmt(apparies) + ' / ' + fmt(total) + ').';
+  if(total && taux < 85) msg += ' Sous 85 %, nettoyez les adresses source avant toute analyse spatiale.';
+  document.getElementById('note-taux').textContent = msg;
+  document.getElementById('btn-echecs').style.display = n.echec ? 'block' : 'none';
+
+  /* --- marqueurs --- */
+  dessinerPoints();
+
+  /* --- liste --- */
+  var html = '';
+  resultats.forEach(function(r, i){
+    if(!visible(r) && r.ok) return;
+    var c = r.ok ? COULEURS[r.precision] : COULEURS.echec;
+    var second = r.ok ? r.trouve : (r.motif || 'Échec');
+    html += '<div class="ligne' + (i === selection ? ' sel' : '') + '" onclick="choisir(' + i + ')">'
+          + '<div class="pastille" style="background:' + (r.ok ? c : 'transparent') + ';border:1px solid ' + c + '"></div>'
+          + '<div class="txt"><div class="src-adr">' + echapper(r.source) + '</div>'
+          + '<div class="res-adr">' + echapper(second) + '</div></div>'
+          + '<div class="sc">' + (r.ok ? fmt(r.score) : '—') + '</div></div>';
+  });
+  document.getElementById('liste').innerHTML = html || '<div class="ligne"><div class="txt"><div class="res-adr">Aucun résultat pour ce filtre.</div></div></div>';
+
+  /* --- GeoJSON pour l'export --- */
+  DATA = {type:'FeatureCollection', features:resultats.filter(function(r){ return r.ok; }).map(function(r){
+    return {type:'Feature',
+            properties:{no:r.no, adresse_source:r.source, adresse_trouvee:r.trouve,
+                        service:r.service, score:r.score, precision:LIBELLES[r.precision],
+                        type_appariement:r.type},
+            geometry:{type:'Point', coordinates:[r.lon, r.lat]}};
+  })};
+} // fin dessiner
+
+var bornes = [];   /* coordonnées des points affichés, pour le cadrage */
+
+function dessinerPoints(){
+  couchepoints.clearLayers();
+  bornes = [];
+  resultats.forEach(function(r, i){
+    if(!r.ok || !visible(r)) return;
+    var c = COULEURS[r.precision];
+    var m = L.circleMarker([r.lat, r.lon], {
+      radius:i === selection ? 10 : 7,
+      fillColor:c, fillOpacity:.85,
+      weight:i === selection ? 3 : 1.5,
+      color:i === selection ? '#ffffff' : '#ffffff66', opacity:.9
+    });
+    m.bindTooltip('<div class="tt-nom">' + echapper(r.source) + '</div>'
+                + '<div class="tt-mrc">' + echapper(r.trouve) + '</div>'
+                + '<div class="tt-val" style="color:' + c + '">' + LIBELLES[r.precision] + '</div>',
+                {className:'muni-tooltip', direction:'top', offset:[0,-8]});
+    m.on('click', function(){ choisir(i); });
+    m.addTo(couchepoints);
+    bornes.push([r.lat, r.lon]);
+  }); // fin forEach
+} // fin dessinerPoints
+
+function cadrer(){
+  var b = bornes;
+  if(!b.length) return;
+  map.fitBounds(L.latLngBounds(b), {paddingTopLeft:[window.innerWidth > 800 ? 410 : 30, 40],
+                                    paddingBottomRight:[40, 40], maxZoom:15});
+} // fin cadrer
+
+function choisir(i){
+  selection = i;
+  var r = resultats[i];
+  document.getElementById('profil').style.display = 'block';
+  document.getElementById('p-src').textContent = r.source;
+  document.getElementById('p-coord').textContent = r.ok ? (fmt(r.lat, 5) + ' , ' + fmt(r.lon, 5)) : 'Non géocodé';
+  document.getElementById('p-coord').style.color = r.ok ? COULEURS[r.precision] : 'var(--muted)';
+  document.getElementById('p-prec').textContent = r.ok ? LIBELLES[r.precision] : (r.motif || 'Échec');
+  document.getElementById('p-trouve').textContent = r.ok ? r.trouve : '—';
+  document.getElementById('p-service').textContent = r.service || '—';
+  document.getElementById('p-type').textContent = r.ok ? r.type : '—';
+  document.getElementById('p-score').textContent = r.ok ? fmt(r.score) : '—';
+  document.getElementById('p-note').textContent = r.cache
+    ? 'Résultat repris du cache (adresse déjà interrogée durant cette session).'
+    : 'Requête envoyée : ' + (r.requete || r.source);
+  dessiner();
+  if(r.ok) map.setView([r.lat, r.lon], Math.max(map.getZoom(), 14), {animate:true});
+  document.getElementById('profil').scrollIntoView({behavior:'smooth', block:'nearest'});
+} // fin choisir
+
+function echapper(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+} // fin echapper
+
+/* =========================================================================
+   5. POSITIONNEMENT MANUEL
+   ========================================================================= */
+
+function modeManuel(){
+  if(selection == null){ alert('Sélectionnez d\u2019abord un enregistrement.'); return; }
+  modeClic = true;
+  document.getElementById('bandeau-manuel').classList.add('actif');
+  map.getContainer().style.cursor = 'crosshair';
+} // fin modeManuel
+
+function annulerManuel(){
+  modeClic = false;
+  document.getElementById('bandeau-manuel').classList.remove('actif');
+  map.getContainer().style.cursor = '';
+} // fin annulerManuel
+
+map.on('click', function(e){
+  if(!modeClic || selection == null) return;
+  var r = resultats[selection];
+  r.ok = true;
+  r.lat = e.latlng.lat;
+  r.lon = e.latlng.lng;
+  r.precision = 'manuel';
+  r.score = 100;
+  r.type = 'Positionné manuellement';
+  r.trouve = r.trouve || 'Position saisie sur la carte';
+  r.service = (r.service || '—') + ' + correction manuelle';
+  annulerManuel();
+  dessiner();
+  choisir(selection);
+});
+
+function copierCoord(){
+  if(selection == null) return;
+  var r = resultats[selection];
+  if(!r.ok) return;
+  var t = r.lat.toFixed(6) + ', ' + r.lon.toFixed(6);
+  if(navigator.clipboard) navigator.clipboard.writeText(t);
+  document.getElementById('p-note').textContent = 'Coordonnées copiées : ' + t;
+} // fin copierCoord
+
+/* =========================================================================
+   6. IMPORT CSV
+   ========================================================================= */
+
+var csvLignes = null;
+
+function detecterSeparateur(txt){
+  var premiere = txt.split('\n')[0] || '';
+  var scores = [[';', (premiere.match(/;/g) || []).length],
+                [',', (premiere.match(/,/g) || []).length],
+                ['\t', (premiere.match(/\t/g) || []).length]];
+  scores.sort(function(a, b){ return b[1] - a[1]; });
+  return scores[0][1] > 0 ? scores[0][0] : ',';
+} // fin detecterSeparateur
+
+function analyserCSV(txt){
+  var sep = detecterSeparateur(txt);
+  var lignes = [], ligne = [], champ = '', guillemets = false;
+  for(var i = 0; i < txt.length; i++){
+    var c = txt[i];
+    if(guillemets){
+      if(c === '"'){
+        if(txt[i + 1] === '"'){ champ += '"'; i++; } else { guillemets = false; }
+      } else { champ += c; }
+    } else {
+      if(c === '"')      guillemets = true;
+      else if(c === sep){ ligne.push(champ); champ = ''; }
+      else if(c === '\n'){ ligne.push(champ); lignes.push(ligne); ligne = []; champ = ''; }
+      else if(c !== '\r') champ += c;
+    } // fin if guillemets
+  } // fin for
+  if(champ !== '' || ligne.length){ ligne.push(champ); lignes.push(ligne); }
+  return lignes.filter(function(l){ return l.join('').trim() !== ''; });
+} // fin analyserCSV
+
+document.getElementById('fichier').addEventListener('change', function(ev){
+  var f = ev.target.files[0];
+  if(!f) return;
+  var lecteur = new FileReader();
+  lecteur.onload = function(){
+    csvLignes = analyserCSV(String(lecteur.result));
+    if(csvLignes.length < 2){ alert('Fichier vide ou illisible.'); return; }
+    var entetes = csvLignes[0];
+    var html = '';
+    entetes.forEach(function(h, i){
+      var pertinent = /adr|rue|civ|ville|munic|code|postal|no_|num/i.test(h);
+      html += '<label class="coche"><input type="checkbox" value="' + i + '"' + (pertinent ? ' checked' : '') + '>'
+            + '<span>' + echapper(h || ('Colonne ' + (i + 1))) + '  <span class="mono" style="color:var(--muted);font-size:.72rem">'
+            + echapper(String(csvLignes[1][i] || '').slice(0, 22)) + '</span></span></label>';
+    });
+    document.getElementById('csv-liste').innerHTML = html;
+    document.getElementById('csv-cols').style.display = 'block';
+  };
+  lecteur.readAsText(f, 'UTF-8');
+});
+
+function appliquerColonnes(){
+  var coches = [].slice.call(document.querySelectorAll('#csv-liste input:checked'))
+                 .map(function(e){ return Number(e.value); });
+  if(!coches.length){ alert('Cochez au moins une colonne.'); return; }
+  var lignes = csvLignes.slice(1).map(function(l){
+    return coches.map(function(i){ return (l[i] || '').trim(); })
+                 .filter(function(s){ return s; }).join(', ');
+  }).filter(function(s){ return s; });
+  document.getElementById('entree').value = lignes.join('\n');
+  document.getElementById('csv-cols').style.display = 'none';
+  majCompteur();
+} // fin appliquerColonnes
+
+/* =========================================================================
+   7. EXPORTS
+   ========================================================================= */
+
+function telecharger(contenu, nom, type){
+  var blob = new Blob([contenu], {type:type});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = nom;
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+} // fin telecharger
+
+function exporterCSV(){
+  if(!resultats.length){ alert('Aucun résultat à exporter.'); return; }
+  var cols = ['no','adresse_source','adresse_trouvee','latitude','longitude','service','score','qualite','type_appariement','motif_echec'];
+  var lignes = [cols.join(',')];
+  resultats.forEach(function(r){
+    lignes.push([r.no,
+                 guill(r.source),
+                 guill(r.ok ? r.trouve : ''),
+                 r.ok ? r.lat.toFixed(6) : '',
+                 r.ok ? r.lon.toFixed(6) : '',
+                 guill(r.service || ''),
+                 r.ok ? r.score : '',
+                 r.ok ? LIBELLES[r.precision] : 'Échec',
+                 guill(r.ok ? r.type : ''),
+                 guill(r.ok ? '' : (r.motif || ''))].join(','));
+  });
+  telecharger('\ufeff' + lignes.join('\r\n'), 'geocodage_resultats.csv', 'text/csv;charset=utf-8');
+} // fin exporterCSV
+
+function guill(v){ return '"' + String(v == null ? '' : v).replace(/"/g,'""') + '"'; } // fin guill
+
+function exportGeoJSON(){
+  if(!DATA.features.length){ alert('Aucun point géocodé à exporter.'); return; }
+  var sortie = {type:'FeatureCollection',
+                metadata:{titre:'Géocodage en lot — C.A.R.T.O.S.',
+                          source:'CISSS des Laurentides — Direction de santé publique',
+                          date:'2026-07-22', crs:'EPSG:4326'},
+                features:DATA.features};
+  telecharger(JSON.stringify(sortie, null, 1), 'geocodage_points.geojson', 'application/geo+json');
+} // fin exportGeoJSON
+
+/* =========================================================================
+   8. CONTRÔLES D'INTERFACE
+   ========================================================================= */
+
+var fs = 1;
+function setFont(d){
+  fs = Math.max(.85, Math.min(1.3, fs + d * .08));
+  document.documentElement.style.setProperty('--fs', fs + 'rem');
+} // fin setFont
+
+function toggleMethodo(){ document.getElementById('methodo-content').classList.toggle('show'); } // fin toggleMethodo
+
+var panelOpen = true;
+function togglePanel(){
+  panelOpen = !panelOpen;
+  document.querySelector('.main').classList.toggle('collapsed', !panelOpen);
+  var t = document.getElementById('panel-toggle');
+  t.classList.toggle('shifted', !panelOpen);
+  t.textContent = panelOpen ? '◀' : '▶';
+  setTimeout(function(){ map.invalidateSize(); }, 320);
+} // fin togglePanel
+
+function fermerAvis(){ document.getElementById('avis').classList.add('cache'); } // fin fermerAvis
+
+function majCompteur(){
+  var n = lignesEntree().length;
+  document.getElementById('compteur').textContent = fmt(n) + (n > 1 ? ' adresses' : ' adresse');
+  var s = document.getElementById('service').value;
+  if(n){
+    var sec = Math.round(n * SERVICES[s].delai / 1000);
+    document.getElementById('compteur').textContent += ' · ~' + (sec < 60 ? sec + ' s' : Math.ceil(sec / 60) + ' min');
+  } // fin if
+} // fin majCompteur
+
+function majService(){
+  var s = document.getElementById('service').value;
+  document.getElementById('note-service').textContent = SERVICES[s].note;
+  document.getElementById('bloc-cle').style.display = SERVICES[s].cle ? 'block' : 'none';
+  document.getElementById('m-url').textContent = SERVICES[s].exemple;
+  majCompteur();
+} // fin majService
+
+document.getElementById('entree').addEventListener('input', majCompteur);
+document.getElementById('service').addEventListener('change', majService);
+document.getElementById('filtre-prec').addEventListener('change', function(){ dessiner(); });
+
+function chargerExemple(){
+  document.getElementById('entree').value = [
+    '290 rue de Montigny, Saint-Jérôme',
+    '520 boulevard Arthur-Sauvé, Saint-Eustache',
+    '234 rue Saint-Vincent, Sainte-Agathe-des-Monts',
+    '145 avenue de la Providence, Lachute',
+    '2561 chemin de la Lièvre Sud, Mont-Laurier',
+    '1525 rue L\u2019Annonciation Nord, Rivière-Rouge',
+    '33 avenue de l\u2019Église, Saint-Sauveur',
+    '100 rue Inexistante, Saint-Nulle-Part'
+  ].join('\n');
+  majCompteur();
+} // fin chargerExemple
+
+/* ===== Démarrage ===== */
+majService();
+chargerExemple();
+</script>
+</body>
+</html>
