@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Déserts et marais alimentaires — Laurentides (RSS 15) · version préchargée</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<script src="laur_defav.js"></script>
+<script src="laur_demande.js"></script>
+<script src="laur_munis.js"></script>
+<script src="laur_commerces.js"></script>
+
+<style>
+:root{
+  --teal:#0f9b8e;--teal-d:#0a7468;--teal-l:#3fc6b6;
+  --gold:#d4a437;--gold-l:#e8c66b;
+  --bg:#10171c;--panel:#172127;--panel-2:#1f2b32;
+  --ink:#e8eef0;--ink-dim:#9fb1b6;--line:#2a3942;
+  --desert:#e0623d;--swamp:#a25cd0;--bad:#c4503a;--good:#4caa8f;--fs:15px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:"Source Sans 3",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:var(--fs)}
+#app{display:flex;height:100%}
+#map{flex:1;height:100%;background:var(--bg)}
+
+#panel{width:374px;min-width:374px;height:100%;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.brand{padding:18px 20px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel-2),var(--panel))}
+.brand .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.brand h1{margin:6px 0 2px;font-size:19px;font-weight:700;line-height:1.2}
+.brand .sub{font-size:12.5px;color:var(--ink-dim)}
+.mode-badge{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:11px}
+.mode-badge.pre{background:rgba(15,155,142,.18);color:var(--teal-l);border:1px solid var(--teal)}
+.mode-badge.live{background:rgba(212,164,55,.16);color:var(--gold-l);border:1px solid var(--gold)}
+.section{padding:15px 20px;border-bottom:1px solid var(--line)}
+.section h2{margin:0 0 10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);font-weight:700}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:8px;padding:12px 14px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-primary{background:var(--gold);color:#231a05}
+.btn-primary:hover{background:var(--gold-l)}
+.btn-net{background:var(--panel-2);color:var(--ink);border:1px solid var(--teal)}
+.btn-net:hover{background:var(--teal);color:#04201c}
+.btn-ghost{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line);font-size:13.5px;padding:10px 12px;margin-top:8px}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-l)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.toggle{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;font-size:14px}
+.toggle input{appearance:none;width:38px;height:21px;background:var(--line);border-radius:20px;position:relative;cursor:pointer;transition:.2s;flex:0 0 auto}
+.toggle input:checked{background:var(--teal)}
+.toggle input:disabled{opacity:.4}
+.toggle input::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}
+.toggle input:checked::after{left:19px}
+.swatch{width:14px;height:14px;border-radius:3px;flex:0 0 auto;margin-left:auto;border:1px solid rgba(255,255,255,.3)}
+
+.field{margin:8px 0}
+.field label{display:block;font-size:12.5px;color:var(--ink-dim);margin-bottom:4px}
+.field input[type=range]{width:100%;accent-color:var(--teal)}
+.field .val{color:var(--teal-l);font-weight:700}
+select,input[type=text],input[type=number]{width:100%;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:8px;font-family:inherit;font-size:13.5px;margin-top:4px}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+
+.legend-item{display:flex;align-items:center;gap:9px;padding:4px 0;font-size:13.5px}
+.legend-item .ico{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.ramp{display:flex;margin:8px 0 4px;border-radius:5px;overflow:hidden;height:16px}.ramp span{flex:1}
+.ramp-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-dim)}
+.hint{font-size:11.5px;color:var(--ink-dim);line-height:1.45;margin-top:6px}
+
+/* --- Icônes-dessins des commerces --------------------------------------- */
+.mk{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;
+    background:#0d1418;border:2px solid currentColor;box-shadow:0 2px 6px rgba(0,0,0,.55);transition:transform .12s}
+.mk svg{width:17px;height:17px;display:block}
+.mk:hover{transform:scale(1.18)}
+.leaflet-marker-icon.mk-wrap{background:none;border:0}
+
+.status{font-size:12.5px;color:var(--ink-dim);padding:10px 20px;line-height:1.4;display:flex;align-items:center;gap:8px}
+.status.err{color:var(--bad)}
+.bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin:0 20px}
+.bar>span{display:block;height:100%;width:0;background:var(--teal);transition:width .2s}
+.foot{margin-top:auto;padding:14px 20px;font-size:11px;color:var(--ink-dim);border-top:1px solid var(--line);line-height:1.5}
+
+#a11y{position:absolute;top:12px;right:12px;z-index:1000;display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px}
+#a11y button{width:30px;height:30px;border:0;border-radius:6px;background:var(--panel-2);color:var(--ink);font-weight:700;cursor:pointer}
+#a11y button:hover{background:var(--teal);color:#04201c}
+
+#map-legend{background:rgba(23,33,39,.94);border:1px solid var(--line);border-radius:10px;padding:12px 14px;max-width:250px;font-family:"Source Sans 3",system-ui,sans-serif;font-size:12.5px;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#map-legend .ml-title{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:7px}
+#map-legend .ml-row{display:flex;align-items:center;gap:8px;padding:2.5px 0;flex-wrap:wrap}
+#map-legend .ml-sw{width:15px;height:15px;border-radius:3px;border:1.5px solid;flex:0 0 auto}
+#map-legend .ml-dot{width:11px;height:11px;border-radius:50%;border:2px solid;background:#0d1418;flex:0 0 auto}
+#map-legend .ml-note{color:var(--ink-dim);font-size:11px}
+#map-legend .ml-sub{margin-top:8px;margin-bottom:3px;color:var(--ink-dim);font-size:11.5px;font-weight:600}
+#map-legend .ml-ramp{display:flex;height:11px;border-radius:4px;overflow:hidden}
+#map-legend .ml-ramp span{flex:1}
+#map-legend .ml-ends{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-dim);margin-top:2px}
+
+.leaflet-popup-content-wrapper{background:var(--panel);color:var(--ink);border-radius:10px;border:1px solid var(--line)}
+.leaflet-popup-tip{background:var(--panel);border:1px solid var(--line)}
+.leaflet-popup-content{margin:12px 14px;font-size:14px;line-height:1.45}
+.leaflet-popup-content b{color:var(--teal-l)}
+.pop-head{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.pop-type{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--gold-l);font-weight:700}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;margin-top:4px}
+.tag.d{background:rgba(224,98,61,.2);color:#f0a087;border:1px solid var(--desert)}
+.tag.s{background:rgba(162,92,208,.2);color:#d0a8ec;border:1px solid var(--swamp)}
+
+#fs-overlay,.ovl{position:fixed;inset:0;background:rgba(6,10,12,.74);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px}
+#fs-overlay.show,.ovl.show{display:flex}
+#fs-card,.ovl-card{width:min(760px,100%);max-height:90vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.ovl-card{width:min(860px,100%)}
+#fs-card header,.ovl-card header{position:sticky;top:0;background:linear-gradient(180deg,var(--panel-2),var(--panel));padding:20px 24px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:flex-start;gap:16px;z-index:1}
+#fs-card header .kicker,.ovl-card header .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+#fs-card header h2,.ovl-card header h2{margin:5px 0 0;font-size:21px}
+#fs-close,.ovl-close{background:none;border:0;color:var(--ink-dim);font-size:26px;cursor:pointer;line-height:1}
+#fs-body,.ovl-body{padding:10px 24px 24px}
+.ovl-body p{font-size:14px;line-height:1.6;color:var(--ink);margin:6px 0 12px}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--teal-l)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.stat{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat .n{font-size:27px;font-weight:900;color:var(--teal-l);line-height:1}
+.stat .n.d{color:#f0a087}.stat .n.s{color:#d0a8ec}
+.stat .l{font-size:12.5px;color:var(--ink-dim);margin-top:4px;line-height:1.3}
+.hl{margin:14px 0;padding:14px 16px;background:var(--panel-2);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;font-size:14.5px;line-height:1.55}
+.hl.d{border-left-color:var(--desert)}.hl.s{border-left-color:var(--swamp)}.hl.warn{border-left-color:var(--gold)}
+.hl b{color:var(--ink)}
+.fs-h3{margin:20px 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}
+table.qt{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+table.qt th,table.qt td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line)}
+table.qt th:first-child,table.qt td:first-child{text-align:left;color:var(--ink-dim)}
+table.qt thead th{color:var(--ink-dim);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+table.qt tr.hot td{color:#f0a087;font-weight:700}
+.method-pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:4px;margin-right:6px}
+.method-pill.net{background:rgba(15,155,142,.2);color:var(--teal-l);border:1px solid var(--teal)}
+.method-pill.euc{background:rgba(212,164,55,.15);color:var(--gold-l);border:1px solid var(--gold)}
+.method-pill.src{background:rgba(255,255,255,.06);color:var(--ink-dim);border:1px solid var(--line)}
+#fs-body .note{font-size:12px;color:var(--ink-dim);margin-top:20px;border-top:1px solid var(--line);padding-top:12px;line-height:1.55}
+.spinner{width:16px;height:16px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--teal-l);border-radius:50%;animation:spin .8s linear infinite;flex:0 0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (max-width:780px){#app{flex-direction:column}#panel{width:100%;min-width:0;height:auto;max-height:48vh}#map{height:52vh}}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <aside id="panel">
+    <div class="brand">
+      <div class="kicker">C.A.R.T.O.S. · CISSS des Laurentides</div>
+      <h1>Déserts et marais alimentaires</h1>
+      <div class="sub">Laurentides (RSS 15) · méthode Robitaille &amp; Paquette (2020) · logements 2026 + OpenStreetMap</div>
+      <span class="mode-badge pre">Version préchargée · hors ligne</span>
+    </div>
+
+    <div class="section">
+      <button id="btn-fs" class="btn btn-primary" disabled>★ &nbsp;Faits saillants</button>
+      <button id="btn-meth" class="btn btn-ghost">📖 &nbsp;Méthodologie</button>
+    </div>
+
+    <div class="section">
+      <h2>Agrégation par municipalité</h2>
+      <label class="toggle"><input type="checkbox" id="t-munis" disabled> Municipalités (nb déserts / marais) <span class="swatch" style="background:linear-gradient(90deg,#3b4a52,#d4a437,#c4503a)"></span></label>
+      <button id="btn-table" class="btn btn-ghost" disabled>▤ &nbsp;Tableau par municipalité et MRC</button>
+    </div>
+
+    <div class="section">
+      <h2>Exports GeoJSON</h2>
+      <button id="dl-ad" class="btn btn-ghost" disabled>⇩ &nbsp;GeoJSON — aires de diffusion (indicateurs)</button>
+      <button id="dl-muni" class="btn btn-ghost" disabled>⇩ &nbsp;GeoJSON — municipalités (agrégats)</button>
+      <div class="hint">Fichiers WGS84 prêts pour QGIS / ArcGIS. Les valeurs reflètent le mode de distance courant (euclidien ou réseau).</div>
+    </div>
+
+    <div class="section">
+      <h2>Indicateurs (méthode 2020)</h2>
+      <label class="toggle"><input type="checkbox" id="t-desert" disabled> Déserts alimentaires <span class="swatch" style="background:var(--desert)"></span></label>
+      <label class="toggle"><input type="checkbox" id="t-swamp" disabled> Marais alimentaires (RFEI ≥ 5) <span class="swatch" style="background:var(--swamp)"></span></label>
+      <label class="toggle"><input type="checkbox" id="t-access" disabled> Accès des logements (distance)</label>
+    </div>
+
+    <div class="section">
+      <h2>Source des commerces</h2>
+      <div class="hint" id="src-state">Instantané local (<code>laur_commerces.js</code>) — aucun appel réseau, résultats strictement reproductibles.</div>
+      <div class="hint">Pour rafraîchir l'instantané, ouvrir la <b>version « live »</b> de l'outil et cliquer sur « Exporter l'instantané », puis remplacer le fichier <code>laur_commerces.js</code>.</div>
+    </div>
+
+    <div class="section">
+      <h2>Distance réseau (OSRM)</h2>
+      <div class="hint" id="net-state">Mode actuel : distances euclidiennes ×1,3 (estimation instantanée).</div>
+      <div class="field"><label>Serveur OSRM</label><input type="text" id="r-url" value="https://router.project-osrm.org"></div>
+      <div class="row2">
+        <div class="field"><label>Profil</label><select id="r-profile"><option value="foot">foot (marche)</option><option value="driving">driving</option></select></div>
+        <div class="field"><label>Coord./requête</label><input type="number" id="r-maxloc" value="100" min="10" max="2000"></div>
+      </div>
+      <div class="field"><label>Portée du calcul</label><select id="r-scope"><option value="view">Vue actuelle de la carte</option><option value="all">Toute la région (lourd)</option></select></div>
+      <button id="r-run" class="btn btn-net" disabled>⟳ &nbsp;Affiner l'accès avec le réseau</button>
+      <div class="hint">Le serveur public de démonstration est limité (profil voiture, ~100 coord./requête, quotas) — idéal pour une <b>vue rapprochée</b>. Pour toute la région en profil marche, pointez vers votre propre OSRM (<code>osrm-routed</code>, profil <code>foot</code>). Repli automatique sur l'euclidien en cas d'échec.</div>
+    </div>
+
+    <div class="section">
+      <h2>Fond de carte</h2>
+      <select id="basemap-sel">
+        <option value="sombre">Sombre (CARTO) — défaut</option>
+        <option value="topo">OpenTopoMap (relief)</option>
+        <option value="gouvqc">Carte gouvernementale du Québec</option>
+      </select>
+      <div class="hint">Sur fonds clairs, les contours des zones sont renforcés automatiquement pour rester lisibles.</div>
+    </div>
+
+    <div class="section">
+      <h2>Couches de référence</h2>
+      <label class="toggle"><input type="checkbox" id="t-stores" checked> Commerces (OSM)</label>
+      <label class="toggle"><input type="checkbox" id="t-defav"> Défavorisation (AD)</label>
+      <label class="toggle"><input type="checkbox" id="t-buffer"> Zones desservies (rayon exploratoire)</label>
+      <div class="field" style="margin-top:8px"><label>Rayon exploratoire : <span class="val" id="r-val">1000</span> m</label><input type="range" id="r-buffer" min="250" max="3000" step="250" value="1000"></div>
+    </div>
+
+    <div class="section">
+      <h2>Indice de défavorisation affiché</h2>
+      <select id="defav-dim">
+        <option value="QuintMat">Matérielle — quintile provincial</option>
+        <option value="QuintMatRSS">Matérielle — quintile régional</option>
+        <option value="QuintSoc">Sociale — quintile provincial</option>
+        <option value="QuintSocRSS">Sociale — quintile régional</option>
+      </select>
+      <div class="ramp" id="defav-ramp"></div>
+      <div class="ramp-labels"><span>Q1 — favorisé</span><span>Q5 — défavorisé</span></div>
+    </div>
+
+    <div class="section"><h2>Commerces</h2><div id="legend"></div></div>
+
+    <div id="status" class="status"><span class="spinner"></span><span>Lecture de l'instantané local des commerces…</span></div>
+    <div class="bar"><span id="prog"></span></div>
+
+    <div class="foot">
+      Commerces : OpenStreetMap (ODbL) — instantané local <code>laur_commerces.js</code>. Logements : rôle d'évaluation foncière 2026 (MAMH).
+      Défavorisation : indice INSPQ, AD 2021, RSS 15. Routage : OSRM. Méthode adaptée de Robitaille &amp; Paquette, <i>IJERPH</i> 2020;17:3359.
+      <div style="margin-top:6px;color:var(--teal-l);font-weight:700">Version de l'outil : v6 (2026-07-23)</div>
+    </div>
+  </aside>
+
+  <div style="flex:1;position:relative">
+    <div id="map"></div>
+    <div id="a11y"><button id="font-dn" title="Réduire le texte">A−</button><button id="font-up" title="Agrandir le texte">A+</button></div>
+  </div>
+</div>
+
+<div id="fs-overlay"><div id="fs-card">
+  <header><div><div class="kicker">Faits saillants</div><h2>Déserts et marais alimentaires — Laurentides</h2></div><button id="fs-close" aria-label="Fermer">×</button></header>
+  <div id="fs-body"></div>
+</div></div>
+
+<div id="tb-overlay" class="ovl"><div class="ovl-card">
+  <header><div><div class="kicker">Agrégation territoriale</div><h2>Municipalités et MRC</h2></div><button class="ovl-close" aria-label="Fermer">×</button></header>
+  <div id="tb-body" class="ovl-body"></div>
+</div></div>
+
+<div id="mt-overlay" class="ovl"><div class="ovl-card">
+  <header><div><div class="kicker">Méthodologie</div><h2>Déserts et marais alimentaires</h2></div><button class="ovl-close" aria-label="Fermer">×</button></header>
+  <div id="mt-body" class="ovl-body"></div>
+</div></div>
+
+<script>
+/* =====================================================================
+   MODE DE L'APPLICATION
+   ===================================================================== */
+const MODE = "prechargee";                 // "prechargee" | "live"
+const MODE_LABEL = "Version préchargée";
+
+/* =====================================================================
+   ICÔNES-DESSINS DES COMMERCES (SVG, trait, 24×24)
+   ===================================================================== */
+const GLYPHS = {
+  /* chariot d'épicerie */
+  cart:'<path d="M2.5 4.5h2.2l2.6 9.8a1.8 1.8 0 0 0 1.75 1.35h7.4a1.8 1.8 0 0 0 1.75-1.3L20 7.4H6"/><circle cx="10" cy="19.4" r="1.5"/><circle cx="17" cy="19.4" r="1.5"/>',
+  /* panier à anse */
+  basket:'<path d="M3.6 8.6h16.8l-1.6 9.9a1.9 1.9 0 0 1-1.9 1.6H7.1a1.9 1.9 0 0 1-1.9-1.6L3.6 8.6Z"/><path d="M8.1 8.6V6.9a3.9 3.9 0 0 1 7.8 0v1.7"/><path d="M9.6 12.2v4.1M14.4 12.2v4.1"/>',
+  /* pomme + feuille */
+  apple:'<path d="M12 8.3c-1.25-1.3-3.15-1.55-4.5-.35C5.85 9.35 5.85 12.2 6.9 14.9c.85 2.15 2.1 4.3 3.6 4.3.65 0 1.05-.35 1.5-.35s.85.35 1.5.35c1.5 0 2.75-2.15 3.6-4.3 1.05-2.7 1.05-5.55-.6-6.95-1.35-1.2-3.25-.95-4.5.35Z"/><path d="M12 8.3V5.2"/><path d="M12 6.1c1.6-1.9 3.6-1.7 3.6-1.7s.1 2.2-3.6 2.4Z"/>',
+  /* devanture de dépanneur (auvent + porte) */
+  shop:'<path d="M2.8 5.6h18.4l-1.4 3.6H4.2L2.8 5.6Z"/><path d="M4.6 9.2v10.6h14.8V9.2"/><path d="M9.9 19.8v-5.4h4.2v5.4"/>',
+  /* burger */
+  burger:'<path d="M3.4 9.1c0-2.85 3.85-5.15 8.6-5.15s8.6 2.3 8.6 5.15Z"/><path d="M3.9 12.2h16.2"/><path d="M3.9 15h16.2c0 2.65-2.15 4.8-4.8 4.8H8.7c-2.65 0-4.8-2.15-4.8-4.8Z"/>',
+  /* carton / magasin général */
+  box:'<path d="M2.8 5.4h18.4v4.2H2.8Z"/><path d="M4.8 9.6v9.9h14.4V9.6"/><path d="M9.9 13.5h4.2"/>',
+  /* grange / kiosque à la ferme */
+  barn:'<path d="M3 9.8 12 4.2l9 5.6v9.9H3Z"/><path d="M9.4 19.7v-6.2h5.2v6.2"/><path d="M9.4 13.5h5.2"/>'
+};
+function svgGlyph(name,px){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+       + 'stroke-linecap="round" stroke-linejoin="round"'+(px?' style="width:'+px+'px;height:'+px+'px"':'')+'>'
+       + GLYPHS[name] + '</svg>';
+}
+
+/* =====================================================================
+   CONFIGURATION
+   ===================================================================== */
+const CONFIG = {
+  bbox:[45.4582,-76.1494,47.7645,-73.7307], center:[46.30,-74.55], zoom:8,
+  storeTypes:{
+    supermarket:{label:"Supermarché",        color:"#0f9b8e", role:"sain",    glyph:"cart"},
+    grocery:    {label:"Épicerie",           color:"#3fc6b6", role:"sain",    glyph:"basket"},
+    greengrocer:{label:"Fruits et légumes",  color:"#7fe0c8", role:"sain",    glyph:"apple"},
+    convenience:{label:"Dépanneur",          color:"#d4a437", role:"malsain", glyph:"shop"},
+    fast_food:  {label:"Restauration rapide",color:"#a25cd0", role:"malsain", glyph:"burger"},
+    general:    {label:"Magasin général",    color:"#6d8a99", role:"autre",   glyph:"box"},
+    farm:       {label:"Kiosque à la ferme", color:"#9bd44a", role:"autre",   glyph:"barn"},
+  },
+  overpassEndpoints:[
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+  ],
+  THRESH_URBAIN:1000, THRESH_RURAL:16000, DETOUR:1.3, RFEI_SEUIL:5.0, DENSITE_URBAINE:400,
+  quintColors:{0:"#3b4a52",1:"#1f7a6e",2:"#6aa88f",3:"#d4b94e",4:"#d68b46",5:"#c4503a"},
+  distBuckets:[500,1000,2000,5000,16000], distColors:["#1a9850","#91cf60","#fee08b","#fc8d59","#d73027","#7d1a1a"],
+  routing:{ tileDeg:0.03, delayMs:120, maxConsecFail:5, candidates:3 }
+};
+
+const STATE={ stores:[], healthy:[], unhealthy:[], cells:[], ad:[], buffer:1000, defavDim:"QuintMat",
+  results:null, networkActive:false, scopeLabel:"", routingBusy:false,
+  srcLabel:"", srcDate:null, ready:false };
+
+/* icônes Leaflet mises en cache (une seule instance par type) */
+const ICON_CACHE={};
+function storeIcon(type){
+  if(ICON_CACHE[type])return ICON_CACHE[type];
+  const t=CONFIG.storeTypes[type];
+  ICON_CACHE[type]=L.divIcon({
+    className:"mk-wrap",
+    html:'<div class="mk" style="color:'+t.color+'">'+svgGlyph(t.glyph)+'</div>',
+    iconSize:[28,28], iconAnchor:[14,14], popupAnchor:[0,-14]
+  });
+  return ICON_CACHE[type];
+}
+
+/* =====================================================================
+   CARTE + COUCHES
+   ===================================================================== */
+const map=L.map("map",{preferCanvas:true}).setView(CONFIG.center,CONFIG.zoom);
+const BASEMAPS={
+  sombre:{label:"Sombre (CARTO) — défaut",maxZoom:19,
+    url:"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    opts:{attribution:'&copy; OpenStreetMap &middot; CARTO &middot; CISSS des Laurentides',subdomains:"abcd"}},
+  topo:{label:"OpenTopoMap (relief)",maxZoom:17,
+    url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    opts:{attribution:'&copy; OpenStreetMap, SRTM &middot; OpenTopoMap (CC-BY-SA) &middot; CISSS des Laurentides',subdomains:"abc"}},
+  gouvqc:{label:"Carte gouvernementale du Québec",maxZoom:19,
+    url:"https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png",
+    opts:{attribution:'&copy; Gouvernement du Québec &middot; CISSS des Laurentides'}}
+};
+let baseLayer=null;
+function setBasemap(key){
+  const b=BASEMAPS[key]||BASEMAPS.sombre;
+  if(baseLayer)map.removeLayer(baseLayer);
+  baseLayer=L.tileLayer(b.url,Object.assign({maxZoom:b.maxZoom},b.opts)).addTo(map);
+  baseLayer.bringToBack();
+  document.body.classList.toggle("light-base",key!=="sombre");
+}
+setBasemap("sombre");
+const storesCluster=L.markerClusterGroup({maxClusterRadius:46,chunkedLoading:true,chunkInterval:120,
+  iconCreateFunction(c){const n=c.getChildCount();return L.divIcon({html:`<div style="background:rgba(15,155,142,.85);color:#04201c;border:2px solid #3fc6b6;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Source Sans 3'">${n}</div>`,className:"",iconSize:[38,38]});}}).addTo(map);
+/* Deux renderers :
+   — SVG pour les couches de polygones interactives (défav, déserts, marais) :
+     les tracés SVG sont de vrais éléments DOM, le survol et le clic sont gérés
+     nativement par le navigateur — aucune détection maison, fiable sur tous
+     les moteurs. ~900 AD simplifiées : coût négligeable.
+   — Canvas pour les couches denses et purement visuelles (33 000+ points
+     d'accès, tampons), non interactives. */
+const SV=L.svg({padding:.3});
+const CV=L.canvas({padding:.5});
+const bufferLayer=L.layerGroup();
+const defavLayer =L.geoJSON(null,{renderer:SV});
+const desertLayer=L.geoJSON(null,{renderer:SV});
+const swampLayer =L.geoJSON(null,{renderer:SV});
+const muniLayer  =L.geoJSON(null,{renderer:SV});
+const accessLayer=L.layerGroup();
+
+/* ---- Légende sur carte (coin inférieur droit) ---- */
+const legendCtl=L.control({position:"bottomright"});
+legendCtl.onAdd=function(){
+  const d=L.DomUtil.create("div");
+  d.id="map-legend";
+  L.DomEvent.disableClickPropagation(d);
+  return d;};
+function updateMapLegend(){
+  const el=document.getElementById("map-legend");if(!el)return;
+  let h='<div class="ml-title">Légende</div>';
+  if(map.hasLayer(desertLayer))h+='<div class="ml-row"><span class="ml-sw" style="background:rgba(224,98,61,.55);border-color:#e0623d"></span>Désert alimentaire <span class="ml-note">(Q5 + distance &gt; seuil)</span></div>';
+  if(map.hasLayer(swampLayer)) h+='<div class="ml-row"><span class="ml-sw" style="background:rgba(162,92,208,.55);border-color:#a25cd0"></span>Marais alimentaire <span class="ml-note">(RFEI ≥ '+CONFIG.RFEI_SEUIL+')</span></div>';
+  if(map.hasLayer(muniLayer)){
+    h+='<div class="ml-sub">Municipalités — AD déserts + marais</div><div class="ml-ramp">';
+    for(const b of MUNI_BUCKETS)h+='<span style="background:'+b.c+'"></span>';
+    h+='</div><div class="ml-ends"><span>0</span><span>'+MUNI_BUCKETS[MUNI_BUCKETS.length-1].label+'</span></div>';}
+  if(map.hasLayer(defavLayer)){
+    h+='<div class="ml-sub">Défavorisation ('+({QuintMat:"matérielle prov.",QuintMatRSS:"matérielle rég.",QuintSoc:"sociale prov.",QuintSocRSS:"sociale rég."})[STATE.defavDim]+')</div><div class="ml-ramp">';
+    for(const q of [1,2,3,4,5])h+='<span style="background:'+CONFIG.quintColors[q]+'"></span>';
+    h+='</div><div class="ml-ends"><span>Q1 favorisé</span><span>Q5 défavorisé</span></div>';}
+  if(map.hasLayer(accessLayer)){
+    h+='<div class="ml-sub">Distance du logement au commerce sain</div><div class="ml-ramp">';
+    for(const c of CONFIG.distColors)h+='<span style="background:'+c+'"></span>';
+    h+='</div><div class="ml-ends"><span>≤ 500 m</span><span>&gt; 16 km</span></div>';}
+  if(map.hasLayer(storesCluster))h+='<div class="ml-row" style="margin-top:6px"><span class="ml-dot" style="border-color:#0f9b8e"></span>sains <span class="ml-dot" style="border-color:#d4a437"></span><span class="ml-dot" style="border-color:#a25cd0;margin-left:0"></span>malsains (RFEI)</div>';
+  el.innerHTML=h;el.style.display=h.length>40?"block":"none";}
+
+/* ---- Agrégation municipale ---- */
+const MUNI_BUCKETS=[{max:0,c:"#3b4a52",label:"0"},{max:2,c:"#8a7a3a",label:"1–2"},{max:5,c:"#d4a437",label:"3–5"},{max:10,c:"#d68b46",label:"6–10"},{max:Infinity,c:"#c4503a",label:"11+"}];
+function muniColor(n){for(const b of MUNI_BUCKETS)if(n<=b.max)return b.c;return MUNI_BUCKETS[MUNI_BUCKETS.length-1].c;}
+function assignMunis(){
+  if(typeof window.LAUR_MUNIS==="undefined")return false;
+  const feats=window.LAUR_MUNIS.features;
+  const boxes=feats.map(f=>{try{return turf.bbox(f);}catch(e){return [0,0,0,0];}});
+  const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const byName=new Map();feats.forEach((f,i)=>byName.set(norm(f.properties.MUS_NM_MUN),i));
+  for(const a of STATE.ad){
+    if(a.muniIdx!==undefined)continue;
+    let c;try{c=turf.centroid(a.feature).geometry.coordinates;}catch(e){c=null;}
+    let hit=-1;
+    if(c){for(let i=0;i<feats.length;i++){const b=boxes[i];
+      if(c[0]<b[0]||c[0]>b[2]||c[1]<b[1]||c[1]>b[3])continue;
+      try{if(turf.booleanPointInPolygon(c,feats[i])){hit=i;break;}}catch(e){}}}
+    if(hit<0&&byName.has(norm(a.name)))hit=byName.get(norm(a.name));
+    a.muniIdx=hit;}
+  return true;}
+function computeMuniStats(){
+  if(!assignMunis())return null;
+  const feats=window.LAUR_MUNIS.features,S=new Map();
+  feats.forEach((f,i)=>S.set(i,{muni:f.properties.MUS_NM_MUN,mrc:f.properties.MUS_NM_MRC,code:f.properties.MUS_CO_GEO,
+    nbAD:0,nbDesert:0,nbSwamp:0,pop:0,popDesert:0,popSwamp:0,sumDist:0,distW:0,sumRfei:0,rfeiW:0,feature:f}));
+  for(const a of STATE.ad){
+    if(a.muniIdx===undefined||a.muniIdx<0)continue;const s=S.get(a.muniIdx);
+    s.nbAD++;s.pop+=a.pop;
+    if(a.desert){s.nbDesert++;s.popDesert+=a.pop;}
+    if(a.swamp){s.nbSwamp++;s.popSwamp+=a.pop;}
+    if(a.meanDist!==null&&a.dwell>0){s.sumDist+=a.meanDist*a.dwell;s.distW+=a.dwell;}
+    if(a.meanRfei!==null&&a.rfeiDwell>0){s.sumRfei+=a.meanRfei*a.rfeiDwell;s.rfeiW+=a.rfeiDwell;}}
+  const rows=[...S.values()].map(s=>({...s,
+    meanDist:s.distW>0?s.sumDist/s.distW:null,meanRfei:s.rfeiW>0?s.sumRfei/s.rfeiW:null}));
+  return rows;}
+function renderMunis(){
+  const rows=computeMuniStats();if(!rows)return;
+  muniLayer.clearLayers();
+  for(const s of rows){
+    const n=s.nbDesert+s.nbSwamp;
+    const lyr=L.geoJSON(s.feature,{renderer:SV,style:{color:"#0f9b8e",weight:1,fillColor:muniColor(n),fillOpacity:s.nbAD?0.45:0.15}});
+    lyr.bindPopup(`<b>${escapeHtml(s.muni)}</b> · MRC ${escapeHtml(s.mrc)}<br>`+
+      (s.nbAD?`AD analysées : ${s.nbAD} · Population : ${fmt(s.pop)}<br><span class="tag d">Déserts : ${s.nbDesert}</span> <span class="tag s">Marais : ${s.nbSwamp}</span><br>Pop. en désert : ${fmt(s.popDesert)} · en marais : ${fmt(s.popSwamp)}<br>Distance moy. : ${s.meanDist!=null?fmt(s.meanDist)+" m":"—"} · RFEI moy. : ${s.meanRfei!=null?s.meanRfei.toFixed(1):"—"}`:`<span style="color:var(--ink-dim)">Aucune AD peuplée analysée (TNO / territoire non organisé)</span>`));
+    lyr.eachLayer(l=>muniLayer.addLayer(l));}
+}
+
+/* ---- Exports GeoJSON ---- */
+function downloadJSON(obj,fname){
+  const blob=new Blob([JSON.stringify(obj)],{type:"application/geo+json;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+function exportADGeoJSON(){
+  assignMunis();
+  const feats=STATE.ad.map(a=>{const mf=(a.muniIdx>=0&&window.LAUR_MUNIS)?window.LAUR_MUNIS.features[a.muniIdx].properties:null;
+    return {type:"Feature",geometry:a.feature.geometry,properties:{
+      adidu:a.id,muni_nom:mf?mf.MUS_NM_MUN:a.name,mrc_nom:mf?mf.MUS_NM_MRC:null,sdrnom:a.name,
+      pop_2021:a.pop,milieu:a.urban?"urbain":"rural",seuil_m:a.urban?CONFIG.THRESH_URBAIN:CONFIG.THRESH_RURAL,
+      dist_moy_m:a.meanDist!=null?Math.round(a.meanDist):null,rfei_moyen:a.meanRfei!=null?+a.meanRfei.toFixed(2):null,
+      pct_log_hors_seuil:+(a.lowShare*100).toFixed(1),
+      desert_alimentaire:a.desert,marais_alimentaire:a.swamp,
+      quint_mat_prov:a.qMat,quint_mat_rss:a.qMatRSS,quint_soc_prov:a.qSoc,quint_soc_rss:a.qSocRSS}};});
+  downloadJSON({type:"FeatureCollection",
+    metadata:{titre:"Déserts et marais alimentaires — AD, Laurentides (RSS 15)",methode:"Robitaille & Paquette, IJERPH 2020;17:3359 (adaptation)",
+      mode_distance:STATE.networkActive?"réseau OSRM ("+STATE.scopeLabel+")":"euclidien ×"+CONFIG.DETOUR,
+      seuils:{urbain_m:CONFIG.THRESH_URBAIN,rural_m:CONFIG.THRESH_RURAL,rfei:CONFIG.RFEI_SEUIL,densite_urbaine_hab_km2:CONFIG.DENSITE_URBAINE},
+      commerces:STATE.srcLabel,genere_le:new Date().toISOString(),producteur:"DSP CISSS des Laurentides · C.A.R.T.O.S."},
+    features:feats},"deserts_marais_AD_laurentides.geojson");
+  setStatus(`GeoJSON exporté : ${feats.length} aires de diffusion.`);}
+function exportMuniGeoJSON(){
+  const rows=computeMuniStats();
+  if(!rows){setError("laur_munis.js requis pour l'export municipal.");return;}
+  const feats=rows.map(s=>({type:"Feature",geometry:s.feature.geometry,properties:{
+    mus_co_geo:s.code,muni_nom:s.muni,mrc_nom:s.mrc,nb_ad:s.nbAD,pop_2021:s.pop,
+    nb_ad_desert:s.nbDesert,nb_ad_marais:s.nbSwamp,pop_desert:s.popDesert,pop_marais:s.popSwamp,
+    dist_moy_m:s.meanDist!=null?Math.round(s.meanDist):null,rfei_moyen:s.meanRfei!=null?+s.meanRfei.toFixed(2):null}}));
+  downloadJSON({type:"FeatureCollection",
+    metadata:{titre:"Déserts et marais alimentaires — agrégats municipaux, Laurentides (RSS 15)",
+      note:"Agrégation des AD par municipalité (affectation par centroïde). Découpage municipal simplifié (Mapshaper).",
+      mode_distance:STATE.networkActive?"réseau OSRM ("+STATE.scopeLabel+")":"euclidien ×"+CONFIG.DETOUR,
+      genere_le:new Date().toISOString(),producteur:"DSP CISSS des Laurentides · C.A.R.T.O.S."},
+    features:feats},"deserts_marais_municipalites_laurentides.geojson");
+  setStatus(`GeoJSON exporté : ${feats.length} municipalités.`);}
+
+/* ---- Tableau municipal / MRC ---- */
+let TB_SORT={key:"nbDesert",dir:-1};
+function showMuniTable(){
+  const rows=computeMuniStats();
+  if(!rows){setError("laur_munis.js requis pour le tableau municipal.");return;}
+  const data=rows.filter(r=>r.nbAD>0);
+  data.sort((a,b)=>{const k=TB_SORT.key;const va=a[k]??-1,vb=b[k]??-1;
+    return (va<vb?-1:va>vb?1:String(a.muni).localeCompare(b.muni,"fr"))*TB_SORT.dir;});
+  const mrcTot=new Map();
+  for(const r of rows){if(!mrcTot.has(r.mrc))mrcTot.set(r.mrc,{nbAD:0,nbDesert:0,nbSwamp:0,pop:0,popDesert:0,popSwamp:0});
+    const t=mrcTot.get(r.mrc);t.nbAD+=r.nbAD;t.nbDesert+=r.nbDesert;t.nbSwamp+=r.nbSwamp;t.pop+=r.pop;t.popDesert+=r.popDesert;t.popSwamp+=r.popSwamp;}
+  const cols=[["muni","Municipalité"],["mrc","MRC"],["nbAD","AD"],["nbDesert","Déserts"],["nbSwamp","Marais"],["pop","Population"],["popDesert","Pop. désert"],["meanDist","Dist. moy. (m)"],["meanRfei","RFEI"]];
+  let h='<div class="hint" style="margin-bottom:8px">Cliquez un en-tête pour trier. Seules les municipalités avec au moins une AD analysée sont listées.</div>';
+  h+='<table class="qt"><thead><tr>'+cols.map(c=>`<th class="sortable" data-k="${c[0]}">${c[1]}${TB_SORT.key===c[0]?(TB_SORT.dir<0?" ▼":" ▲"):""}</th>`).join("")+'</tr></thead><tbody>';
+  for(const r of data){const hot=r.nbDesert>0||r.nbSwamp>0;
+    h+=`<tr class="${hot?'hot':''}"><td style="text-align:left;color:${hot?'inherit':'var(--ink-dim)'}">${escapeHtml(r.muni)}</td><td style="text-align:left">${escapeHtml(r.mrc)}</td><td>${r.nbAD}</td><td>${r.nbDesert}</td><td>${r.nbSwamp}</td><td>${fmt(r.pop)}</td><td>${fmt(r.popDesert)}</td><td>${r.meanDist!=null?fmt(r.meanDist):"—"}</td><td>${r.meanRfei!=null?r.meanRfei.toFixed(1):"—"}</td></tr>`;}
+  h+='</tbody></table>';
+  h+='<div class="fs-h3">Totaux par MRC</div><table class="qt"><thead><tr><th>MRC</th><th>AD</th><th>Déserts</th><th>Marais</th><th>Population</th><th>Pop. désert</th><th>Pop. marais</th></tr></thead><tbody>';
+  for(const [m,t] of [...mrcTot.entries()].sort((a,b)=>b[1].nbDesert-a[1].nbDesert||b[1].nbSwamp-a[1].nbSwamp)){
+    if(!t.nbAD)continue;
+    h+=`<tr class="${(t.nbDesert||t.nbSwamp)?'hot':''}"><td style="text-align:left">${escapeHtml(m)}</td><td>${t.nbAD}</td><td>${t.nbDesert}</td><td>${t.nbSwamp}</td><td>${fmt(t.pop)}</td><td>${fmt(t.popDesert)}</td><td>${fmt(t.popSwamp)}</td></tr>`;}
+  h+='</tbody></table>';
+  document.getElementById("tb-body").innerHTML=h;
+  document.getElementById("tb-body").querySelectorAll("th.sortable").forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k;TB_SORT.dir=(TB_SORT.key===k)?-TB_SORT.dir:-1;TB_SORT.key=k;showMuniTable();});
+  document.getElementById("tb-overlay").classList.add("show");}
+
+/* ---- Méthodologie ---- */
+function showMethodo(){
+  const b=document.getElementById("mt-body");
+  b.innerHTML=`
+  <div class="hl"><b>Cadre.</b> Adaptation régionale de Robitaille&nbsp;&amp;&nbsp;Paquette, <i>Development and Validation of a Method to Identify Food Deserts and Food Swamps</i>, IJERPH 2020;17:3359, appliquée aux Laurentides (RSS&nbsp;15) à l'échelle des aires de diffusion (AD 2021).</div>
+  <div class="fs-h3">Origines (demande)</div>
+  <p>Unités d'évaluation résidentielles du rôle foncier 2026 (MAMH), agrégées sur une grille de 200&nbsp;m pondérée par le nombre de logements — ${fmt(window.LAUR_DEMANDE?window.LAUR_DEMANDE.cells.length:0)} cellules.</p>
+  <div class="fs-h3">Offre alimentaire</div>
+  <p>Commerces OpenStreetMap (Overpass) : <b>sains</b> = supermarchés, épiceries, fruiteries; <b>malsains</b> (numérateur du RFEI) = dépanneurs et restauration rapide. L'OSM n'est pas le registre MAPAQ : couverture non validée sur le terrain — pré-diagnostic à confirmer.</p>
+  <div class="fs-h3">Distance et seuils</div>
+  <p>Distance de chaque cellule au commerce sain le plus proche : euclidienne ×${CONFIG.DETOUR} par défaut, raffinable en distance réseau (OSRM, profils marche/voiture). Seuils d'accès : <b>${fmt(CONFIG.THRESH_URBAIN)}&nbsp;m</b> en milieu urbain, <b>${fmt(CONFIG.THRESH_RURAL)}&nbsp;m</b> en milieu rural. Urbain/rural approché par la densité de l'AD (≥&nbsp;${CONFIG.DENSITE_URBAINE}&nbsp;hab/km²).</p>
+  <div class="fs-h3">Définitions</div>
+  <p><b>Désert alimentaire</b> : AD au quintile Q5 de défavorisation matérielle (indice provincial INSPQ/Pampalon) dont la distance moyenne pondérée par les logements dépasse le seuil. <b>Marais alimentaire</b> : AD dont le RFEI moyen (malsains ÷ sains dans le rayon du seuil) est ≥&nbsp;${CONFIG.RFEI_SEUIL}.</p>
+  <div class="fs-h3">Agrégation municipale</div>
+  <p>Chaque AD est affectée à sa municipalité par centroïde (découpage municipal 2026, simplifié). Les municipalités sans AD peuplée (TNO) sont affichées sans statistiques.</p>
+  <div class="fs-h3">Limites</div>
+  <p>Couverture OSM variable en région; distances euclidiennes approximatives avant raffinement réseau; le RFEI est sensible au rayon; l'affectation par centroïde peut différer marginalement des limites officielles pour les AD chevauchantes. Outil d'aide à la décision — ne remplace pas une validation terrain.</p>
+  <div class="note">Sources : OpenStreetMap (ODbL) · rôle d'évaluation foncière 2026 (MAMH) · indice de défavorisation INSPQ (AD 2021) · découpage municipal 2026 · routage OSRM. Production : Direction de santé publique, CISSS des Laurentides — suite C.A.R.T.O.S.</div>`;
+  document.getElementById("mt-overlay").classList.add("show");}
+
+
+
+/* =====================================================================
+   UTILITAIRES
+   ===================================================================== */
+function haversine(la1,lo1,la2,lo2){const R=6371000,r=Math.PI/180;const dla=(la2-la1)*r,dlo=(lo2-lo1)*r;
+  const a=Math.sin(dla/2)**2+Math.cos(la1*r)*Math.cos(la2*r)*Math.sin(dlo/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
+const fmt=n=>Math.round(n).toLocaleString("fr-CA");
+const pct=(a,b)=>b>0?(a/b*100):0;
+function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function distColor(d){const B=CONFIG.distBuckets,C=CONFIG.distColors;for(let i=0;i<B.length;i++)if(d<=B[i])return C[i];return C[C.length-1];}
+function buildIndex(pts,cellDeg){const m=new Map();pts.forEach((p,i)=>{const k=Math.floor(p.lat/cellDeg)+","+Math.floor(p.lng/cellDeg);(m.get(k)||m.set(k,[]).get(k)).push(i);});return{m,cell:cellDeg};}
+function countWithin(lat,lng,radM,pts,idx){const cosL=Math.cos(lat*Math.PI/180)||1e-6;
+  const dLat=radM/111000,dLng=radM/(111000*cosL),c=idx.cell;
+  const y0=Math.floor((lat-dLat)/c),y1=Math.floor((lat+dLat)/c),x0=Math.floor((lng-dLng)/c),x1=Math.floor((lng+dLng)/c);let n=0;
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const arr=idx.m.get(y+","+x);if(!arr)continue;for(const i of arr)if(haversine(lat,lng,pts[i].lat,pts[i].lng)<=radM)n++;}return n;}
+const effDist=c=>(c.distNet!=null?c.distNet:c.distEuc);
+
+/* OSRM helpers */
+function osrmTableURL(base,profile,coords,srcN,dstN){
+  const cs=coords.map(c=>c[0].toFixed(6)+","+c[1].toFixed(6)).join(";");
+  const src=Array.from({length:srcN},(_,i)=>i).join(";");
+  const dst=Array.from({length:dstN},(_,i)=>srcN+i).join(";");
+  return `${base.replace(/\/+$/,"")}/table/v1/${profile}/${cs}?annotations=distance&sources=${src}&destinations=${dst}`;}
+function parseTable(json){if(!json||json.code!=="Ok")throw new Error("OSRM "+((json&&json.code)||"réponse invalide"));
+  return json.distances.map(r=>r.map(v=>v==null?Infinity:v));}
+function splitBatches(a,s){const o=[];for(let i=0;i<a.length;i+=s)o.push(a.slice(i,i+s));return o;}
+
+/* =====================================================================
+   SOURCE DES COMMERCES
+   ===================================================================== */
+/* Lecture de l'instantané local : accepte le format compact [lat,lng,type,nom,marque]
+   ou une liste d'objets {lat,lng,type,name,brand}. */
+async function loadStores(){
+  const S=window.LAUR_COMMERCES;
+  if(!S||!Array.isArray(S.stores))throw new Error("laur_commerces.js absent ou invalide.");
+  const out=[];
+  for(const r of S.stores){
+    let lat,lng,type,name,brand;
+    if(Array.isArray(r)){[lat,lng,type,name,brand]=r;}
+    else{lat=r.lat;lng=r.lng??r.lon;type=r.type;name=r.name;brand=r.brand;}
+    if(lat==null||lng==null||!CONFIG.storeTypes[type])continue;
+    out.push({lat:+lat,lng:+lng,type,name:name||CONFIG.storeTypes[type].label,brand:brand||""});
+  }
+  STATE.srcDate=S.generated?new Date(S.generated):null;
+  STATE.srcLabel="Instantané local"+(STATE.srcDate?` — extrait le ${STATE.srcDate.toLocaleDateString("fr-CA")}`:"");
+  return out;
+}
+
+/* =====================================================================
+   PRÉPARATION DES AD
+   ===================================================================== */
+function prepareAD(){STATE.ad=window.LAUR_DEFAV.features.map((f,i)=>{const p=f.properties;let km2=0;try{km2=turf.area(f)/1e6;}catch(e){}
+  const pop=p.ADPOP2021||0,dens=km2>0?pop/km2:0;
+  return {idx:i,id:p.ADIDU,name:p.SDRNOM,pop,areaKm2:km2,dens,urban:dens>=CONFIG.DENSITE_URBAINE,
+    qMat:p.QuintMat,qMatRSS:p.QuintMatRSS,qSoc:p.QuintSoc,qSocRSS:p.QuintSocRSS,feature:f,
+    dwell:0,sumDist:0,lowDwell:0,sumRfei:0,rfeiDwell:0,meanDist:null,meanRfei:null,lowShare:0,desert:false,swamp:false};});}
+
+/* =====================================================================
+   ANALYSE EUCLIDIENNE (par défaut) + AGRÉGATION RÉUTILISABLE
+   ===================================================================== */
+function analyzeEuclidean(){
+  STATE.healthy=STATE.stores.filter(s=>CONFIG.storeTypes[s.type].role==="sain");
+  STATE.unhealthy=STATE.stores.filter(s=>CONFIG.storeTypes[s.type].role==="malsain");
+  const idxH=buildIndex(STATE.healthy,0.02),idxU=buildIndex(STATE.unhealthy,0.02),D=CONFIG.DETOUR,K=CONFIG.routing.candidates;
+  STATE.cells=window.LAUR_DEMANDE.cells.map(c=>{
+    const lng=c[0],lat=c[1],dwell=c[2],ad=STATE.ad[c[3]],thr=ad.urban?CONFIG.THRESH_URBAIN:CONFIG.THRESH_RURAL;
+    const top=[];
+    for(let i=0;i<STATE.healthy.length;i++){const d=haversine(lat,lng,STATE.healthy[i].lat,STATE.healthy[i].lng);
+      if(top.length<K){top.push({d,i});top.sort((a,b)=>a.d-b.d);}else if(d<top[K-1].d){top[K-1]={d,i};top.sort((a,b)=>a.d-b.d);}}
+    const best=top.length?top[0].d:Infinity;
+    const radE=thr/D, nH=countWithin(lat,lng,radE,STATE.healthy,idxH), nU=countWithin(lat,lng,radE,STATE.unhealthy,idxU);
+    return {lat,lng,dwell,adIdx:c[3],thr,distEuc:best*D,distNet:null,candH:top.map(t=>t.i),rfei:nH>0?nU/nH:null};});
+  aggregate();
+}
+
+function aggregate(){
+  for(const a of STATE.ad){a.dwell=0;a.sumDist=0;a.lowDwell=0;a.sumRfei=0;a.rfeiDwell=0;}
+  for(const c of STATE.cells){const a=STATE.ad[c.adIdx],dist=effDist(c);
+    a.dwell+=c.dwell;a.sumDist+=c.dwell*dist;if(dist>c.thr)a.lowDwell+=c.dwell;
+    if(c.rfei!==null){a.sumRfei+=c.dwell*c.rfei;a.rfeiDwell+=c.dwell;}}
+  const byQ={1:{d:0,s:0,popD:0,pop:0},2:{d:0,s:0,popD:0,pop:0},3:{d:0,s:0,popD:0,pop:0},4:{d:0,s:0,popD:0,pop:0},5:{d:0,s:0,popD:0,pop:0},0:{d:0,s:0,popD:0,pop:0}};
+  let desertAD=0,swampAD=0,popDesert=0,popSwamp=0,sumRfeiW=0,rfeiW=0,totalPop=0;
+  for(const a of STATE.ad){totalPop+=a.pop;
+    a.meanDist=a.dwell>0?a.sumDist/a.dwell:null;a.lowShare=a.dwell>0?a.lowDwell/a.dwell:0;a.meanRfei=a.rfeiDwell>0?a.sumRfei/a.rfeiDwell:null;
+    const thr=a.urban?CONFIG.THRESH_URBAIN:CONFIG.THRESH_RURAL;
+    a.desert=(a.qMat===5)&&(a.meanDist!==null)&&(a.meanDist>thr);
+    a.swamp=(a.meanRfei!==null)&&(a.meanRfei>=CONFIG.RFEI_SEUIL);
+    if(a.meanRfei!==null){sumRfeiW+=a.meanRfei*a.pop;rfeiW+=a.pop;}
+    const q=(a.qMat>=1&&a.qMat<=5)?a.qMat:0;byQ[q].pop+=a.pop;
+    if(a.desert){desertAD++;popDesert+=a.pop;byQ[q].d++;byQ[q].popD+=a.pop;}
+    if(a.swamp){swampAD++;popSwamp+=a.pop;byQ[q].s++;}}
+  const arr=STATE.cells.filter(c=>isFinite(effDist(c))).sort((a,b)=>effDist(a)-effDist(b));
+  const tot=arr.reduce((s,c)=>s+c.dwell,0);let cum=0,medDist=null;for(const c of arr){cum+=c.dwell;if(cum>=tot/2){medDist=effDist(c);break;}}
+  const netCells=STATE.cells.filter(c=>c.distNet!=null).length;
+  STATE.results={totalPop,desertAD,swampAD,popDesert,popSwamp,meanRfeiRegion:rfeiW>0?sumRfeiW/rfeiW:null,medDist,byQ,
+    nHealthy:STATE.healthy.length,nUnhealthy:STATE.unhealthy.length,
+    nFast:STATE.stores.filter(s=>s.type==="fast_food").length,nConv:STATE.stores.filter(s=>s.type==="convenience").length,
+    urbanAD:STATE.ad.filter(a=>a.urban).length,netCells,network:STATE.networkActive,scope:STATE.scopeLabel};
+}
+
+/* =====================================================================
+   RAFFINEMENT RÉSEAU (OSRM /table par tuiles)
+   ===================================================================== */
+async function runNetwork(){
+  if(STATE.routingBusy)return; STATE.routingBusy=true;
+  const base=document.getElementById("r-url").value.trim();
+  const profile=document.getElementById("r-profile").value;
+  const maxLoc=Math.max(10,Math.min(2000,parseInt(document.getElementById("r-maxloc").value)||100));
+  const scope=document.getElementById("r-scope").value;
+  const btn=document.getElementById("r-run");btn.disabled=true;
+
+  let cells=STATE.cells;
+  if(scope==="view"){const b=map.getBounds();cells=STATE.cells.filter(c=>b.contains([c.lat,c.lng]));}
+  STATE.scopeLabel = scope==="view" ? "vue actuelle" : "toute la région";
+  if(!cells.length){setStatus("Aucune cellule de logements dans la vue actuelle.",false);btn.disabled=false;STATE.routingBusy=false;return;}
+
+  const T=CONFIG.routing.tileDeg,tiles=new Map();
+  for(const c of cells){const k=Math.floor(c.lat/T)+","+Math.floor(c.lng/T);(tiles.get(k)||tiles.set(k,[]).get(k)).push(c);}
+
+  let totalCalls=0;
+  for(const arr of tiles.values()){const dests=new Set();arr.forEach(c=>c.candH.forEach(i=>dests.add(i)));
+    const D=Math.max(1,dests.size),srcMax=Math.max(1,maxLoc-Math.min(D,maxLoc-2));totalCalls+=Math.ceil(arr.length/srcMax)*Math.ceil(D/Math.max(1,maxLoc-2));}
+  let done=0,consec=0; setProgress(0);
+
+  try{
+    for(const arr of tiles.values()){
+      const destIdx=[...new Set([].concat(...arr.map(c=>c.candH)))];
+      if(!destIdx.length){arr.forEach(c=>c.distNet=Infinity);continue;}
+      arr.forEach(c=>c._net=Infinity);
+      const destBatches=splitBatches(destIdx,Math.max(1,maxLoc-2));
+      for(const db of destBatches){
+        const destCoords=db.map(i=>[STATE.healthy[i].lng,STATE.healthy[i].lat]);
+        const srcMax=Math.max(1,maxLoc-db.length);
+        for(const sb of splitBatches(arr,srcMax)){
+          const coords=sb.map(c=>[c.lng,c.lat]).concat(destCoords);
+          const url=osrmTableURL(base,profile,coords,sb.length,db.length);
+          setStatus(`Routage réseau (${STATE.scopeLabel})…`,true);
+          try{
+            const res=await fetch(url);if(!res.ok)throw new Error("HTTP "+res.status);
+            const dist=parseTable(await res.json());
+            sb.forEach((c,r)=>{const m=dist[r].reduce((mn,v)=>v<mn?v:mn,Infinity);if(m<c._net)c._net=m;});
+            consec=0;
+          }catch(e){consec++;if(consec>=CONFIG.routing.maxConsecFail)throw new Error("serveur instable ("+e.message+")");}
+          done++; setProgress(done/totalCalls);
+          await new Promise(r=>setTimeout(r,CONFIG.routing.delayMs));
+        }
+      }
+      arr.forEach(c=>{if(c._net!==undefined){c.distNet=c._net;delete c._net;}});
+    }
+    STATE.networkActive=true;
+    aggregate();
+    renderDesert();renderSwamp();if(map.hasLayer(accessLayer))renderAccess();if(map.hasLayer(muniLayer)){renderMunis();muniLayer.bringToBack();}
+    const R=STATE.results;
+    document.getElementById("net-state").innerHTML=`Mode actuel : <b style="color:var(--teal-l)">distances réseau OSRM</b> (profil ${profile}) sur ${fmt(R.netCells)} cellules — ${STATE.scopeLabel}.`;
+    setStatus(`Réseau appliqué : ${R.desertAD} déserts · ${R.swampAD} marais · ${fmt(R.netCells)} cellules routées.`);
+    setProgress(0);
+  }catch(err){
+    aggregate();renderDesert();renderSwamp();if(map.hasLayer(accessLayer))renderAccess();
+    setStatus("Routage interrompu ("+err.message+") — repli euclidien pour les cellules non traitées. Réduisez la portée ou utilisez votre propre OSRM.",true);
+    setProgress(0);
+  }finally{ btn.disabled=false; STATE.routingBusy=false; }
+}
+
+/* =====================================================================
+   RENDUS
+   ===================================================================== */
+function renderStores(){storesCluster.clearLayers();
+  const batch=[];
+  for(const s of STATE.stores){const t=CONFIG.storeTypes[s.type];
+    const m=L.marker([s.lat,s.lng],{icon:storeIcon(s.type),title:s.name||t.label});
+    m.bindPopup(`<div class="pop-head"><span class="mk" style="color:${t.color};width:24px;height:24px">${svgGlyph(t.glyph,14)}</span><span class="pop-type">${t.label}</span></div><b>${escapeHtml(s.name)}</b>${s.brand?`<br><span style="color:var(--ink-dim)">${escapeHtml(s.brand)}</span>`:""}`);
+    batch.push(m);}
+  storesCluster.addLayers(batch);}
+function renderBuffers(){bufferLayer.clearLayers();for(const s of STATE.healthy)L.circle([s.lat,s.lng],{renderer:CV,interactive:false,radius:STATE.buffer,color:"#3fc6b6",weight:.6,opacity:.35,fillColor:"#0f9b8e",fillOpacity:.07}).addTo(bufferLayer);}
+function defavStyle(f){const q=f.properties[STATE.defavDim];return {color:"#0c1418",weight:.4,fillColor:CONFIG.quintColors[q]??"#3b4a52",fillOpacity:.6};}
+function renderDefav(){defavLayer.clearLayers();defavLayer.addData(window.LAUR_DEFAV);defavLayer.setStyle(defavStyle);
+  defavLayer.eachLayer(l=>{const p=l.feature.properties,a=STATE.ad.find(x=>x.id===p.ADIDU);
+    l.bindPopup(`<b>${escapeHtml(p.SDRNOM||"")}</b> · AD ${p.ADIDU}<br>Population 2021 : ${fmt(p.ADPOP2021||0)}<br>Défav. matérielle : Q${p.QuintMat} (prov.) / Q${p.QuintMatRSS} (rég.)<br>Milieu : ${a&&a.urban?"urbain":"rural"} (${a?Math.round(a.dens):"?"} hab/km²)`);});}
+const isLight=()=>document.body.classList.contains("light-base");
+const desertStyle=()=>({color:isLight()?"#7d2c10":"#e0623d",weight:isLight()?1.7:1,fillColor:"#e0623d",fillOpacity:isLight()?.5:.42});
+const swampStyle =()=>({color:isLight()?"#4d2570":"#a25cd0",weight:isLight()?1.7:1,fillColor:"#a25cd0",fillOpacity:isLight()?.5:.42});
+function renderDesert(){desertLayer.clearLayers();desertLayer.addData({type:"FeatureCollection",features:STATE.ad.filter(a=>a.desert).map(a=>a.feature)});
+  desertLayer.setStyle(desertStyle());
+  desertLayer.eachLayer(l=>{const a=STATE.ad.find(x=>x.id===l.feature.properties.ADIDU);
+    l.bindPopup(`<span class="tag d">Désert alimentaire</span><br><b>${escapeHtml(a.name)}</b> · ${a.urban?"urbain":"rural"}<br>Distance moyenne au commerce sain : ${fmt(a.meanDist)} m<br>Seuil : ${fmt(a.urban?CONFIG.THRESH_URBAIN:CONFIG.THRESH_RURAL)} m · Défav. matérielle Q${a.qMat}<br>Population : ${fmt(a.pop)}`);});}
+function renderSwamp(){swampLayer.clearLayers();swampLayer.addData({type:"FeatureCollection",features:STATE.ad.filter(a=>a.swamp).map(a=>a.feature)});
+  swampLayer.setStyle(swampStyle());
+  swampLayer.eachLayer(l=>{const a=STATE.ad.find(x=>x.id===l.feature.properties.ADIDU);
+    l.bindPopup(`<span class="tag s">Marais alimentaire</span><br><b>${escapeHtml(a.name)}</b> · ${a.urban?"urbain":"rural"}<br>RFEI moyen : ${a.meanRfei.toFixed(1)} (seuil ${CONFIG.RFEI_SEUIL})<br>Défav. matérielle Q${a.qMat} · Population : ${fmt(a.pop)}`);});}
+function renderAccess(){accessLayer.clearLayers();
+  for(const c of STATE.cells)L.circleMarker([c.lat,c.lng],{renderer:CV,interactive:false,radius:2.6,stroke:false,fillColor:distColor(effDist(c)),fillOpacity:.8}).addTo(accessLayer);}
+
+/* =====================================================================
+   FAITS SAILLANTS
+   ===================================================================== */
+function showHighlights(){const R=STATE.results,b=document.getElementById("fs-body");
+  const dPct=pct(R.popDesert,R.totalPop),sPct=pct(R.popSwamp,R.totalPop);
+  const pill=R.network?`<span class="method-pill net">Distances réseau OSRM · ${fmt(R.netCells)} cellules (${R.scope})</span>`:`<span class="method-pill euc">Distances euclidiennes ×${CONFIG.DETOUR} (estimation)</span>`;
+  const src=`<span class="method-pill src">${escapeHtml(STATE.srcLabel)}</span>`;
+  let html=`${pill}${src}<div class="stat-grid">
+    <div class="stat"><div class="n d">${R.desertAD}</div><div class="l">aires = déserts alimentaires · ${fmt(R.popDesert)} pers. (${dPct.toFixed(1)} %)</div></div>
+    <div class="stat"><div class="n s">${R.swampAD}</div><div class="l">aires = marais alimentaires · ${fmt(R.popSwamp)} pers. (${sPct.toFixed(1)} %)</div></div>
+    <div class="stat"><div class="n">${R.meanRfeiRegion!=null?R.meanRfeiRegion.toFixed(2):"—"}</div><div class="l">RFEI moyen régional (malsains ÷ sains)</div></div>
+    <div class="stat"><div class="n">${R.medDist!=null?fmt(R.medDist)+" m":"—"}</div><div class="l">distance médiane au commerce sain (pondérée logements)</div></div>
+  </div>`;
+  html+=`<div class="hl d"><b>Déserts alimentaires.</b> ${R.desertAD} aire(s) combinent défavorisation matérielle élevée (Q5 provincial) et faible accès géographique (distance moyenne d'un logement au commerce sain &gt; ${fmt(CONFIG.THRESH_URBAIN)} m urbain / ${fmt(CONFIG.THRESH_RURAL)} m rural). Environ <b>${fmt(R.popDesert)} personnes</b> (${dPct.toFixed(1)} % de la population régionale) y résident.</div>`;
+  const hotS=R.byQ[4].s+R.byQ[5].s;
+  html+=`<div class="hl s"><b>Marais alimentaires.</b> ${R.swampAD} aire(s) présentent un RFEI moyen ≥ ${CONFIG.RFEI_SEUIL}. ${R.swampAD>0?`<b>${hotS}</b> sur ${R.swampAD} (${pct(hotS,R.swampAD).toFixed(0)} %) en milieu défavorisé (Q4–Q5)`:"Aucun marais au seuil courant"}.</div>`;
+  html+=`<div class="fs-h3">Déserts et marais par quintile de défavorisation matérielle</div>
+    <table class="qt"><thead><tr><th>Quintile</th><th>Population</th><th>Déserts</th><th>Pop. en désert</th><th>Marais</th></tr></thead><tbody>`;
+  const lab={1:"Q1 favorisé",2:"Q2",3:"Q3",4:"Q4",5:"Q5 défavorisé",0:"Non classé"};
+  for(const q of [1,2,3,4,5,0]){const r=R.byQ[q],hot=(q===5||q===4)&&(r.d>0||r.s>0);
+    html+=`<tr class="${hot?'hot':''}"><td>${lab[q]}</td><td>${fmt(r.pop)}</td><td>${r.d}</td><td>${fmt(r.popD)}</td><td>${r.s}</td></tr>`;}
+  html+=`</tbody></table>`;
+  html+=`<div class="fs-h3">Commerces recensés (OpenStreetMap)</div><div class="hl"><b>${R.nHealthy}</b> commerces d'aliments sains · <b>${R.nConv}</b> dépanneurs · <b>${R.nFast}</b> restauration rapide. Classement : ${R.urbanAD} AD urbaines / ${STATE.ad.length}.</div>`;
+  const methNet = R.network ? `Distances réseau routier via OSRM (profil ${document.getElementById("r-profile").value}) pour ${fmt(R.netCells)} cellules (${R.scope}); cellules hors portée en repli euclidien ×${CONFIG.DETOUR}.` : `Distances euclidiennes ×${CONFIG.DETOUR} (approximation; cliquez « Affiner l'accès avec le réseau » pour le routage OSRM).`;
+  html+=`<div class="note"><b>Méthode</b> — Adaptation de Robitaille &amp; Paquette (<i>IJERPH</i> 2020;17:3359). Origine : unités d'évaluation résidentielles 2026 agrégées sur grille de 200 m pondérée par les logements. <b>Désert</b> = AD en Q5 matériel dont la distance moyenne au commerce sain dépasse ${fmt(CONFIG.THRESH_URBAIN)} m (urbain) / ${fmt(CONFIG.THRESH_RURAL)} m (rural). <b>RFEI</b> = (restauration rapide + dépanneurs) ÷ (commerces sains) dans le tampon; <b>marais</b> = RFEI moyen ≥ ${CONFIG.RFEI_SEUIL}. ${methNet} Urbain/rural approché par la densité de l'AD (≥ ${CONFIG.DENSITE_URBAINE} hab/km²). Commerces : ${escapeHtml(STATE.srcLabel)} — OpenStreetMap (ODbL), et non registre MAPAQ, sans validation terrain. Pré-diagnostic à valider.</div>`;
+  b.innerHTML=html;document.getElementById("fs-overlay").classList.add("show");}
+
+/* =====================================================================
+   UI
+   ===================================================================== */
+function buildLegend(){document.getElementById("legend").innerHTML=Object.values(CONFIG.storeTypes).map(t=>{
+  const tag=t.role==="sain"?" <span style='color:var(--ink-dim);font-size:12px'>(sain)</span>":t.role==="malsain"?" <span style='color:var(--ink-dim);font-size:12px'>(RFEI)</span>":"";
+  return `<div class="legend-item"><span class="ico"><span class="mk" style="color:${t.color};width:24px;height:24px">${svgGlyph(t.glyph,14)}</span></span>${t.label}${tag}</div>`;}).join("");
+  document.getElementById("defav-ramp").innerHTML=[1,2,3,4,5].map(i=>`<span style="background:${CONFIG.quintColors[i]}"></span>`).join("");}
+function setStatus(m,spin){const el=document.getElementById("status");el.classList.remove("err");el.innerHTML=(spin?'<span class="spinner"></span>':'')+`<span>${m}</span>`;}
+function setError(m){const el=document.getElementById("status");el.classList.add("err");el.innerHTML=`<span>${m}</span>`;}
+function setProgress(f){document.getElementById("prog").style.width=Math.round(Math.min(1,Math.max(0,f))*100)+"%";}
+
+document.getElementById("t-stores").onchange=e=>{e.target.checked?map.addLayer(storesCluster):map.removeLayer(storesCluster);updateMapLegend();};
+document.getElementById("t-buffer").onchange=e=>{if(e.target.checked){renderBuffers();map.addLayer(bufferLayer);}else map.removeLayer(bufferLayer);};
+document.getElementById("t-defav").onchange=e=>{if(e.target.checked){renderDefav();map.addLayer(defavLayer);
+  if(map.hasLayer(desertLayer))desertLayer.bringToFront();if(map.hasLayer(swampLayer))swampLayer.bringToFront();}else map.removeLayer(defavLayer);updateMapLegend();};
+document.getElementById("t-desert").onchange=e=>{if(e.target.checked){renderDesert();map.addLayer(desertLayer);}else map.removeLayer(desertLayer);updateMapLegend();};
+document.getElementById("t-swamp").onchange=e=>{if(e.target.checked){renderSwamp();map.addLayer(swampLayer);}else map.removeLayer(swampLayer);updateMapLegend();};
+document.getElementById("t-access").onchange=e=>{if(e.target.checked){renderAccess();map.addLayer(accessLayer);}else map.removeLayer(accessLayer);updateMapLegend();};
+document.getElementById("t-munis").onchange=e=>{if(e.target.checked){renderMunis();map.addLayer(muniLayer);muniLayer.bringToBack();}else map.removeLayer(muniLayer);updateMapLegend();};
+document.getElementById("basemap-sel").onchange=e=>{setBasemap(e.target.value);
+  desertLayer.setStyle(desertStyle());swampLayer.setStyle(swampStyle());
+  if(map.hasLayer(defavLayer))defavLayer.setStyle(defavStyle);};
+document.getElementById("btn-table").onclick=showMuniTable;
+document.getElementById("btn-meth").onclick=showMethodo;
+document.getElementById("dl-ad").onclick=exportADGeoJSON;
+document.getElementById("dl-muni").onclick=exportMuniGeoJSON;
+document.querySelectorAll(".ovl .ovl-close").forEach(b=>b.onclick=()=>b.closest(".ovl").classList.remove("show"));
+document.querySelectorAll(".ovl").forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove("show");});
+const rIn=document.getElementById("r-buffer"),rVal=document.getElementById("r-val");
+rIn.oninput=()=>{STATE.buffer=+rIn.value;rVal.textContent=fmt(+rIn.value);};rIn.onchange=()=>{if(map.hasLayer(bufferLayer))renderBuffers();};
+document.getElementById("defav-dim").onchange=e=>{STATE.defavDim=e.target.value;if(map.hasLayer(defavLayer)){defavLayer.setStyle(defavStyle);}updateMapLegend();};
+document.getElementById("r-run").onclick=runNetwork;
+document.getElementById("btn-fs").onclick=showHighlights;
+document.getElementById("fs-close").onclick=()=>document.getElementById("fs-overlay").classList.remove("show");
+document.getElementById("fs-overlay").onclick=e=>{if(e.target.id==="fs-overlay")e.currentTarget.classList.remove("show");};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.getElementById("fs-overlay").classList.remove("show");document.querySelectorAll(".ovl.show").forEach(o=>o.classList.remove("show"));}});
+let fontPx=15;
+document.getElementById("font-up").onclick=()=>{fontPx=Math.min(20,fontPx+1);document.documentElement.style.setProperty("--fs",fontPx+"px");};
+document.getElementById("font-dn").onclick=()=>{fontPx=Math.max(13,fontPx-1);document.documentElement.style.setProperty("--fs",fontPx+"px");};
+function enableUI(){
+  const ids=["t-desert","t-swamp","t-access","btn-fs","r-run","dl-ad"];
+  if(typeof window.LAUR_MUNIS!=="undefined")ids.push("t-munis","btn-table","dl-muni");
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=false;});
+  if(typeof window.LAUR_MUNIS==="undefined")setStatus("Note : laur_munis.js absent — agrégation municipale et export municipal désactivés.");
+}
+
+
+/* =====================================================================
+   DÉMARRAGE
+   ===================================================================== */
+buildLegend();
+console.log("Déserts et marais alimentaires — Laurentides · build v6 (2026-07-23) · mode "+MODE);
+(async function init(){
+  if(typeof window.LAUR_DEFAV==="undefined"||typeof window.LAUR_DEMANDE==="undefined"){setError("Fichiers laur_defav.js et laur_demande.js requis à côté du HTML.");return;}
+  if(typeof window.LAUR_COMMERCES==="undefined"){setError("Fichier laur_commerces.js requis à côté du HTML (exportez-le depuis la version « live »).");return;}
+  try{
+    STATE.stores=await loadStores();renderStores();
+    document.getElementById("src-state").innerHTML=escapeHtml(STATE.srcLabel);
+    const b=L.latLngBounds(STATE.stores.map(s=>[s.lat,s.lng]));if(b.isValid())map.fitBounds(b.pad(0.05));
+    setStatus("Préparation des aires de diffusion et des logements…",true);prepareAD();await new Promise(r=>setTimeout(r,30));
+    setStatus(`Calcul des déserts et marais (${fmt(window.LAUR_DEMANDE.cells.length)} cellules)…`,true);await new Promise(r=>setTimeout(r,30));
+    analyzeEuclidean();
+    renderDesert();renderSwamp();map.addLayer(desertLayer);map.addLayer(swampLayer);
+    document.getElementById("t-desert").checked=true;document.getElementById("t-swamp").checked=true;
+    legendCtl.addTo(map);updateMapLegend();
+    enableUI();STATE.ready=true;
+    const R=STATE.results;
+    setStatus(`${R.desertAD} déserts · ${R.swampAD} marais · ${R.nHealthy} commerces sains (estimation euclidienne). Affinez avec le réseau au besoin.`);
+  }catch(err){
+    setError("Échec : "+err.message);
+  }
+})();
+</script>
+</body>
+</html>
