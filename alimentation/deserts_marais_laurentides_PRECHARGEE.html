@@ -20,6 +20,7 @@
 <script src="laur_demande.js"></script>
 <script src="laur_munis.js"></script>
 <script src="laur_commerces.js"></script>
+<script src="laur_commerces_google.js"></script>
 
 <style>
 :root{
@@ -188,8 +189,13 @@ table.qt tr.hot td{color:#f0a087;font-weight:700}
 
     <div class="section">
       <h2>Source des commerces</h2>
-      <div class="hint" id="src-state">Instantané local (<code>laur_commerces.js</code>) — aucun appel réseau, résultats strictement reproductibles.</div>
-      <div class="hint">Pour rafraîchir l'instantané, ouvrir la <b>version « live »</b> de l'outil et cliquer sur « Exporter l'instantané », puis remplacer le fichier <code>laur_commerces.js</code>.</div>
+      <select id="src-sel">
+        <option value="osm">OpenStreetMap (laur_commerces.js)</option>
+        <option value="google">Google POI (laur_commerces_google.js)</option>
+      </select>
+      <div class="hint" id="src-state" style="margin-top:8px">Instantané local — aucun appel réseau, résultats reproductibles.</div>
+      <button id="btn-compare" class="btn btn-net" disabled style="margin-top:8px">⇆ &nbsp;Comparer OSM ↔ Google POI</button>
+      <div class="hint">La comparaison recalcule déserts et marais avec chacune des deux sources (distances euclidiennes) et liste les AD dont le statut change. Google POI : usage interne — ne pas rediffuser (CGU Google).</div>
     </div>
 
     <div class="section">
@@ -243,7 +249,7 @@ table.qt tr.hot td{color:#f0a087;font-weight:700}
     <div class="foot">
       Commerces : OpenStreetMap (ODbL) — instantané local <code>laur_commerces.js</code>. Logements : rôle d'évaluation foncière 2026 (MAMH).
       Défavorisation : indice INSPQ, AD 2021, RSS 15. Routage : OSRM. Méthode adaptée de Robitaille &amp; Paquette, <i>IJERPH</i> 2020;17:3359.
-      <div style="margin-top:6px;color:var(--teal-l);font-weight:700">Version de l'outil : v6 (2026-07-23)</div>
+      <div style="margin-top:6px;color:var(--teal-l);font-weight:700">Version de l'outil : v7 (2026-07-30)</div>
     </div>
   </aside>
 
@@ -261,6 +267,11 @@ table.qt tr.hot td{color:#f0a087;font-weight:700}
 <div id="tb-overlay" class="ovl"><div class="ovl-card">
   <header><div><div class="kicker">Agrégation territoriale</div><h2>Municipalités et MRC</h2></div><button class="ovl-close" aria-label="Fermer">×</button></header>
   <div id="tb-body" class="ovl-body"></div>
+</div></div>
+
+<div id="cp-overlay" class="ovl"><div class="ovl-card">
+  <header><div><div class="kicker">Analyse de sensibilité</div><h2>OSM ↔ Google POI — même méthode, deux sources</h2></div><button class="ovl-close" aria-label="Fermer">×</button></header>
+  <div id="cp-body" class="ovl-body"></div>
 </div></div>
 
 <div id="mt-overlay" class="ovl"><div class="ovl-card">
@@ -572,11 +583,8 @@ function splitBatches(a,s){const o=[];for(let i=0;i<a.length;i+=s)o.push(a.slice
 /* =====================================================================
    SOURCE DES COMMERCES
    ===================================================================== */
-/* Lecture de l'instantané local : accepte le format compact [lat,lng,type,nom,marque]
-   ou une liste d'objets {lat,lng,type,name,brand}. */
-async function loadStores(){
-  const S=window.LAUR_COMMERCES;
-  if(!S||!Array.isArray(S.stores))throw new Error("laur_commerces.js absent ou invalide.");
+/* Lecture d'un instantané : format compact [lat,lng,type,nom,marque] ou objets. */
+function parseSnapshot(S){
   const out=[];
   for(const r of S.stores){
     let lat,lng,type,name,brand;
@@ -585,9 +593,98 @@ async function loadStores(){
     if(lat==null||lng==null||!CONFIG.storeTypes[type])continue;
     out.push({lat:+lat,lng:+lng,type,name:name||CONFIG.storeTypes[type].label,brand:brand||""});
   }
-  STATE.srcDate=S.generated?new Date(S.generated):null;
-  STATE.srcLabel="Instantané local"+(STATE.srcDate?` — extrait le ${STATE.srcDate.toLocaleDateString("fr-CA")}`:"");
   return out;
+}
+function snapshotFor(key){return key==="google"?window.LAUR_COMMERCES_GOOGLE:window.LAUR_COMMERCES;}
+function sourceLabel(key,S){
+  const d=S&&S.generated?new Date(S.generated).toLocaleDateString("fr-CA"):null;
+  return (key==="google"?"Google POI (reclassé méthode 2020)":"Instantané OpenStreetMap")+(d?" — extrait le "+d:"");
+}
+async function loadStores(){
+  const sel=document.getElementById("src-sel");
+  let key=sel.value;
+  let S=snapshotFor(key);
+  if(!S||!Array.isArray(S.stores)){key=(key==="osm")?"google":"osm";S=snapshotFor(key);sel.value=key;}
+  if(!S||!Array.isArray(S.stores))throw new Error("aucun instantané de commerces (laur_commerces.js ou laur_commerces_google.js) à côté du HTML.");
+  STATE.srcKey=key;STATE.srcDate=S.generated?new Date(S.generated):null;STATE.srcLabel=sourceLabel(key,S);
+  sel.querySelector('option[value="osm"]').disabled=!(window.LAUR_COMMERCES&&window.LAUR_COMMERCES.stores);
+  sel.querySelector('option[value="google"]').disabled=!(window.LAUR_COMMERCES_GOOGLE&&window.LAUR_COMMERCES_GOOGLE.stores);
+  return parseSnapshot(S);
+}
+async function switchSource(){
+  try{
+    setStatus("Changement de source des commerces…",true);await new Promise(r=>setTimeout(r,30));
+    STATE.stores=await loadStores();renderStores();
+    STATE.networkActive=false;STATE.scopeLabel="";
+    document.getElementById("net-state").innerHTML="Mode actuel : distances euclidiennes ×1,3 (estimation instantanée).";
+    analyzeEuclidean();
+    renderDesert();renderSwamp();
+    if(map.hasLayer(accessLayer))renderAccess();
+    if(map.hasLayer(muniLayer)){renderMunis();muniLayer.bringToBack();}
+    document.getElementById("src-state").innerHTML=escapeHtml(STATE.srcLabel);
+    const R=STATE.results;
+    setStatus(`${STATE.srcKey==="google"?"Google POI":"OSM"} : ${R.desertAD} déserts · ${R.swampAD} marais · ${R.nHealthy} commerces sains.`);
+  }catch(err){setError("Échec du changement de source : "+err.message);}
+}
+function captureRun(){return {res:Object.assign({},STATE.results),
+  ad:STATE.ad.map(a=>({id:a.id,name:a.name,muniIdx:a.muniIdx,desert:a.desert,swamp:a.swamp,
+    meanDist:a.meanDist,meanRfei:a.meanRfei}))};}
+async function compareSources(){
+  const A=window.LAUR_COMMERCES,B=window.LAUR_COMMERCES_GOOGLE;
+  if(!A||!A.stores||!B||!B.stores){setError("Les deux instantanés (OSM et Google) sont requis pour comparer.");return;}
+  const btn=document.getElementById("btn-compare");btn.disabled=true;
+  const cur=STATE.srcKey||"osm";
+  try{
+    assignMunis();
+    setStatus("Comparaison — passage 1/2 (OSM)…",true);await new Promise(r=>setTimeout(r,30));
+    STATE.stores=parseSnapshot(A);analyzeEuclidean();const rOSM=captureRun();
+    setStatus("Comparaison — passage 2/2 (Google POI)…",true);await new Promise(r=>setTimeout(r,30));
+    STATE.stores=parseSnapshot(B);analyzeEuclidean();const rG=captureRun();
+    /* restaurer la source active */
+    STATE.stores=parseSnapshot(snapshotFor(cur));analyzeEuclidean();
+    STATE.networkActive=false;
+    renderStores();renderDesert();renderSwamp();
+    if(map.hasLayer(accessLayer))renderAccess();
+    if(map.hasLayer(muniLayer)){renderMunis();muniLayer.bringToBack();}
+    showComparison(rOSM,rG,A,B);
+    setStatus(`Comparaison affichée — source active : ${cur==="google"?"Google POI":"OSM"}.`);
+  }catch(err){setError("Échec de la comparaison : "+err.message);}
+  finally{btn.disabled=false;}
+}
+function showComparison(O,G,SA,SB){
+  const dO=new Date(SA.generated||0).toLocaleDateString("fr-CA"),dG=new Date(SB.generated||0).toLocaleDateString("fr-CA");
+  const delta=(a,b)=>{const d=b-a;return d===0?"—":(d>0?"+":"")+((typeof a==="number"&&Math.abs(d)<10&&!Number.isInteger(d))?d.toFixed(2):fmt(d));};
+  const rowsStat=[
+    ["Commerces sains",O.res.nHealthy,G.res.nHealthy],
+    ["Dépanneurs",O.res.nConv,G.res.nConv],
+    ["Restauration rapide",O.res.nFast,G.res.nFast],
+    ["AD déserts alimentaires",O.res.desertAD,G.res.desertAD],
+    ["Population en désert",O.res.popDesert,G.res.popDesert],
+    ["AD marais alimentaires",O.res.swampAD,G.res.swampAD],
+    ["Population en marais",O.res.popSwamp,G.res.popSwamp],
+    ["Distance médiane (m)",Math.round(O.res.medDist||0),Math.round(G.res.medDist||0)],
+    ["RFEI moyen régional",+(O.res.meanRfeiRegion||0).toFixed(2),+(G.res.meanRfeiRegion||0).toFixed(2)]];
+  let h=`<div class="hint" style="margin-bottom:8px">Même méthode, mêmes seuils, distances euclidiennes ×${CONFIG.DETOUR} — seule la source des commerces change. OSM extrait le ${dO}; Google POI extrait le ${dG}, reclassé (sains = supermarket + grocery_store; RFEI = convenience + restauration rapide; pharmacies, SAQ, boulangeries et restaurants complets exclus).</div>`;
+  h+='<table class="qt"><thead><tr><th style="text-align:left">Indicateur</th><th>OSM</th><th>Google POI</th><th>Δ (G − O)</th></tr></thead><tbody>';
+  for(const [l,a,b] of rowsStat)h+=`<tr class="${a!==b?'hot':''}"><td style="text-align:left">${l}</td><td>${typeof a==="number"&&a>999?fmt(a):a}</td><td>${typeof b==="number"&&b>999?fmt(b):b}</td><td>${delta(a,b)}</td></tr>`;
+  h+='</tbody></table>';
+  const mapO=new Map(O.ad.map(a=>[a.id,a])),changed=[];
+  for(const g of G.ad){const o=mapO.get(g.id);if(!o)continue;
+    if(o.desert!==g.desert||o.swamp!==g.swamp)changed.push({o,g});}
+  h+=`<div class="fs-h3">AD dont le statut change (${changed.length})</div>`;
+  if(!changed.length)h+='<div class="hl">Aucune AD ne change de statut entre les deux sources — résultats robustes au choix de la source.</div>';
+  else{
+    h+='<table class="qt"><thead><tr><th style="text-align:left">AD · municipalité</th><th>Désert O→G</th><th>Marais O→G</th><th>Dist. O / G (m)</th><th>RFEI O / G</th></tr></thead><tbody>';
+    const mark=(a,b)=>a===b?(a?"✓ / ✓":"— / —"):(a?"✓ / <b>—</b>":"— / <b>✓</b>");
+    for(const {o,g} of changed.slice(0,120)){
+      const muni=(o.muniIdx>=0&&window.LAUR_MUNIS)?window.LAUR_MUNIS.features[o.muniIdx].properties.MUS_NM_MUN:o.name;
+      h+=`<tr class="hot"><td style="text-align:left">${escapeHtml(o.name)} <span style="color:var(--ink-dim)">· ${escapeHtml(muni)} · AD ${o.id}</span></td><td>${mark(o.desert,g.desert)}</td><td>${mark(o.swamp,g.swamp)}</td><td>${o.meanDist!=null?fmt(o.meanDist):"—"} / ${g.meanDist!=null?fmt(g.meanDist):"—"}</td><td>${o.meanRfei!=null?o.meanRfei.toFixed(1):"—"} / ${g.meanRfei!=null?g.meanRfei.toFixed(1):"—"}</td></tr>`;}
+    h+='</tbody></table>';
+    if(changed.length>120)h+=`<div class="hint">${changed.length-120} autres AD non affichées — utilisez les exports GeoJSON de chaque source pour l'analyse complète.</div>`;
+  }
+  h+=`<div class="note"><b>Interprétation.</b> Les écarts reflètent la couverture des deux répertoires, pas un changement du territoire : l'OSM dépend des contributions locales (souvent incomplet en région), Google des inscriptions commerciales (plus exhaustif mais catégorisation commerciale, chaînes surreprésentées). Les AD qui restent désert ou marais <i>dans les deux sources</i> constituent les signaux les plus solides pour l'action. Données Google Places : usage interne — ne pas rediffuser publiquement.</div>`;
+  document.getElementById("cp-body").innerHTML=h;
+  document.getElementById("cp-overlay").classList.add("show");
 }
 
 /* =====================================================================
@@ -783,6 +880,8 @@ document.getElementById("t-munis").onchange=e=>{if(e.target.checked){renderMunis
 document.getElementById("basemap-sel").onchange=e=>{setBasemap(e.target.value);
   desertLayer.setStyle(desertStyle());swampLayer.setStyle(swampStyle());
   if(map.hasLayer(defavLayer))defavLayer.setStyle(defavStyle);};
+(function(){const s=document.getElementById("src-sel");if(s)s.onchange=switchSource;
+  const c=document.getElementById("btn-compare");if(c)c.onclick=compareSources;})();
 document.getElementById("btn-table").onclick=showMuniTable;
 document.getElementById("btn-meth").onclick=showMethodo;
 document.getElementById("dl-ad").onclick=exportADGeoJSON;
@@ -804,6 +903,8 @@ function enableUI(){
   const ids=["t-desert","t-swamp","t-access","btn-fs","r-run","dl-ad"];
   if(typeof window.LAUR_MUNIS!=="undefined")ids.push("t-munis","btn-table","dl-muni");
   ids.forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=false;});
+  const cmp=document.getElementById("btn-compare");
+  if(cmp)cmp.disabled=!(typeof window.LAUR_COMMERCES!=="undefined"&&window.LAUR_COMMERCES.stores&&typeof window.LAUR_COMMERCES_GOOGLE!=="undefined"&&window.LAUR_COMMERCES_GOOGLE.stores);
   if(typeof window.LAUR_MUNIS==="undefined")setStatus("Note : laur_munis.js absent — agrégation municipale et export municipal désactivés.");
 }
 
@@ -812,10 +913,10 @@ function enableUI(){
    DÉMARRAGE
    ===================================================================== */
 buildLegend();
-console.log("Déserts et marais alimentaires — Laurentides · build v6 (2026-07-23) · mode "+MODE);
+console.log("Déserts et marais alimentaires — Laurentides · build v7 (2026-07-30) · mode "+MODE);
 (async function init(){
   if(typeof window.LAUR_DEFAV==="undefined"||typeof window.LAUR_DEMANDE==="undefined"){setError("Fichiers laur_defav.js et laur_demande.js requis à côté du HTML.");return;}
-  if(typeof window.LAUR_COMMERCES==="undefined"){setError("Fichier laur_commerces.js requis à côté du HTML (exportez-le depuis la version « live »).");return;}
+  if(typeof window.LAUR_COMMERCES==="undefined"&&typeof window.LAUR_COMMERCES_GOOGLE==="undefined"){setError("Instantané de commerces requis à côté du HTML : laur_commerces.js (export de la version live) ou laur_commerces_google.js.");return;}
   try{
     STATE.stores=await loadStores();renderStores();
     document.getElementById("src-state").innerHTML=escapeHtml(STATE.srcLabel);
