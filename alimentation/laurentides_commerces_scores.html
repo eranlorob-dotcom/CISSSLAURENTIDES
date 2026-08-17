@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Commerces alimentaires et scores — Laurentides</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF; --indigo:#5b54c0;
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+  --amber:#e8a15f;
+  --fs:1rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Source Sans 3",system-ui,sans-serif;font-size:var(--fs);
+  background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+.mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+a{color:var(--teal)}
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+header.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;
+  background:linear-gradient(100deg,var(--bg2) 0%,#161354 60%,#1c2a8a 100%);
+  border-bottom:1px solid var(--line);z-index:1200}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.mark{width:40px;height:40px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
+  background:radial-gradient(circle at 32% 28%,var(--teal),var(--navy) 75%);
+  box-shadow:0 0 0 1px #21aead33,inset 0 0 14px #00000040}
+.mark svg{width:22px;height:22px}
+.title h1{font-size:1.12rem;font-weight:700;line-height:1.12}
+.title h1 span{color:var(--teal)}
+.title p{font-size:.78rem;color:var(--ink2);font-weight:400;margin-top:2px}
+.spacer{flex:1 1 auto}
+.tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tools select{appearance:none;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  border-radius:9px;padding:7px 12px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer}
+.tools select:focus{outline:none;border-color:var(--teal)}
+.badge{font-size:.72rem;font-weight:700;letter-spacing:.4px;padding:4px 11px;border-radius:999px;
+  background:#21aead1f;color:var(--teal);border:1px solid #21aead40;white-space:nowrap}
+.fontctl{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.fontctl button{background:transparent;border:0;color:var(--ink2);cursor:pointer;width:30px;height:30px;font:inherit;font-weight:700}
+.fontctl button:hover{background:#ffffff14;color:var(--ink)}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink2);
+  border-radius:9px;padding:7px 12px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--teal);color:var(--ink)}
+.btn.active{border-color:var(--teal);color:var(--ink);background:#21aead22}
+.main{position:relative;display:grid;grid-template-columns:400px 1fr;min-height:0;transition:grid-template-columns .3s ease}
+.main.collapsed{grid-template-columns:0 1fr}
+.panel{width:400px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;
+  padding:18px 18px 26px;scrollbar-width:thin;scrollbar-color:var(--line) transparent;transition:transform .3s ease}
+.panel::-webkit-scrollbar{width:8px}
+.panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.main.collapsed .panel{transform:translateX(-100%)}
+#map{position:relative;height:100%;width:100%;background:var(--bg);outline:none}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.leaflet-control-attribution{background:#070620cc!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--teal)!important}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:700;margin:0 0 6px}
+.scopename{font-size:1.25rem;font-weight:700;line-height:1.15;margin-bottom:2px}
+.scopesub{font-size:.84rem;color:var(--muted);margin-bottom:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hero{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:16px;padding:16px 18px;margin-bottom:12px}
+.hero .lab{font-size:.8rem;color:var(--ink2);font-weight:600}
+.hero .big{font-size:2.2rem;font-weight:900;line-height:1;letter-spacing:-1px;color:var(--white);margin:4px 0 2px}
+.hero .big small{font-size:1rem;font-weight:700;color:var(--teal);margin-left:3px}
+.hero .sub{font-size:.83rem;color:var(--ink2)}
+.ci{margin-top:10px}
+.ci-bar{position:relative;height:8px;border-radius:4px;background:linear-gradient(90deg,#e74c3c,#f1c40f,#2ecc71)}
+.ci-band{position:absolute;top:-3px;height:14px;border-radius:4px;background:#ffffff30;border:1.5px solid #fff}
+.ci-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:4px}
+.statline{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line2);font-size:.84rem;gap:10px}
+.statline:last-child{border-bottom:none}
+.statline .k{color:var(--muted);flex:0 0 auto}
+.statline .v{font-family:"JetBrains Mono";font-weight:600;color:var(--ink);text-align:right}
+.statgrid{margin-top:14px}
+.pillstat{display:inline-block;margin-top:8px;margin-right:6px;font-size:.74rem;font-weight:700;padding:4px 11px;border-radius:999px}
+.note{font-size:.78rem;color:var(--muted);background:var(--panel2);border-radius:8px;padding:9px 11px;margin-top:12px;line-height:1.5}
+.warn{font-size:.78rem;color:var(--amber);background:#e8a15f14;border:1px solid #e8a15f40;border-radius:8px;padding:9px 11px;margin-top:12px;line-height:1.5}
+.linkrow{display:flex;gap:8px;margin-top:12px}
+.linkrow a{flex:1;text-align:center;background:var(--panel2);border:1px solid var(--line);
+  border-radius:9px;padding:9px 8px;font-size:.82rem;font-weight:600;text-decoration:none;color:var(--ink)}
+.linkrow a:hover{border-color:var(--teal);color:var(--teal)}
+h3.sect{font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:20px 0 8px;font-weight:700}
+.worklist{display:flex;flex-direction:column;gap:6px}
+.wl-item{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--amber);
+  border-radius:8px;padding:8px 11px;cursor:pointer}
+.wl-item:hover{border-color:var(--teal);border-left-color:var(--amber)}
+.wl-nom{font-size:.84rem;font-weight:600;line-height:1.25}
+.wl-meta{font-size:.72rem;color:var(--muted);margin-top:3px;font-family:"JetBrains Mono"}
+.bornes{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:14px}
+.bornes h4{font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.bornes-bar{position:relative;height:26px;border-radius:6px;background:var(--panel);overflow:hidden;border:1px solid var(--line)}
+.bornes-range{position:absolute;top:0;bottom:0;background:#e8a15f26;border-left:2px solid var(--amber);border-right:2px solid var(--amber)}
+.bornes-ref{position:absolute;top:-3px;bottom:-3px;width:2.5px;background:var(--teal)}
+.bornes-lab{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:6px;font-family:"JetBrains Mono"}
+#legend{position:absolute;bottom:20px;left:20px;z-index:600;background:var(--panel);
+  background:color-mix(in srgb,var(--panel) 96%,transparent);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:12px;padding:13px 15px;min-width:235px;max-width:265px;max-height:74vh;overflow-y:auto}
+.legend-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px}
+.legend-scale{display:flex;height:10px;border-radius:5px;overflow:hidden;margin-bottom:6px}
+.legend-scale div{flex:1}
+.legend-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted)}
+.legend-item{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.76rem;color:var(--ink2)}
+.legend-sw{width:14px;height:14px;border-radius:50%;flex:0 0 auto;border:1px solid var(--line)}
+.legend-sep{height:1px;background:var(--line2);margin:10px 0}
+#counts{font-size:.7rem;color:var(--muted);margin-top:10px;line-height:1.55}
+#methodo{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:600}
+#methodo-btn{background:var(--panel);border:1px solid var(--line);color:var(--ink2);
+  padding:7px 15px;border-radius:999px;font:inherit;font-size:.78rem;cursor:pointer}
+#methodo-btn:hover{color:var(--ink);border-color:var(--teal)}
+#methodo-content{display:none;position:absolute;bottom:42px;left:50%;transform:translateX(-50%);
+  width:min(640px,90vw);max-height:76vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;font-size:.82rem;line-height:1.6;color:var(--ink2);box-shadow:0 12px 40px #0008}
+#methodo-content.show{display:block}
+#methodo-content h4{color:var(--ink);font-size:.95rem;margin:14px 0 6px}
+#methodo-content h4:first-child{margin-top:0}
+#methodo-content table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.78rem}
+#methodo-content th,#methodo-content td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line2)}
+#methodo-content th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.68rem;letter-spacing:.06em}
+#methodo-content td.num{font-family:"JetBrains Mono";text-align:right}
+.caveat{font-size:.78rem;color:var(--amber);background:#e8a15f14;border:1px solid #e8a15f40;border-radius:8px;padding:9px 11px;margin:8px 0}
+.muni-tooltip{background:var(--panel2)!important;border:1px solid var(--line)!important;color:var(--ink)!important;
+  border-radius:9px!important;padding:9px 13px!important;font-family:"Source Sans 3"!important;
+  font-size:.8rem!important;box-shadow:0 6px 20px #0007!important;max-width:230px}
+.muni-tooltip .tt-nom{font-weight:700;font-size:.9rem;line-height:1.25}
+.muni-tooltip .tt-mrc{color:var(--muted);font-size:.73rem;margin-top:2px}
+.muni-tooltip .tt-val{font-family:"JetBrains Mono";font-weight:700;font-size:1.05rem;margin-top:5px}
+.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{border-color:transparent!important}
+#panel-toggle{position:absolute;top:14px;left:400px;z-index:700;background:var(--panel);
+  border:1px solid var(--line);color:var(--ink);width:26px;height:34px;border-radius:0 8px 8px 0;
+  cursor:pointer;font-size:13px;transition:left .3s ease}
+#panel-toggle.shifted{left:0}
+@media(max-width:800px){
+  .main{grid-template-columns:1fr}
+  .main.collapsed{grid-template-columns:1fr}
+  .panel{position:absolute;inset:auto 0 0 0;width:auto;height:60vh;border-right:none;border-top:1px solid var(--line);z-index:800}
+  .main.collapsed .panel{transform:translateY(100%)}
+  #panel-toggle{display:none}
+  #legend{bottom:auto;top:14px;max-width:205px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.4"/></svg></div>
+      <div class="title">
+        <h1>Laurentides <span>commerces et scores de disponibilité</span></h1>
+        <p>Barème par défaut, résolution par bannière et triage des cas à valider</p>
+      </div>
+    </div>
+    <span class="badge">C.A.R.T.O.S. — prototype</span>
+    <div class="spacer"></div>
+    <div class="tools">
+      <select id="f-type"><option value="">Tous les types</option></select>
+      <select id="f-priorite">
+        <option value="">Toutes priorités</option>
+        <option value="1">Priorité 1 — critique</option>
+        <option value="2">Priorité 2 — élevée</option>
+        <option value="3">Priorité 3 — faible</option>
+        <option value="0">Résolus (aucune validation)</option>
+      </select>
+      <button class="btn" id="btn-scenario" onclick="cycleScenario()">Scénario : référence</button>
+      <div class="fontctl"><button onclick="setFont(-1)" title="Réduire le texte">A−</button><button onclick="setFont(1)" title="Agrandir le texte">A+</button></div>
+      <button class="btn" onclick="exportGeoJSON()">⬇ GeoJSON</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="panel" id="panel">
+      <div id="accueil">
+        <div class="eyebrow">Vue d'ensemble</div>
+        <div class="scopename">547 commerces alimentaires</div>
+        <div class="scopesub">Laurentides · hors restauration rapide</div>
+
+        <div class="bornes">
+          <h4>Analyse de bornes — commerces comptés « sains »</h4>
+          <div class="bornes-bar" id="bornes-bar">
+            <div class="bornes-range" id="bornes-range"></div>
+            <div class="bornes-ref" id="bornes-ref"></div>
+          </div>
+          <div class="bornes-lab">
+            <span id="b-pess"></span><span id="b-ref" style="color:var(--teal)"></span><span id="b-opt"></span>
+          </div>
+          <div class="note" style="margin-top:10px">L'écart entre les bornes pessimiste et optimiste
+          mesure ce que l'ambiguïté du codage fait bouger. Un chiffre régional agrégé publié sans cet
+          intervalle serait trompeur.</div>
+        </div>
+
+        <h3 class="sect">Liste de travail — priorité 1</h3>
+        <div class="note" style="margin-top:0">Commerces ambigus, isolés et sans alternative saine à moins
+        de 10 km : chacun détermine à lui seul le statut de son secteur. C'est ici que la validation a le
+        plus d'effet.</div>
+        <div class="worklist" id="worklist"></div>
+      </div>
+      <div id="profil" style="display:none"></div>
+    </aside>
+
+    <div id="map">
+      <button id="panel-toggle" onclick="togglePanel()">◀</button>
+      <div id="legend">
+        <div class="legend-title">Score de disponibilité (0–10)</div>
+        <div class="legend-scale" id="legend-scale"></div>
+        <div class="legend-labels"><span>0</span><span>seuil 5,0</span><span>10</span></div>
+        <div class="legend-sep"></div>
+        <div class="legend-item"><div class="legend-sw" style="background:#8b8fc4;border:2.5px solid var(--amber)"></div><span>À valider (contour ambre)</span></div>
+        <div class="legend-item"><div class="legend-sw" style="background:#8b8fc4;border:1px solid #ffffff66"></div><span>Résolu par bannière</span></div>
+        <div class="legend-item"><div class="legend-sw" style="width:18px;height:18px;background:#8b8fc4;border:2.5px solid var(--amber)"></div><span>Grand = priorité 1</span></div>
+        <div id="counts"></div>
+      </div>
+      <div id="methodo">
+        <button id="methodo-btn" onclick="toggleMethodo()">&#9432; Barème et méthode</button>
+        <div id="methodo-content">
+          <div class="caveat">Le barème continu ci-dessous est une <b>hypothèse de travail non validée</b>
+          contre des audits NEMS-S réels. Ce qui est étayé par la littérature, c'est la dichotomie
+          sain / non sain de Robitaille &amp; Paquette (2020), pas l'échelle 0–10. Utilisez le score pour
+          prioriser le travail de validation, pas comme mesure publiable de la qualité alimentaire.</div>
+          <h4>Barème par défaut</h4>
+          <table id="bareme-table"><thead><tr><th>Type résolu</th><th>Score</th><th>Incertitude</th><th>n</th></tr></thead><tbody></tbody></table>
+          <h4>1. Résolution par bannière</h4>
+          <p>Une enseigne connue détermine le type réel, quelle que soit la catégorie Google. Cette étape est
+          déterministe et auditable, et corrige notamment les stations-service et dépanneurs de chaîne
+          étiquetés <code>grocery</code> par Google. Les commerces sans enseigne reconnue retombent sur la
+          catégorie Google, avec une incertitude élevée.</p>
+          <h4>2. Triage par impact, pas par ambiguïté</h4>
+          <p>Tous les commerces ambigus ne se valent pas. En milieu urbain, mal classer un dépanneur parmi
+          vingt commerces ne déplace presque pas le RFEI. En milieu rural isolé, mal classer <b>le seul</b>
+          commerce fait basculer toute l'aire de diffusion entre désert et non-désert. La priorité combine
+          donc l'ambiguïté (incertitude ≥ 2,0), l'isolement (≤ 3 commerces dans 5 km) et l'absence
+          d'alternative saine confirmée (&gt; 10 km).</p>
+          <h4>3. Analyse de bornes</h4>
+          <p>Le bouton «&nbsp;Scénario&nbsp;» rejoue la carte en supposant tous les ambigus sains (borne
+          optimiste), puis tous non sains (borne pessimiste). Les conclusions qui survivent aux deux bornes
+          sont robustes ; les autres dépendent d'un codage incertain et exigent une validation.</p>
+          <h4>Pourquoi pas un modèle de vision</h4>
+          <p>Pour les cas de priorité 1 précisément, une devanture ne montre pas les tablettes — c'est la
+          limite documentée par SPOTLIGHT-VAT (Bethlehem et al. 2014) sur la faible fiabilité du codage à
+          distance des commerces alimentaires. Pour une trentaine de commerces, un appel téléphonique
+          («&nbsp;vendez-vous des fruits et légumes frais? de la viande?&nbsp;») donne une réponse plus
+          fiable que n'importe quel classificateur entraîné sur quelques centaines d'images. C'est la
+          démarche de validation terrain employée en Gaspésie dans l'article d'origine.</p>
+          <p class="note">Sources : instantané Google Places du 2026-07-30 (usage interne, ne pas
+          rediffuser — CGU Google) · Méthode : Robitaille, É., Paquette, M.-C. (2020), <i>Int. J. Environ.
+          Res. Public Health</i>, 17(10), 3359 · CISSS des Laurentides — Direction de santé publique</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   DONNEES — commerces scores (produit par scorer_commerces.py).
+   Format compact : stores = [lat, lon, nom, iType, iMethode, iCat,
+                              priorite, densite, dist_sain_sur]
+   ========================================================================= */
+var D = {"types":["depanneur_chaine","depanneur_essence","depanneur_indep","epicerie_chaine","epicerie_indep","magasin_general","supermarche_chaine","supermarche_indep"],"methodes":["banniere","categorie_google","mot_cle"],"cats":["convenience","grocery","supermarket"],"bareme":{"supermarche_chaine":{"score":9.0,"incert":0.5},"supermarche_indep":{"score":8.0,"incert":1.0},"epicerie_chaine":{"score":7.0,"incert":1.0},"epicerie_indep":{"score":5.5,"incert":2.5},"magasin_general":{"score":4.5,"incert":3.0},"depanneur_indep":{"score":3.0,"incert":2.5},"depanneur_chaine":{"score":2.0,"incert":0.8},"depanneur_essence":{"score":1.5,"incert":0.7}},"seuil":5.0,"bornes":{"pessimiste":147,"reference":268,"optimiste":402},"stores":[[45.57382,-75.40806,"Maxi Gatineau Lepine",6,0,2,0,16,0.4],[45.55513,-75.43576,"IGA Marché Masson Angers inc.",6,0,2,0,16,3.0],[45.57436,-75.40021,"Metro Plus Buckingham",6,0,2,0,16,0.3],[45.59734,-75.24437,"Metro Thurso",6,0,2,0,2,12.4],[45.57298,-75.12546,"Marché de la Place",7,1,2,0,0,9.1],[45.55714,-74.88681,"Bissonnette Votre épicier Indépendant Alfred",7,1,2,0,3,11.0],[45.59371,-74.60378,"Supercentre Walmart",6,0,2,0,30,3.5],[45.59801,-74.61272,"FreshCo Spence & Cartier Blvd.",7,1,2,0,30,0.8],[45.59329,-74.6017,"Asselin's Your Independent Grocer Hawkesbury",7,1,2,0,30,0.2],[45.59209,-74.59103,"Food Basics",7,1,2,0,29,1.0],[45.57847,-74.24227,"Saucisses",7,1,2,0,1,9.4],[45.61712,-74.10324,"Boucannerie Belle-Rivière Inc",7,1,2,0,5,9.4],[45.57316,-74.09439,"Marché Saint-Benoît",7,1,2,0,1,10.8],[45.57832,-73.92115,"Supercentre Walmart",6,0,2,0,13,0.3],[45.57563,-73.87323,"Maxi St-Eustache 25e",6,0,2,0,19,0.3],[45.5758,-73.91802,"Super C",6,0,2,0,14,0.4],[45.55215,-73.86794,"Marché Richard Tellier des oiseaux inc.",7,1,2,0,15,2.6],[45.56272,-73.90136,"IGA Extra Lamoureux Saint-Eustache",6,0,2,0,14,1.9],[45.57946,-73.9182,"Metro Plus Arthur-Sauvé (St-Eustache)",6,0,2,0,14,0.3],[45.57564,-73.87678,"Metro Plus St-Laurent (St-Eustache)",6,0,2,0,19,0.3],[45.5599,-73.75265,"Supercentre Walmart",6,0,2,0,12,0.7],[45.56377,-73.73316,"Avril",6,0,2,0,12,1.6],[45.55371,-73.75018,"Maxi & Cie",6,0,2,0,10,0.7],[45.72366,-75.05353,"Metro, Saint-André-Avellin",6,0,2,0,4,12.2],[45.61604,-75.02656,"Metro Tanguay Papineauville",6,0,2,0,5,8.1],[45.65031,-74.93506,"Marché Bonichoix - Gestion R & B Couture inc.",3,0,2,0,2,8.1],[45.62412,-74.5945,"IGA Grenville",6,0,2,0,29,3.5],[45.63815,-74.33018,"Walmart",6,0,2,0,28,0.3],[45.65619,-74.34517,"Maxi Lachute Principale",6,0,2,0,28,2.2],[45.64124,-74.32736,"IGA S. Albert inc.",6,0,2,0,27,0.2],[45.63934,-74.32615,"Super C",6,0,2,0,27,0.2],[45.6382,-74.3257,"Carrefour (entrepôts) D'Argenteuil",7,1,2,0,27,0.1],[45.64113,-74.32728,"FoodHero",7,1,2,0,27,0.0],[45.63804,-74.32598,"Ministère de l'Agriculture des Pêcheries et de l'Alimentation",7,1,2,0,27,0.1],[45.70302,-74.08984,"IGA extra Famille Duchemin (St-Canut)",6,0,2,0,7,0.6],[45.70371,-74.09737,"Super C",6,0,2,0,7,0.6],[45.67763,-73.91258,"Supercentre Walmart",6,0,2,0,20,0.2],[45.66885,-73.87131,"Maxi Blainville Curé-Labelle",6,0,2,0,27,0.3],[45.6439,-73.86308,"La Moisson - Supermarché Santé",7,1,2,0,31,0.2],[45.66286,-73.87469,"Super C",6,0,2,0,33,0.7],[45.62283,-73.84937,"Super C",6,0,2,0,28,0.4],[45.68923,-73.90383,"Potager Blainville",7,1,2,0,18,0.7],[45.69873,-73.92141,"IGA extra Famille Girard St-Janvier",6,0,2,0,14,2.4],[45.68498,-73.89662,"Metro Plus Thibeault Blainville",6,0,2,0,20,1.3],[45.64536,-73.86025,"IGA extra Supermarchés Jacques Daigle inc.",6,0,2,0,32,0.3],[45.66832,-73.8677,"IGA extra La Seigneurie Blainville inc.",6,0,2,0,30,0.3],[45.6259,-73.85177,"IGA Extra",6,0,2,0,29,0.4],[45.63354,-73.98481,"IGA Marché Girard St-Augustin inc.",6,0,2,0,2,0.0],[45.66862,-73.92443,"Metro Thibeault Mirabel",6,0,2,0,18,1.4],[45.61157,-73.86925,"Supermarché KT",7,1,2,0,23,2.0],[45.67905,-73.91292,"Les Aliments M&M",7,1,2,0,19,0.2],[45.63361,-73.98459,"IGA Extra Famille Girard",6,0,2,0,2,0.0],[45.64303,-73.86086,"Maxi Ste-Therese",6,0,2,0,31,0.3],[45.60607,-73.73458,"Maxi & Cie Vimont",6,0,2,0,10,1.6],[45.62995,-73.8136,"Maxi & Cie Boulevard Labelle",6,0,2,0,31,1.0],[45.59309,-73.78606,"IGA extra Marché des Oiseaux inc.",6,0,2,0,21,0.6],[45.64573,-73.81827,"Super C",6,0,2,0,31,0.3],[45.66517,-73.76236,"IGA extra Marché Montée Gagnon inc.",6,0,2,0,10,1.5],[45.64334,-73.81542,"IGA Extra Supermarchés Jacques Daigle inc.",6,0,2,0,31,0.3],[45.58787,-73.78724,"Metro Plus Sainte-Rose",6,0,2,0,21,0.6],[45.66645,-73.78181,"Maxi Lorraine de Gaulle",6,0,2,0,13,1.5],[45.62804,-73.75276,"IGA Extra Marché Auteuil",6,0,2,0,16,2.8],[45.688,-73.77999,"Super C",6,0,2,0,5,2.4],[45.88745,-75.06355,"Metro Chénéville",6,0,2,0,2,18.2],[45.89765,-74.92358,"Marché Bonichoix Namur Et Station service Sonic",1,0,2,0,0,10.9],[45.79393,-74.01811,"Maxi St-Jérôme Grignon",6,0,2,0,42,0.8],[45.89066,-74.15062,"Super C",6,0,2,0,15,0.4],[45.89036,-74.15523,"Provigo Lacroix St-Sauveur",6,0,2,0,15,0.4],[45.78206,-74.0179,"Metro Plus Thibeault St-Jérôme",6,0,2,0,43,1.3],[45.79547,-74.02776,"IGA extra Marché Robert Tellier 1990 inc.",6,0,2,0,40,0.8],[45.83993,-74.06008,"IGA extra Marché Piché",6,0,2,0,7,2.4],[45.86992,-74.07215,"Metro Plus Thibeault Prévost",6,0,2,0,8,1.1],[45.80248,-74.01203,"Marché 5 Saveurs",7,1,2,0,37,0.9],[45.78578,-74.08007,"Les marchés Tradition Bellefeuille Ltée",3,0,2,0,12,4.2],[45.78929,-74.01839,"Les Aliments M&M",7,1,2,0,42,0.5],[45.76187,-74.01726,"Supercentre Walmart",6,0,2,0,38,0.2],[45.75767,-74.02188,"Super C Saint-Jérôme",6,0,2,0,37,0.6],[45.76098,-74.01526,"IGA extra St-Jérôme",6,0,2,0,38,0.2],[45.7631,-73.99524,"Maxi St-Jérôme Laurentides",6,0,2,0,38,0.4],[45.76189,-73.99017,"Metro Plus Thibeault St-Antoine",6,0,2,0,37,0.4],[45.79557,-74.00704,"Marché IGA extra",6,0,2,0,39,0.9],[45.85385,-74.0188,"IGA",6,0,2,0,6,3.5],[45.81931,-73.90183,"Metro Plus Thibeault Ste-Sophie",6,0,2,0,2,7.8],[45.76897,-73.97255,"IGA extra Famille JM",6,0,2,0,35,1.6],[45.77922,-74.00263,"Albalad Marche De La Ville",7,1,2,0,40,1.2],[45.86653,-73.75603,"Maxi Saint-Lin",6,0,2,0,11,0.5],[45.86251,-73.75672,"Super C",6,0,2,0,13,0.5],[45.82813,-73.75817,"IGA Famille Crégheur inc.",6,0,2,0,10,3.8],[45.74814,-73.82707,"Super C",6,0,2,0,7,1.8],[45.76682,-73.81399,"Maxi",6,0,2,0,7,0.6],[45.90349,-74.24313,"IGA Morin-Heights",6,0,2,0,3,7.0],[45.90146,-74.253,"Marché Vaillancourt (Neelima) Inc",7,1,2,0,3,0.8],[45.97053,-74.33708,"Marché St-Adolphe",7,1,2,0,2,9.4],[45.89841,-74.1461,"IGA extra Famille Jasmin",6,0,2,0,15,0.9],[45.95319,-74.13799,"IGA Marché au Chalet 1978 inc.",6,0,2,0,10,0.8],[45.94753,-74.12613,"Metro Plus Ste-Adèle",6,0,2,0,12,0.3],[45.94466,-74.1261,"Maxi",6,0,2,0,11,0.3],[45.93171,-74.02385,"Marché Tradition St-Hippolyte inc.",3,0,2,0,2,7.8],[45.9431,-73.84635,"Marché Tradition - Marché St-Calixte inc.",3,0,2,0,3,11.0],[46.07501,-74.67257,"Alimentation Brébeuf Inc.",7,1,2,0,1,7.6],[46.11707,-74.57273,"IGA extra Tremblant",6,0,2,0,20,0.1],[46.11811,-74.59655,"Metro",6,0,2,0,21,1.7],[46.11752,-74.57416,"Super C",6,0,2,0,20,0.1],[46.11776,-74.57096,"Maxi Mont-Tremblant rte. 117",6,0,2,0,20,0.2],[46.11828,-74.5992,"Marché S.Bourassa Mont-Tremblant",7,1,2,0,21,0.2],[46.13009,-74.47343,"Les marchés Tradition",3,0,2,0,6,7.6],[46.04343,-74.27473,"Supercentre Walmart",6,0,2,0,22,0.0],[46.04417,-74.26471,"Metro Plus Ste-Agathe",6,0,2,0,25,0.5],[46.04626,-74.27718,"IGA extra Marché M. Bouchard Ste-Agathe",6,0,2,0,22,0.4],[46.04263,-74.27072,"Maxi",6,0,2,0,24,0.3],[46.04348,-74.27475,"Cueillette d'épicerie Walmart",6,0,2,0,22,0.0],[46.02971,-74.20655,"Alimentation Val David inc.",7,1,2,0,10,4.8],[46.03124,-74.05789,"Les Marché Tradition – Famille Jasmin",3,0,2,0,1,10.7],[46.0667,-73.87992,"Provigo Desrochers, Chertsey",6,0,2,0,3,14.0],[46.11192,-74.0032,"- Marché St-Emile",7,1,2,0,1,9.9],[46.25665,-74.93551,"Les marchés Tradition Bruneau & Frères inc.",3,0,2,0,0,15.8],[46.19514,-74.62714,"Marché Bonichoix",3,0,2,0,6,6.8],[46.28175,-74.73386,"Marché Richelieu",3,0,2,0,4,12.7],[46.21189,-74.58576,"Magasin Général",5,2,2,3,6,3.7],[46.27909,-73.75871,"Les Marchés Rainville inc.",7,1,2,0,2,25.4],[46.39525,-75.02633,"Distribution du Trèfle",7,1,2,0,2,0.4],[46.40085,-74.86696,"IGA Marché Raymond Rivière Rouge",6,0,2,0,4,12.2],[46.31129,-74.20923,"Alimentation IGA Patrice Tellier inc.",6,0,2,0,4,0.1],[46.31017,-74.21033,"Super C",6,0,2,0,4,0.1],[46.55069,-75.49017,"IGA Marché Leblanc inc.",6,0,2,0,21,0.3],[46.55141,-75.48626,"Metro Mont-Laurier",6,0,2,0,21,0.3],[46.55099,-75.47904,"Maxi Mont-Laurier",6,0,2,0,21,0.6],[46.54829,-75.50779,"Centre d’achat",7,1,2,0,21,1.4],[46.51373,-74.99013,"Marché Bonichoix",3,0,2,0,0,13.1],[46.65186,-75.24463,"Marché Omni - R & D Saint-Louis inc.",7,1,2,0,0,16.8],[46.6711,-73.91375,"Maxi St-Michel-des-Saints Brassard",6,0,2,0,2,46.0],[46.70204,-75.45277,"IGA Ferme Neuve",6,0,2,0,4,16.9],[46.7801,-75.33501,"Marché Omni Millette enr.",7,1,2,0,1,12.5],[46.88229,-75.32557,"Marché Omni - Épicerie Du Lac Senc",7,1,2,0,0,22.3],[47.22237,-74.38868,"Marché Tradition Manawan",3,0,2,0,1,71.1],[45.57602,-75.40367,"Super C",6,0,1,0,16,0.3],[45.58988,-75.41799,"Tigre Géant",4,1,1,3,17,1.9],[45.57888,-75.41208,"Fine et Fûtés",4,1,1,3,17,0.6],[45.57589,-75.40033,"Couche-Tard",0,0,1,0,16,0.2],[45.55431,-75.43617,"Couche-Tard",0,0,1,0,16,0.1],[45.58614,-75.41248,"Dépanneur Boni-Soir",0,0,1,0,17,1.3],[45.58152,-74.62021,"Les Matantes",4,1,1,3,24,1.9],[45.58273,-74.8053,"Le petit marché du Blue Corner",4,1,1,1,0,12.6],[45.6088,-74.60848,"Giant Tiger",4,1,1,3,30,1.7],[45.58817,-74.46918,"CàB Café",4,1,1,1,0,10.5],[45.5919,-74.59705,"Bulk Barn",4,1,1,3,30,0.6],[45.59774,-74.61985,"Lamoureux Producteur Local",4,1,1,3,30,1.3],[45.60729,-74.59385,"St. Albert Cheese",4,1,1,3,30,1.7],[45.60841,-74.6099,"Saveurs des Continents",4,1,1,3,30,1.7],[45.57756,-74.25224,"Garage esso à st-eutasche",1,0,1,0,1,9.0],[45.5696,-74.00541,"Verger La Magie de la Pomme | Cueillette de Pomme",4,1,1,2,0,6.6],[45.57393,-73.91326,"Potager St-Eustache",4,1,1,3,14,0.4],[45.5618,-73.90046,"Tigre Géant",4,1,1,3,14,0.1],[45.55673,-73.74464,"Sami Fruit",4,1,1,3,11,0.6],[45.55919,-73.76753,"Adonis",6,0,1,0,12,1.2],[45.64106,-75.17199,"Bergerie Bouwman Érabliere",4,1,1,2,0,7.4],[45.62498,-75.06062,"Fairweather Farm / Ferme du Beau Temps",4,1,1,3,5,2.8],[45.72784,-75.05297,"Marché Du Coin",4,1,1,3,4,0.5],[45.72538,-75.04917,"Distributeur Blais",4,1,1,3,4,0.4],[45.61693,-75.00541,"Tigre Géant",4,1,1,3,5,1.6],[45.67631,-74.4051,"Couche-Tard",0,0,1,0,8,5.2],[45.60984,-74.60854,"L'Amie de la santé",4,1,1,3,30,1.8],[45.61154,-74.60512,"Full Serve* 24/7 GAS PLAZA Gas Station, Grocery & More...",4,1,1,3,30,1.6],[45.65672,-74.34447,"Tigre Géant",4,1,1,3,28,0.1],[45.66361,-74.30114,"Le Jardin de Lachute",4,1,1,3,27,3.2],[45.65658,-74.33767,"Couche-Tard",0,0,1,0,27,0.6],[45.64168,-74.32874,"Couche-Tard",0,0,1,0,27,0.1],[45.64832,-74.34404,"Le Dépanneur",4,1,1,3,28,0.9],[45.65461,-74.3316,"Le Dépanneur 8348",4,1,1,3,27,1.1],[45.66395,-74.29658,"Le Dépanneur - Épicerie Campbell in",4,1,1,3,26,3.5],[45.65337,-74.35125,"Boni-Soir - Garage Pierre-Paul Desforges inc.",0,0,1,0,29,0.6],[45.65608,-74.33815,"Le Studio Herbes Chouettes",4,1,1,3,27,0.6],[45.65302,-74.3589,"Dépanneur Boni-Soir",0,0,1,0,29,1.1],[45.65622,-74.33885,"La table est mise",4,1,1,3,27,0.5],[45.65605,-74.33679,"Économies S.M.T",4,1,1,3,27,0.7],[45.70681,-74.09717,"Couche-Tard",0,0,1,0,9,0.3],[45.71903,-74.07733,"Couche-Tard",0,0,1,0,8,2.0],[45.65137,-74.05537,"La Mirablière Famille Lalande - Les Jardins de la Côte des Saints",4,1,1,2,3,5.8],[45.62601,-74.09581,"De Germe en Pousse",4,1,1,3,5,8.6],[45.70323,-74.09018,"Rachelle-Béry boutiques santé",4,1,1,3,7,0.0],[45.70584,-74.09735,"bonisoir",4,1,1,3,9,0.2],[45.64802,-74.14712,"Beef",4,1,1,3,4,7.3],[45.62471,-73.8506,"Tigre Géant",4,1,1,3,28,0.2],[45.67793,-73.90979,"Marchés TAU",6,0,1,0,20,0.2],[45.69523,-73.93462,"Bourassa Alimentation St-Janvier",4,1,1,3,14,1.1],[45.63519,-73.8361,"Marché Theresa Inc.",4,1,1,3,32,1.6],[45.6265,-73.84896,"Bulk Barn",4,1,1,3,30,0.2],[45.61638,-73.85403,"Maître Saladier",4,1,1,3,30,0.8],[45.60038,-73.80132,"Liquidation Marie, Laval",4,1,1,3,28,1.4],[45.61899,-73.74316,"Aurès supermarché maghrébin",4,1,1,3,11,1.2],[45.77458,-75.59199,"Dépanneur chez Dan",4,1,1,2,1,1.0],[45.76736,-75.58393,"Mike Dean Locale Marché",3,0,1,0,1,16.2],[45.78407,-75.10662,"Coopérative de Solidarité Place du Marché",4,1,1,2,2,7.9],[45.85585,-75.16284,"Marché Faubert",4,1,1,2,0,8.4],[45.78651,-75.10894,"L'inter Marché",4,1,1,2,2,8.2],[45.83898,-75.0102,"Forets et Papilles",4,1,1,2,3,6.8],[45.84044,-75.02187,"Paniers D'Elaine",4,1,1,2,1,6.1],[45.83054,-74.55,"Marché Lost River",4,1,1,1,1,17.2],[45.89183,-74.14831,"Bourassa Alimentation St-Sauveur",4,1,1,3,15,0.2],[45.89587,-74.12567,"La Cena Épicerie Traiteur Piedmont",4,1,1,3,17,1.6],[45.89111,-74.16239,"Rachelle-Béry boutiques santé",4,1,1,3,15,0.6],[45.88981,-74.1477,"Couche-Tard",0,0,1,0,15,0.2],[45.79931,-74.01085,"Vogel St-Jérôme | Produits Naturels",4,1,1,3,39,0.5],[45.78592,-74.07823,"Boucherie Des Chênes",4,1,1,3,16,0.1],[45.79047,-74.05286,"Couche-Tard",0,0,1,0,35,2.0],[45.85974,-74.06957,"Couche-Tard",0,0,1,0,8,0.1],[45.86435,-74.12069,"Marché Monchoix",4,1,1,3,20,3.7],[45.88397,-74.17454,"Boni-Soir - Dépanneur Du Vallon 1988 inc.",0,0,1,0,15,1.7],[45.7946,-74.01037,"Tigre Géant St-Jerome",4,1,1,3,40,0.3],[45.76314,-73.98317,"Au Toit Rouge - Épicerie de Quartier & Bières de Microbrasserie",4,1,1,3,36,0.6],[45.77115,-74.00144,"Fruiterie Amr",4,1,1,3,39,1.0],[45.75649,-74.01798,"Bulk Barn",4,1,1,3,37,0.3],[45.83539,-73.84964,"Les Fromagiers de la Table Ronde",4,1,1,2,3,4.4],[45.78272,-74.00152,"Morazan St-Jérôme",4,1,1,3,40,1.3],[45.75611,-73.81756,"Tigre Géant",4,1,1,3,7,0.7],[45.76884,-73.8171,"Couche-Tard",0,0,1,0,7,0.3],[45.86127,-73.75773,"Couche-Tard",0,0,1,0,13,0.2],[45.82513,-73.80635,"Boni-Soir - Dépanneur Soleil",0,0,1,0,6,3.8],[45.82604,-73.75891,"Couche-Tard",0,0,1,0,10,0.2],[45.86371,-73.75752,"PraticoFrigo",4,1,1,3,13,0.1],[45.76161,-73.81339,"Trésors De Linda / Minotaure Nutrition",6,0,1,0,7,0.6],[45.91282,-75.59574,"Marché Richelieu - Val-des-Bois",3,0,1,0,1,16.2],[45.97403,-74.6343,"Marché Richelieu - Marché Huberdeau",3,0,1,0,2,16.3],[45.9709,-74.63647,"Serre royale",4,1,1,2,2,0.4],[45.90416,-74.24708,"Couche-Tard",0,0,1,0,3,0.3],[45.96693,-74.33083,"Dépanneur Voisin Gauthier",0,0,1,0,2,9.6],[45.90413,-74.24602,"Dépanneur Boni-Soir",0,0,1,0,3,0.2],[45.96642,-74.33107,"Fruits et légumes",4,1,1,2,2,9.6],[45.94861,-74.12972,"Boucherie & Restaurant Les Têtes de Cochon",6,0,1,0,12,0.3],[45.98942,-74.11851,"Marché de la Gare",4,1,1,3,7,4.3],[46.00658,-74.18753,"Marché Val-Morin",4,1,1,3,8,7.1],[45.89815,-74.15047,"LA P'TITE POLONAISE",4,1,1,3,15,0.3],[45.93986,-74.11763,"Marché Mont-Rolland - Epicerie/Fromagerie/Charcuterie - Microbrasserie Biere Artisinale Vin",4,1,1,3,11,0.8],[45.95063,-74.13234,"Couche-Tard",0,0,1,0,10,0.3],[46.00569,-73.92099,"EPICERIE BONI-SOIR",0,0,1,0,1,7.5],[45.94442,-73.84518,"Couche-Tard",0,0,1,0,3,0.2],[46.00054,-73.91838,"Depan-Hera",4,1,1,2,1,7.9],[46.0118,-73.76473,"Dépanneur Boni-Soir",0,0,1,0,2,9.9],[45.90501,-73.76913,"Dépanneur Bonne Humeur",4,1,1,3,9,4.4],[45.85396,-73.75724,"Dépanneur Boni-Soir",0,0,1,0,12,0.9],[45.88822,-73.75835,"Boni-Soir - Dépanneur K.D.L. inc.",0,0,1,0,9,2.4],[46.02381,-73.78412,"Distribution Jolicrue inc",4,1,1,2,2,8.8],[46.07855,-74.83377,"Marché Garnier",4,1,1,1,1,17.9],[46.06407,-74.83377,"Le marché Ô couleur de la terre",4,1,1,1,1,18.4],[46.11102,-74.6601,"Érablière du Rang des Vents",4,1,1,3,7,4.2],[46.13074,-74.59082,"83 Nord",4,1,1,3,20,1.5],[46.11426,-74.50375,"Gourmet Sauvage",4,1,1,3,9,2.9],[46.11838,-74.59437,"Tigre Géant",4,1,1,3,20,0.2],[46.13205,-74.61432,"Couche-Tard",0,0,1,0,21,0.3],[46.11871,-74.59666,"Couche-Tard",0,0,1,0,21,0.1],[46.12299,-74.59153,"Marché Jovi",4,1,1,3,20,0.7],[46.11626,-74.47876,"Pétro canada",4,1,1,3,6,1.6],[46.11881,-74.59122,"L'Apogée Santé",4,1,1,3,20,0.4],[46.11753,-74.56367,"Shell Dépaneur M.C. Roy inc.",1,0,1,0,21,0.6],[46.11896,-74.59062,"Vrac et vous",4,1,1,3,20,0.5],[46.13421,-74.6166,"Traiteur La Brigade par Josée Labelle",6,0,1,0,21,2.4],[46.12161,-74.59401,"Épicerie africaine Salvé Régina",4,1,1,3,20,0.4],[46.07992,-74.319,"Boulangerie le Caveau",4,1,1,3,13,4.9],[46.04444,-74.27119,"Bourassa Alimentation",4,1,1,3,24,0.2],[46.04355,-74.26974,"Tigre Géant",4,1,1,3,24,0.1],[46.04234,-74.26231,"SAINT PIERRE",4,1,1,3,27,0.3],[46.04598,-74.28233,"Couche-Tard",0,0,1,0,22,0.4],[46.06492,-74.3034,"Couche-Tard",0,0,1,0,22,2.9],[46.04722,-74.27799,"FoodHero",4,1,1,3,22,0.1],[46.04849,-74.28854,"LA STATION des saveurs - Épicerie de proximité - Sandwiches / Salades - Café / Espresso / Thé - Bière Artisanale / Vin",1,0,1,0,22,0.9],[46.12037,-74.28858,"Le Dépanneur",4,1,1,3,4,8.3],[46.04851,-74.28822,"Le Local vrac et artisanat local",4,1,1,3,22,0.9],[46.04311,-74.2629,"Dépanneur Voisin Halte-des-Monts inc.",0,0,1,0,27,0.2],[46.14306,-74.26838,"Fraîchement Vrac Inc.",4,1,1,2,4,10.8],[46.04397,-74.2721,"Boni-Soir Ste-Agathe",0,0,1,0,24,0.2],[46.04801,-74.28986,"Marchés d'été Sainte-Agathe-des-Monts",4,1,1,3,22,1.0],[46.05563,-74.26999,"SLY Foods",4,1,1,3,22,1.2],[46.0257,-74.2147,"Couche-Tard",0,0,1,0,16,4.4],[46.0249,-74.21517,"Bio Sattva inc.",4,1,1,3,16,4.4],[46.02733,-74.21549,"Marché Valda INC.",4,1,1,3,18,4.2],[46.02865,-74.06313,"Dépanneur Voisin 2000 inc.",0,0,1,0,1,0.5],[46.01644,-74.21225,"Le Marché De Yann et cie, Épicerie, bières, vins et viandes locales",4,1,1,3,9,5.1],[46.01563,-74.21298,"Dépanneur Voisin Jocelyn Villemaire inc.",0,0,1,0,9,5.1],[46.00778,-74.20885,"Foodring",4,1,1,3,8,5.9],[46.11008,-74.00268,"Le Dépanneur",4,1,1,2,1,9.8],[46.07422,-73.88875,"Le Dépanneur",4,1,1,2,3,1.1],[46.03869,-73.80045,"Épicerie",4,1,1,2,2,6.9],[46.19514,-74.62921,"Cucinotto",4,1,1,3,6,0.2],[46.19508,-74.63045,"Les 2 Sœurs market",4,1,1,3,6,0.2],[46.27898,-74.73291,"Le Dépanneur",4,1,1,3,4,0.3],[46.26499,-74.7245,"SYMBIOSE ALIMENTERRE",4,1,1,3,4,2.0],[46.20685,-74.47215,"L’Étalage marché gourmand",4,1,1,2,0,8.5],[46.21287,-74.58547,"Maison Fayard",4,1,1,3,6,3.8],[46.20126,-74.59049,"Halal grocery",4,1,1,3,6,2.9],[46.18234,-74.34301,"Épicerie Le Saint-Agricole",4,1,1,1,0,11.6],[46.27181,-73.86214,"Épicerie Le Comptoir",4,1,1,1,0,22.9],[46.2756,-73.76774,"On s'gâte",4,1,1,1,2,24.8],[46.30532,-75.50346,"Marché LDC lac du cerf",4,1,1,1,0,17.2],[46.41871,-75.3772,"Marché Vallée de la Kiamika",4,1,1,1,1,11.6],[46.41869,-75.37734,"Le Dépanneur",4,1,1,1,1,11.6],[46.3986,-75.02608,"MARCHÉ GÉNÉREUX TRADITION DAVE GÉNÉREUX ET JULIE BRUNET, prop.",3,0,1,0,2,12.2],[46.39037,-75.02621,"Beausoir - Dépanneur l'Essentiel Plus inc.+casse-croûte- crèmerie",4,1,1,2,2,0.9],[46.42395,-74.88479,"Tigre Géant",4,1,1,3,4,2.9],[46.33478,-74.79237,"Marche alimentation",4,1,1,2,0,7.4],[46.31083,-74.2114,"Dépanneur Boni-Soir",0,0,1,0,4,0.1],[46.5513,-75.48803,"Couche-Tard",0,0,1,0,21,0.1],[46.55069,-75.49571,"Dépanneur Boni-Soir",0,0,1,0,21,0.4],[46.55057,-75.49384,"ÉPICERIE SANTÉ Tout Vert Tout Pur",4,1,1,3,21,0.3],[46.55138,-75.49104,"Dépanneur Voisin Lacelle inc.",0,0,1,0,21,0.1],[46.55144,-75.49691,"Dépanneur Voisin Lacelle inc.",0,0,1,0,21,0.5],[46.54927,-75.51602,"Dépanneur Voisin Lacelle inc.",0,0,1,0,20,2.0],[46.5489,-75.50577,"Proxi",4,1,1,3,21,1.2],[46.4597,-75.51608,"IGA mont laurier",6,0,1,0,0,10.3],[46.5075,-75.35601,"Boni-Soir - Dépanneur D.M. 2001 inc.",0,0,1,0,0,10.6],[46.55977,-75.37084,"Dépanneur Voisin Lacelle inc.",0,0,1,0,3,8.3],[46.55758,-75.58509,"Dépanneur Boni-Soir",0,0,1,0,1,7.3],[46.70043,-75.4558,"MARCHÉ Express",4,1,1,3,4,0.3],[46.5961,-73.84412,"Super Sagamie - Dépanneur Rond'Eau",4,1,1,2,0,9.9],[46.7059,-75.45017,"Le Dépanneur 4 saisons",4,1,1,3,4,0.5],[46.70195,-75.44421,"Boni-Soir - D.Melanie & Chryst inc.",0,0,1,0,4,0.7],[46.70082,-75.44991,"Distribution Lucky Bones inc.",4,1,1,3,4,0.3],[45.58614,-75.41248,"Dépanneur Mauzeroll",2,1,0,3,17,1.3],[45.57422,-75.42341,"Mini-Marché Le Gros Do",2,1,0,3,16,1.2],[45.5514,-75.29561,"Waypoint Convenience",2,1,0,2,1,6.5],[45.60159,-75.24208,"Dépanneur 10-10",2,1,0,2,2,0.5],[45.58409,-75.40046,"Dépanneur Cité des Jeunes",2,1,0,3,17,0.9],[45.5966,-75.24401,"TABAGIE THURSO/PROXI",2,1,0,2,2,0.1],[45.55415,-75.28027,"Maxo Food Mart",2,1,0,2,1,5.6],[45.59093,-75.40932,"Dépanneur Sincennes",2,1,0,3,17,1.7],[45.58893,-75.4168,"Dépanneur Principal",2,1,0,3,17,1.8],[45.56832,-75.42476,"Dépanneur Lamarche",2,1,0,3,16,1.4],[45.55607,-75.42159,"Marché Express - Dépanneur",2,1,0,3,16,1.1],[45.58324,-75.41011,"Dépanneur Gibeau",2,1,0,3,17,0.9],[45.60274,-75.0516,"La Carapace service centre",2,1,0,3,5,2.5],[45.56177,-74.87005,"Esso",1,0,0,0,3,11.1],[45.55911,-74.87963,"Dépanneur Lamarche",2,1,0,1,3,11.0],[45.5622,-74.86957,"GTX Alfred",2,1,0,1,3,11.0],[45.6192,-74.69258,"Quickie / Agence LCBO",2,1,0,2,1,7.5],[45.60696,-74.58405,"Crevier Express Hawkesbury",1,0,0,0,30,2.1],[45.60853,-74.59011,"Smoke shop",2,1,0,3,30,1.8],[45.60014,-74.61858,"Waypoint Convenience",2,1,0,3,30,1.4],[45.60797,-74.59852,"Variété du Coin",2,1,0,3,30,1.6],[45.5894,-74.58766,"Quickie Convenience Store",2,1,0,3,29,1.3],[45.58785,-74.58522,"Quickie Convenience Store",2,1,0,3,28,1.6],[45.59983,-74.61949,"Quickie Convenience Store",2,1,0,3,30,1.4],[45.56289,-74.33484,"Dépanneur Pagil Inc.",2,1,0,2,1,8.4],[45.56239,-74.3361,"Crevier Express - Dépanneur",1,0,0,0,1,8.4],[45.56858,-73.83569,"Petro-Canada",1,0,0,0,13,3.0],[45.58152,-73.88132,"Petro-Canada",1,0,0,0,19,0.7],[45.56367,-73.82984,"Couche-Tard",0,0,0,0,14,3.6],[45.56868,-73.88704,"Petro-Canada et Lave-auto",1,0,0,0,18,1.1],[45.55217,-73.89423,"Couche-Tard",0,0,0,0,16,1.3],[45.57174,-73.91115,"Ultramar - Gas Station",1,0,0,0,14,0.7],[45.57355,-73.91465,"Petro-Canada et Lave-Auto",1,0,0,0,14,0.4],[45.5686,-73.83573,"Dépanneur Sprint",2,1,0,3,13,3.0],[45.58204,-73.92309,"Couche-Tard",0,0,0,0,13,0.4],[45.58968,-73.74255,"Petro-Pass",2,1,0,3,17,1.2],[45.60008,-73.80196,"Petro-Canada et Lave-Auto",1,0,0,0,27,1.5],[45.5569,-73.76745,"Couche-Tard",0,0,0,0,12,0.2],[45.60075,-73.73206,"Couche-Tard",0,0,0,0,12,0.6],[45.55927,-73.79057,"Petro-Canada",1,0,0,0,14,1.8],[45.62081,-75.38978,"Dépanneur 315",2,1,0,3,8,5.1],[45.66161,-75.0204,"Ultramar - Gas Station",1,0,0,0,3,5.1],[45.66181,-75.0201,"Marché Express - Dépanneur",2,1,0,2,3,5.1],[45.72784,-75.05297,"Dépanneur du Coin",2,1,0,3,4,0.5],[45.73079,-75.05712,"Filgo - Dépanneur",2,1,0,3,4,0.8],[45.6502,-74.94756,"Dépanneur Pierre Nguyen",2,1,0,2,2,1.0],[45.61717,-75.01699,"Dépanneur du Coin JCS",2,1,0,3,7,0.8],[45.6176,-75.01639,"Dépanneur Super 7",2,1,0,3,7,0.8],[45.63909,-74.898,"DEP CAFEE",2,1,0,2,2,3.1],[45.64479,-74.74698,"Dépanneur la place",2,1,0,1,0,12.1],[45.62136,-74.64187,"On The Run - Convenience Store",2,1,0,3,28,3.7],[45.62419,-74.59334,"Petro-Canada",1,0,0,0,29,0.1],[45.62212,-74.594,"Ultramar - Gas Station",1,0,0,0,30,0.2],[45.6086,-74.61344,"Shell Hawkesbury / S-Express",1,0,0,0,30,1.8],[45.63337,-74.5989,"Dépanneur Grenville",2,1,0,3,28,1.1],[45.62295,-74.59525,"Dépanneur Perley",2,1,0,3,30,0.1],[45.62225,-74.59373,"Marché Express - Dépanneur",2,1,0,3,30,0.2],[45.62824,-74.60382,"Dépanneur Villeneuve",2,1,0,3,29,0.9],[45.6248,-74.42672,"Dépanneur Caroy",2,1,0,2,1,7.2],[45.62419,-74.59335,"Filgo - Dépanneur",2,1,0,3,29,0.1],[45.62549,-74.59226,"Quickie",2,1,0,3,29,0.2],[45.60721,-74.6151,"Convenience Store",2,1,0,3,30,1.7],[45.63685,-74.32787,"Petro-Canada et Lave-Auto",1,0,0,0,27,0.2],[45.69897,-74.39944,"Au P'Tit Marché de la Pointe",2,1,0,2,1,6.4],[45.66081,-74.34887,"Ultramar - Gas Station",1,0,0,0,29,0.6],[45.65306,-74.35888,"Dépanneur T-O",2,1,0,3,29,1.1],[45.6316,-74.39357,"Beau-Soir Dépanneur C. Trottier",0,0,0,0,13,4.7],[45.63676,-74.32785,"Dépanneur Lachute-Béthany inc.",2,1,0,3,27,0.2],[45.64836,-74.36034,"Dépanneur Martine",2,1,0,3,28,1.5],[45.65559,-74.33171,"Dépanneur Béthany",2,1,0,3,27,1.1],[45.66079,-74.34886,"Ultramar - Car Wash",1,0,0,0,29,0.6],[45.66079,-74.34886,"Marché Express - Dépanneur",2,1,0,3,29,0.6],[45.649,-74.35193,"Dépanneur RD",2,1,0,3,28,1.0],[45.7397,-74.13871,"Dépanneur Boni Soir",0,0,0,0,6,5.1],[45.74044,-74.13774,"Marché Express - Dépanneur",2,1,0,3,6,5.2],[45.65366,-74.09331,"Dépanno-Bien",2,1,0,3,5,5.5],[45.70581,-74.09728,"Dépanneur Caliprix",2,1,0,3,9,0.2],[45.72009,-74.08142,"Dépanneur",2,1,0,3,10,2.0],[45.65364,-74.09333,"Bienvenue Depanneur",2,1,0,3,5,5.5],[45.69427,-73.93613,"Petro-Canada",1,0,0,0,14,1.2],[45.62307,-73.85179,"Petro-Canada",1,0,0,0,28,0.2],[45.64524,-73.8692,"Petro-Canada et Lave-Auto",1,0,0,0,33,0.7],[45.65337,-73.84484,"Dépanneur Chez Miville Enr",2,1,0,3,30,1.5],[45.67942,-73.92137,"Petro-Canada",1,0,0,0,17,0.7],[45.6398,-73.8427,"Couche-Tard",0,0,0,0,30,1.5],[45.63949,-73.82759,"Petro-Canada",1,0,0,0,33,1.0],[45.65849,-73.85753,"Couche-Tard",0,0,0,0,37,1.4],[45.65172,-73.84542,"Couche-Tard",0,0,0,0,31,1.4],[45.75249,-73.97839,"Petro-Canada",1,0,0,0,26,1.4],[45.67528,-73.88168,"Couche-Tard",0,0,0,0,26,1.1],[45.6765,-73.88522,"Couche-Tard",0,0,0,0,25,1.3],[45.68262,-73.89469,"Petro-Canada et Lave-Auto",1,0,0,0,22,0.3],[45.62237,-73.85424,"ESSO",1,0,0,0,28,0.4],[45.63697,-73.98422,"Couche-Tard",0,0,0,0,2,0.4],[45.64248,-73.87685,"Couche-Tard",0,0,0,0,33,1.2],[45.68066,-73.91219,"Dépanneur Du Coin",2,1,0,3,18,0.3],[45.68835,-73.90181,"Depanneur Provi-Soir/Convenience Store",2,1,0,3,18,0.6],[45.63309,-73.83362,"Harnois Proxi",1,0,0,0,32,1.6],[45.65475,-73.80138,"Petro-Canada",1,0,0,0,23,1.6],[45.62769,-73.82537,"Couche-Tard",0,0,0,0,30,0.9],[45.5983,-73.75119,"IGA express",6,0,0,0,18,1.6],[45.63952,-73.81162,"Harnois Le magasin Rosemère",1,0,0,0,30,0.5],[45.62389,-73.77521,"Ultramar",1,0,0,0,23,1.8],[45.67714,-73.74389,"Couche-Tard",0,0,0,0,4,2.0],[45.67413,-73.74915,"Petro-Canada et Lave-Auto",1,0,0,0,5,1.4],[45.62421,-73.80371,"IGA express",6,0,0,0,30,1.0],[45.5843,-73.75012,"Couche-Tard",0,0,0,0,18,1.6],[45.8839,-75.05677,"Dépanneur Bélanger et Proteau",2,1,0,2,2,0.7],[45.88047,-75.05629,"Marché Express - Dépanneur",2,1,0,2,2,1.0],[45.78646,-75.10855,"Marché Express - Convenience Store",2,1,0,2,2,8.2],[45.80833,-74.96615,"Ultramar",1,0,0,0,2,11.6],[45.80833,-74.96613,"Marché Express - Dépanneur",2,1,0,1,2,11.6],[45.78577,-74.61244,"Dépanneur Kilmar",2,1,0,1,0,18.0],[45.8304,-74.5493,"Magasin Général Lost River",5,2,0,1,1,17.3],[45.7671,-74.38247,"Station Wentworth",2,1,0,1,1,12.7],[45.76712,-74.38249,"Dépanneur",2,1,0,1,1,12.7],[45.79603,-74.02795,"Petro-Canada",1,0,0,0,38,0.1],[45.89157,-74.14989,"Petro-Canada",1,0,0,0,15,0.1],[45.75709,-74.08909,"Petro-Canada",1,0,0,0,9,3.3],[45.86035,-74.07073,"IGA Express Famille Piché",6,0,0,0,8,1.1],[45.88963,-74.14623,"Voisin St-Sauveur",0,0,0,0,15,0.4],[45.79647,-74.02793,"Couche-Tard",0,0,0,0,38,0.1],[45.88953,-74.16719,"Dépanneur (Le)",2,1,0,3,15,0.9],[45.87345,-74.0779,"Couche-Tard",0,0,0,0,8,0.6],[45.84251,-74.06852,"Couche-Tard",0,0,0,0,8,0.7],[45.76829,-74.03282,"Dépanneur De La Faune",2,1,0,3,43,1.4],[45.89193,-74.15782,"Marché Express - Dépanneur",2,1,0,3,15,0.3],[45.78628,-74.07283,"In Inter Gaz",2,1,0,3,19,0.6],[45.80022,-74.01134,"Dépanneur Boni-Soir",0,0,0,0,39,0.6],[45.80873,-74.04312,"Dépanneur Boni-Soir",0,0,0,0,29,1.9],[45.77999,-74.01543,"Petro-Canada",1,0,0,0,42,0.3],[45.761,-74.0237,"Esso",1,0,0,0,39,0.4],[45.77868,-74.00236,"Couche-Tard",0,0,0,0,40,1.3],[45.77926,-74.01618,"Ultramar - Gas Station",1,0,0,0,42,0.3],[45.81629,-73.90563,"Ultramar",1,0,0,0,2,0.5],[45.8065,-73.9984,"Couche-Tard",0,0,0,0,31,1.4],[45.79536,-73.99572,"Couche-Tard",0,0,0,0,40,0.9],[45.76089,-74.02374,"Couche-Tard",0,0,0,0,39,0.4],[45.79418,-74.00551,"Couche-Tard",0,0,0,0,39,0.2],[45.76408,-73.99552,"Couche-Tard",0,0,0,0,38,0.1],[45.77926,-74.01618,"Dépanneur Du Coin",2,1,0,3,42,0.3],[45.77926,-74.01618,"Ultramar - Car Wash",1,0,0,0,42,0.3],[45.76735,-73.97761,"Petro-Canada",1,0,0,0,36,0.4],[45.77494,-73.98152,"Couche-Tard",0,0,0,0,38,1.0],[45.77179,-73.9719,"Couche-Tard",0,0,0,0,35,0.3],[45.77415,-74.00971,"Dépanneur St Jerome",2,1,0,3,40,1.1],[45.88834,-73.75825,"Petro-Canada",1,0,0,0,9,2.4],[45.81968,-73.75218,"Dépanneur Ma-Mi & Les Cuisines M",2,1,0,3,8,1.1],[45.76307,-73.81122,"Ultramar - Gas Station",1,0,0,0,7,0.2],[45.76759,-73.8164,"Petro-Canada",1,0,0,0,7,0.2],[45.76307,-73.81122,"Dépanneur Du Coin",2,1,0,3,7,0.2],[45.82077,-73.76034,"Depanneur Malina",2,1,0,3,8,0.8],[45.92201,-75.59619,"Dépanneur Bowman",2,1,0,2,1,1.0],[46.02291,-75.07932,"Provi-Soir (MARCHE-DUHAMEL)",2,1,0,1,0,15.1],[45.98167,-74.89222,"Marché des Plages",2,1,0,1,0,16.9],[46.00739,-74.76405,"Dépanneur St-Rémi",2,1,0,1,0,10.7],[45.97676,-74.63337,"Dépanneur Au Petit Centre Enr",2,1,0,2,2,0.3],[45.90435,-74.13803,"Petro-Canada",1,0,0,0,21,0.9],[45.89074,-74.05756,"Dépanneur Du Lac Renaud (Le)",2,1,0,3,5,2.6],[45.97268,-74.17241,"Dépanneur Loup-Garou Enr",2,1,0,3,11,3.4],[45.94356,-74.12617,"Le Magasin and Esso Gaz Station",1,0,0,0,11,0.1],[45.94922,-74.13905,"Dépanneur Boni-Soir",0,0,0,0,11,0.5],[45.95033,-74.13152,"Dépanneur Boni-Soir",0,0,0,0,10,0.2],[45.9301,-74.02584,"Depanneur",2,1,0,2,2,0.2],[45.9042,-74.13814,"Filgo - Dépanneur",2,1,0,3,20,0.9],[45.90412,-73.98458,"Dépanneur Marché Du Coin",2,1,0,2,3,4.3],[45.95152,-73.84943,"Depanneur L'oasis Servi Express",2,1,0,2,3,1.0],[45.87267,-74.00493,"Shell - Dépanneur Des Hauteurs",1,0,0,0,3,2.4],[45.91989,-73.82256,"Dépanneur La Fringale Inc",2,1,0,3,5,3.2],[45.94808,-73.73458,"Dépanneur C.R.",2,1,0,2,0,8.7],[45.89913,-73.76901,"Dépanneur",2,1,0,3,9,3.8],[45.86694,-73.75666,"Waypoint Convenience",2,1,0,3,11,0.1],[46.04589,-74.47603,"Parc Éco-Laurentides",2,1,0,2,0,9.4],[46.13419,-74.61434,"Petro-Canada",1,0,0,0,21,0.2],[46.11547,-74.57112,"Ultramar",1,0,0,0,20,0.2],[46.11615,-74.47869,"Petro-Canada",1,0,0,0,6,1.6],[46.11746,-74.56452,"Petro-Canada et Lave-Auto",1,0,0,0,21,0.5],[46.11753,-74.56367,"Shell Sélect",1,0,0,0,21,0.6],[46.13249,-74.4727,"Marché Lève-Tôt Inc",2,1,0,3,6,0.3],[46.11547,-74.57112,"Marché Express - Dépanneur",2,1,0,3,20,0.2],[46.13244,-74.47267,"Boni Soir",0,0,0,0,6,0.3],[46.1149,-74.57613,"Filgo - Dépanneur",2,1,0,3,20,0.3],[46.13244,-74.47269,"Vidéogie",2,1,0,3,6,0.3],[46.04396,-74.26806,"Petro-Canada et Lave-Auto",1,0,0,0,24,0.2],[46.05073,-74.28798,"Dépanneur Charbonneau",2,1,0,3,22,1.0],[46.06118,-74.28976,"Quickie Convenience Store",2,1,0,3,22,1.9],[46.04985,-74.28521,"Dépanneur Marier",2,1,0,3,22,0.7],[46.12037,-74.28858,"Marché du Lac Long",2,1,0,3,4,8.3],[46.11848,-74.28878,"Dep Feghaly / Crevier",1,0,0,0,5,8.1],[46.04402,-74.26804,"Beau Soir",2,1,0,3,24,0.3],[46.11851,-74.28876,"Ultramar - Dépanneur",1,0,0,0,5,8.1],[46.07427,-73.88876,"Marché Chertsey inc.",2,1,0,2,3,1.1],[46.0671,-73.88343,"Dépanneur Latendresse Inc",2,1,0,2,3,0.3],[46.19508,-74.63045,"Le Dépanneur",2,1,0,3,6,0.2],[46.28054,-74.74286,"Beau Soir",2,1,0,3,4,0.7],[46.28067,-74.74274,"Filgo - Dépanneur",2,1,0,3,4,0.7],[46.2554,-74.49997,"Cote Plein Air",2,1,0,1,0,11.9],[46.22616,-74.06087,"AMERIC 125 INC",2,1,0,1,2,14.8],[46.24886,-74.10568,"Halte 125",2,1,0,1,2,10.5],[46.24886,-74.10568,"Dépanneur 7 jours",2,1,0,1,2,10.5],[46.17086,-73.88195,"Depaneur Grande-Vallee",2,1,0,1,0,11.6],[46.27636,-73.76592,"Dépanneur R Emery Et Fils",2,1,0,1,2,24.9],[46.40837,-75.51187,"Dépanneur Lac-Des-Iles Inc",2,1,0,2,0,5.7],[46.40468,-74.86651,"Dépanneur Proprio Enr",0,0,0,0,4,0.4],[46.41523,-74.87251,"Dépanneur Yrbc",2,1,0,3,4,1.6],[46.41523,-74.87251,"Monocerus International Inc",2,1,0,3,4,1.6],[46.3194,-74.22263,"Dépanneur l'Oasis st-donat inc",2,1,0,3,4,1.4],[46.3051,-74.20128,"Petro-Canada",1,0,0,0,4,0.9],[46.55134,-75.49104,"Petro-Canada et Lave-Auto",1,0,0,0,21,0.1],[46.54895,-75.51582,"Petro-Canada et Lave-auto",1,0,0,0,20,2.0],[46.55752,-75.49277,"Dépanneur Jules",2,1,0,3,21,0.8],[46.54932,-75.51605,"Dépanneur Sprint",2,1,0,3,20,2.0],[46.55812,-75.49853,"Dépanneur Alix Enr",2,1,0,3,21,1.0],[46.55142,-75.49706,"Dépanneur Sprint",2,1,0,3,21,0.5],[46.55125,-75.49094,"Dépanneur Sprint",2,1,0,3,21,0.1],[46.54762,-75.49874,"Dépanneur Chapleau Inc",2,1,0,3,21,0.7],[46.54823,-75.47978,"Marché Express - Convenience Store",2,1,0,3,21,0.3],[46.54893,-75.51216,"Mini Dépan/Mini Express - Dépanneur",2,1,0,3,20,1.7],[46.55956,-75.37091,"Petro-Canada",1,0,0,0,3,8.3],[46.5598,-75.37094,"Dépanneur Sprint",2,1,0,2,3,8.3],[46.55502,-75.35704,"Marché Express - Dépanneur",2,1,0,2,3,9.3],[46.49948,-75.14509,"Dépanneur Lac Saguay, Ultramar Marché Express",1,0,0,0,1,12.0],[46.49953,-75.14498,"Marché Express - Dépanneur",2,1,0,1,1,12.0],[46.55762,-75.58517,"Dépanneur Dinelle",2,1,0,2,1,7.3],[46.58569,-75.47245,"Avec Service",2,1,0,3,17,3.9],[46.68035,-73.91942,"Esso proxi extra",1,0,0,0,2,1.1],[46.67133,-73.91489,"Express Mart - Dépanneur",2,1,0,2,2,0.1],[46.7801,-75.33501,"Dépanneur Millette",2,1,0,1,1,12.5],[46.73194,-75.31004,"Magasin Général M.G",5,2,0,1,0,11.4],[47.21528,-74.39371,"Dépanneur Eneri",2,1,0,2,1,0.9],[47.31159,-74.88494,"Casse-Croûte Lu-Nic",2,1,0,1,0,38.7]]};
+
+var TYPE_LABEL={
+  supermarche_chaine:'Supermarché de chaîne', supermarche_indep:'Supermarché indépendant',
+  epicerie_chaine:'Épicerie de chaîne', epicerie_indep:'Épicerie indépendante',
+  magasin_general:'Magasin général', depanneur_indep:'Dépanneur indépendant',
+  depanneur_chaine:'Dépanneur de chaîne', depanneur_essence:'Dépanneur-essence'
+};
+var METHODE_LABEL={banniere:'Enseigne reconnue',categorie_google:'Catégorie Google',mot_cle:'Mot-clé du nom'};
+var CAT_LABEL={supermarket:'supermarket',grocery:'grocery',convenience:'convenience'};
+
+/* ===== Helpers couleur / format ===== */
+var RAMP=['#e74c3c','#f1c40f','#2ecc71'];
+function hexRgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+function lerp(a,b,t){var pa=hexRgb(a),pb=hexRgb(b);return'rgb('+Math.round(pa[0]+(pb[0]-pa[0])*t)+','+Math.round(pa[1]+(pb[1]-pa[1])*t)+','+Math.round(pa[2]+(pb[2]-pa[2])*t)+')';}
+function rampColor(v,min,max){var t=Math.max(0,Math.min(1,(v-min)/(max-min)));var s=t*(RAMP.length-1),i=Math.min(Math.floor(s),RAMP.length-2);return lerp(RAMP[i],RAMP[i+1],s-i);}
+function fmt(n,d){return n==null?'—':Number(n).toLocaleString('fr-CA',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
+
+/* ===== Objets commerce ===== */
+var STORES=D.stores.map(function(r,i){
+  var type=D.types[r[3]];
+  var b=D.bareme[type];
+  return {i:i, lat:r[0], lon:r[1], nom:r[2], type:type,
+          methode:D.methodes[r[4]], cat:D.cats[r[5]],
+          priorite:r[6], dens:r[7], dSain:r[8],
+          score:b.score, incert:b.incert,
+          aValider:b.incert>=2.0};
+});
+
+/* ===== Scenario : reference | optimiste | pessimiste ===== */
+var SCENARIOS=['reference','optimiste','pessimiste'];
+var SCEN_LABEL={reference:'référence',optimiste:'optimiste (ambigus sains)',pessimiste:'pessimiste (ambigus non sains)'};
+var scenario='reference';
+function scoreOf(s){
+  if(!s.aValider) return s.score;
+  if(scenario==='optimiste') return Math.min(10,s.score+s.incert);
+  if(scenario==='pessimiste') return Math.max(0,s.score-s.incert);
+  return s.score;
+}
+function sainOf(s){ return scoreOf(s)>=D.seuil; }
+function cycleScenario(){
+  scenario=SCENARIOS[(SCENARIOS.indexOf(scenario)+1)%SCENARIOS.length];
+  document.getElementById('btn-scenario').textContent='Scénario : '+
+    (scenario==='reference'?'référence':scenario);
+  document.getElementById('btn-scenario').classList.toggle('active',scenario!=='reference');
+  redraw();
+  if(currentSel!=null) showProfil(currentSel);
+}
+
+/* ===== Carte ===== */
+var map=L.map('map',{zoomControl:true,preferCanvas:true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · Données commerces : Google Places (usage interne) · CISSS des Laurentides',
+  maxZoom:19, subdomains:'abcd'}).addTo(map);
+
+var layer=L.layerGroup().addTo(map);
+var markers=[];
+var currentSel=null;
+
+function passesFilter(s){
+  var t=document.getElementById('f-type').value;
+  var p=document.getElementById('f-priorite').value;
+  if(t && s.type!==t) return false;
+  if(p!=='' && String(s.priorite)!==p) return false;
+  return true;
+}
+
+function redraw(){
+  layer.clearLayers(); markers=[];
+  var shown=0, sains=0;
+  STORES.forEach(function(s){
+    if(!passesFilter(s)) return;
+    shown++; if(sainOf(s)) sains++;
+    var sc=scoreOf(s);
+    var m=L.circleMarker([s.lat,s.lon],{
+      radius: s.priorite===1?9:(s.aValider?6:5),
+      weight: s.aValider?2.5:1,
+      color: s.aValider?'#e8a15f':'#ffffff66',
+      fillColor: rampColor(sc,0,10), fillOpacity:.9
+    });
+    m.bindTooltip('<div class="tt-nom">'+s.nom+'</div>'+
+      '<div class="tt-mrc">'+TYPE_LABEL[s.type]+'</div>'+
+      '<div class="tt-val" style="color:'+rampColor(sc,0,10)+'">'+fmt(sc,1)+' / 10</div>'+
+      (s.aValider?'<div class="tt-mrc" style="color:#e8a15f">À valider · priorité '+s.priorite+'</div>':''),
+      {className:'muni-tooltip',sticky:true});
+    m.on('click',function(){ showProfil(s.i); });
+    m.addTo(layer); markers.push(m);
+  });
+  document.getElementById('counts').innerHTML=
+    shown+' commerce(s) affiché(s)<br>'+sains+' compté(s) « sain(s) » — scénario '+
+    (scenario==='reference'?'de référence':scenario);
+  drawBornes();
+}
+
+/* ===== Bornes ===== */
+function drawBornes(){
+  var pess=STORES.filter(function(s){return !s.aValider && s.score>=D.seuil;}).length;
+  var opt =STORES.filter(function(s){return s.score>=D.seuil || s.aValider;}).length;
+  var ref =STORES.filter(function(s){return s.score>=D.seuil;}).length;
+  var lo=Math.max(0,pess-30), hi=opt+30;
+  function pct(v){ return ((v-lo)/(hi-lo)*100); }
+  document.getElementById('bornes-range').style.left=pct(pess)+'%';
+  document.getElementById('bornes-range').style.width=(pct(opt)-pct(pess))+'%';
+  document.getElementById('bornes-ref').style.left=pct(ref)+'%';
+  document.getElementById('b-pess').textContent=pess+' pess.';
+  document.getElementById('b-ref').textContent=ref+' réf.';
+  document.getElementById('b-opt').textContent=opt+' opt.';
+}
+
+/* ===== Profil ===== */
+function showProfil(idx){
+  currentSel=idx;
+  var s=STORES[idx];
+  var sc=scoreOf(s), col=rampColor(sc,0,10);
+  var lo=Math.max(0,s.score-s.incert), hi=Math.min(10,s.score+s.incert);
+  var gmaps='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.nom)+'%40'+s.lat+','+s.lon;
+  var sv='https://www.google.com/maps?layer=c&cbll='+s.lat+','+s.lon;
+  var prioLabel={1:'Priorité 1 — critique',2:'Priorité 2 — élevée',3:'Priorité 3 — faible',0:'Résolu'};
+  var html='<div class="eyebrow"><a href="#" onclick="retourAccueil();return false;">← Vue d\'ensemble</a></div>'+
+    '<div class="scopename">'+s.nom+'</div>'+
+    '<div class="scopesub"><span class="badge">'+TYPE_LABEL[s.type]+'</span></div>'+
+    '<div class="hero"><div class="lab">Score de disponibilité'+
+      (scenario!=='reference'?' — scénario '+scenario:'')+'</div>'+
+    '<div class="big mono" style="color:'+col+'">'+fmt(sc,1)+'<small>/ 10</small></div>'+
+    '<div class="sub">'+(sainOf(s)?'Compté comme commerce sain':'Non compté comme sain')+
+      ' (seuil '+fmt(D.seuil,1)+')</div>'+
+    '<div class="ci"><div class="ci-bar"><div class="ci-band" style="left:'+(lo*10)+'%;width:'+((hi-lo)*10)+'%"></div></div>'+
+    '<div class="ci-labels"><span>0</span><span>intervalle plausible '+fmt(lo,1)+'–'+fmt(hi,1)+'</span><span>10</span></div></div>'+
+    '</div>'+
+    (s.priorite>0?'<div class="pillstat" style="background:#e8a15f22;color:var(--amber);border:1px solid #e8a15f55">'+prioLabel[s.priorite]+'</div>':
+      '<div class="pillstat" style="background:#21aead1f;color:var(--teal);border:1px solid #21aead40">Résolu par enseigne</div>')+
+    '<div class="statgrid">'+
+    '<div class="statline"><span class="k">Type résolu</span><span class="v" style="font-size:.78rem">'+TYPE_LABEL[s.type]+'</span></div>'+
+    '<div class="statline"><span class="k">Méthode de résolution</span><span class="v" style="font-size:.78rem">'+METHODE_LABEL[s.methode]+'</span></div>'+
+    '<div class="statline"><span class="k">Catégorie Google d\'origine</span><span class="v" style="font-size:.78rem">'+s.cat+'</span></div>'+
+    '<div class="statline"><span class="k">Commerces dans 5 km</span><span class="v">'+s.dens+'</span></div>'+
+    '<div class="statline"><span class="k">Distance au 1<sup>er</sup> commerce sain sûr</span><span class="v">'+(s.dSain==null?'—':fmt(s.dSain,1)+' km')+'</span></div>'+
+    '</div>'+
+    '<div class="linkrow"><a href="'+gmaps+'" target="_blank" rel="noopener">Google Maps</a><a href="'+sv+'" target="_blank" rel="noopener">Street View</a></div>';
+
+  if(s.methode==='categorie_google' && s.type.indexOf('depanneur')===0 && s.cat==='grocery'){
+    html+='<div class="warn">Google classe ce commerce comme « grocery » mais aucune enseigne n\'a été reconnue : le type retenu vient de la catégorie Google, non vérifiée.</div>';
+  }
+  if(s.priorite===1){
+    html+='<div class="warn">Ce commerce est ambigu, isolé et sans alternative saine confirmée à moins de 10 km. Son classement détermine à lui seul le statut de désert alimentaire de son secteur — un appel téléphonique tranche la question plus sûrement qu\'une photo de devanture.</div>';
+  }
+  html+='<div class="note">Le score provient du barème par défaut appliqué au type résolu, pas d\'une observation de l\'offre réelle en tablette. Voir &#9432; Barème et méthode.</div>';
+
+  document.getElementById('accueil').style.display='none';
+  var pr=document.getElementById('profil'); pr.style.display='block'; pr.innerHTML=html;
+  map.setView([s.lat,s.lon], Math.max(map.getZoom(),13));
+}
+function retourAccueil(){
+  currentSel=null;
+  document.getElementById('profil').style.display='none';
+  document.getElementById('accueil').style.display='block';
+}
+
+/* ===== Liste de travail priorite 1 ===== */
+function buildWorklist(){
+  var p1=STORES.filter(function(s){return s.priorite===1;})
+               .sort(function(a,b){return (b.dSain||0)-(a.dSain||0);});
+  document.getElementById('worklist').innerHTML=p1.map(function(s){
+    return '<div class="wl-item" onclick="showProfil('+s.i+')">'+
+      '<div class="wl-nom">'+s.nom+'</div>'+
+      '<div class="wl-meta">'+TYPE_LABEL[s.type]+' · '+(s.dSain==null?'—':fmt(s.dSain,1)+' km')+' · '+s.dens+' comm./5 km</div></div>';
+  }).join('');
+}
+
+/* ===== Legende, filtres, bareme ===== */
+document.getElementById('legend-scale').innerHTML=RAMP.map(function(c){return'<div style="background:'+c+'"></div>';}).join('');
+var typeSel=document.getElementById('f-type');
+Object.keys(TYPE_LABEL).forEach(function(t){
+  if(D.types.indexOf(t)<0) return;
+  var o=document.createElement('option'); o.value=t; o.textContent=TYPE_LABEL[t]; typeSel.appendChild(o);
+});
+typeSel.onchange=redraw;
+document.getElementById('f-priorite').onchange=redraw;
+
+(function(){
+  var counts={};
+  STORES.forEach(function(s){counts[s.type]=(counts[s.type]||0)+1;});
+  var tb=document.querySelector('#bareme-table tbody');
+  Object.keys(TYPE_LABEL).filter(function(t){return counts[t];})
+    .sort(function(a,b){return D.bareme[b].score-D.bareme[a].score;})
+    .forEach(function(t){
+      var b=D.bareme[t];
+      tb.innerHTML+='<tr><td>'+TYPE_LABEL[t]+'</td><td class="num">'+fmt(b.score,1)+
+        '</td><td class="num">± '+fmt(b.incert,1)+'</td><td class="num">'+counts[t]+'</td></tr>';
+    });
+})();
+
+var b=L.latLngBounds(STORES.map(function(s){return [s.lat,s.lon];}));
+map.fitBounds(b,{paddingTopLeft:[420,40],paddingBottomRight:[40,40]});
+buildWorklist();
+redraw();
+
+/* ===== Controles ===== */
+var fs=1; function setFont(d){fs=Math.max(.85,Math.min(1.3,fs+d*.08));document.documentElement.style.setProperty('--fs',fs+'rem');}
+function toggleMethodo(){document.getElementById('methodo-content').classList.toggle('show');}
+var panelOpen=true;
+function togglePanel(){panelOpen=!panelOpen;
+  document.querySelector('.main').classList.toggle('collapsed',!panelOpen);
+  var t=document.getElementById('panel-toggle');t.classList.toggle('shifted',!panelOpen);t.textContent=panelOpen?'◀':'▶';}
+function exportGeoJSON(){
+  var feats=STORES.map(function(s){
+    return {type:'Feature',properties:{
+      nom:s.nom, type_resolu:s.type, methode:s.methode, cat_google:s.cat,
+      score_reference:s.score, incertitude:s.incert,
+      score_scenario:scoreOf(s), scenario:scenario,
+      sain:sainOf(s), a_valider:s.aValider, priorite:s.priorite,
+      densite_5km:s.dens, dist_sain_sur_km:s.dSain
+    },geometry:{type:'Point',coordinates:[s.lon,s.lat]}};
+  });
+  var out={type:'FeatureCollection',metadata:{
+    titre:'Commerces alimentaires et scores de disponibilité — Laurentides',
+    scenario:scenario, seuil_sain:D.seuil, bareme:D.bareme,
+    avertissement:'Barème non validé contre NEMS-S. La dichotomie sain/non sain est ce qui est étayé, pas l\'échelle continue. Données commerces : Google Places, usage interne, ne pas rediffuser.',
+    date:'2026-08-06'},features:feats};
+  var blob=new Blob([JSON.stringify(out)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='commerces_scores_'+scenario+'.geojson';a.click();
+}
+</script>
+</body>
+</html>
