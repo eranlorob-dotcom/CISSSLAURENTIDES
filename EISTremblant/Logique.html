@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modèle logique d'ÉIS — Plan d'urbanisme de Mont-Tremblant</title>
+<meta name="description" content="Modèle logique interactif de l'évaluation d'impact sur la santé du plan d'urbanisme de la Ville de Mont-Tremblant. CISSS des Laurentides — Direction de santé publique.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Marque (charte CISSS-DSP) */
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+
+  /* Thème sombre marine (défaut) */
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+
+  --accent:var(--teal); --accent2:var(--blue);
+  --fs:1rem;
+
+  /* Sens de l'effet — jamais la couleur seule, toujours doublée d'un symbole */
+  --pos:#3fd0c9; --pos-bg:rgba(63,208,201,.12); --pos-line:rgba(63,208,201,.45);
+  --neg:#ff8a5c; --neg-bg:rgba(255,138,92,.12); --neg-line:rgba(255,138,92,.45);
+  --inc:#f5c451; --inc-bg:rgba(245,196,81,.12); --inc-line:rgba(245,196,81,.45);
+  --neu:#8b8fc4; --neu-bg:rgba(139,143,196,.10); --neu-line:rgba(139,143,196,.35);
+}
+body.theme-light{
+  --bg:#ffffff; --bg2:#f4f6fc; --panel:#ffffff; --panel2:#eef1fb;
+  --line:#d8def0; --line2:#e6eaf7;
+  --ink:#14143a; --ink2:#3a3f6e; --muted:#7a80a8;
+  --pos:#0b6e6c; --pos-bg:rgba(11,110,108,.10); --pos-line:rgba(11,110,108,.40);
+  --neg:#c1441a; --neg-bg:rgba(193,68,26,.10); --neg-line:rgba(193,68,26,.40);
+  --inc:#9a6b00; --inc-bg:rgba(154,107,0,.10); --inc-line:rgba(154,107,0,.40);
+  --neu:#7a80a8; --neu-bg:rgba(122,128,168,.10); --neu-line:rgba(122,128,168,.35);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:var(--fs); line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+.num{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+
+/* ---------- En-tête institutionnel ---------- */
+header.app{
+  background:linear-gradient(135deg,var(--navy) 0%,#1b1470 55%,#0f2f6b 100%);
+  color:#fff;padding:14px 18px 12px;border-bottom:3px solid var(--teal);
+}
+.hdr-top{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.hdr-titles{flex:1 1 320px;min-width:0}
+h1{margin:0;font-size:1.22rem;font-weight:700;letter-spacing:.1px;line-height:1.2}
+.sub{margin:3px 0 0;font-size:.88rem;color:#c9d2f5;font-weight:400}
+.badge{
+  display:inline-block;margin-top:7px;padding:2px 9px;border-radius:999px;
+  background:rgba(33,174,173,.18);border:1px solid rgba(33,174,173,.55);
+  color:#7fe3e1;font-size:.72rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
+}
+.sign{font-size:.74rem;color:#a9b4e0;text-align:right;line-height:1.35;flex:0 0 auto}
+
+/* ---------- Barre d'outils ---------- */
+.toolbar{
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  padding:10px 18px;background:var(--bg2);border-bottom:1px solid var(--line2);
+  position:sticky;top:0;z-index:40;
+}
+.tb-label{font-size:.76rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;margin-right:2px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:4px 11px;
+  border-radius:999px;border:1px solid var(--line);background:var(--panel);
+  color:var(--ink2);font-size:.84rem;font-weight:600;transition:.15s;
+}
+.chip:hover{border-color:var(--teal);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#04242b}
+.chip .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.chip.f-pos .dot{background:var(--pos)} .chip.f-neg .dot{background:var(--neg)} .chip.f-inc .dot{background:var(--inc)}
+.chip[aria-pressed="true"].f-pos{background:var(--pos-bg);border-color:var(--pos);color:var(--pos)}
+.chip[aria-pressed="true"].f-neg{background:var(--neg-bg);border-color:var(--neg);color:var(--neg)}
+.chip[aria-pressed="true"].f-inc{background:var(--inc-bg);border-color:var(--inc);color:var(--inc)}
+.spacer{flex:1 1 auto}
+.tb-group{display:flex;gap:4px;align-items:center}
+.icon-btn{
+  min-width:32px;min-height:32px;padding:4px 9px;border-radius:8px;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-weight:600;font-size:.84rem;
+}
+.icon-btn:hover{border-color:var(--teal);color:var(--ink)}
+
+/* ---------- Grille du modèle ---------- */
+main{padding:16px 18px 8px;max-width:1560px;margin:0 auto}
+.intro{font-size:.92rem;color:var(--ink2);max-width:88ch;margin:0 0 14px}
+.intro b{color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:190px repeat(4,1fr);gap:10px;align-items:stretch}
+.colhead{
+  position:sticky;top:53px;z-index:30;
+  background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:9px 11px;font-size:.8rem;font-weight:700;line-height:1.25;
+}
+.colhead .step{
+  display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--teal);letter-spacing:1px;margin-bottom:2px;
+}
+.colhead.k0{background:var(--navy);border-color:var(--indigo);color:#fff}
+.colhead.k0 .step{color:var(--teal-l)}
+
+/* rail de l'enjeu */
+.rail{
+  border:1px solid var(--line);border-left:4px solid var(--indigo);border-radius:10px;
+  background:var(--panel);padding:11px 12px;text-align:left;width:100%;
+  display:flex;flex-direction:column;gap:7px;transition:.15s;
+}
+.rail:hover{border-color:var(--teal);border-left-color:var(--teal)}
+.rail .enum{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--teal);letter-spacing:1px}
+.rail h2{margin:0;font-size:.95rem;font-weight:700;line-height:1.25;color:var(--ink)}
+.rail .strats{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.sbadge{
+  font-size:.68rem;font-weight:600;padding:1px 7px;border-radius:999px;
+  background:var(--panel2);border:1px solid var(--line);color:var(--ink2);
+}
+.rail .more{font-size:.74rem;color:var(--teal);font-weight:600;margin-top:auto}
+
+/* cellules */
+.cell{
+  border:1px solid var(--line2);border-radius:10px;background:var(--panel);
+  padding:8px;display:flex;flex-direction:column;gap:6px;
+}
+.item{
+  display:flex;gap:7px;align-items:flex-start;
+  padding:6px 8px;border-radius:8px;font-size:.83rem;line-height:1.34;
+  background:var(--neu-bg);border-left:3px solid var(--neu-line);color:var(--ink2);
+  transition:.15s;
+}
+.item .sym{
+  flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:.78rem;
+  width:16px;text-align:center;color:var(--neu);padding-top:1px;
+}
+.item.pos{background:var(--pos-bg);border-left-color:var(--pos-line)} .item.pos .sym{color:var(--pos)}
+.item.neg{background:var(--neg-bg);border-left-color:var(--neg-line)} .item.neg .sym{color:var(--neg)}
+.item.inc{background:var(--inc-bg);border-left-color:var(--inc-line)} .item.inc .sym{color:var(--inc)}
+.item .fam{font-weight:700;color:var(--ink)}
+.item.tension{border-left-style:dashed;font-style:italic}
+.item.dim{opacity:.22}
+
+/* états de sélection */
+.row-wrap{display:contents}
+body.has-sel .row-wrap:not(.sel) .rail,
+body.has-sel .row-wrap:not(.sel) .cell{opacity:.28;filter:saturate(.45)}
+.row-wrap.sel .rail{border-color:var(--teal);border-left-color:var(--teal);background:var(--panel2);box-shadow:0 0 0 1px var(--teal) inset}
+.row-wrap.sel .cell{border-color:var(--line)}
+
+/* ---------- Légende + compteurs ---------- */
+.legend{
+  display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;
+  margin:16px 0 4px;padding:11px 14px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);
+  font-size:.83rem;color:var(--ink2);
+}
+.lg{display:inline-flex;align-items:center;gap:7px}
+.lg .sym{font-family:'JetBrains Mono',monospace;font-weight:500;width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:.78rem}
+.lg.pos .sym{background:var(--pos-bg);color:var(--pos);border:1px solid var(--pos-line)}
+.lg.neg .sym{background:var(--neg-bg);color:var(--neg);border:1px solid var(--neg-line)}
+.lg.inc .sym{background:var(--inc-bg);color:var(--inc);border:1px solid var(--inc-line)}
+.lg .cnt{font-family:'JetBrains Mono',monospace;color:var(--ink);font-weight:500}
+
+/* ---------- Panneau latéral ---------- */
+.scrim{position:fixed;inset:0;background:rgba(4,3,20,.55);opacity:0;pointer-events:none;transition:.2s;z-index:60}
+.scrim.on{opacity:1;pointer-events:auto}
+aside.panel{
+  position:fixed;top:0;right:0;height:100%;width:min(460px,92vw);z-index:70;
+  background:var(--panel);border-left:1px solid var(--line);
+  transform:translateX(102%);transition:transform .22s ease;
+  display:flex;flex-direction:column;
+}
+aside.panel.on{transform:none}
+.p-head{padding:14px 16px;border-bottom:1px solid var(--line2);background:var(--panel2)}
+.p-head .enum{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--teal);letter-spacing:1px}
+.p-head h3{margin:2px 0 0;font-size:1.05rem;line-height:1.25}
+.p-close{position:absolute;top:10px;right:12px;border:none;background:transparent;color:var(--ink2);font-size:1.4rem;line-height:1;padding:4px 8px;border-radius:8px}
+.p-close:hover{background:var(--line2);color:var(--ink)}
+.p-body{padding:14px 16px 28px;overflow:auto;flex:1}
+.p-sec{margin:0 0 16px}
+.p-sec h4{
+  margin:0 0 7px;font-size:.75rem;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--muted);font-weight:700;
+}
+.chain{border-left:2px solid var(--line);padding-left:12px;margin:0 0 12px}
+.chain li{list-style:none;margin:0 0 7px;font-size:.86rem;line-height:1.35;position:relative}
+.chain li::before{
+  content:'';position:absolute;left:-17px;top:.5em;width:7px;height:7px;border-radius:50%;
+  background:var(--neu);
+}
+.chain.pos{border-left-color:var(--pos-line)} .chain.pos li::before{background:var(--pos)}
+.chain.neg{border-left-color:var(--neg-line)} .chain.neg li::before{background:var(--neg)}
+.chain.inc{border-left-color:var(--inc-line)} .chain.inc li::before{background:var(--inc)}
+.chain-t{font-size:.8rem;font-weight:700;margin:0 0 6px;display:flex;align-items:center;gap:7px}
+.chain-t.pos{color:var(--pos)} .chain-t.neg{color:var(--neg)} .chain-t.inc{color:var(--inc)}
+.p-note{
+  font-size:.82rem;color:var(--ink2);background:var(--panel2);border:1px solid var(--line2);
+  border-radius:8px;padding:10px 12px;
+}
+.p-link{
+  display:inline-flex;gap:6px;align-items:center;margin-top:8px;padding:6px 12px;border-radius:8px;
+  background:var(--teal);color:#04242b;font-weight:700;font-size:.82rem;text-decoration:none;border:none;
+}
+
+/* ---------- Modale méthodo / version texte ---------- */
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:20px}
+.modal.on{display:grid}
+.modal .box{
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  max-width:760px;width:100%;max-height:86vh;overflow:auto;padding:20px 22px;position:relative;
+}
+.modal h3{margin:0 0 10px;font-size:1.05rem}
+.modal h4{margin:16px 0 5px;font-size:.88rem;color:var(--teal)}
+.modal p,.modal li{font-size:.87rem;color:var(--ink2);line-height:1.5}
+.srcs{margin-top:16px;padding-top:12px;border-top:1px solid var(--line2);font-size:.78rem;color:var(--muted)}
+.txtv h4{color:var(--ink);border-bottom:1px solid var(--line2);padding-bottom:4px}
+.txtv .cols{margin:0 0 10px}
+.txtv .cols b{color:var(--teal);font-size:.8rem;text-transform:uppercase;letter-spacing:.5px}
+
+footer.app{
+  padding:14px 18px 22px;color:var(--muted);font-size:.76rem;
+  border-top:1px solid var(--line2);margin-top:14px;line-height:1.5;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1080px){
+  .grid{grid-template-columns:1fr;gap:0}
+  .colhead{display:none}
+  .row-wrap{display:block;margin-bottom:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+  .rail{border:none;border-radius:0;border-left:4px solid var(--indigo);border-bottom:1px solid var(--line2)}
+  .cell{border:none;border-radius:0;border-bottom:1px solid var(--line2);padding:10px 12px 12px}
+  .cell::before{
+    content:attr(data-col);display:block;font-family:'JetBrains Mono',monospace;
+    font-size:.66rem;letter-spacing:1px;color:var(--teal);text-transform:uppercase;margin-bottom:2px;
+  }
+  body.has-sel .row-wrap:not(.sel){display:none}
+}
+@media (max-width:640px){
+  header.app{padding:12px 13px 10px} .toolbar{padding:9px 13px} main{padding:14px 13px 6px}
+  h1{font-size:1.05rem} .sign{text-align:left}
+}
+@media print{
+  .toolbar,.p-link,.scrim,aside.panel,.modal{display:none!important}
+  body{background:#fff;color:#111}
+  .item.dim{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="hdr-top">
+    <div class="hdr-titles">
+      <h1>Modèle logique d'évaluation d'impact sur la santé</h1>
+      <p class="sub">Plan d'urbanisme de la Ville de Mont-Tremblant — perspective tourisme durable</p>
+      <span class="badge">Figure interactive</span>
+    </div>
+    <div class="sign">CISSS des Laurentides<br>Direction de santé publique<br><span class="num">2026</span></div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <span class="tb-label">Afficher</span>
+  <button class="chip f-pos" id="fPos" aria-pressed="true"><span class="dot"></span>Effets favorables</button>
+  <button class="chip f-neg" id="fNeg" aria-pressed="true"><span class="dot"></span>Risques</button>
+  <button class="chip f-inc" id="fInc" aria-pressed="true"><span class="dot"></span>Incertitudes</button>
+  <button class="icon-btn" id="reset" title="Réinitialiser la sélection">Tout afficher</button>
+  <span class="spacer"></span>
+  <div class="tb-group">
+    <button class="icon-btn" id="txtBtn" title="Version texte accessible">Version texte</button>
+    <button class="icon-btn" id="methBtn" title="Méthodologie et sources">Méthodologie</button>
+    <button class="icon-btn" id="themeBtn" title="Basculer le thème clair ou sombre">Thème clair</button>
+    <button class="icon-btn" id="fsDown" title="Réduire la taille du texte" aria-label="Réduire la taille du texte">A−</button>
+    <button class="icon-btn" id="fsUp" title="Augmenter la taille du texte" aria-label="Augmenter la taille du texte">A+</button>
+  </div>
+</div>
+
+<main>
+  <p class="intro">Le modèle logique reconstitue les <b>chaînes causales</b> entre les actions inscrites au plan d'urbanisme et leurs effets attendus sur la santé et la qualité de vie. La lecture se fait de gauche à droite : une action du plan produit un <b>changement direct</b> sur le territoire, ce changement modifie un <b>déterminant de la santé</b>, et ce déterminant se traduit par un <b>effet sur la santé et le bien-être</b>. Cliquez sur un enjeu pour isoler sa chaîne complète.</p>
+
+  <div class="grid" id="grid">
+    <div class="colhead k0"><span class="step">ENJEU</span>Cinq enjeux structurants</div>
+    <div class="colhead"><span class="step">01</span>Composantes du projet<br><span style="font-weight:400;color:var(--muted)">actions du plan</span></div>
+    <div class="colhead"><span class="step">02</span>Effets proximaux<br><span style="font-weight:400;color:var(--muted)">changements directs</span></div>
+    <div class="colhead"><span class="step">03</span>Déterminants de la santé</div>
+    <div class="colhead"><span class="step">04</span>Santé et qualité de vie<br><span style="font-weight:400;color:var(--muted)">impacts finaux</span></div>
+  </div>
+
+  <div class="legend" id="legend">
+    <span class="lg pos"><span class="sym">+</span> Effet favorable anticipé — <span class="cnt" id="cPos">0</span></span>
+    <span class="lg neg"><span class="sym">−</span> Risque ou effet défavorable — <span class="cnt" id="cNeg">0</span></span>
+    <span class="lg inc"><span class="sym">?</span> Incertitude ou angle mort — <span class="cnt" id="cInc">0</span></span>
+    <span class="lg"><span class="sym" style="border:1px dashed var(--neu-line);color:var(--neu)">⚑</span> Tension repérée dans le plan</span>
+  </div>
+</main>
+
+<footer class="app">
+  Sources : Ville de Mont-Tremblant, projet de plan d'urbanisme · analyse de la Direction de santé publique · CISSS des Laurentides — Direction de santé publique · Mise à jour <span class="num">2026-08-20</span>.<br>
+  Citation suggérée : CISSS des Laurentides, Direction de santé publique (2026). <i>Modèle logique d'ÉIS : plan d'urbanisme de la Ville de Mont-Tremblant</i>. Figure interactive.
+</footer>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="pTitle">
+  <div class="p-head">
+    <button class="p-close" id="pClose" aria-label="Fermer le panneau">×</button>
+    <span class="enum" id="pNum"></span>
+    <h3 id="pTitle"></h3>
+  </div>
+  <div class="p-body" id="pBody"></div>
+</aside>
+
+<div class="modal" id="meth" role="dialog" aria-modal="true" aria-labelledby="methTitle">
+  <div class="box">
+    <button class="p-close" id="methClose" aria-label="Fermer">×</button>
+    <h3 id="methTitle">Méthodologie et lecture de la figure</h3>
+    <h4>Ce qu'est un modèle logique d'ÉIS</h4>
+    <p>Le modèle logique explicite les hypothèses causales sur lesquelles repose l'évaluation. Il ne prédit pas l'avenir : il rend visible le raisonnement qui relie une décision d'aménagement à un effet sur la santé, de manière à ce que ce raisonnement puisse être discuté, contesté et suivi dans le temps.</p>
+    <h4>Les quatre colonnes</h4>
+    <p><b>Composantes du projet</b> — stratégies, objectifs et tensions repérés dans le plan d'urbanisme, avec leur numéro d'origine. <b>Effets proximaux</b> — changements directs attendus sur le territoire, à court terme. <b>Déterminants de la santé</b> — facteurs reconnus qui influencent l'état de santé d'une population. <b>Santé et qualité de vie</b> — effets finaux, physiques, mentaux et sociaux.</p>
+    <h4>Cotation des effets</h4>
+    <p>Chaque énoncé porte un symbole doublé d'une couleur : <b>+</b> effet favorable anticipé, <b>−</b> risque ou effet défavorable, <b>?</b> incertitude, c'est-à-dire un effet dont la direction ou l'ampleur ne peut être déterminée en l'état du plan ou des connaissances. Les tensions sont des éléments du plan qui agissent en sens contraire d'un autre de ses objectifs.</p>
+    <h4>Limites</h4>
+    <p>Le modèle porte sur le projet de plan d'urbanisme tel que soumis au moment de l'analyse. Il ne tient pas compte des modalités de mise en œuvre, des budgets ni des règlements d'urbanisme qui en découleront, lesquels détermineront une part importante des effets réels. L'ampleur des effets n'est pas quantifiée à cette étape.</p>
+    <h4>Correspondance avec le rapport</h4>
+    <p>Le modèle est organisé en cinq enjeux structurants, alors que le rapport d'ÉIS est organisé en neuf stratégies. Les pastilles affichées sous chaque enjeu indiquent les stratégies du rapport où l'analyse détaillée, les recommandations et les indicateurs de suivi correspondants se trouvent.</p>
+    <div class="srcs">Sources : Ville de Mont-Tremblant, projet de plan d'urbanisme · analyse de la Direction de santé publique · CISSS des Laurentides — Direction de santé publique · Mise à jour 2026-08-20.</div>
+  </div>
+</div>
+
+<div class="modal" id="txt" role="dialog" aria-modal="true" aria-labelledby="txtTitle">
+  <div class="box txtv">
+    <button class="p-close" id="txtClose" aria-label="Fermer">×</button>
+    <h3 id="txtTitle">Version texte du modèle logique</h3>
+    <p>Équivalent textuel complet de la figure, destiné à la lecture par synthèse vocale, à l'impression et à la reprise dans le rapport.</p>
+    <div id="txtBody"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Modèle logique d'ÉIS — Plan d'urbanisme de Mont-Tremblant
+   CISSS des Laurentides — Direction de santé publique, 2026
+   Fichier autonome. Pour modifier le contenu, éditer DATA.
+   sens : 'pos' (+) | 'neg' (−) | 'inc' (?) | 'neu' (neutre)
+   ============================================================ */
+
+var DATA = [
+  {
+    num: 1,
+    titre: "Mobilité et pression automobile",
+    strategies: ["S3 Mobilité", "S5 Centre-ville", "S6 Village", "S7 Route 117"],
+    note: "C'est l'enjeu qui concentre à la fois le plus grand potentiel de gain et le risque le plus grave. Le développement du réseau actif et du transport collectif gratuit agit favorablement sur l'activité physique, la qualité de l'air et l'accès aux services. À l'inverse, l'évaluation de nouvelles traverses piétonnes non protégées sur la route 117, un axe à fort débit, expose directement des piétons à un risque de blessure grave ou mortelle.",
+    composantes: [
+      {t:"Stratégie 3 : réseau de mobilité efficace", s:"neu"},
+      {t:"Obj. 3.1.1 : infrastructures de mobilité active (rue Labelle)", s:"neu"},
+      {t:"Obj. 3.2.1 et 3.2.2 : transport collectif intégré et gratuit", s:"neu"},
+      {t:"Obj. 3.3.1 : stationnement incitatif", s:"neu"},
+      {t:"Tension — Obj. 6.3.3 : traversées piétonnes non protégées sur la 117", s:"neg", tension:true}
+    ],
+    effets: [
+      {t:"Augmentation des options de transport actif et collectif sécuritaires", s:"pos"},
+      {t:"Réduction de la congestion automobile dans les pôles", s:"pos"},
+      {t:"Risque accru d'accidents entre piétons et véhicules sur la route 117", s:"neg"}
+    ],
+    determinants: [
+      {f:"Habitudes de vie", t:"favorisation des déplacements actifs", s:"pos"},
+      {f:"Environnement bâti", t:"rues plus sécuritaires, sauf la 117", s:"pos"},
+      {f:"Qualité de l'air", t:"réduction des GES", s:"pos"},
+      {f:"Accès aux services", t:"amélioration pour les personnes non motorisées", s:"pos"},
+      {f:"Sécurité", t:"risque routier pour les piétons", s:"neg"}
+    ],
+    impacts: [
+      {t:"Augmentation de l'activité physique", s:"pos"},
+      {t:"Diminution des maladies respiratoires", s:"pos"},
+      {t:"Augmentation du risque de blessures graves", s:"neg"},
+      {t:"Réduction du stress lié à la congestion", s:"pos"}
+    ]
+  },
+  {
+    num: 2,
+    titre: "Logement de la main-d'œuvre",
+    strategies: ["S2 Habitation", "S5 Centre-ville", "S6 Village"],
+    note: "L'enjeu dont les chaînes causales sont les plus univoques : toutes vont dans le sens de la santé. La réserve foncière et la prohibition de la location à court terme dans les secteurs centraux protègent le parc locatif permanent, dont dépend la capacité des travailleurs à vivre là où ils travaillent. Le principal point de vigilance ne figure pas au modèle : l'absence de cible chiffrée et d'échéancier au plan.",
+    composantes: [
+      {t:"Stratégie 2 : offre d'habitation diversifiée", s:"neu"},
+      {t:"Obj. 2.4.3 : réserve foncière pour logements sociaux et abordables", s:"neu"},
+      {t:"Obj. 2.3.4 : prohibition de la location à court terme (centre-ville, Village)", s:"neu"}
+    ],
+    effets: [
+      {t:"Augmentation de l'offre de logements abordables pour les travailleurs et les résidents", s:"pos"},
+      {t:"Protection du parc locatif permanent contre la conversion", s:"pos"}
+    ],
+    determinants: [
+      {f:"Logement", t:"amélioration de la sécurité et de l'abordabilité", s:"pos"},
+      {f:"Conditions socioéconomiques", t:"réduction de la précarité résidentielle", s:"pos"}
+    ],
+    impacts: [
+      {t:"Réduction majeure du stress financier et de l'anxiété", s:"pos"},
+      {t:"Présence accrue des travailleurs localement et vitalité communautaire", s:"pos"}
+    ]
+  },
+  {
+    num: 3,
+    titre: "Protection de l'actif naturel",
+    strategies: ["S1 Milieux naturels", "S9 Infrastructures et eau"],
+    note: "L'actif naturel est ici à la fois la ressource protégée et la ressource exploitée. La préservation des milieux naturels, le verdissement et l'accès public aux lacs produisent des gains nets, mais la pression continue du développement récréotouristique (stratégie 7 du plan) s'exerce sur les mêmes bassins versants. La chaîne de risque passe par l'apport en phosphore, l'eutrophisation et, en bout de course, les épisodes de cyanobactéries qui compromettent la baignade.",
+    composantes: [
+      {t:"Stratégie 1 : préservation des milieux naturels", s:"neu"},
+      {t:"Obj. 1.1.3 : limitation de la densité dans les bassins versants", s:"neu"},
+      {t:"Obj. 1.5.x : augmentation du verdissement", s:"neu"},
+      {t:"Obj. 7.2 : assurer l'accès public aux lacs", s:"neu"},
+      {t:"Tension : pression continue du développement (stratégie 7)", s:"neg", tension:true}
+    ],
+    effets: [
+      {t:"Protection de la qualité de l'eau", s:"pos"},
+      {t:"Préservation des paysages", s:"pos"},
+      {t:"Réduction des îlots de chaleur", s:"pos"},
+      {t:"Risque de pollution diffuse au phosphore et de fragmentation des habitats", s:"neg"}
+    ],
+    determinants: [
+      {f:"Qualité de l'eau, de l'air et des sols", t:"environnement sain, mais sous pression", s:"pos"},
+      {f:"Accès aux espaces verts", t:"démocratisation de l'accès", s:"pos"},
+      {f:"Adaptation aux changements climatiques", t:"résilience aux chaleurs et aux pluies", s:"pos"}
+    ],
+    impacts: [
+      {t:"Accès à une eau potable de qualité", s:"pos"},
+      {t:"Occasions accrues d'activité physique", s:"pos"},
+      {t:"Risques liés à la baignade (cyanobactéries)", s:"neg"},
+      {t:"Accès à la nature pour le ressourcement", s:"pos"}
+    ]
+  },
+  {
+    num: 4,
+    titre: "Tensions sociales et économiques",
+    strategies: ["S8 Récréotourisme"],
+    note: "Le seul enjeu dont le bilan est majoritairement défavorable. La densification du pôle récréotouristique crée des emplois, mais souvent saisonniers et précaires, et augmente simultanément l'exposition aux jeux de hasard, les nuisances et l'iniquité d'accès au loisir pour la population résidente. L'objectif 7.3.10, sur l'accessibilité locale, constitue le seul levier d'atténuation repéré au plan : son potentiel reste à documenter.",
+    composantes: [
+      {t:"Stratégie 7 : densification du pôle récréotouristique (Versant Soleil, casino)", s:"neu"},
+      {t:"Tension : emplois souvent saisonniers et précaires", s:"neg", tension:true},
+      {t:"Tension : coût élevé des activités", s:"neg", tension:true},
+      {t:"Tension : densification sans nouveaux équipements de loisir garantis", s:"neg", tension:true}
+    ],
+    effets: [
+      {t:"Augmentation de l'offre d'emplois, potentiellement précaires", s:"pos"},
+      {t:"Exposition accrue aux jeux de hasard", s:"neg"},
+      {t:"Augmentation des nuisances (bruit, achalandage)", s:"neg"},
+      {t:"Iniquité d'accès aux loisirs et aux installations sportives", s:"neg"}
+    ],
+    determinants: [
+      {f:"Conditions socioéconomiques", t:"qualité de l'emploi et du revenu", s:"neg"},
+      {f:"Cohésion sociale", t:"risque de friction et d'exclusion", s:"neg"},
+      {f:"Environnement social", t:"exposition accrue aux jeux de hasard", s:"neg"},
+      {f:"Environnement sonore", t:"dégradation", s:"neg"}
+    ],
+    impacts: [
+      {t:"Risque accru de ludomanie", s:"neg"},
+      {t:"Stress financier lié à la précarité", s:"neg"},
+      {t:"Sentiment d'exclusion", s:"neg"},
+      {t:"Stress lié au bruit", s:"neg"},
+      {t:"Potentiel d'atténuation : Obj. 7.3.10 (accessibilité locale)", s:"inc"}
+    ]
+  },
+  {
+    num: 5,
+    titre: "Accès à l'alimentation saine",
+    strategies: ["S4 Alimentation durable"],
+    note: "Cet enjeu ne découle pas d'une stratégie du plan : il découle de son absence. Le plan ne comporte aucune stratégie alimentaire, et le contrôle des usages commerciaux qui y figure vise la concurrence entre commerces, non la qualité de l'offre. Toutes les chaînes sont donc cotées incertaines. L'analyse des environnements alimentaires prévue au rapport doit convertir au moins deux de ces incertitudes en chaînes documentées.",
+    composantes: [
+      {t:"Angle mort : absence d'une stratégie alimentaire dans le plan d'urbanisme", s:"inc", tension:true},
+      {t:"Obj. 4.2.1 et 6.4.1 : contrôle des usages commerciaux (vise la concurrence, pas la qualité)", s:"neu"},
+      {t:"Contexte : pression pour la restauration rapide aux entrées de ville", s:"inc"}
+    ],
+    effets: [
+      {t:"Incertitude sur la disponibilité et l'accessibilité d'aliments sains et abordables", s:"inc"},
+      {t:"Risque de domination d'options de faible qualité nutritionnelle", s:"inc"}
+    ],
+    determinants: [
+      {f:"Accès à une saine alimentation", t:"accès incertain", s:"inc"},
+      {f:"Habitudes de vie", t:"impact inconnu sur les choix alimentaires", s:"inc"}
+    ],
+    impacts: [
+      {t:"Impact inconnu sur les maladies chroniques liées à l'alimentation (diabète, obésité)", s:"inc"}
+    ]
+  }
+];
+
+var SYM = {pos:'+', neg:'\u2212', inc:'?', neu:'\u203A'};
+var COLS = [
+  {k:'composantes',  lbl:'Composantes du plan'},
+  {k:'effets',       lbl:'Effets proximaux'},
+  {k:'determinants', lbl:'Déterminants de la santé'},
+  {k:'impacts',      lbl:'Santé et qualité de vie'}
+];
+
+var grid = document.getElementById('grid');
+var filters = {pos:true, neg:true, inc:true};
+var selected = null;
+
+function el(tag, cls, txt){
+  var n = document.createElement(tag);
+  if(cls) n.className = cls;
+  if(txt !== undefined && txt !== null) n.textContent = txt;
+  return n;
+}
+
+function itemNode(o){
+  var d = el('div', 'item ' + o.s + (o.tension ? ' tension' : ''));
+  d.dataset.sens = o.s;
+  var sym = el('span', 'sym', SYM[o.s] || SYM.neu);
+  sym.setAttribute('aria-hidden', 'true');
+  d.appendChild(sym);
+  var body = el('span');
+  if(o.f){
+    body.appendChild(el('span', 'fam', o.f + ' : '));
+    body.appendChild(document.createTextNode(o.t));
+  } else {
+    body.textContent = o.t;
+  }
+  d.appendChild(body);
+  var label = {pos:'effet favorable', neg:'risque', inc:'incertitude', neu:'élément du plan'}[o.s];
+  d.setAttribute('aria-label', label + ' : ' + (o.f ? o.f + ' — ' : '') + o.t);
+  return d;
+}
+
+function render(){
+  document.querySelectorAll('.row-wrap').forEach(function(n){ n.remove(); });
+  DATA.forEach(function(e){
+    var wrap = el('div', 'row-wrap');
+    wrap.dataset.num = e.num;
+
+    var rail = el('button', 'rail');
+    rail.setAttribute('aria-expanded', 'false');
+    rail.appendChild(el('span', 'enum', 'ENJEU ' + e.num));
+    rail.appendChild(el('h2', null, e.titre));
+    var st = el('div', 'strats');
+    e.strategies.forEach(function(s){ st.appendChild(el('span', 'sbadge', s)); });
+    rail.appendChild(st);
+    rail.appendChild(el('span', 'more', 'Voir la chaîne complète →'));
+    rail.addEventListener('click', function(){ select(e.num); });
+    wrap.appendChild(rail);
+
+    COLS.forEach(function(c, i){
+      if(i === 0) return;
+      var cell = el('div', 'cell');
+      cell.dataset.col = c.lbl;
+      (e[c.k] || []).forEach(function(o){ cell.appendChild(itemNode(o)); });
+      wrap.appendChild(cell);
+    });
+
+    // la colonne 1 est le rail lui-même : les composantes vont dans une cellule dédiée en mobile
+    var comp = el('div', 'cell');
+    comp.dataset.col = 'Composantes du plan';
+    (e.composantes || []).forEach(function(o){ comp.appendChild(itemNode(o)); });
+    wrap.insertBefore(comp, wrap.children[1]);
+
+    grid.appendChild(wrap);
+  });
+  applyFilters();
+  count();
+}
+
+function applyFilters(){
+  document.querySelectorAll('.item').forEach(function(n){
+    var s = n.dataset.sens;
+    var off = (s === 'pos' || s === 'neg' || s === 'inc') && !filters[s];
+    n.classList.toggle('dim', off);
+  });
+}
+
+function count(){
+  var c = {pos:0, neg:0, inc:0};
+  DATA.forEach(function(e){
+    ['effets','determinants','impacts'].forEach(function(k){
+      (e[k] || []).forEach(function(o){ if(c[o.s] !== undefined) c[o.s]++; });
+    });
+  });
+  document.getElementById('cPos').textContent = c.pos;
+  document.getElementById('cNeg').textContent = c.neg;
+  document.getElementById('cInc').textContent = c.inc;
+}
+
+/* ---------- Sélection et panneau ---------- */
+function select(num){
+  if(selected === num){ clearSel(); return; }
+  selected = num;
+  document.body.classList.add('has-sel');
+  document.querySelectorAll('.row-wrap').forEach(function(w){
+    var on = (+w.dataset.num === num);
+    w.classList.toggle('sel', on);
+    w.querySelector('.rail').setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+  openPanel(DATA.filter(function(e){ return e.num === num; })[0]);
+}
+
+function clearSel(){
+  selected = null;
+  document.body.classList.remove('has-sel');
+  document.querySelectorAll('.row-wrap').forEach(function(w){
+    w.classList.remove('sel');
+    w.querySelector('.rail').setAttribute('aria-expanded', 'false');
+  });
+  closePanel();
+}
+
+function chainBlock(e, sens){
+  var titles = {
+    pos:'Chaînes favorables à la santé',
+    neg:'Chaînes défavorables ou à risque',
+    inc:'Chaînes incertaines'
+  };
+  var rows = [];
+  [['effets','Effet direct'], ['determinants','Déterminant'], ['impacts','Impact sur la santé']]
+    .forEach(function(pair){
+      (e[pair[0]] || []).forEach(function(o){
+        if(o.s === sens) rows.push(pair[1] + ' — ' + (o.f ? o.f + ' : ' : '') + o.t);
+      });
+    });
+  if(!rows.length) return null;
+  var box = el('div', 'p-sec');
+  var t = el('p', 'chain-t ' + sens);
+  t.appendChild(el('span', null, SYM[sens]));
+  t.appendChild(el('span', null, titles[sens]));
+  box.appendChild(t);
+  var ul = el('ul', 'chain ' + sens);
+  ul.style.padding = '0 0 0 12px';
+  rows.forEach(function(r){ ul.appendChild(el('li', null, r)); });
+  box.appendChild(ul);
+  return box;
+}
+
+function openPanel(e){
+  document.getElementById('pNum').textContent = 'ENJEU ' + e.num;
+  document.getElementById('pTitle').textContent = e.titre;
+  var b = document.getElementById('pBody');
+  b.innerHTML = '';
+
+  var s1 = el('div', 'p-sec');
+  s1.appendChild(el('h4', null, 'Ce que prévoit le plan'));
+  var ulc = el('ul', 'chain');
+  ulc.style.padding = '0 0 0 12px';
+  (e.composantes || []).forEach(function(o){ ulc.appendChild(el('li', null, o.t)); });
+  s1.appendChild(ulc);
+  b.appendChild(s1);
+
+  ['pos','neg','inc'].forEach(function(s){
+    var blk = chainBlock(e, s);
+    if(blk) b.appendChild(blk);
+  });
+
+  var s3 = el('div', 'p-sec');
+  s3.appendChild(el('h4', null, 'Lecture'));
+  s3.appendChild(el('div', 'p-note', e.note));
+  b.appendChild(s3);
+
+  var s4 = el('div', 'p-sec');
+  s4.appendChild(el('h4', null, 'Où trouver l\u2019analyse détaillée'));
+  var sd = el('div', 'strats');
+  e.strategies.forEach(function(s){ sd.appendChild(el('span', 'sbadge', s)); });
+  s4.appendChild(sd);
+  var hint = el('p', 'p-note', 'Les recommandations et les indicateurs de suivi rattachés à cet enjeu se trouvent dans ces sections du rapport d\u2019ÉIS.');
+  hint.style.marginTop = '8px';
+  s4.appendChild(hint);
+  b.appendChild(s4);
+
+  document.getElementById('panel').classList.add('on');
+  document.getElementById('scrim').classList.add('on');
+}
+
+function closePanel(){
+  document.getElementById('panel').classList.remove('on');
+  document.getElementById('scrim').classList.remove('on');
+}
+
+/* ---------- Version texte ---------- */
+function buildText(){
+  var host = document.getElementById('txtBody');
+  host.innerHTML = '';
+  DATA.forEach(function(e){
+    host.appendChild(el('h4', null, 'Enjeu ' + e.num + ' — ' + e.titre));
+    COLS.forEach(function(c){
+      var p = el('p', 'cols');
+      p.appendChild(el('b', null, c.lbl + ' : '));
+      var txt = (e[c.k] || []).map(function(o){
+        var pre = o.s === 'pos' ? '(+) ' : o.s === 'neg' ? '(\u2212) ' : o.s === 'inc' ? '(?) ' : '';
+        return pre + (o.f ? o.f + ' : ' : '') + o.t;
+      }).join(' · ');
+      p.appendChild(document.createTextNode(txt));
+      host.appendChild(p);
+    });
+    var n = el('p', 'cols');
+    n.appendChild(el('b', null, 'Lecture : '));
+    n.appendChild(document.createTextNode(e.note));
+    host.appendChild(n);
+    var s = el('p', 'cols');
+    s.appendChild(el('b', null, 'Sections du rapport : '));
+    s.appendChild(document.createTextNode(e.strategies.join(', ')));
+    host.appendChild(s);
+  });
+}
+
+/* ---------- Contrôles ---------- */
+function toggleFilter(id, key){
+  var btn = document.getElementById(id);
+  btn.addEventListener('click', function(){
+    filters[key] = !filters[key];
+    btn.setAttribute('aria-pressed', filters[key] ? 'true' : 'false');
+    applyFilters();
+  });
+}
+toggleFilter('fPos', 'pos');
+toggleFilter('fNeg', 'neg');
+toggleFilter('fInc', 'inc');
+
+document.getElementById('reset').addEventListener('click', function(){
+  filters = {pos:true, neg:true, inc:true};
+  ['fPos','fNeg','fInc'].forEach(function(i){ document.getElementById(i).setAttribute('aria-pressed','true'); });
+  applyFilters();
+  clearSel();
+});
+
+document.getElementById('pClose').addEventListener('click', clearSel);
+document.getElementById('scrim').addEventListener('click', clearSel);
+
+function modal(id, btnId, closeId, before){
+  var m = document.getElementById(id);
+  document.getElementById(btnId).addEventListener('click', function(){
+    if(before) before();
+    m.classList.add('on');
+  });
+  document.getElementById(closeId).addEventListener('click', function(){ m.classList.remove('on'); });
+  m.addEventListener('click', function(ev){ if(ev.target === m) m.classList.remove('on'); });
+}
+modal('meth', 'methBtn', 'methClose');
+modal('txt', 'txtBtn', 'txtClose', buildText);
+
+document.addEventListener('keydown', function(ev){
+  if(ev.key === 'Escape'){
+    document.querySelectorAll('.modal.on').forEach(function(m){ m.classList.remove('on'); });
+    clearSel();
+  }
+});
+
+var themeBtn = document.getElementById('themeBtn');
+themeBtn.addEventListener('click', function(){
+  var light = document.body.classList.toggle('theme-light');
+  themeBtn.textContent = light ? 'Thème sombre' : 'Thème clair';
+});
+
+var fs = 1;
+function setFs(v){
+  fs = Math.max(0.85, Math.min(1.3, v));
+  document.documentElement.style.setProperty('--fs', fs + 'rem');
+}
+document.getElementById('fsUp').addEventListener('click', function(){ setFs(fs + 0.07); });
+document.getElementById('fsDown').addEventListener('click', function(){ setFs(fs - 0.07); });
+
+render();
+</script>
+</body>
+</html>
