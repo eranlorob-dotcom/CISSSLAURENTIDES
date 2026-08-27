@@ -287,6 +287,161 @@ input:checked+.pu-sl:before{transform:translateX(16px)}
 .aff-osbl{background:#FCF6E2;color:#7A6A2E}
 .nodata-hab{font-size:11px;color:#aaa;font-style:italic;padding:4px 0}
 
+
+/* ══════════════════════════════════════════════════════════════════════
+   MODULE SIGNALEMENT — CSS
+   Boucle de rétroaction : convertit une plainte d'usager en correction
+   OSM ou en billet de suivi. Palette alignée sur l'outil (vert 1f3a1f).
+   ══════════════════════════════════════════════════════════════════════ */
+.sg-ctl{background:none;border:none;box-shadow:none}
+.sg-btn{
+  background:#fff;color:#1f3a1f;border:1px solid #2E7D32;border-radius:6px;
+  padding:7px 11px;cursor:pointer;font:600 12px "Source Sans 3","Segoe UI",system-ui,sans-serif;
+  min-height:34px;box-shadow:0 1px 5px rgba(0,0,0,.32);display:flex;align-items:center;gap:6px;
+}
+.sg-btn:hover{background:#f0f7ec}
+.sg-btn[aria-pressed="true"]{background:#1f3a1f;color:#d4e8c0;border-color:#1f3a1f}
+.sg-banner{
+  position:fixed;left:50%;transform:translateX(-50%);top:14px;z-index:1600;
+  background:#1f3a1f;color:#d4e8c0;font:600 12px "Segoe UI",system-ui,sans-serif;
+  padding:8px 14px;border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,.35);
+  display:none;align-items:center;gap:10px;max-width:92vw;
+}
+.sg-banner.on{display:flex}
+.sg-banner button{background:rgba(255,255,255,.16);border:0;color:inherit;border-radius:5px;
+  min-width:32px;min-height:26px;cursor:pointer;font-size:12px}
+.sg-picking .leaflet-container,
+.sg-picking .leaflet-interactive,
+.sg-picking .leaflet-marker-icon,
+.sg-picking .leaflet-clickable{cursor:crosshair!important}
+.sg-picking .leaflet-control-container{cursor:auto}
+.sg-overlay{position:fixed;inset:0;background:rgba(20,25,18,.5);z-index:2000;
+  display:none;align-items:center;justify-content:center;padding:16px}
+.sg-overlay.on{display:flex}
+.sg-modal{background:#fff;border-radius:10px;width:min(540px,100%);max-height:92vh;
+  overflow:auto;box-shadow:0 12px 44px rgba(0,0,0,.4);
+  font-family:"Segoe UI",system-ui,sans-serif;color:#1a1a18}
+.sg-hd{background:#1f3a1f;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:8px;
+  position:sticky;top:0;z-index:2}
+.sg-hd h2{font-size:14px;font-weight:600;margin:0}
+.sg-hd .sg-ey{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8fbc6a}
+.sg-close{margin-left:auto;background:transparent;border:0;color:#fff;font-size:18px;
+  line-height:1;cursor:pointer;min-width:32px;min-height:32px}
+.sg-body{padding:14px 16px;display:grid;gap:11px}
+.sg-coord{font:11px/1.4 ui-monospace,"JetBrains Mono",monospace;color:#555;background:#f9f8f4;
+  border:1px dashed #d8d4c8;border-radius:5px;padding:7px 9px;font-variant-numeric:tabular-nums}
+.sg-f{display:grid;gap:4px}
+.sg-f label{font-size:11px;font-weight:600;color:#555}
+.sg-f label i{font-weight:400;color:#aaa;font-style:normal}
+.sg-f select,.sg-f input,.sg-f textarea{font:12px "Segoe UI",system-ui,sans-serif;color:#1a1a18;
+  background:#fff;border:1px solid #d8d4c8;border-radius:5px;padding:7px 8px;min-height:32px;width:100%}
+.sg-f select:focus,.sg-f input:focus,.sg-f textarea:focus{outline:2px solid #2E7D32;outline-offset:-1px}
+.sg-f textarea{min-height:74px;resize:vertical}
+.sg-acts{display:grid;gap:6px;padding:0 16px 16px}
+.sg-sep{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:#aaa;margin-top:6px}
+.sg-act{display:flex;align-items:flex-start;gap:9px;text-align:left;text-decoration:none;
+  background:#fff;color:#1a1a18;border:1px solid #e0ddd5;border-radius:7px;padding:9px 11px;
+  cursor:pointer;font:12px "Segoe UI",system-ui,sans-serif;min-height:38px}
+.sg-act:hover{border-color:#2E7D32;background:#f9fdf7}
+.sg-act.primary{border-color:#2E7D32;background:#f0f7ec}
+.sg-act b{display:block;font-size:12px;font-weight:600;color:#1f3a1f}
+.sg-act em{display:block;font-size:11px;color:#888;font-style:normal;font-weight:400;margin-top:1px;line-height:1.35}
+.sg-ic{font-size:15px;flex-shrink:0;margin-top:1px}
+.sg-popup-link{display:inline-block;margin-top:6px;font-size:11px;font-weight:600;color:#2E7D32;
+  background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;font-family:inherit}
+.sg-popup-link:hover{color:#1f3a1f}
+@media(max-width:800px){.sg-modal{width:100%}.sg-banner{font-size:11px}}
+
+
+
+/* ─── Onglet Densité ──────────────────────────────────────────────────── */
+.toolbar{flex-wrap:wrap}
+.tbtn{min-width:64px}
+#dens-panel{display:none;padding:14px 20px 4px}
+.dn-title{font-size:13px;font-weight:600;color:#1f3a1f;margin-bottom:3px}
+.dn-desc{font-size:11.5px;color:#666;line-height:1.5;margin-bottom:11px}
+.dn-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid #e0ddd5;
+  border-radius:7px;background:#f9f8f4;margin-bottom:10px}
+.dn-row .dn-lab{font-size:12px;font-weight:600;color:#1f3a1f}
+.dn-sw{position:relative;display:inline-block;width:38px;height:21px;margin-left:auto;flex-shrink:0}
+.dn-sw input{opacity:0;width:0;height:0}
+.dn-sl{position:absolute;cursor:pointer;inset:0;background:#c9c5b8;border-radius:21px;transition:.2s}
+.dn-sl:before{content:"";position:absolute;height:15px;width:15px;left:3px;bottom:3px;
+  background:#fff;border-radius:50%;transition:.2s}
+.dn-sw input:checked + .dn-sl{background:#A15C00}
+.dn-sw input:checked + .dn-sl:before{transform:translateX(17px)}
+.dn-field{margin-bottom:10px}
+.dn-field label{display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:4px}
+.dn-field select{width:100%;font:12px "Segoe UI",system-ui,sans-serif;padding:7px 8px;
+  border:1px solid #d8d4c8;border-radius:5px;background:#fff;min-height:34px}
+.dn-leg{border:1px solid #e0ddd5;border-radius:7px;padding:10px 12px;margin-bottom:10px}
+.dn-leg-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:#7A4600;margin-bottom:7px}
+.dn-cls{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#3a3a36;margin-bottom:4px}
+.dn-sq{width:16px;height:16px;border-radius:3px;border:1px solid rgba(0,0,0,.25);flex-shrink:0}
+.dn-cls .dn-n{margin-left:auto;font:11px ui-monospace,monospace;color:#888;
+  font-variant-numeric:tabular-nums}
+.dn-note{font-size:11px;color:#888;line-height:1.5;font-style:italic}
+.dn-flash{font-size:11.5px;line-height:1.5;background:#FBF2D8;border:1px solid #DCC57E;
+  color:#7A5B10;border-radius:6px;padding:8px 10px;margin-bottom:10px;display:none}
+/* ─── Bouton et fenêtre « Méthodologie et limites » ───────────────────── */
+.mt-open{display:flex;align-items:center;gap:6px;width:100%;margin-top:10px;padding:7px 10px;
+  background:rgba(255,255,255,.08);color:#d4e8c0;border:1px solid rgba(212,232,192,.35);
+  border-radius:6px;font:600 11px "Segoe UI",system-ui,sans-serif;cursor:pointer;min-height:32px;
+  text-align:left}
+.mt-open:hover{background:rgba(255,255,255,.16);color:#fff}
+.mt-open .mt-ar{margin-left:auto;opacity:.6}
+.mt-modal{background:#fff;border-radius:10px;width:min(640px,100%);max-height:92vh;overflow:auto;
+  box-shadow:0 12px 44px rgba(0,0,0,.4);font-family:"Segoe UI",system-ui,sans-serif;color:#1a1a18}
+.mt-body{padding:16px 20px 4px}
+.mt-body h3{font-size:12px;font-weight:700;color:#1f3a1f;text-transform:uppercase;
+  letter-spacing:.05em;margin:18px 0 7px;padding-bottom:5px;border-bottom:1px solid #e0ddd5}
+.mt-body h3:first-child{margin-top:0}
+.mt-body p{font-size:12.5px;line-height:1.6;color:#3a3a36;margin:0 0 9px}
+.mt-body ul{margin:0 0 9px;padding-left:17px}
+.mt-body li{font-size:12.5px;line-height:1.55;color:#3a3a36;margin-bottom:6px}
+.mt-body li b{color:#1f3a1f}
+.mt-src{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:11.5px;
+  background:#f9f8f4;border:1px solid #e0ddd5;border-radius:7px;padding:10px 12px;margin-bottom:9px}
+.mt-src dt{font-weight:600;color:#1f3a1f}
+.mt-src dd{margin:0;color:#555}
+.mt-note{background:#FBF2D8;border:1px solid #DCC57E;border-radius:7px;padding:10px 12px;
+  font-size:12px;line-height:1.55;color:#7A5B10;margin:0 0 9px}
+.mt-cta{background:#f0f7ec;border:1px solid #BFE3B4;border-radius:8px;padding:12px 14px;margin:4px 0 0}
+.mt-cta p{font-size:12px;color:#2d5a26;margin-bottom:10px}
+.mt-cta-btns{display:grid;gap:7px}
+.mt-cta-btns button{padding:9px 12px;border-radius:6px;border:1px solid #2E7D32;background:#2E7D32;
+  color:#fff;font:600 12px "Segoe UI",system-ui,sans-serif;cursor:pointer;min-height:36px}
+.mt-cta-btns button:hover{background:#1f5c23}
+.mt-cta-btns button.sec{background:#fff;color:#2E7D32}
+.mt-cta-btns button.sec:hover{background:#e8f4e4}
+.mt-foot{padding:12px 20px 16px;font-size:11px;color:#888;line-height:1.5}
+/* ─── Édition OSM ─────────────────────────────────────────────────────── */
+.osm-box{border:1px solid #cfe0f5;background:#f4f9ff;border-radius:8px;padding:10px 12px;margin-bottom:4px}
+.osm-hd{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;color:#1565c0;margin-bottom:6px}
+.osm-hd .osm-who{margin-left:auto;font:400 11px "Segoe UI",system-ui,sans-serif;
+  text-transform:none;letter-spacing:0;color:#555}
+.osm-hd .osm-who a{color:#1565c0;cursor:pointer;text-decoration:underline}
+.osm-lead{font-size:11px;color:#555;line-height:1.45;margin-bottom:8px}
+.osm-btn{width:100%;padding:8px;border-radius:6px;border:1px solid #1565c0;background:#1565c0;
+  color:#fff;font:600 12px "Segoe UI",system-ui,sans-serif;cursor:pointer;min-height:34px}
+.osm-btn:hover{background:#0f4c9a}
+.osm-btn[disabled]{opacity:.5;cursor:not-allowed}
+.osm-btn.sec{background:#fff;color:#1565c0}
+.osm-btn.sec:hover{background:#e8f1fb}
+.osm-row{display:grid;gap:6px}
+.osm-row select{font:12px "Segoe UI",system-ui,sans-serif;border:1px solid #cfe0f5;
+  border-radius:5px;padding:6px 7px;min-height:32px;width:100%;background:#fff}
+.osm-st{font-size:11px;line-height:1.45;margin-top:7px;padding:6px 8px;border-radius:5px;display:none}
+.osm-st.ok{display:block;background:#BFE3B4;color:#1f6b12}
+.osm-st.err{display:block;background:#F5B3AA;color:#8b2c14}
+.osm-st.wait{display:block;background:#fff3d6;color:#7a5500}
+.osm-st a{color:inherit;font-weight:600}
+.osm-warn{font-size:10px;color:#888;line-height:1.4;margin-top:7px;font-style:italic}
+/* ════════════════════ fin MODULE SIGNALEMENT — CSS ═══════════════════ */
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
 </head>
@@ -298,12 +453,17 @@ input:checked+.pu-sl:before{transform:translateX(16px)}
    <h1>Milieux de vie complets — Laurentides</h1>
    <p>Accessibilité depuis chaque immeuble résidentiel, pondérée par logement. Paramètres Vivre en Ville (2026). Type de milieu établi sur la densité résidentielle nette à l'intérieur du périmètre d'urbanisation.</p>
    <div class="badge">VeV 2026 · MAMH · PU 2026 (SAD) · OSM Overpass</div>
+   <button class="mt-open" id="mtOpen" type="button">
+     <span aria-hidden="true">ⓘ</span> Méthodologie et limites des données
+     <span class="mt-ar" aria-hidden="true">›</span>
+   </button>
   </div>
   <div class="toolbar">
    <div class="tbtn active" id="tb-single" onclick="showMode('single')">🖱 Par clic</div>
    <div class="tbtn" id="tb-reg" onclick="showMode('reg')">🗺 Tout afficher</div>
    <div class="tbtn" id="tb-import" onclick="showMode('import')">📂 Charger</div>
    <div class="tbtn" id="tb-pu" onclick="showMode('pu')">🏙 Périmètres</div>
+   <div class="tbtn" id="tb-dens" onclick="showMode('dens')">📊 Densité</div>
   </div>
 
   <!-- REGIONAL PANEL -->
@@ -334,6 +494,33 @@ input:checked+.pu-sl:before{transform:translateX(16px)}
    </div>
    <input type="file" id="file-input" accept=".geojson,.json" onchange="handleFileInput(event)">
    <div id="imp-status"></div>
+  </div>
+
+
+  <!-- DENSITY PANEL -->
+  <div id="dens-panel">
+   <div class="dn-title">Densité résidentielle</div>
+   <div class="dn-desc">Couche de lecture du territoire, indépendante des scores d'accessibilité.
+     Elle sert à situer le type de milieu qui commande les rayons de marche retenus.</div>
+
+   <div class="dn-flash" id="dn-flash"></div>
+
+   <div class="dn-row">
+    <span class="dn-lab">Afficher la couche</span>
+    <label class="dn-sw"><input type="checkbox" id="dn-cb"><span class="dn-sl"></span></label>
+   </div>
+
+   <div class="dn-field">
+    <label for="dn-mes">Mesure représentée</label>
+    <select id="dn-mes">
+     <option value="dn">Densité nette dans le PU (log/ha) — périmètres</option>
+     <option value="db">Densité brute dans le PU (log/ha) — périmètres</option>
+     <option value="da">Densité administrative (log/km²) — municipalités</option>
+    </select>
+   </div>
+
+   <div class="dn-leg" id="dn-leg"></div>
+   <div class="dn-note" id="dn-note"></div>
   </div>
 
   <!-- EXPORT ROW -->
@@ -661,7 +848,8 @@ var REGIONAL_FEATURES=null;
 
 var map=L.map("map",{center:[46.2,-74.3],zoom:9});
   L.control.scale({metric:true,imperial:false,maxWidth:140,position:"bottomleft"}).addTo(map);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+var CARTO_KEY="cb1_267s_1_6174c34d08c45372822d9bb2";
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key="+CARTO_KEY,
   {attribution:"&copy; OpenStreetMap &copy; CARTO",subdomains:"abcd",maxZoom:19,crossOrigin:"anonymous"}).addTo(map);
 
 function haverDist(la1,lo1,la2,lo2){
@@ -775,7 +963,7 @@ function classifyElements(elements){
     for(var j=0;j<PARAMS.length;j++){
       if(!PARAMS[j].match(t))continue;
       if(!byParam[PARAMS[j].id])byParam[PARAMS[j].id]=[];
-      byParam[PARAMS[j].id].push({name:nm||PARAMS[j].label,coords:c,color:PARAMS[j].color});
+      byParam[PARAMS[j].id].push({name:nm||PARAMS[j].label,coords:c,color:PARAMS[j].color,osm_type:el.type,osm_id:el.id});
       break;
     }
   }
@@ -1892,7 +2080,7 @@ function showPuPoiMarkers(pid){
       DISPLAYED_PARAMS[paramId]={pdef:pdef,muted:muted};
       var mk = L.marker(feats[k].coords, {icon:poiIcon(pdef,muted,size)})
         .bindPopup('<strong>'+(feats[k].name||pdef.label)+'</strong><br>'+
-          '<span style="font-size:11px;color:#666">'+pdef.icon+' '+pdef.label+
+          '<span class="sg-osm" data-t="'+(feats[k].osm_type||'')+'" data-i="'+(feats[k].osm_id||'')+'"></span>'+'<span style="font-size:11px;color:#666">'+pdef.icon+' '+pdef.label+
           ' — '+covPct+'%</span>');
       mk.addTo(map);
       PU_POI_MARKERS.push(mk);
@@ -1943,7 +2131,7 @@ renderSidebarLegend();
   document.getElementById('mx-go').addEventListener('click',exportMap);
 
   function setS(t){var el=document.getElementById('mx-status');if(el)el.textContent=t;}
-  function flt(el){if(!el.classList)return true;return !(el.classList.contains('map-export-box')||el.classList.contains('leaflet-control-zoom'));}
+  function flt(el){if(!el.classList)return true;return !(el.classList.contains('map-export-box')||el.classList.contains('leaflet-control-zoom')||el.classList.contains('sg-ctl'));}
   async function exportMap(){
     if(typeof htmlToImage==='undefined'){setS('Librairie non charg\u00e9e (r\u00e9seau ?)');return;}
     var fmt=document.getElementById('mx-fmt').value, scale=parseInt(document.getElementById('mx-scale').value)||3;
@@ -1963,4 +2151,857 @@ renderSidebarLegend();
   }
 })();
 /* ===== fin EXPORT CARTE ===== */
-</script></body></html>
+</script>
+
+<!-- ═══════════════ MODULE SIGNALEMENT — HTML ═══════════════ -->
+<div class="sg-banner" id="sgBanner" role="status">
+  <span>Cliquez sur la carte à l'endroit concerné</span>
+  <button type="button" id="sgCancel" title="Annuler (Échap)">✕</button>
+</div>
+
+<div class="sg-overlay" id="sgOverlay" role="dialog" aria-modal="true" aria-labelledby="sgTitle">
+  <div class="sg-modal">
+    <div class="sg-hd">
+      <div>
+        <div class="sg-ey">Qualité des données</div>
+        <h2 id="sgTitle">Signaler une donnée manquante ou erronée</h2>
+      </div>
+      <button type="button" class="sg-close" id="sgClose" title="Fermer">✕</button>
+    </div>
+    <div class="sg-body">
+      <div class="sg-coord" id="sgCoord">—</div>
+      <div class="sg-f">
+        <label for="sgType">Nature du signalement</label>
+        <select id="sgType">
+          <option value="Destination manquante">Un lieu existe, mais n'apparaît pas dans l'outil</option>
+          <option value="Destination inexistante">Un lieu affiché n'existe plus ou n'a jamais existé</option>
+          <option value="Mauvaise catégorie">Le lieu est classé dans le mauvais paramètre</option>
+          <option value="Mauvaise position">Le point est mal positionné</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="sg-f">
+        <label for="sgCat">Paramètre concerné</label>
+        <select id="sgCat"></select>
+      </div>
+      <div class="sg-f">
+        <label for="sgNom">Nom ou enseigne <i>(facultatif)</i></label>
+        <input type="text" id="sgNom" placeholder="p. ex. Pharmacie du Village, École Sainte-Anne">
+      </div>
+      <div class="sg-f">
+        <label for="sgComm">Précisions <i>(adresse, date de fermeture, etc.)</i></label>
+        <textarea id="sgComm" placeholder="Décrivez brièvement ce qui devrait être corrigé."></textarea>
+      </div>
+    </div>
+    <div class="sg-acts">
+      <a class="sg-act primary" id="sgOsmNote" href="#" target="_blank" rel="noopener">
+        <span class="sg-ic" aria-hidden="true">📍</span>
+        <span><b>Déposer une note sur OpenStreetMap</b>
+        <em>Sans compte, en deux clics. Un contributeur corrigera la donnée à la source, et tous les outils en profitent.</em></span>
+      </a>
+      <a class="sg-act" id="sgOsmEdit" href="#" target="_blank" rel="noopener">
+        <span class="sg-ic" aria-hidden="true">✎</span>
+        <span><b>Corriger moi-même dans OpenStreetMap</b>
+        <em>Ouvre l'éditeur iD centré sur le point. Compte OSM requis.</em></span>
+      </a>
+      <a class="sg-act" id="sgGithub" href="#" target="_blank" rel="noopener">
+        <span class="sg-ic" aria-hidden="true">🗂</span>
+        <span><b>Transmettre à l'équipe de l'outil</b>
+        <em>Crée un billet de suivi public. Compte GitHub requis.</em></span>
+      </a>
+            <div class="osm-box" id="osmBox">
+        <div class="osm-hd"><span aria-hidden="true">🌍</span> Modifier OpenStreetMap
+          <span class="osm-who" id="osmWho"></span></div>
+        <div class="osm-lead" id="osmLead">
+          Connectez-vous à votre compte OpenStreetMap pour corriger la donnée à la source,
+          sans quitter l'outil. La correction bénéficie à tous les usagers d'OSM.
+        </div>
+        <div class="osm-row" id="osmRow"></div>
+        <div class="osm-st" id="osmSt"></div>
+        <div class="osm-warn" id="osmWarn"></div>
+      </div>
+      <div class="sg-sep">Autres canaux</div>
+      <button type="button" class="sg-act" id="sgCopy">
+        <span class="sg-ic" aria-hidden="true">⧉</span>
+        <span><b>Copier le signalement</b><em id="sgCopyEm">À coller dans un courriel.</em></span>
+      </button>
+      <a class="sg-act" id="sgMail" href="#">
+        <span class="sg-ic" aria-hidden="true">✉</span>
+        <span><b>Ouvrir un courriel prérempli</b><em>Vers l'adresse de l'équipe de l'outil.</em></span>
+      </a>
+    </div>
+  </div>
+</div>
+<!-- ═════════════ fin MODULE SIGNALEMENT — HTML ═════════════ -->
+
+<!-- ═══════════ MÉTHODOLOGIE ET LIMITES — HTML ═══════════ -->
+<div class="sg-overlay" id="mtOverlay" role="dialog" aria-modal="true" aria-labelledby="mtTitle">
+  <div class="mt-modal">
+    <div class="sg-hd">
+      <div>
+        <div class="sg-ey">Comprendre le résultat</div>
+        <h2 id="mtTitle">Méthodologie et limites des données</h2>
+      </div>
+      <button type="button" class="sg-close" id="mtClose" title="Fermer">✕</button>
+    </div>
+
+    <div class="mt-body">
+      <h3>Ce que l'outil calcule</h3>
+      <p>Pour chaque immeuble résidentiel, l'outil mesure l'accès à pied aux destinations
+         du quotidien, puis pondère le résultat par le nombre de logements. Le score d'une
+         municipalité est donc la part des ménages qui atteignent chaque type de service
+         dans la distance de marche retenue, et non une moyenne de points sur une carte.</p>
+      <dl class="mt-src">
+        <dt>Destinations</dt><dd>OpenStreetMap, interrogé en direct par Overpass au moment du calcul</dd>
+        <dt>Logements</dt><dd>Rôle d'évaluation foncière 2026 (MAMH)</dd>
+        <dt>Périmètres</dt><dd>Périmètres d'urbanisation 2026 des schémas d'aménagement</dd>
+        <dt>Paramètres</dt><dd>Grille des milieux de vie complets, Vivre en Ville (2026)</dd>
+      </dl>
+
+      <h3>Les limites d'OpenStreetMap</h3>
+      <p>Les destinations proviennent d'une base cartographique collaborative, alimentée par
+         des contributeurs bénévoles. C'est sa force, puisqu'elle est ouverte, gratuite et
+         vérifiable par tous, mais cela entraîne quatre limites qu'il faut avoir en tête
+         avant d'interpréter un résultat.</p>
+      <ul>
+        <li><b>La couverture varie d'un territoire à l'autre.</b> Elle est généralement plus
+            complète dans les secteurs urbains que dans les municipalités rurales, ce qui peut
+            faire sous-estimer l'accessibilité de ces dernières.</li>
+        <li><b>Les ouvertures et fermetures ne sont pas suivies en temps réel.</b> Un commerce
+            fermé peut subsister dans la base, et un commerce récent peut en être absent.</li>
+        <li><b>Les services regroupés sont parfois représentés par un seul point.</b> Un centre
+            commercial ou un immeuble mixte peut n'apparaître qu'une fois, alors qu'il abrite
+            plusieurs services distincts.</li>
+        <li><b>L'étiquetage est hétérogène.</b> Un même type de service peut être décrit de
+            plusieurs façons par les contributeurs, et la requête ne retient que les étiquettes
+            prévues pour chaque paramètre.</li>
+      </ul>
+      <div class="mt-note">
+        <b>Comment lire les résultats.</b> Le score est un instrument de discussion et de
+        priorisation, pas un inventaire réglementaire. Un écart de quelques points entre deux
+        municipalités n'est pas significatif ; ce sont les ordres de grandeur et les écarts
+        marqués qui méritent d'être interprétés. Les données étant interrogées au moment du
+        calcul, deux analyses effectuées à des dates différentes peuvent différer légèrement.
+      </div>
+
+      <h3>Vous connaissez votre territoire mieux que la base</h3>
+      <p>Un service manquant sur la carte n'est pas une fatalité : la base est modifiable, et
+         c'est même sa raison d'être. Vous pouvez ajouter un point de service directement
+         depuis l'outil, ou simplement signaler ce qui cloche. La correction est permanente et
+         publique : elle ne profite pas qu'à cet outil, mais à toutes les applications qui
+         utilisent OpenStreetMap, et à votre municipalité la prochaine fois que l'analyse sera
+         relancée.</p>
+      <div class="mt-cta">
+        <p>C'est le moyen le plus direct d'améliorer le portrait de votre milieu.</p>
+        <div class="mt-cta-btns">
+          <button type="button" id="mtAdd">➕ Ajouter un point de service manquant</button>
+          <button type="button" class="sec" id="mtReport">⚑ Signaler une donnée erronée</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-foot">
+      Direction de santé publique, Santé Québec · Données OpenStreetMap sous licence
+      ODbL. Les contributions faites depuis cet outil sont publiques et signées de votre compte
+      OpenStreetMap.
+    </div>
+  </div>
+</div>
+<!-- ═══════ fin MÉTHODOLOGIE ET LIMITES — HTML ═══════ -->
+
+
+<script>
+
+/* ══════════════════════════════════════════════════════════════════════
+   MODULE SIGNALEMENT — JS
+   À configurer : SG_CONFIG.depot et SG_CONFIG.courriel.
+   Les paramètres proposés sont lus directement dans PARAMS : rien à
+   maintenir en double si la liste évolue.
+   ══════════════════════════════════════════════════════════════════════ */
+var SG_CONFIG = {
+  outil     : 'Milieux de vie complets — Laurentides',
+  version   : '3.0.0',                              // TODO version diffusée
+  depot     : 'ORGANISATION/DEPOT',                 // TODO 'owner/repo' GitHub, ou null pour masquer
+  etiquettes: 'signalement,donnees',
+  courriel  : 'prenom.nom@ssss.gouv.qc.ca'          // TODO adresse de repli, ou null pour masquer
+};
+
+(function(){
+  if(typeof map==='undefined'||typeof L==='undefined') return;
+  var picking=false, pt=null, ctx=null;
+  var banner  = document.getElementById('sgBanner'),
+      overlay = document.getElementById('sgOverlay'),
+      selCat  = document.getElementById('sgCat');
+
+  /* Paramètres : repris de PARAMS (id, label, icône) */
+  (function(){
+    var list = (typeof PARAMS!=='undefined' && PARAMS.length) ? PARAMS : [];
+    for(var i=0;i<list.length;i++){
+      var o=document.createElement('option');
+      o.value=list[i].id; o.textContent=(list[i].icon?list[i].icon+' ':'')+list[i].label;
+      selCat.appendChild(o);
+    }
+    var a=document.createElement('option'); a.value='autre'; a.textContent='Autre / ne sais pas';
+    selCat.appendChild(a);
+  })();
+  function labelCat(v){ var o=selCat.querySelector('option[value="'+v+'"]'); return o?o.textContent:v; }
+
+  /* ---- Bouton de carte ---- */
+  var Ctl = L.Control.extend({
+    options:{position:'bottomright'},
+    onAdd:function(){
+      var w=L.DomUtil.create('div','sg-ctl');
+      var b=L.DomUtil.create('button','sg-btn',w);
+      b.type='button'; b.id='sgToggle'; b.setAttribute('aria-pressed','false');
+      b.title='Signaler une donnée manquante ou erronée';
+      b.innerHTML='<span aria-hidden="true">⚑</span> Signaler une donnée';
+      L.DomEvent.disableClickPropagation(w);
+      L.DomEvent.on(b,'click',function(){ picking?stopPick():startPick(); });
+      return w;
+    }
+  });
+  map.addControl(new Ctl());
+
+  function startPick(){ picking=true; document.body.classList.add('sg-picking');
+    banner.classList.add('on'); setPressed(true); }
+  function stopPick(){ picking=false; document.body.classList.remove('sg-picking');
+    banner.classList.remove('on'); setPressed(false); }
+  function setPressed(v){ var t=document.getElementById('sgToggle'); if(t) t.setAttribute('aria-pressed',v?'true':'false'); }
+  /* Points d'entrée depuis la fenêtre Méthodologie */
+  window.SG_AJOUT=function(){ document.getElementById('sgType').value='Destination manquante';
+    banner.querySelector('span').textContent='Cliquez sur la carte à l\'emplacement du service à ajouter'; startPick(); };
+  window.SG_SIGNALER=function(){ banner.querySelector('span').textContent='Cliquez sur la carte à l\'endroit concerné'; startPick(); };
+  document.getElementById('sgCancel').onclick=stopPick;
+  (function(){
+    var cont = map.getContainer(), sx = 0, sy = 0;
+
+    function depart(ev){
+      var t = (ev.touches && ev.touches[0]) || ev;
+      sx = t.clientX; sy = t.clientY;
+    }
+    cont.addEventListener('mousedown', depart, true);
+    cont.addEventListener('touchstart', depart, true);
+
+    cont.addEventListener('click', function(ev){
+      if(!picking) return;
+      // laisser passer les contrôles de la carte (bouton Signaler, zoom, légende)
+      if(ev.target.closest && ev.target.closest('.leaflet-control-container')) return;
+      // ignorer le clic qui termine un déplacement de la carte
+      if(Math.abs(ev.clientX - sx) > 5 || Math.abs(ev.clientY - sy) > 5) return;
+
+      ev.preventDefault();
+      ev.stopPropagation();
+      if(ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+
+      var ll;
+      try{ ll = map.mouseEventToLatLng(ev); }catch(e){ return; }
+      stopPick();
+      openModal(ll, null);
+    }, true);
+  })();
+
+  /* ---- Lien contextuel injecté dans tout popup de la carte ---- */
+  map.on('popupopen', function(e){
+    var el=e.popup.getElement(); if(!el) return;
+    var c=el.querySelector('.leaflet-popup-content'); if(!c||c.querySelector('.sg-popup-link')) return;
+    var ll=e.popup.getLatLng(); if(!ll) return;
+    var strong=c.querySelector('strong'), nom=strong?strong.textContent.trim():'';
+    var ids=c.querySelector('.sg-osm');
+    var oT=ids?ids.getAttribute('data-t'):'', oI=ids?ids.getAttribute('data-i'):'';
+    var b=document.createElement('button');
+    b.className='sg-popup-link'; b.type='button'; b.textContent='Signaler une erreur sur ce lieu';
+    b.onclick=function(ev){ ev.stopPropagation(); map.closePopup();
+      openModal(ll,{nom:nom, osm_type:oT||null, osm_id:oI||null}); };
+    c.appendChild(b);
+  });
+
+  /* ---- Fenêtre ---- */
+  function uniteActive(){
+    var el=document.getElementById('mname');
+    var n=el?el.textContent.trim():'';
+    return n || null;
+  }
+  function openModal(latlng, point){
+    pt=latlng; ctx=point||null;
+    window.SG_ETAT={pt:pt, ctx:ctx};
+    document.getElementById('sgCoord').textContent =
+      'Point signalé : '+latlng.lat.toFixed(5)+' / '+latlng.lng.toFixed(5)+
+      (ctx&&ctx.nom?' — '+ctx.nom:'')+
+      (uniteActive()?'  ·  '+uniteActive():'');
+    document.getElementById('sgNom').value  = ctx&&ctx.nom?ctx.nom:'';
+    document.getElementById('sgType').value = ctx?'Destination inexistante':'Destination manquante';
+    document.getElementById('sgGithub').style.display = SG_CONFIG.depot?'':'none';
+    document.getElementById('sgMail').style.display   = SG_CONFIG.courriel?'':'none';
+    overlay.classList.add('on');
+    refreshLinks();
+    if(window.SG_OSM_UI) window.SG_OSM_UI.refresh();
+    document.getElementById('sgType').focus();
+  }
+  function closeModal(){ overlay.classList.remove('on'); }
+  document.getElementById('sgClose').onclick=closeModal;
+  overlay.onclick=function(e){ if(e.target===overlay) closeModal(); };
+  document.addEventListener('keydown', function(e){
+    if(e.key!=='Escape') return;
+    if(overlay.classList.contains('on')) closeModal(); else if(picking) stopPick();
+  });
+  ['sgType','sgCat','sgNom','sgComm'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', refreshLinks);
+  });
+
+  /* ---- Composition du message ---- */
+  function texte(){
+    var lat=pt.lat.toFixed(5), lng=pt.lng.toFixed(5), u=uniteActive();
+    return [
+      '**Outil** : '+SG_CONFIG.outil+' v'+SG_CONFIG.version,
+      '**Données** : OpenStreetMap, interrogé via Overpass le '+new Date().toLocaleDateString('fr-CA'),
+      (u?'**Unité affichée** : '+u:''),
+      '**Nature** : '+document.getElementById('sgType').value,
+      '**Paramètre** : '+labelCat(selCat.value),
+      '**Nom / enseigne** : '+(document.getElementById('sgNom').value||'—'),
+      '**Coordonnées** : '+lat+', '+lng+' (zoom '+map.getZoom()+')',
+      '',
+      '**Précisions**',
+      (document.getElementById('sgComm').value||'_(aucune)_'),
+      '',
+      '---',
+      'Signalement déposé depuis l\'outil, via le bouton « Signaler une donnée ».',
+      'Localisation : https://www.openstreetmap.org/#map=19/'+lat+'/'+lng
+    ].filter(Boolean).join('\n');
+  }
+  function titre(){
+    var n=document.getElementById('sgNom').value;
+    return '['+document.getElementById('sgType').value+'] '+(n||labelCat(selCat.value))+
+           ' ('+pt.lat.toFixed(4)+', '+pt.lng.toFixed(4)+')';
+  }
+
+  function refreshLinks(){
+    if(!pt) return;
+    window.SG_ETAT={pt:pt, ctx:ctx};
+    if(window.SG_OSM_UI) window.SG_OSM_UI.refresh();
+    var lat=pt.lat.toFixed(5), lng=pt.lng.toFixed(5), h='#map=19/'+lat+'/'+lng;
+    document.getElementById('sgOsmNote').href='https://www.openstreetmap.org/note/new'+h;
+    document.getElementById('sgOsmEdit').href='https://www.openstreetmap.org/edit'+h;
+    if(SG_CONFIG.depot){
+      document.getElementById('sgGithub').href='https://github.com/'+SG_CONFIG.depot+'/issues/new'+
+        '?title='+encodeURIComponent(titre())+
+        '&labels='+encodeURIComponent(SG_CONFIG.etiquettes)+
+        '&body='+encodeURIComponent(texte());
+    }
+    if(SG_CONFIG.courriel){
+      document.getElementById('sgMail').href='mailto:'+SG_CONFIG.courriel+
+        '?subject='+encodeURIComponent('Signalement — '+SG_CONFIG.outil+' : '+titre())+
+        '&body='+encodeURIComponent(texte().replace(/\*\*/g,'').replace(/_/g,''));
+    }
+  }
+
+  document.getElementById('sgCopy').onclick=function(){
+    var t=texte().replace(/\*\*/g,''), em=document.getElementById('sgCopyEm'), old=em.textContent;
+    function ok(){ em.textContent='Copié dans le presse-papiers ✓';
+      setTimeout(function(){ em.textContent=old; },2500); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(ok,function(){ window.prompt('Copiez le texte :',t); });
+    } else { window.prompt('Copiez le texte :',t); }
+  };
+})();
+/* ═════════════════ fin MODULE SIGNALEMENT — JS ══════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODULE ÉDITION OPENSTREETMAP — OAuth 2.0 (PKCE) + API 0.6
+   Permet à un usager connecté à son propre compte OSM d'ajouter un lieu
+   manquant ou de corriger un nom, directement depuis l'outil.
+
+   AVANT LA MISE EN LIGNE — lire le bloc « Encadrement » plus bas.
+   Trois opérations seulement sont offertes, et jamais la suppression.
+   ══════════════════════════════════════════════════════════════════════════ */
+var OSM_CONFIG = {
+  serveur    : 'dev',                       // 'dev' (bac à sable) puis 'prod'
+  client_id  : 'TODO_CLIENT_ID',            // openstreetmap.org/oauth2/applications
+  redirect_uri: null,                       // null = <dossier de l'appli>/osm-callback.html
+  hashtag    : '#mvc-laurentides',          // doit exister sur la page wiki de l'activité
+  wiki       : 'https://wiki.openstreetmap.org/wiki/Organised_Editing/Activities/MVC_Laurentides',
+  source     : 'local knowledge',
+  max_edits  : 20                           // garde-fou par session
+};
+
+/* Encadrement (Organised Editing Guidelines de l'OSMF)
+   ─────────────────────────────────────────────────────────────────────────
+   Un outil institutionnel qui amène plusieurs personnes à éditer OSM est une
+   activité d'édition organisée. Avant d'activer le mode 'prod' :
+     1. créer la page d'activité sur le wiki OSM (Organised Editing/Activities)
+        et y déclarer l'organisation, le but, la zone, le contact ;
+     2. utiliser le hashtag unique ci-dessus dans le commentaire de chaque
+        changeset, et pointer la page wiki ;
+     3. chaque personne édite sous SON compte OSM — jamais un compte partagé
+        au nom de Santé Québec ;
+     4. annoncer l'initiative à la communauté OSM québécoise avant le lancement.
+   Tester d'abord sur le serveur de développement (serveur:'dev'), qui a sa
+   propre base et exige un compte distinct. */
+
+var OSM_PRESETS = {
+  alimentation : [['shop=supermarket','Supermarché'],['shop=convenience','Dépanneur'],
+                  ['shop=grocery','Épicerie'],['shop=greengrocer','Fruiterie'],
+                  ['shop=butcher','Boucherie'],['shop=bakery','Boulangerie']],
+  pharmacie    : [['amenity=pharmacy','Pharmacie']],
+  sante        : [['amenity=clinic','Clinique'],['amenity=doctors','Cabinet médical'],
+                  ['amenity=dentist','Dentiste']],
+  ecole_prim   : [['amenity=school','École primaire']],
+  ecole_sec    : [['amenity=school','École secondaire']],
+  service_garde: [['amenity=kindergarten','Service de garde / CPE']],
+  culture      : [['amenity=library','Bibliothèque'],['amenity=community_centre','Centre communautaire'],
+                  ['amenity=theatre','Salle de spectacle'],['amenity=cinema','Cinéma']],
+  loisirs      : [['leisure=sports_centre','Centre sportif'],['leisure=pitch','Terrain de sport'],
+                  ['leisure=swimming_pool','Piscine'],['leisure=ice_rink','Aréna / patinoire'],
+                  ['leisure=playground','Aire de jeux']],
+  nature       : [['leisure=park','Parc']],
+  transport    : [['highway=bus_stop','Arrêt d\'autobus']]
+};
+
+var OSM = (function(){
+  var TOKEN = null, USER = null, NEDITS = 0;
+
+  function base(){
+    return OSM_CONFIG.serveur === 'dev'
+      ? {web:'https://master.apis.dev.openstreetmap.org', api:'https://master.apis.dev.openstreetmap.org'}
+      : {web:'https://www.openstreetmap.org', api:'https://api.openstreetmap.org'};
+  }
+  function redirect(){
+    return OSM_CONFIG.redirect_uri ||
+      (location.origin + location.pathname.replace(/[^/]*$/, '') + 'osm-callback.html');
+  }
+  function b64url(buf){
+    var s=''; var b=new Uint8Array(buf);
+    for(var i=0;i<b.length;i++) s+=String.fromCharCode(b[i]);
+    return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  function alea(n){ var a=new Uint8Array(n); crypto.getRandomValues(a); return b64url(a); }
+
+  /* ---- Connexion : code d'autorisation + PKCE, sans secret client ---- */
+  function connecter(){
+    return new Promise(function(res, rej){
+      if(!OSM_CONFIG.client_id || OSM_CONFIG.client_id.indexOf('TODO')===0)
+        return rej(new Error("client_id non configuré — enregistrez l'application sur openstreetmap.org/oauth2/applications"));
+      var verifier = alea(48), state = alea(12);
+      sessionStorage.setItem('osm_verifier', verifier);
+      sessionStorage.setItem('osm_state', state);
+      crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)).then(function(h){
+        var url = base().web + '/oauth2/authorize?' + new URLSearchParams({
+          client_id: OSM_CONFIG.client_id, redirect_uri: redirect(),
+          response_type: 'code', scope: 'read_prefs write_api write_notes',
+          state: state, code_challenge: b64url(h), code_challenge_method: 'S256'
+        }).toString();
+        var pop = window.open(url, 'osm_login', 'width=560,height=680');
+        if(!pop) return rej(new Error('Fenêtre bloquée par le navigateur.'));
+        function onMsg(ev){
+          if(ev.origin!==location.origin || !ev.data || ev.data.source!=='osm-oauth') return;
+          window.removeEventListener('message', onMsg);
+          if(ev.data.error) return rej(new Error(ev.data.error));
+          if(ev.data.state !== sessionStorage.getItem('osm_state'))
+            return rej(new Error('État OAuth non concordant — connexion abandonnée.'));
+          echanger(ev.data.code).then(res, rej);
+        }
+        window.addEventListener('message', onMsg);
+      }, rej);
+    });
+  }
+  function echanger(code){
+    return fetch(base().web + '/oauth2/token', {
+      method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({grant_type:'authorization_code', code:code,
+        client_id:OSM_CONFIG.client_id, redirect_uri:redirect(),
+        code_verifier:sessionStorage.getItem('osm_verifier')}).toString()
+    }).then(function(r){ if(!r.ok) throw new Error('Échange du jeton refusé ('+r.status+')'); return r.json(); })
+      .then(function(j){
+        TOKEN = j.access_token;
+        sessionStorage.removeItem('osm_verifier'); sessionStorage.removeItem('osm_state');
+        return api('/api/0.6/user/details.json').then(function(t){
+          try{ USER = JSON.parse(t).user.display_name; }catch(e){ USER='(compte OSM)'; }
+          return USER;
+        });
+      });
+  }
+  function deconnecter(){ TOKEN=null; USER=null; }
+  function connecte(){ return !!TOKEN; }
+  function usager(){ return USER; }
+
+  /* ---- Appels API ---- */
+  function api(path, opts){
+    opts = opts || {};
+    var h = opts.headers || {};
+    if(TOKEN) h['Authorization'] = 'Bearer ' + TOKEN;
+    return fetch(base().api + path, {method:opts.method||'GET', headers:h, body:opts.body})
+      .then(function(r){
+        return r.text().then(function(t){
+          if(!r.ok) throw new Error('OSM ' + r.status + ' : ' + (t||'').slice(0,180));
+          return t;
+        });
+      });
+  }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function ouvrirChangeset(commentaire){
+    var xml = '<osm><changeset>'
+      + '<tag k="created_by" v="' + esc('MVC Laurentides (Santé Québec)') + '"/>'
+      + '<tag k="comment" v="' + esc(commentaire + ' ' + OSM_CONFIG.hashtag) + '"/>'
+      + '<tag k="hashtags" v="' + esc(OSM_CONFIG.hashtag) + '"/>'
+      + '<tag k="source" v="' + esc(OSM_CONFIG.source) + '"/>'
+      + '<tag k="website" v="' + esc(OSM_CONFIG.wiki) + '"/>'
+      + '</changeset></osm>';
+    return api('/api/0.6/changeset/create', {method:'PUT',
+      headers:{'Content-Type':'text/xml'}, body:xml}).then(function(t){ return t.trim(); });
+  }
+  function fermerChangeset(id){
+    return api('/api/0.6/changeset/'+id+'/close', {method:'PUT'}).catch(function(){});
+  }
+
+  function garde(){
+    if(NEDITS >= OSM_CONFIG.max_edits)
+      throw new Error('Limite de ' + OSM_CONFIG.max_edits + ' modifications par session atteinte.');
+  }
+
+  /* ---- Ajout d'un lieu (nœud) ---- */
+  function ajouterLieu(lat, lon, tags, commentaire){
+    garde();
+    var csid;
+    return ouvrirChangeset(commentaire).then(function(id){
+      csid = id;
+      var t = '';
+      for(var k in tags) if(tags[k]) t += '<tag k="'+esc(k)+'" v="'+esc(tags[k])+'"/>';
+      var xml = '<osm><node changeset="'+csid+'" lat="'+Number(lat).toFixed(7)+
+                '" lon="'+Number(lon).toFixed(7)+'">'+t+'</node></osm>';
+      return api('/api/0.6/node/create', {method:'PUT',
+        headers:{'Content-Type':'text/xml'}, body:xml});
+    }).then(function(nodeId){
+      NEDITS++;
+      return fermerChangeset(csid).then(function(){
+        return {node:nodeId.trim(), changeset:csid};
+      });
+    }).catch(function(e){ if(csid) fermerChangeset(csid); throw e; });
+  }
+
+  /* ---- Correction du nom d'un nœud existant ---- */
+  function corrigerNom(type, id, nouveauNom, commentaire){
+    garde();
+    if(type !== 'node')
+      return Promise.reject(new Error(
+        "Cet élément est un tracé ou une relation. L'outil ne modifie que les points ; "
+        + "utilisez l'éditeur iD ou déposez une note."));
+    var csid, doc;
+    return api('/api/0.6/node/'+id).then(function(xml){
+      doc = new DOMParser().parseFromString(xml, 'text/xml');
+      if(!doc.querySelector('node')) throw new Error('Nœud introuvable.');
+      return ouvrirChangeset(commentaire);
+    }).then(function(cs){
+      csid = cs;
+      var node = doc.querySelector('node');
+      node.setAttribute('changeset', csid);
+      var t = node.querySelector('tag[k="name"]');
+      if(t) t.setAttribute('v', nouveauNom);
+      else { var n=doc.createElement('tag'); n.setAttribute('k','name');
+             n.setAttribute('v', nouveauNom); node.appendChild(n); }
+      return api('/api/0.6/node/'+id, {method:'PUT',
+        headers:{'Content-Type':'text/xml'},
+        body:new XMLSerializer().serializeToString(doc)});
+    }).then(function(v){
+      NEDITS++;
+      return fermerChangeset(csid).then(function(){ return {node:id, version:v.trim(), changeset:csid}; });
+    }).catch(function(e){ if(csid) fermerChangeset(csid); throw e; });
+  }
+
+  /* ---- Note (aucun compte requis ; attribuée si connecté) ---- */
+  function deposerNote(lat, lon, texte){
+    var q = new URLSearchParams({lat:Number(lat).toFixed(7), lon:Number(lon).toFixed(7), text:texte});
+    return api('/api/0.6/notes?'+q.toString(), {method:'POST'}).then(function(xml){
+      var m = /<note[^>]*>[\s\S]*?<id>(\d+)<\/id>/.exec(xml) || /"id"\s*:\s*(\d+)/.exec(xml);
+      return m ? m[1] : null;
+    });
+  }
+
+  return {connecter:connecter, deconnecter:deconnecter, connecte:connecte, usager:usager,
+          ajouterLieu:ajouterLieu, corrigerNom:corrigerNom, deposerNote:deposerNote,
+          serveurWeb:function(){ return base().web; },
+          reste:function(){ return OSM_CONFIG.max_edits - NEDITS; }};
+})();
+/* ═══════════════ fin MODULE ÉDITION OPENSTREETMAP ═══════════════════════ */
+
+
+/* ── Interface d'édition OSM, greffée sur la fenêtre de signalement ────── */
+(function(){
+  var box=document.getElementById('osmBox'), row=document.getElementById('osmRow'),
+      who=document.getElementById('osmWho'), st=document.getElementById('osmSt'),
+      lead=document.getElementById('osmLead'), warn=document.getElementById('osmWarn');
+  if(!box) return;
+
+  function dire(txt, cls){ st.className='osm-st '+(cls||''); st.innerHTML=txt; }
+  function vide(){ st.className='osm-st'; st.innerHTML=''; }
+  function etat(){ return window.SG_ETAT||{}; }
+  function champ(id){ var e=document.getElementById(id); return e?e.value:''; }
+
+  function bouton(txt, cls, fn){
+    var b=document.createElement('button'); b.type='button';
+    b.className='osm-btn'+(cls?' '+cls:''); b.textContent=txt; b.onclick=fn; row.appendChild(b);
+    return b;
+  }
+
+  function refresh(){
+    row.innerHTML=''; vide();
+    var e=etat(), ctx=e.ctx||{}, type=champ('sgType'), cat=champ('sgCat');
+    who.innerHTML = OSM.connecte()
+      ? 'Connecté : '+OSM.usager()+' · <a id="osmOut">déconnexion</a>' : '';
+    if(document.getElementById('osmOut'))
+      document.getElementById('osmOut').onclick=function(){ OSM.deconnecter(); refresh(); };
+
+    warn.textContent = OSM_CONFIG.serveur==='dev'
+      ? 'Mode bac à sable : les modifications partent vers le serveur de développement, pas vers OSM.'
+      : 'Vos modifications sont publiques et signées de votre compte. La suppression n\'est jamais offerte ici.';
+
+    if(!OSM.connecte()){
+      lead.style.display='';
+      bouton('Se connecter à OpenStreetMap','',function(){
+        dire('Ouverture de la fenêtre de connexion…','wait');
+        OSM.connecter().then(function(u){ dire('Connecté comme '+u+'.','ok'); refresh(); },
+          function(err){ dire('Connexion impossible : '+err.message,'err'); });
+      });
+      bouton('Déposer une note sans compte','sec', noteAnonyme);
+      return;
+    }
+    lead.style.display='none';
+
+    /* Ajout d'un lieu manquant */
+    if(type==='Destination manquante'){
+      var presets=(typeof OSM_PRESETS!=='undefined' && OSM_PRESETS[cat])||null;
+      if(!presets){
+        var p=document.createElement('div'); p.className='osm-lead';
+        p.textContent='Aucun gabarit d\'étiquettes pour ce paramètre. Utilisez la note ou l\'éditeur iD.';
+        row.appendChild(p);
+      } else {
+        var sel=document.createElement('select'); sel.id='osmPreset';
+        presets.forEach(function(pr){ var o=document.createElement('option');
+          o.value=pr[0]; o.textContent=pr[1]+'  ('+pr[0]+')'; sel.appendChild(o); });
+        row.appendChild(sel);
+        bouton('Ajouter ce lieu dans OpenStreetMap','',function(){
+          var nom=champ('sgNom').trim();
+          if(!nom) return dire('Indiquez le nom ou l\'enseigne avant d\'ajouter le lieu.','err');
+          var kv=sel.value.split('='), tags={}; tags[kv[0]]=kv[1]; tags.name=nom;
+          dire('Envoi en cours…','wait');
+          OSM.ajouterLieu(e.pt.lat, e.pt.lng, tags,
+            'Ajout d\'un lieu manquant repéré via l\'outil Milieux de vie complets')
+            .then(function(r){
+              dire('Lieu ajouté ✓ — <a href="'+OSM.serveurWeb()+'/node/'+r.node+
+                   '" target="_blank" rel="noopener">voir le point</a> · '+
+                   OSM.reste()+' modification(s) restantes cette session.','ok');
+            }, function(err){ dire('Échec : '+err.message,'err'); });
+        });
+      }
+    }
+
+    /* Correction du nom d'un point existant */
+    if(ctx.osm_id && ctx.osm_type){
+      bouton('Corriger le nom dans OpenStreetMap','sec',function(){
+        var nom=champ('sgNom').trim();
+        if(!nom) return dire('Saisissez le nom corrigé dans le champ ci-dessus.','err');
+        dire('Envoi en cours…','wait');
+        OSM.corrigerNom(ctx.osm_type, ctx.osm_id, nom,
+          'Correction du nom d\'un lieu, repérée via l\'outil Milieux de vie complets')
+          .then(function(r){
+            dire('Nom corrigé ✓ — <a href="'+OSM.serveurWeb()+'/node/'+r.node+
+                 '" target="_blank" rel="noopener">voir le point</a>','ok');
+          }, function(err){ dire('Échec : '+err.message,'err'); });
+      });
+    }
+
+    /* Fermeture définitive : jamais une suppression automatique, une note. */
+    bouton(type==='Destination inexistante'
+      ? 'Signaler la fermeture par une note' : 'Déposer une note sur ce point','sec', noteAnonyme);
+  }
+
+  function noteAnonyme(){
+    var e=etat(); if(!e.pt) return;
+    var txt='['+champ('sgType')+'] '+(champ('sgNom')||'—')+
+            '\n'+(champ('sgComm')||'')+
+            '\nSignalé via l\'outil Milieux de vie complets (Santé Québec). '+
+            OSM_CONFIG.hashtag;
+    dire('Dépôt de la note…','wait');
+    OSM.deposerNote(e.pt.lat, e.pt.lng, txt).then(function(id){
+      dire(id ? 'Note déposée ✓ — <a href="'+OSM.serveurWeb()+'/note/'+id+
+               '" target="_blank" rel="noopener">la suivre</a>' : 'Note déposée ✓','ok');
+    }, function(err){
+      dire('Dépôt impossible ('+err.message+'). Utilisez le bouton « Déposer une note sur '+
+           'OpenStreetMap » ci-dessous, qui ouvre le site.','err');
+    });
+  }
+
+  window.SG_OSM_UI={refresh:refresh};
+  refresh();
+})();
+
+
+
+/* ─── Fenêtre « Méthodologie et limites » ─────────────────────────────── */
+(function(){
+  var ov=document.getElementById('mtOverlay'), op=document.getElementById('mtOpen');
+  if(!ov||!op) return;
+  function ouvrir(){ ov.classList.add('on'); }
+  function fermer(){ ov.classList.remove('on'); }
+  op.onclick=ouvrir;
+  document.getElementById('mtClose').onclick=fermer;
+  ov.onclick=function(e){ if(e.target===ov) fermer(); };
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && ov.classList.contains('on')) fermer();
+  });
+  document.getElementById('mtAdd').onclick=function(){
+    fermer(); if(window.SG_AJOUT) window.SG_AJOUT();
+  };
+  document.getElementById('mtReport').onclick=function(){
+    fermer(); if(window.SG_SIGNALER) window.SG_SIGNALER();
+  };
+})();
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   ONGLET DENSITÉ — choroplèthe des municipalités et des périmètres
+   Couche de lecture posée par-dessus la carte, non interactive, retirée
+   automatiquement dès qu'une analyse MVC démarre pour ne pas se
+   superposer aux couleurs de score.
+   ══════════════════════════════════════════════════════════════════════ */
+var DENS = (function(){
+  var couche = null, visible = false, mesure = 'dn';
+
+  var RAMPE = ['#F7F1DC','#EFE3B8','#D9A62E','#B87A14','#7A4600'];
+
+  var MESURES = {
+    dn: {ech:'pu',   unite:'log/ha', lib:'Densité nette dans le PU',
+         seuils:[5,10,15,25],
+         note:"Logements du périmètre d'urbanisation rapportés à sa superficie construite. "
+            + "C'est la mesure qui établit le type de milieu : dense au-delà de 15 log/ha, "
+            + "intermédiaire de 5 à 15, rural en deçà. Les périmètres d'une même municipalité "
+            + "partagent sa valeur, le calcul étant agrégé au niveau municipal."},
+    db: {ech:'pu',   unite:'log/ha', lib:'Densité brute dans le PU',
+         seuils:[2,5,10,15],
+         note:"Logements du périmètre rapportés à sa superficie totale, espaces non bâtis "
+            + "compris. Systématiquement plus basse que la densité nette."},
+    da: {ech:'muni', unite:'log/km²', lib:'Densité administrative',
+         seuils:[25,100,300,800],
+         note:"Logements rapportés à la superficie totale de la municipalité. Donnée de "
+            + "référence seulement : elle écrase les grandes municipalités à faible "
+            + "population et ne sert pas à établir le type de milieu."}
+  };
+
+  function classe(v, seuils){
+    if(v==null || isNaN(v)) return -1;
+    for(var i=0;i<seuils.length;i++) if(v < seuils[i]) return i;
+    return seuils.length;
+  }
+  function couleur(v, seuils){ var c=classe(v,seuils); return c<0 ? '#EDEDE7' : RAMPE[c]; }
+  function fmt(v,d){ return v==null||isNaN(v) ? '—'
+    : Number(v).toLocaleString('fr-CA',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+  function valeur(muniId){
+    var u = (typeof PUDENS!=='undefined') ? PUDENS[String(muniId)] : null;
+    return u ? u[mesure] : null;
+  }
+
+  function construire(){
+    detruire();
+    var m = MESURES[mesure], grp = [], compte = [0,0,0,0,0], nul = 0;
+
+    if(m.ech === 'pu'){
+      for(var pid in PU_DATA){
+        var pu = PU_DATA[pid], v = valeur(pu.m);
+        var ll = pu.g.map(function(c){ return [c[0], c[1]]; });
+        grp.push(L.polygon(ll, {color:'#7A4600', weight:1, opacity:.55,
+          fillColor:couleur(v, m.seuils), fillOpacity:v==null?.25:.72, interactive:false}));
+        var c = classe(v, m.seuils); if(c<0) nul++; else compte[c]++;
+      }
+    } else {
+      var lg = L.geoJSON(GEOJSON, {interactive:false, style:function(f){
+        var p = f.properties, id = p.MUS_CO_GEO || p.mus_co_geo;
+        var v = valeur(id), c = classe(v, m.seuils);
+        if(c<0) nul++; else compte[c]++;
+        return {color:'#7A4600', weight:.8, opacity:.5,
+                fillColor:couleur(v, m.seuils), fillOpacity:v==null?.25:.7};
+      }});
+      grp.push(lg);
+    }
+
+    couche = L.layerGroup(grp);
+    if(visible) couche.addTo(map);
+    legende(compte, nul);
+  }
+
+  function detruire(){ if(couche){ map.removeLayer(couche); couche = null; } }
+
+  function legende(compte, nul){
+    var m = MESURES[mesure], s = m.seuils, el = document.getElementById('dn-leg');
+    var bornes = ['moins de '+fmt(s[0],0)];
+    for(var i=0;i<s.length-1;i++) bornes.push(fmt(s[i],0)+' à '+fmt(s[i+1],0));
+    bornes.push(fmt(s[s.length-1],0)+' et plus');
+    var h = '<div class="dn-leg-t">'+m.lib+' ('+m.unite+')</div>';
+    for(var j=0;j<bornes.length;j++)
+      h += '<div class="dn-cls"><span class="dn-sq" style="background:'+RAMPE[j]+'"></span>'
+         + bornes[j] + '<span class="dn-n">'+(compte[j]||0)+'</span></div>';
+    if(nul) h += '<div class="dn-cls"><span class="dn-sq" style="background:#EDEDE7"></span>'
+               + 'Sans donnée<span class="dn-n">'+nul+'</span></div>';
+    el.innerHTML = h;
+    document.getElementById('dn-note').textContent = m.note;
+  }
+
+  function flash(txt){
+    var f = document.getElementById('dn-flash');
+    if(!f) return;
+    if(!txt){ f.style.display='none'; return; }
+    f.textContent = txt; f.style.display = 'block';
+  }
+
+  function afficher(v){
+    visible = !!v;
+    var cb = document.getElementById('dn-cb'); if(cb) cb.checked = visible;
+    if(visible){ if(!couche) construire(); else couche.addTo(map); flash(''); }
+    else if(couche) map.removeLayer(couche);
+  }
+
+  /* Retrait automatique dès qu'une analyse MVC démarre */
+  function masquerPourAnalyse(){
+    if(!visible) return;
+    afficher(false);
+    flash("Couche de densité masquée pendant l'analyse, pour ne pas se superposer aux "
+        + "couleurs de score. Réactivez-la ici quand vous voulez.");
+  }
+
+  function init(){
+    var cb = document.getElementById('dn-cb'), sel = document.getElementById('dn-mes');
+    if(!cb || !sel) return;
+    cb.onchange = function(){ afficher(cb.checked); };
+    sel.onchange = function(){ mesure = sel.value; if(visible){ construire(); } else { construire(); detruire(); } };
+    construire(); detruire();          // légende prête avant tout affichage
+  }
+
+  return {init:init, afficher:afficher, masquer:masquerPourAnalyse,
+          visible:function(){ return visible; }};
+})();
+
+/* Onglet : brancher sur showMode sans toucher à la fonction d'origine */
+(function(){
+  var _showMode = window.showMode;
+  window.showMode = function(mode){
+    _showMode.apply(this, arguments);
+    var t = document.getElementById('tb-dens');
+    if(t) t.className = 'tbtn' + (mode==='dens' ? ' active' : '');
+    var p = document.getElementById('dens-panel');
+    if(p) p.style.display = (mode==='dens' ? 'block' : 'none');
+  };
+
+  /* Les trois entrées d'analyse retirent la couche avant de repeindre */
+  ['runAnalysis','showPrecomputed','startRegional'].forEach(function(nom){
+    var f = window[nom];
+    if(typeof f !== 'function') return;
+    window[nom] = function(){ try{ DENS.masquer(); }catch(e){} return f.apply(this, arguments); };
+  });
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', function(){ DENS.init(); });
+  else DENS.init();
+})();
+
+</script>
+</body></html>
