@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ce que dit la science. Fiche 8, Récréotourisme | ÉIS Mont-Tremblant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Marque (charte CISSS-DSP) */
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+
+  /* Thème sombre marine (défaut) */
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+
+  --accent:var(--teal); --accent2:var(--blue);
+  --fs:1rem;
+}
+body.theme-light{
+  --bg:#ffffff; --bg2:#f4f6fc; --panel:#ffffff; --panel2:#eef1fb;
+  --line:#d8def0; --line2:#e6eaf7;
+  --ink:#14143a; --ink2:#3a3f6e; --muted:#7a80a8;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Source Sans 3',system-ui,sans-serif;
+  font-size:var(--fs); line-height:1.6; font-weight:400;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+
+/* ---------- Barre institutionnelle ---------- */
+.bandeau{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; gap:.9rem; flex-wrap:wrap;
+  padding:.55rem 1.4rem;
+  background:var(--navy); color:#fff;
+  border-bottom:2px solid var(--teal);
+}
+body.theme-light .bandeau{color:#fff}
+.bandeau .sig{font-size:.78rem; font-weight:600; letter-spacing:.01em; opacity:.92}
+.bandeau .sep{flex:1}
+.ctl{display:flex; gap:.35rem}
+.ctl button{
+  font-family:inherit; font-size:.78rem; font-weight:600;
+  color:#fff; background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.22); border-radius:3px;
+  min-width:34px; min-height:32px; padding:0 .55rem; cursor:pointer;
+}
+.ctl button:hover{background:rgba(255,255,255,.24)}
+.ctl button:focus-visible{outline:2px solid var(--teal-l); outline-offset:2px}
+
+/* ---------- Trame ---------- */
+main{max-width:56rem; margin:0 auto; padding:2.6rem 1.4rem 5rem}
+.fil{max-width:34rem}
+
+/* ---------- Ouverture ---------- */
+.eyebrow{
+  font-size:.82rem; font-weight:600; color:var(--accent);
+  margin:0 0 .5rem;
+}
+h1{
+  font-size:clamp(2rem,5.2vw,3.1rem); line-height:1.08; font-weight:900;
+  letter-spacing:-.02em; margin:0 0 1rem; max-width:14ch;
+}
+.chapeau{font-size:1.12rem; color:var(--ink2); max-width:34rem; margin:0 0 1.6rem}
+
+.jauge{
+  display:inline-flex; align-items:baseline; gap:.5rem;
+  border:1px dashed var(--line); border-radius:3px;
+  padding:.35rem .7rem; margin-bottom:2.8rem;
+  font-size:.82rem; color:var(--muted);
+}
+.jauge b{font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; font-weight:500; color:var(--ink)}
+.jauge.ok b{color:var(--teal)}
+.jauge.trop b{color:#e6a23c}
+
+/* ---------- Constats ---------- */
+.constat{
+  display:grid; grid-template-columns:7.5rem 1fr; gap:0 1.6rem;
+  padding:1.7rem 0 1.9rem;
+  border-top:1px solid var(--line2);
+}
+.constat:first-of-type{border-top:2px solid var(--line)}
+.chiffre{
+  font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums;
+  font-weight:500; font-size:2.1rem; line-height:1; letter-spacing:-.03em;
+  color:var(--accent); padding-top:.35rem;
+}
+.chiffre.mot{
+  font-family:'Source Sans 3',sans-serif; font-size:1.5rem; font-weight:700;
+  letter-spacing:-.01em; color:var(--indigo);
+}
+body.theme-light .chiffre.mot{color:var(--indigo)}
+.chiffre span{display:block; font-family:'Source Sans 3',sans-serif; font-size:.78rem; font-weight:400; color:var(--muted); line-height:1.35; margin-top:.5rem; letter-spacing:0}
+.constat h2{
+  font-size:1.35rem; line-height:1.25; font-weight:700; letter-spacing:-.01em;
+  margin:.15rem 0 .55rem;
+}
+.constat p{margin:0 0 .6rem; color:var(--ink2); max-width:36rem}
+.constat p:last-child{margin-bottom:0}
+
+
+
+/* Appels de référence */
+.ref{
+  font-family:'JetBrains Mono',monospace; font-size:.68em; font-weight:500;
+  color:var(--accent2); background:none; border:none; padding:0 .05rem;
+  cursor:pointer; vertical-align:super; line-height:0;
+}
+.ref:hover{color:var(--teal-l); text-decoration:underline}
+.ref:focus-visible{outline:2px solid var(--teal); outline-offset:2px}
+
+/* ---------- Encadré contre-intuitif : le seul objet « boîte » de la page ---------- */
+.rebours{
+  position:relative; margin:2.6rem 0 2.2rem; padding:1.6rem 1.7rem 1.5rem;
+  background:linear-gradient(135deg,var(--panel) 0%,var(--panel2) 100%);
+  border-left:4px solid var(--teal);
+}
+body.theme-light .rebours{background:var(--panel2); border-left-color:var(--teal-d)}
+.rebours .tag{
+  font-size:.78rem; font-weight:700; color:var(--teal);
+  margin:0 0 .5rem;
+}
+body.theme-light .rebours .tag{color:var(--teal-d)}
+.rebours h3{font-size:1.2rem; font-weight:700; margin:0 0 .5rem; line-height:1.3}
+.rebours p{margin:0; color:var(--ink2)}
+
+/* ---------- Accordéons ---------- */
+details{border-top:1px solid var(--line2)}
+details:last-of-type{border-bottom:1px solid var(--line2)}
+summary{
+  cursor:pointer; list-style:none; padding:1rem .2rem;
+  font-size:1.02rem; font-weight:600; color:var(--ink);
+  display:flex; align-items:center; gap:.7rem;
+}
+summary::-webkit-details-marker{display:none}
+summary::before{
+  content:'+'; font-family:'JetBrains Mono',monospace; font-weight:500;
+  color:var(--accent); width:1rem; display:inline-block;
+}
+details[open] summary::before{content:'–'}
+summary:focus-visible{outline:2px solid var(--teal); outline-offset:-2px}
+summary .n{margin-left:auto; font-size:.8rem; font-weight:400; color:var(--muted)}
+.det-corps{padding:0 0 1.3rem 1.7rem; max-width:36rem}
+.det-corps h4{font-size:.98rem; font-weight:700; margin:1.1rem 0 .25rem; color:var(--ink)}
+.det-corps h4:first-child{margin-top:0}
+.det-corps p{margin:0; color:var(--ink2); font-size:.96rem}
+
+ol.sources{margin:0; padding-left:1.4rem; font-size:.88rem; color:var(--ink2)}
+ol.sources li{margin-bottom:.5rem; scroll-margin-top:5rem}
+ol.sources li a{color:var(--accent2); word-break:break-word}
+ol.sources li.vise{background:rgba(33,174,173,.14); outline:2px solid var(--teal); outline-offset:3px; border-radius:2px}
+
+/* ---------- Légende & pied ---------- */
+footer{
+  max-width:56rem; margin:0 auto; padding:1.6rem 1.4rem 3rem;
+  font-size:.8rem; color:var(--muted); border-top:1px solid var(--line2);
+}
+footer b{color:var(--ink2); font-weight:600}
+
+h2,h3,h4{text-wrap:balance}
+
+@media (max-width:640px){
+  .constat{grid-template-columns:1fr; gap:.2rem}
+  .chiffre{font-size:1.7rem; padding-top:0; margin-bottom:.4rem}
+  .chiffre span{display:inline; margin-left:.5rem}
+  .det-corps{padding-left:0}
+  main{padding-top:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<div class="bandeau">
+  <span class="sig">Santé Québec Laurentides, Direction de santé publique</span>
+  <span class="sep"></span>
+  <div class="ctl">
+    <button id="fsm" title="Réduire la taille du texte" aria-label="Réduire la taille du texte">A&minus;</button>
+    <button id="fsp" title="Augmenter la taille du texte" aria-label="Augmenter la taille du texte">A+</button>
+    <button id="theme" title="Basculer le thème clair ou sombre">Thème clair</button>
+  </div>
+</div>
+
+<main>
+
+  <p class="eyebrow">Fiche 8, Récréotourisme. Partie 3 de 7</p>
+  <h1>Ce que dit la science</h1>
+  <p class="chapeau">Quatre constats documentés sur le lien entre l&rsquo;aménagement récréotouristique et la santé. Le détail et les sources sont plus bas.</p>
+
+  <div class="jauge" id="jauge">
+    Fil principal : <b id="nbmots">0</b> mots <span id="cible">(cible du gabarit : 250 à 350)</span>
+  </div>
+
+  <div class="fil-principal">
+
+    <article class="constat">
+      <div class="chiffre">10 min<span>au-delà, le parc cesse d&rsquo;être fréquenté</span></div>
+      <div>
+        <h2>Dix minutes de marche, pas vingt</h2>
+        <p>Un parc à moins de dix minutes de marche est fréquenté. Le même parc à vingt minutes ne l&rsquo;est plus.<button class="ref" data-ref="2">3</button> Ce n&rsquo;est pas une question de motivation, mais de distance.</p>
+        <p>Là où l&rsquo;accès est proche, on bouge davantage, le stress baisse et la santé mentale s&rsquo;améliore. L&rsquo;effet est plus marqué chez les personnes à faible revenu, qui se déplacent moins loin.<button class="ref" data-ref="0">1</button></p>
+      </div>
+    </article>
+
+    <article class="constat">
+      <div class="chiffre">45 dB<span>limite OMS pour le bruit routier la nuit ; 53 dB en moyenne sur 24 heures</span></div>
+      <div>
+        <h2>Le seuil d&rsquo;une nuit réparatrice</h2>
+        <p>L&rsquo;OMS fixe à 45 décibels la limite du bruit routier nocturne.<button class="ref" data-ref="4">5</button> Au-delà, le sommeil se fragmente. Avec les années, la tension monte et le risque cardiovasculaire suit.</p>
+        <p>Dans les zones où le touristique touche le résidentiel, le bruit ne vient pas d&rsquo;abord des activités : il vient de la circulation qu&rsquo;elles attirent et des stationnements.<button class="ref" data-ref="5">6</button></p>
+      </div>
+    </article>
+
+    <article class="constat">
+      <div class="chiffre mot">Jeu<span>aucune donnée locale chiffrée disponible à ce jour</span></div>
+      <div>
+        <h2>Les appareils ne sont pas répartis au hasard</h2>
+        <p>Plus il y a d&rsquo;appareils de jeu près de chez soi, plus le jeu problématique est fréquent dans le secteur.<button class="ref" data-ref="9">10</button> Et ces appareils se concentrent dans les quartiers à faible revenu, un écart expliqué d&rsquo;abord par le revenu des résidents.<button class="ref" data-ref="11">12</button> La publicité agit en plus sur l&rsquo;initiation des jeunes.<button class="ref" data-ref="10">11</button></p>
+        <p>Le jeu problématique ne reste pas un problème d&rsquo;argent : détresse, endettement, ruptures familiales, risque suicidaire accru. Au Piémont, réduire le nombre d&rsquo;appareils et de points de vente a fait baisser le jeu à risque.<button class="ref" data-ref="13">14</button> Une municipalité peut plafonner les appareils dans un périmètre et imposer une distance minimale des lieux fréquentés par les jeunes.<button class="ref" data-ref="12">13</button></p>
+      </div>
+    </article>
+
+    <article class="constat">
+      <div class="chiffre mot">Saison<span>revenus d&rsquo;une partie de l&rsquo;année, loyer de toute l&rsquo;année</span></div>
+      <div>
+        <h2>Travailler l&rsquo;hiver, payer le loyer toute l&rsquo;année</h2>
+        <p>L&rsquo;emploi saisonnier, temporaire et à horaires atypiques va de pair avec une détresse psychologique plus élevée,<button class="ref" data-ref="6">7</button> davantage d&rsquo;insécurité alimentaire<button class="ref" data-ref="7">8</button> et un moindre recours aux services préventifs.</p>
+        <p>Quand s&rsquo;y ajoute un marché locatif tendu, l&rsquo;instabilité résidentielle s&rsquo;installe.<button class="ref" data-ref="8">9</button> La main-d&rsquo;œuvre qui fait tourner l&rsquo;offre récréotouristique est la première exposée.</p>
+      </div>
+    </article>
+
+    <section class="rebours">
+      <p class="tag">À rebours de l&rsquo;intuition</p>
+      <h3>Rendre l&rsquo;accès gratuit ne ramène pas les absents</h3>
+      <p>Le coût est bien une barrière pour les ménages à faible revenu. Mais les évaluations de programmes de gratuité montrent que retirer le prix, seul, profite surtout aux personnes déjà actives. Tout dépend ensuite de la proximité de l&rsquo;équipement, de l&rsquo;accompagnement et de la notoriété du programme.<button class="ref" data-ref="3">4</button></p>
+    </section>
+
+  </div>
+
+  <details>
+    <summary>Pour aller plus loin dans les connaissances <span class="n">6 constats</span></summary>
+    <div class="det-corps">
+      <h4>Les lieux publics gratuits font se croiser des gens qui ne se croisent pas</h4>
+      <p>La qualité des relations sociales pèse sur la mortalité autant que les grands facteurs de risque comportementaux.<button class="ref" data-ref="14">15</button> Les lieux publics ouverts et confortables favorisent les contacts informels entre groupes sociaux.<button class="ref" data-ref="15">16</button></p>
+
+      <h4>Densifier sans commerces reporte tout sur l&rsquo;automobile</h4>
+      <p>La cible québécoise du milieu de vie complet est d&rsquo;au moins un commerce alimentaire à 800 mètres de marche du domicile.<button class="ref" data-ref="17">18</button> L&rsquo;outil MilieuxVie mesure la proximité de douze catégories de services à partir du rôle foncier, avec une cible de couverture de 70 %.<button class="ref" data-ref="18">19</button></p>
+
+      <h4>Un équipement n&rsquo;est utilisé que s&rsquo;il est utilisable</h4>
+      <p>L&rsquo;annexe H de la norme CAN/CSA Z614 exige que les composantes de jeu accessibles soient intégrées au reste de l&rsquo;aire, et non regroupées à part.<button class="ref" data-ref="19">20</button> Chez les aînés, la marche dépend de conditions aménageables : pentes faibles, revêtement adapté, bancs avec dossier, blocs sanitaires accessibles.<button class="ref" data-ref="20">21</button></p>
+
+      <h4>Se baigner est aussi une mesure d&rsquo;adaptation à la chaleur</h4>
+      <p>Les lacs et rivières d&rsquo;une superficie appréciable affichent une température inférieure d&rsquo;environ 2,5 °C aux secteurs environnants, et élargir les heures d&rsquo;accès aux lieux de baignade améliore le répit des personnes vulnérables à la chaleur.<button class="ref" data-ref="22">23</button></p>
+
+      <h4>Le vélo utilitaire tient à l&rsquo;infrastructure, pas à la volonté</h4>
+      <p>Près de sept adultes québécois sur dix ne pratiquent pas ou rarement le transport actif.<button class="ref" data-ref="24">25</button> Piétons et cyclistes restent surreprésentés dans les décès routiers : sécuriser les aménagements est une condition, pas un complément.<button class="ref" data-ref="25">26</button> Le transport représente environ 18 % des dépenses des ménages québécois, au second rang derrière le logement.<button class="ref" data-ref="26">27</button></p>
+
+      <h4>La qualité des eaux de baignade se surveille et s&rsquo;affiche</h4>
+      <p>Bactéries d&rsquo;origine fécale et cyanobactéries causent gastro-entérites, dermatites et irritations. Santé Canada fixe les seuils de conformité et recommande l&rsquo;affichage rapide des résultats aux sites de baignade.<button class="ref" data-ref="27">28</button></p>
+    </div>
+  </details>
+
+  <details id="bloc-sources">
+    <summary>Sources <span class="n">28 références</span></summary>
+    <div class="det-corps" style="max-width:none">
+      <ol class="sources" id="liste-sources"></ol>
+    </div>
+  </details>
+
+
+</main>
+
+<footer>
+  <b>Évaluation d&rsquo;impact sur la santé du plan d&rsquo;urbanisme de Mont-Tremblant.</b>
+  Maquette de mise en récit de la partie 3 du gabarit de fiche-stratégie.
+  Santé Québec Laurentides, Direction de santé publique. Mise à jour 2026-09-17.
+</footer>
+
+<script>
+var SOURCES = [
+  {t:"INSPQ. Verdir les villes pour la santé de la population", u:"https://www.inspq.qc.ca/publications/2517"},
+  {t:"OMS Europe. Urban green spaces and health", u:"https://www.who.int/europe/publications/i/item/WHO-EURO-2016-3352-43111-60341"},
+  {t:"Trust for Public Land. 10-Minute Walk, Key Park Equity Policies; et Rigolon et coll., PMC7369687", u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC7369687/"},
+  {t:"Journal of Physical Activity and Health, évaluation de programmes de gratuité", u:"https://doi.org/10.1123/jpah.6.6.716"},
+  {t:"OMS Europe. Environmental noise guidelines for the European Region", u:"https://www.who.int/europe/publications/i/item/9789289053563"},
+  {t:"Noise &amp; Health, bruit en zones de transition", u:"https://doi.org/10.4103/1463-1741.155833"},
+  {t:"Emploi précaire et détresse psychologique (PubMed 38012123)", u:"https://pubmed.ncbi.nlm.nih.gov/38012123/"},
+  {t:"Canadian Public Policy, emploi atypique et insécurité alimentaire", u:"https://doi.org/10.3138/cpp.2024-059"},
+  {t:"Urban Studies, marché locatif tendu et instabilité résidentielle", u:"https://doi.org/10.1177/0042098017711649"},
+  {t:"Addiction, proximité et densité de l&rsquo;offre de jeu", u:"https://doi.org/10.1111/add.16153"},
+  {t:"Journal of Public Health, jeu problématique et santé", u:"https://doi.org/10.1093/pubmed/fdad096"},
+  {t:"Health Promotion International, exposition publicitaire et initiation des jeunes", u:"https://doi.org/10.1093/heapro/dah509"},
+  {t:"BMC Public Health, densité d&rsquo;appareils et statut socioéconomique", u:"https://doi.org/10.1186/s12889-019-7535-1"},
+  {t:"International Journal of Health Geographics, encadrement géographique de l&rsquo;offre de jeu", u:"https://doi.org/10.1186/s12942-024-00379-2"},
+  {t:"BMC Public Health, réduction de l&rsquo;offre au Piémont", u:"https://doi.org/10.1186/s12889-022-13398-0"},
+  {t:"Holt-Lunstad et coll., PLOS Medicine, relations sociales et mortalité", u:"https://doi.org/10.1371/journal.pmed.1000316"},
+  {t:"Lieux publics et contacts informels (JSTOR)", u:"https://www.jstor.org/stable/jj.41003893"},
+  {t:"INSPQ. Qualité de vie et action municipale", u:"https://www.inspq.qc.ca/sites/default/files/publications/3262-qualite-vie-action-municipale.pdf"},
+  {t:"Vivre en Ville. Milieux de vie complets, destinations de proximité", u:"https://carrefour.vivreenville.org/milieux-de-vie-complets/destinations-de-proximite/alimentation"},
+  {t:"Robitaille et coll., Geographies, outil MilieuxVie", u:"https://doi.org/10.3390/geographies6030066"},
+  {t:"Guides Sports Loisirs. Accessibilité universelle des aires de jeu, CAN/CSA Z614 annexe H", u:"https://www.guides-sports-loisirs.ca/projetespaces/espaces-jeu-enfants/accessibilite-universelle-aire-jeu/"},
+  {t:"Santé Montérégie. Guide d&rsquo;aménagement des parcs pour les aînés", u:"https://extranet.santemonteregie.qc.ca/app/uploads/2024/01/guide-amenagement-parcs-pour-aines.pdf"},
+  {t:"INSPQ. Baignade et activité physique", u:"https://www.inspq.qc.ca/publications/2501"},
+  {t:"INSPQ. Mesures populationnelles d&rsquo;adaptation à la chaleur", u:"https://www.inspq.qc.ca/changements-climatiques/menaces/chaleur/mesures-populationnelles"},
+  {t:"Health Promotion International, interventions en milieu aquatique et bien-être", u:"https://doi.org/10.1093/heapro/day103"},
+  {t:"INSPQ. Transport actif et habitudes de vie", u:"https://www.inspq.qc.ca/habitudes-de-vie/activite-physique/transports"},
+  {t:"INSPQ. Favoriser la sécurité des transports actifs par l&rsquo;environnement bâti", u:"https://www.inspq.qc.ca/sites/default/files/publications/3653-TOPO-favoriser-securite-transports-actifs-environnement-bati.pdf"},
+  {t:"Vélo Québec. Données et arguments pour le vélo dans la collectivité", u:"https://velosympathique.velo.qc.ca/ressources/donnees-arguments-velo-collectivite/"},
+  {t:"Santé Canada. Recommandations sur la qualité des eaux utilisées à des fins récréatives", u:"https://www.canada.ca/fr/sante-canada/services/publications/vie-saine/recommandations-sujet-qualite-eaux-utilisees-fins-recreatives-canada-document-synthese.html"}
+];
+
+/* Liste des sources */
+var ol = document.getElementById('liste-sources');
+SOURCES.forEach(function(s,i){
+  var li = document.createElement('li');
+  li.id = 'src-' + i;
+  li.innerHTML = s.t + '. <a href="' + s.u + '" target="_blank" rel="noopener">' + s.u + '</a>';
+  ol.appendChild(li);
+});
+
+/* Appels de référence : ouvrir le bloc sources et pointer la bonne ligne */
+document.addEventListener('click', function(e){
+  var b = e.target.closest('.ref');
+  if(!b) return;
+  var i = b.dataset.ref;
+  document.getElementById('bloc-sources').open = true;
+  var li = document.getElementById('src-' + i);
+  document.querySelectorAll('.sources li.vise').forEach(function(x){x.classList.remove('vise');});
+  li.classList.add('vise');
+  li.scrollIntoView({block:'center'});
+});
+
+/* Compteur de mots du fil principal */
+(function(){
+  var n = 0;
+  document.querySelectorAll('.fil-principal h2, .fil-principal h3, .fil-principal p').forEach(function(el){
+    var c = el.cloneNode(true);
+    c.querySelectorAll('.ref, .preuve, .tag').forEach(function(x){ x.remove(); });
+    n += c.textContent.split(/\s+/).filter(function(w){ return /[A-Za-zÀ-ÿ0-9]/.test(w); }).length;
+  });
+  document.getElementById('nbmots').textContent = n;
+  var j = document.getElementById('jauge');
+  j.classList.add(n >= 250 && n <= 350 ? 'ok' : 'trop');
+})();
+
+/* Taille de police */
+var fs = 1;
+function setFs(v){ fs = Math.max(.85, Math.min(1.35, v)); document.documentElement.style.setProperty('--fs', fs + 'rem'); }
+document.getElementById('fsm').onclick = function(){ setFs(fs - .08); };
+document.getElementById('fsp').onclick = function(){ setFs(fs + .08); };
+
+/* Thème */
+var bt = document.getElementById('theme');
+bt.onclick = function(){
+  document.body.classList.toggle('theme-light');
+  bt.textContent = document.body.classList.contains('theme-light') ? 'Thème sombre' : 'Thème clair';
+};
+</script>
+</body>
+</html>
