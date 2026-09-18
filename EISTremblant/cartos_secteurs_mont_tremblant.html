@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -72,6 +73,18 @@ header.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:10px 
 .leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
 .leaflet-control-attribution{background:#070620cc!important;color:var(--muted)!important;font-size:10px}
 .leaflet-control-attribution a{color:var(--teal)!important}
+.leaflet-control-layers{background:var(--panel)!important;color:var(--ink)!important;
+  border:1px solid var(--line)!important;border-radius:4px!important;box-shadow:none!important}
+.leaflet-control-layers-toggle{background-color:var(--panel)!important;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2321AEAD' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 22 8.5 12 15 2 8.5 12 2'/%3E%3Cpolyline points='2 15.5 12 22 22 15.5'/%3E%3C/svg%3E")!important;
+  background-size:20px 20px!important;background-position:center!important;background-repeat:no-repeat!important}
+.leaflet-control-layers-expanded{padding:8px 12px 8px 8px!important;font:500 12px 'Source Sans 3',sans-serif!important}
+.leaflet-control-layers-list label{margin:2px 0!important;cursor:pointer}
+.leaflet-control-layers-list span{color:var(--ink2)}
+.leaflet-control-layers-separator{border-top:1px solid var(--line)!important}
+/* Fond clair (Quebec) : l'attribution doit rester lisible */
+body.fond-clair .leaflet-control-attribution{background:#ffffffdd!important;color:#3a3f6e!important}
+body.fond-clair .leaflet-control-attribution a{color:#0366a6!important}
 
 /* ===== Panneau-profil ===== */
 .empty{text-align:center;padding:44px 18px;color:var(--muted)}
@@ -356,9 +369,40 @@ var SEUIL_POP=500;
 
 /* ===== Carte ===== */
 var map=L.map('map',{zoomControl:true}).setView([46.16,-74.59],10);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · Santé Québec Laurentides',
-  maxZoom:18, subdomains:'abcd'}).addTo(map);
+
+/* ===== Fonds de carte ===== */
+var SIG='Santé Québec Laurentides';
+
+var fondEsri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
+  attribution:'Tuiles © <a href="https://www.esri.com/">Esri</a> · HERE, Garmin, © OpenStreetMap · '+SIG,
+  maxZoom:16});
+
+/* Habillage (toponymes et routes) du canevas Esri, superposé à la couche de données */
+var habillageEsri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{
+  maxZoom:16, pane:'shadowPane', opacity:.9});
+
+/* Carte de base du gouvernement du Québec (TMS, EPSG:3857) */
+var fondQuebec = L.tileLayer('https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',{
+  attribution:'© <a href="https://www.donneesquebec.ca/">Gouvernement du Québec</a> · '+SIG,
+  maxZoom:17});
+
+fondEsri.addTo(map);
+habillageEsri.addTo(map);
+
+var FONDS={
+  'Sombre (Esri)': fondEsri,
+  'Québec (topographique)': fondQuebec
+};
+L.control.layers(FONDS,null,{position:'topright',collapsed:true}).addTo(map);
+
+/* Le fond québécois est clair : on adapte le contour des polygones et l'attribution */
+var fondEstClair=false;
+map.on('baselayerchange', function(e){
+  if(e.layer===fondEsri){ map.addLayer(habillageEsri); } else { map.removeLayer(habillageEsri); }
+  fondEstClair = (e.layer===fondQuebec);
+  document.body.classList.toggle('fond-clair', fondEstClair);
+  if(typeof dataLayer!=='undefined' && dataLayer){ dataLayer.setStyle(styleFeature); }
+});
 
 var dataLayer, selected=null, selNom=null, DATA;
 
@@ -373,7 +417,7 @@ function bornes(){
 function styleFeature(f){
   var v=f.properties[FIELD], c=rampColor(v,VMIN,VMAX);
   if(c===null) return {fillColor:'#8b8fc4',fillOpacity:.12,weight:1,color:'#8b8fc4',opacity:.5,dashArray:'4 3'};
-  return {fillColor:c,fillOpacity:.78,weight:1,color:'#ffffff55',opacity:.7};
+  return {fillColor:c,fillOpacity:(fondEstClair?.68:.78),weight:1,color:(fondEstClair?'#14143a88':'#ffffff55'),opacity:.7};
 }
 function hiStyle(f){
   var st=styleFeature(f);
