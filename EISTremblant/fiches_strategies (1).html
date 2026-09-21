@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atelier des fiches-stratégies ÉIS Mont-Tremblant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<style>
+:root{
+  --ground:#F4F6FA; --surface:#FFFFFF; --ink:#1F1F2E; --muted:#5b5f7e; --line:#dcdfee;
+  --navy:#140C74; --accent:#0e7f7e; --accent-soft:#e1f3f3; --amber:#a86a0c; --amber-soft:#fbf0dc;
+  --field:#fbfbfe; --focus:#0482D3;
+  --sans:'Source Sans 3','Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ground:#0b0a24; --surface:#141238; --ink:#eef0fb; --muted:#9a9ecb; --line:#2a2860;
+    --navy:#c9c6ff; --accent:#3cc8c7; --accent-soft:#12324a; --amber:#f0b457; --amber-soft:#3a2c14;
+    --field:#100f2e; --focus:#5cb6f5;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 4rem}
+.wrap{max-width:1180px;margin:0 auto}
+header.top{padding-block:1.6rem .6rem;display:grid;gap:.45rem}
+.eyebrow{font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0}
+h1{font-size:1.75rem;font-weight:800;color:var(--navy);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.lede{margin:0;max-width:74ch;color:var(--muted)}
+.lede b{color:var(--ink);font-weight:600}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.6rem;margin:1rem 0}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.8rem .9rem;display:grid;gap:.35rem;align-content:start}
+.step .k{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.step b{font-size:.98rem}
+.step p{margin:0;font-size:.86rem;color:var(--muted)}
+.bar{position:sticky;top:0;z-index:5;background:var(--ground);padding-block:.6rem;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:space-between}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap}
+.tab{font:inherit;font-weight:700;font-size:.9rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:4px;padding:.4rem .8rem;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--navy);color:var(--ground);border-color:var(--navy)}
+.status{font-size:.84rem;color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:.45rem}
+button.b{font:inherit;font-weight:700;font-size:.86rem;border-radius:4px;padding:.42rem .8rem;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+button.b.primary{background:#178f8e;border-color:#178f8e;color:#fff}
+button.b.ghost{background:transparent}
+button.b.small{font-size:.78rem;padding:.25rem .55rem}
+button.b:disabled{opacity:.5;cursor:default}
+button:focus-visible,.tab:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:1.6rem;align-items:start;margin-top:1.2rem}
+@media (max-width:860px){.layout{grid-template-columns:1fr}.toc{display:none}}
+.toc{position:sticky;top:4.2rem;display:grid;gap:.15rem;font-size:.88rem}
+.toc a{color:var(--muted);text-decoration:none;padding:.25rem .5rem;border-radius:4px}
+.toc a:hover{background:var(--surface);color:var(--ink)}
+form{display:grid;gap:2.2rem}
+section.part{display:grid;gap:.8rem;scroll-margin-top:4.5rem}
+section.part>h2{font-size:1.2rem;font-weight:800;color:var(--navy);margin:0;display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+section.part>h2 .n{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:600}
+section.part>h2 .blk{font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:3px;padding:.05rem .4rem}
+.row{display:grid;gap:.25rem}
+.row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.7rem}
+label,.lbl{font-weight:600;font-size:.88rem}
+.hint{font-size:.82rem;color:var(--muted);margin:0;max-width:78ch}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:5px;padding:.42rem .6rem;width:100%}
+textarea{resize:vertical;line-height:1.45}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--focus);outline-offset:0;border-color:transparent}
+.list{display:grid;gap:.6rem}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.75rem;display:grid;gap:.55rem}
+.item .ih{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.item .ih span{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.item .ih .btns{gap:.25rem}
+.adds{display:flex;flex-wrap:wrap;gap:.35rem}
+.revsum{font-size:.82rem;color:var(--ink);background:var(--accent-soft);border-radius:4px;padding:.45rem .6rem;margin:.2rem 0 0!important}
+.empty{font-size:.86rem;color:var(--muted);margin:0}
+.blocks{display:grid;gap:.7rem;margin-top:1.2rem}
+.blk-card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.8rem .9rem;display:grid;gap:.5rem}
+.blk-card .top{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;justify-content:space-between}
+.blk-card .num{font-family:var(--mono);font-size:.78rem;font-weight:600;color:var(--muted);margin-right:.5rem}
+.blk-card .kind{font-size:.74rem;font-weight:700;border-radius:99px;padding:.05rem .55rem;margin-right:.5rem}
+.kind.txt{background:var(--accent-soft);color:var(--accent)}
+.kind.emb{background:var(--amber-soft);color:var(--amber)}
+.blk-card b{font-size:1rem}
+.blk-card .meta{font-size:.82rem;color:var(--muted)}
+.blk-card textarea{font-family:var(--mono);font-size:.74rem;height:8rem}
+.blk-card .url{font-family:var(--mono);font-size:.82rem;word-break:break-all;margin:0}
+.howto{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:.8rem 1rem;margin-top:1rem}
+.howto ol{margin:.3rem 0 0;padding-left:1.2rem;font-size:.9rem}
+.previewwrap{margin-top:1rem;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#070620}
+iframe#pv{display:block;width:100%;height:calc(100vh - 150px);min-height:520px;border:0}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:.5rem .9rem;border-radius:4px;font-weight:600;font-size:.88rem;z-index:9;max-width:90vw}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">ÉIS · Plan d'urbanisme de Mont-Tremblant</p>
+    <h1>Atelier des fiches-stratégies</h1>
+    <p class="lede">Cet atelier transforme votre fiche Word en <b>blocs HTML prêts à coller dans Hub</b>, au gabarit de la fiche 8. Importez votre Word ou remplissez le formulaire : l'onglet « Blocs Hub » découpe la fiche bloc par bloc, avec les cartes intégrées entre les blocs.</p>
+  </header>
+
+  <div class="steps">
+    <div class="step"><span class="k">Étape 1</span><b>Importer votre fiche Word</b><p>Le gabarit en sept parties est lu automatiquement. Tout reste modifiable.</p>
+      <div class="btns"><button type="button" class="b primary" id="impWord">Importer un .docx</button><input type="file" id="fWord" accept=".docx" hidden></div></div>
+    <div class="step"><span class="k">Étape 2</span><b>Mettre en forme</b><p>Choisissez les constats clés et leur chiffre, les objectifs du plan, les chiffres du terrain et la place des cartes.</p></div>
+    <div class="step"><span class="k">Étape 3</span><b>Transmettre</b><p>Téléchargez votre fiche (.json) et joignez-la à un courriel.</p>
+      <div class="btns"><button type="button" class="b" id="saveJson">Télécharger ma fiche (.json)</button><button type="button" class="b ghost" id="mail">Préparer le courriel</button></div></div>
+    <div class="step"><span class="k">Étape 4</span><b>Révision linguistique</b><p>Exportez le texte à publier en Word, faites-le réviser en suivi des modifications, puis réimportez-le.</p>
+      <div class="btns"><button type="button" class="b" id="revOut">Exporter pour révision (.docx)</button><button type="button" class="b ghost" id="revIn">Réimporter le Word révisé</button><input type="file" id="fRev" accept=".docx" hidden></div>
+      <p class="revsum" id="revsum" hidden></p></div>
+  </div>
+
+  <div class="bar">
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab" role="tab" id="tForm" aria-selected="true">Formulaire</button>
+      <button type="button" class="tab" role="tab" id="tBlocks" aria-selected="false">Blocs Hub</button>
+      <button type="button" class="tab" role="tab" id="tPrev" aria-selected="false">Aperçu</button>
+    </div>
+    <span class="status" id="status">Brouillon enregistré dans ce navigateur.</span>
+    <div class="btns">
+      <button type="button" class="b" id="impJson">Importer une fiche .json</button><input type="file" id="fJson" accept=".json,application/json" hidden>
+      <button type="button" class="b ghost" id="loadEx">Voir l'exemple (fiche 8)</button>
+      <button type="button" class="b ghost" id="clear">Nouvelle fiche</button>
+    </div>
+  </div>
+
+  <div id="paneForm" class="layout">
+    <nav class="toc" id="toc" aria-label="Parties"></nav>
+    <form id="f" autocomplete="off" onsubmit="return false"></form>
+  </div>
+  <div id="paneBlocks" hidden>
+    <div class="howto">
+      <b>Dans la page Hub de la stratégie</b>
+      <ol>
+        <li>Pour chaque bloc « Texte HTML », ajoutez une carte Texte, passez en mode code et collez le bloc.</li>
+        <li>Pour chaque bloc « Intégrer », ajoutez une carte d'intégration (iframe) et collez l'adresse de la carte.</li>
+        <li>Respectez l'ordre des blocs. Le dernier bloc, l'impression, est le même pour toutes les fiches.</li>
+      </ol>
+      <div class="btns" style="margin-top:.6rem"><button type="button" class="b" id="saveAll">Télécharger la fiche complète (.html)</button></div>
+    </div>
+    <div class="blocks" id="blocks"></div>
+  </div>
+  <div id="panePrev" hidden>
+    <div class="previewwrap"><iframe id="pv" title="Aperçu de la fiche"></iframe></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+"use strict";
+/* ===== À CONFIGURER ===== */
+var DESTINATAIRE="";   /* adresse qui reçoit les fiches */
+var KEY="eis-mt-fiche-v2";
+
+var $=function(id){return document.getElementById(id);};
+function toast(m){var t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){t.hidden=true;},2600);}
+
+/* ================= MODÈLE ================= */
+var SENS=[["++","++ Effet favorable majeur"],["+","+ Effet favorable"],["?","? Effet incertain"],["−","− Effet défavorable"],["−−","−− Effet défavorable majeur"]];
+var AMP=[["","À préciser"],["limitée","Limitée"],["modérée","Modérée"],["importante","Importante"]];
+var COUL=[["","Automatique"],["#21AEAD","Turquoise"],["#6aa6e8","Bleu"],["#a8a2ee","Lavande"],["#e6a23c","Ambre (vigilance)"]];
+var POS=[["apres","Légende sous la carte"],["avant","Légende au-dessus de la carte"]];
+function blank(){return {n:"",titre:"",enonce:"",auteur:"",date:"",version:"",
+  enjeu1:"",enjeuPhrase:"",enjeu2:"",
+  planIntro:"",objectifs:[],anglesIntro:"Le plan ne traite pas :",anglesMorts:[],
+  sciIntro:"",enonces:[],
+  obs:[],
+  impIntro:"",impacts:[],gagne1:"",gagne2:"",
+  recoIntro:"",recos:[],
+  indIntro:"",indicateurs:[],plusLoin:"",
+  sources:[],retour:"383f99f94ce3407f883a4ce04f065a06",pdf:"/documents/EIS_Mont-Tremblant.pdf"};}
+var D=blank();
+
+var ENTYPES=[["constat","Constat clé"],["encadre","Encadré à rebours de l'intuition"],["loin","Pour aller plus loin"]];
+var OBTYPES=[["texte","Paragraphe"],["phrase","Phrase-choc"],["chiffres","Chiffres clés"],["soustitre","Sous-titre"],["liste","Liste de valeurs"],["panneau","Panneau"],["note","Note de sources"],["carte","Carte intégrée"]];
+var LISTS={
+  objectifs:{label:"Objectif",fields:[["titre","Titre de l'objectif","text"],["codes","Numéros du plan (séparés par des virgules)","text"],["texte","Ce que le plan prévoit","textarea",2]]},
+  anglesMorts:{label:"Angle mort",str:true,fields:[["t","Énoncé","textarea",2]]},
+  enonces:{label:"Énoncé",typed:ENTYPES,fieldsFor:function(it){
+    if(it.type==="encadre") return [["etiquette","Étiquette","text"],["titre","Titre","text"],["texte","Texte (références : [3] ou [1,2])","textarea",4]];
+    if(it.type==="loin") return [["titre","Titre","text"],["texte","Texte (références : [3] ou [1,2])","textarea",3]];
+    return [["chiffre","Chiffre ou mot clé (ex. 10 min, 45 dB, Saison)","text"],["chiffreLegende","Légende du chiffre","text"],["titre","Titre du constat","text"],["texte","Texte : un paragraphe par ligne (références : [3] ou [1,2])","textarea",5]];
+  }},
+  obs:{label:"Élément",typed:OBTYPES,fieldsFor:function(it){
+    switch(it.type){
+      case "phrase": return [["texte","Phrase mise en évidence","textarea",2]];
+      case "chiffres": return [["lignes","Un chiffre par ligne, sous la forme valeur | libellé (4 au plus)","textarea",4]];
+      case "soustitre": return [["texte","Sous-titre","text"]];
+      case "liste": return [["intro","Phrase d'introduction","text"],["lignes","Une ligne par valeur, sous la forme libellé | valeur","textarea",5]];
+      case "panneau": return [["titre","Titre du panneau","text"],["couleur","Couleur du titre","select",COUL],["texte","Texte (70 à 90 mots)","textarea",4]];
+      case "note": return [["texte","Note (sources, précisions)","textarea",2]];
+      case "carte": return [["num","Numéro","text"],["titre","Titre de la carte","text"],["url","Adresse de la carte (GitHub Pages)","text"],["position","Place de la légende","select",POS],["texte","Légende : ce qu'il faut regarder","textarea",3],["sources","Sources de la carte","text"]];
+      default: return [["texte","Paragraphe (références : [3] ou [1,2])","textarea",4]];
+    }
+  }},
+  impacts:{label:"Chaîne d'impact",fields:[["effet","Effet attendu du plan","textarea",2],["codes","Numéros du plan","text"],["sens","Sens","select",SENS],["ampleur","Ampleur","select",AMP],["determinant","Déterminant touché","text"],["impact","Impact sur la santé","text"],["populations","Populations touchées","text"]]},
+  recos:{label:"Recommandation",fields:[["code","Code","text"],["couleur","Couleur","select",COUL],["titre","Intitulé","textarea",2],["moyens","Moyens (un par ligne)","lines",4]]},
+  indicateurs:{label:"Indicateur",fields:[["indicateur","Indicateur","textarea",2],["unite","Unité (ex. n, %)","text"],["source","Source","text"],["frequence","Fréquence","text"],["ventilation","Ventilation","text"],["direction","Direction attendue","text"],["responsable","Responsable","text"]]},
+  sources:{label:"Source",numbered:true,fields:[["libelle","Référence (auteur ou organisme. Titre)","text"],["url","Adresse (DOI ou lien)","text"]]}
+};
+var REFHINT="Pour citer une source, écrivez son numéro entre crochets, par exemple [3] ou [1,2]. Les sources sont numérotées dans la partie 7.";
+var PARTS=[
+ {id:"p0",t:"Identification",blk:"Bloc A",body:[
+   ["row2",[["n","Numéro de la stratégie","text"],["titre","Titre","text"]]],
+   ["enonce","Énoncé du plan (citation)","textarea",2],
+   ["row2",[["auteur","Rédaction (nom, titre)","text"],["date","Date","text"],["version","Version","text"]]]]},
+ {id:"p1",n:"Partie 1",t:"L'enjeu",blk:"Bloc A",body:[["enjeu1","Mise en contexte (2 ou 3 phrases)","textarea",3],["enjeuPhrase","La question ou la phrase-clé, mise en évidence","textarea",2],["enjeu2","Phrase de conclusion","textarea",2]]},
+ {id:"p2",n:"Partie 2",t:"Ce que prévoit le plan",blk:"Bloc A",body:[["planIntro","Phrase d'introduction (ex. Le plan structure le récréotourisme autour de cinq objectifs.)","textarea",2],["@objectifs","Objectifs du plan, un encadré par objectif"],["anglesIntro","Introduction des angles morts","text"],["@anglesMorts","Angles morts"]]},
+ {id:"p3",n:"Partie 3",t:"Ce que dit la science",blk:"Bloc A",body:[["sciIntro","Phrase d'introduction","textarea",2],["#"+REFHINT+" Retenez trois ou quatre constats clés; les autres énoncés vont dans « Pour aller plus loin »."],["@enonces","Énoncés"]]},
+ {id:"p4",n:"Partie 4",t:"Ce qu'on observe à Mont-Tremblant",blk:"Blocs B, C, D",body:[["#Composez la partie élément par élément, dans l'ordre d'affichage. Chaque « Carte intégrée » coupe la fiche : un bloc d'intégration est inséré à cet endroit dans Hub."],["@obs","Éléments de la partie"]]},
+ {id:"p5",n:"Partie 5",t:"Impacts anticipés sur la santé",blk:"Bloc E",body:[["impIntro","Phrase d'introduction","textarea",2],["@impacts","Chaînes d'impact"],["gagne1","Qui gagne, qui perd : constat","textarea",3],["gagne2","Qui gagne, qui perd : point de vigilance (en gras)","textarea",2]]},
+ {id:"p6",n:"Partie 6",t:"Nos recommandations",blk:"Bloc E",body:[["recoIntro","Phrase d'introduction","text"],["@recos","Recommandations"]]},
+ {id:"p7",n:"Partie 7",t:"Comment savoir si ça fonctionne",blk:"Bloc E",body:[["indIntro","Phrase d'introduction","text"],["@indicateurs","Indicateurs"],["plusLoin","Pour aller plus loin (municipalité comparable, ressource)","textarea",2],["@sources","Sources, numérotées dans l'ordre"],["row2",[["retour","Identifiant de la page Hub de retour","text"],["pdf","Lien du PDF officiel","text"]]]]}
+];
+
+/* ================= FORMULAIRE ================= */
+function mkField(key,label,type,opt,val,onchg){
+  var w=document.createElement("div"); w.className="row";
+  var id="f_"+key.replace(/[^a-z0-9_]/gi,"_"), el;
+  var lab=document.createElement("label"); lab.htmlFor=id; lab.textContent=label; w.appendChild(lab);
+  if(type==="select"){ el=document.createElement("select"); opt.forEach(function(o){var op=document.createElement("option");op.value=o[0];op.textContent=o[1];el.appendChild(op);}); el.value=val==null?opt[0][0]:val; }
+  else if(type==="textarea"||type==="lines"){ el=document.createElement("textarea"); el.rows=opt||3; el.value=type==="lines"?(val||[]).join("\n"):(val||""); }
+  else { el=document.createElement("input"); el.value=val||""; }
+  el.id=id; w.appendChild(el);
+  el.addEventListener(type==="select"?"change":"input",function(){ onchg(type==="lines"?el.value.split(/\n/).map(function(s){return s.trim();}).filter(Boolean):el.value); });
+  return w;
+}
+function newItem(cfg,type){
+  if(cfg.str) return "";
+  var o={}; if(type) o.type=type;
+  var fs=cfg.fieldsFor?cfg.fieldsFor(o):cfg.fields;
+  fs.forEach(function(fd){o[fd[0]]=fd[2]==="lines"?[]:(fd[2]==="select"?fd[3][0][0]:"");});
+  if(type==="carte") o.num=String(D.obs.filter(function(x){return x.type==="carte";}).length+1);
+  if(type==="encadre") o.etiquette="À rebours de l'intuition";
+  return o;
+}
+function buildList(key,title){
+  var cfg=LISTS[key], box=document.createElement("div"); box.className="row";
+  var h=document.createElement("span"); h.className="lbl"; h.textContent=title; box.appendChild(h);
+  var list=document.createElement("div"); list.className="list"; box.appendChild(list);
+  function draw(){
+    list.textContent="";
+    var arr=D[key];
+    if(!arr.length){var e=document.createElement("p");e.className="empty";e.textContent="Aucun élément pour l'instant.";list.appendChild(e);}
+    arr.forEach(function(it,i){
+      var card=document.createElement("div"); card.className="item";
+      var ih=document.createElement("div"); ih.className="ih";
+      var s=document.createElement("span");
+      s.textContent=(cfg.numbered?"["+(i+1)+"] ":cfg.label+" "+(i+1))+(cfg.typed?" · "+(cfg.typed.filter(function(t){return t[0]===it.type;})[0]||["",""])[1]:"");
+      ih.appendChild(s);
+      var bs=document.createElement("div"); bs.className="btns";
+      [["↑","Monter",function(){if(i>0){arr.splice(i-1,0,arr.splice(i,1)[0]);changed();draw();}}],
+       ["↓","Descendre",function(){if(i<arr.length-1){arr.splice(i+1,0,arr.splice(i,1)[0]);changed();draw();}}],
+       ["Retirer","Retirer",function(){if(confirm("Retirer cet élément ?")){arr.splice(i,1);changed();draw();}}]].forEach(function(b){
+        var bt=document.createElement("button"); bt.type="button"; bt.className="b small ghost"; bt.textContent=b[0]; bt.setAttribute("aria-label",b[1]+" : "+cfg.label+" "+(i+1)); bt.onclick=b[2]; bs.appendChild(bt); });
+      ih.appendChild(bs); card.appendChild(ih);
+      var grid=null;
+      if(cfg.typed){
+        grid=document.createElement("div"); grid.className="row2"; card.appendChild(grid);
+        grid.appendChild(mkField(key+"_"+i+"_type","Type","select",cfg.typed,it.type,function(v){ var n=newItem(cfg,v); Object.keys(n).forEach(function(k){ if(it[k]==null) it[k]=n[k]; }); it.type=v; changed(); draw(); }));
+      }
+      var fs=cfg.fieldsFor?cfg.fieldsFor(it):cfg.fields;
+      fs.forEach(function(fd){
+        var val=cfg.str?it:it[fd[0]];
+        var f=mkField(key+"_"+i+"_"+fd[0],fd[1],fd[2],fd[3],val,function(v){ if(cfg.str) arr[i]=v; else it[fd[0]]=v; changed(); });
+        if(fd[2]==="select"||fd[2]==="text"){ if(!grid){grid=document.createElement("div");grid.className="row2";card.appendChild(grid);} grid.appendChild(f); }
+        else { grid=null; card.appendChild(f); }
+      });
+      list.appendChild(card);
+    });
+  }
+  draw();
+  var adds=document.createElement("div"); adds.className="adds";
+  (cfg.typed||[[null,cfg.label]]).forEach(function(t){
+    var add=document.createElement("button"); add.type="button"; add.className="b small";
+    add.textContent="Ajouter : "+t[1].toLowerCase();
+    add.onclick=function(){ D[key].push(newItem(cfg,t[0])); changed(); draw(); var last=list.lastElementChild; var el=last&&last.querySelector("textarea,input"); if(el) el.focus(); };
+    adds.appendChild(add);
+  });
+  box.appendChild(adds);
+  return box;
+}
+function buildForm(){
+  var f=$("f"), toc=$("toc"); f.textContent=""; toc.textContent="";
+  PARTS.forEach(function(p){
+    var s=document.createElement("section"); s.className="part"; s.id=p.id;
+    var h=document.createElement("h2");
+    if(p.n){var n=document.createElement("span");n.className="n";n.textContent=p.n;h.appendChild(n);}
+    h.append(p.t);
+    var b=document.createElement("span"); b.className="blk"; b.textContent=p.blk; h.appendChild(b);
+    s.appendChild(h);
+    p.body.forEach(function(x){
+      if(x[0]==="row2"){ var g=document.createElement("div"); g.className="row2"; x[1].forEach(function(y){g.appendChild(mkField(y[0],y[1],y[2],null,D[y[0]],function(v){D[y[0]]=v;changed();}));}); s.appendChild(g); }
+      else if(x[0][0]==="@") s.appendChild(buildList(x[0].slice(1),x[1]));
+      else if(x[0][0]==="#"){ var hp=document.createElement("p"); hp.className="hint"; hp.textContent=x[0].slice(1); s.appendChild(hp); }
+      else s.appendChild(mkField(x[0],x[1],x[2],x[3],D[x[0]],function(v){D[x[0]]=v;changed();}));
+    });
+    f.appendChild(s);
+    var a=document.createElement("a"); a.href="#"+p.id; a.textContent=p.n?p.n.replace("Partie ","")+". "+p.t:p.t; toc.appendChild(a);
+  });
+}
+
+/* ================= SAUVEGARDE ================= */
+var saveT=null;
+function changed(){ clearTimeout(saveT); saveT=setTimeout(function(){
+  try{localStorage.setItem(KEY,JSON.stringify(D));}catch(e){}
+  $("status").textContent="Brouillon enregistré à "+new Date().toLocaleTimeString("fr-CA",{hour:"2-digit",minute:"2-digit"})+".";
+  if(!$("panePrev").hidden) preview();
+  if(!$("paneBlocks").hidden) showBlocks();
+},500); }
+function load(obj){ D=Object.assign(blank(),obj||{}); buildForm(); changed(); }
+function fileSave(name,text,type){ var blob=new Blob([text],{type:type}),a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500); }
+function slug(s){return String(s||"fiche").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
+function base(){return "EIS_MT_S"+(D.n||"x")+"_"+slug(D.titre);}
+
+/* ================= BLOCS HUB (gabarit de la fiche 8) ================= */
+var FONT="font-family:'Source Sans 3','Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;";
+var MONO="font-family:'JetBrains Mono',Consolas,monospace;";
+var CYC=["#21AEAD","#6aa6e8","#a8a2ee"], TILE=["#21AEAD","#a8a2ee","#e6a23c","#6aa6e8"];
+var SX={"++":["#21AEAD","Effet favorable majeur","++"],"+":["#5fd0cf","Effet favorable","+"],"?":["#8b8fc4","Effet incertain","?"],"−":["#e6a23c","Effet défavorable","&minus;"],"−−":["#e06c5a","Effet défavorable majeur","&minus;&minus;"]};
+var NUMW=["Aucune","Une","Deux","Trois","Quatre","Cinq","Six","Sept","Huit","Neuf","Dix","Onze","Douze","Treize","Quatorze","Quinze"];
+function ent(s){
+  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+    .replace(/'/g,"&rsquo;").replace(/[\u0080-￿]/g,function(c){return "&#"+c.charCodeAt(0)+";";});
+}
+function refLink(n){return '<a href="#src-'+n+'" style="'+MONO+'font-size:0.68em;font-weight:500;color:#6aa6e8;text-decoration:none;vertical-align:super;">'+n+'</a>';}
+function rich(s){
+  return ent(String(s||"").trim()).replace(/\s*\[(\d+(?:\s*[,;]\s*\d+)*)\]/g,function(m,g){
+    return g.split(/\s*[,;]\s*/).map(refLink).join('<span style="color:#6aa6e8;font-size:0.68em;vertical-align:super;">,</span>');
+  });
+}
+function lines(s){return String(s||"").split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
+function wrapOpen(pad){return '<div style="background-color:#070620;color:#eef0fb;padding:'+(pad||"0 1.5rem 2.4rem")+';'+FONT+'line-height:1.6;">\n  <div style="max-width:52rem;margin:0 auto;">\n';}
+var WRAPCLOSE='  </div>\n</div>\n';
+var DIV='    <div style="border-top:1px solid #2a2870;margin:2.6rem 0 1.8rem;"></div>\n';
+function partHead(n,t){return '    <span style="display:block;'+MONO+'font-size:0.78rem;font-weight:600;color:#8b8fc4;margin:0 0 0.35rem;">Partie '+n+'</span>\n    <h3 style="font-size:1.4rem;line-height:1.22;font-weight:800;letter-spacing:-0.01em;color:#eef0fb;margin:0 0 0.8rem;">'+ent(t)+'</h3>\n';}
+function P(s,last){return '    <p style="color:#c4c8ea;font-size:1.04rem;line-height:1.6;margin:'+(last?"0":"0 0 1rem")+';max-width:40rem;">'+rich(s)+'</p>\n';}
+function bullet(t,col){return '<div style="display:flex;align-items:flex-start;margin:0 0 0.5rem;"><span style="flex:0 0 1.1rem;color:'+col+';font-weight:700;line-height:1.55;">&middot;</span><span style="flex:1 1 auto;color:#c4c8ea;font-size:1rem;line-height:1.55;">'+rich(t)+'</span></div>';}
+function tag(t,col){return '<span style="display:inline-block;'+MONO+'font-size:0.74rem;color:'+col+';border:1px solid '+col+';padding:0.1rem 0.42rem;margin:0 0.35rem 0.35rem 0;">'+ent(t)+'</span>';}
+function splitCodes(s){return String(s||"").split(/\s*,\s*/).filter(Boolean);}
+function isNumish(s){return /^[\d\s.,%$±<>≈~+−-]/.test(String(s||"").trim());}
+
+function blockA(d){
+  var h=[];
+  h.push('<a name="strategie-'+ent(d.n)+'"></a>\n<div style="background-color:#070620;color:#eef0fb;border-top:4px solid #21AEAD;padding:2.6rem 1.5rem 2.8rem;'+FONT+'line-height:1.6;">\n  <div style="max-width:52rem;margin:0 auto;">\n\n');
+  h.push('    <p style="'+MONO+'font-size:0.85rem;font-weight:600;color:#21AEAD;margin:0 0 0.7rem;">Strat&eacute;gie '+ent(d.n)+'</p>\n');
+  h.push('    <h2 style="font-size:2.4rem;line-height:1.1;font-weight:900;letter-spacing:-0.02em;color:#eef0fb;margin:0 0 1.2rem;max-width:16ch;">'+ent(d.titre)+'</h2>\n');
+  if(d.enonce) h.push('    <p style="color:#eef0fb;font-size:1.1rem;font-weight:600;line-height:1.45;border-left:3px solid #21AEAD;padding:0.1rem 0 0.1rem 1.1rem;margin:0 0 2.4rem;max-width:40rem;">&laquo;&nbsp;'+ent(d.enonce.replace(/^[«"\s]+|[»"\s]+$/g,""))+'&nbsp;&raquo;<br><span style="font-size:0.85rem;font-weight:400;color:#8b8fc4;">&Eacute;nonc&eacute; du plan d&rsquo;urbanisme</span></p>\n');
+  h.push(partHead(1,"L'enjeu"));
+  if(d.enjeu1) h.push(P(d.enjeu1, !d.enjeuPhrase&&!d.enjeu2));
+  if(d.enjeuPhrase) h.push('    <p style="color:#eef0fb;font-size:1.25rem;font-weight:700;line-height:1.35;margin:0 0 0.8rem;max-width:34rem;">'+rich(d.enjeuPhrase)+'</p>\n');
+  if(d.enjeu2) h.push(P(d.enjeu2,true));
+  h.push('\n'+DIV+partHead(2,"Ce que prévoit le plan"));
+  lines(d.planIntro).forEach(function(l){h.push(P(l));});
+  if(d.objectifs.length){
+    h.push('    <div style="margin:0 0 1.8rem;">\n');
+    d.objectifs.forEach(function(o,i){ var c=CYC[i%3], cs=splitCodes(o.codes);
+      h.push('      <div style="background-color:#11103e;border-left:3px solid '+c+';padding:1rem 1.2rem;margin:0 0 0.75rem;">\n        <p style="font-size:1.06rem;font-weight:700;color:'+c+';margin:0 0 0.3rem;line-height:1.3;">'+ent(o.titre)+'</p>\n        <p style="color:#c4c8ea;font-size:0.99rem;line-height:1.5;margin:0;">'+rich(o.texte)+'</p>'+(cs.length?'<span style="display:block;margin-top:0.7rem;">'+cs.map(function(x){return tag(x,c);}).join("")+'</span>':'')+'\n      </div>');
+    });
+    h.push('\n    </div>\n');
+  }
+  if(d.anglesMorts.length){
+    h.push('\n    <div style="background-color:#11103e;border-left:4px solid #e6a23c;padding:1.3rem 1.4rem;margin:0;">\n      <p style="font-size:0.78rem;font-weight:700;color:#e6a23c;margin:0 0 0.5rem;">Angles morts du plan</p>\n');
+    if(d.anglesIntro) h.push('      <p style="color:#c4c8ea;font-size:1rem;line-height:1.55;margin:0 0 0.7rem;">'+ent(d.anglesIntro)+'</p>\n');
+    h.push(d.anglesMorts.map(function(a){return bullet(a,"#e6a23c");}).join("")+'\n    </div>\n');
+  }
+  h.push('\n'+DIV+partHead(3,"Ce que dit la science"));
+  if(d.sciIntro) h.push(P(d.sciIntro));
+  var cons=d.enonces.filter(function(e){return (e.type||"constat")==="constat";}), enc=d.enonces.filter(function(e){return e.type==="encadre";}), loin=d.enonces.filter(function(e){return e.type==="loin";});
+  if(cons.length){
+    h.push('    <div>\n');
+    cons.forEach(function(e,i){
+      var ps=lines(e.texte);
+      h.push('      <div style="display:flex;flex-wrap:wrap;border-top:'+(i?"1px solid #1d1b50":"2px solid #2a2870")+';padding:1.6rem 0 1.7rem;">\n');
+      if(e.chiffre||e.chiffreLegende){
+        var num=isNumish(e.chiffre);
+        h.push('        <div style="flex:0 0 8rem;padding-right:1.5rem;margin-bottom:0.6rem;">\n          <span style="display:block;'+(num?MONO+'font-size:2rem;font-weight:500;color:#21AEAD;letter-spacing:-0.03em;line-height:1.1;':'font-size:1.45rem;font-weight:700;color:#a8a2ee;letter-spacing:-0.01em;line-height:1.15;')+'">'+ent(e.chiffre)+'</span>\n          <span style="display:block;font-size:0.78rem;color:#8b8fc4;line-height:1.35;margin-top:0.45rem;">'+ent(e.chiffreLegende)+'</span>\n        </div>\n');
+      }
+      h.push('        <div style="flex:1 1 300px;">\n');
+      if(e.titre) h.push('          <p style="font-size:1.28rem;font-weight:700;color:#eef0fb;letter-spacing:-0.01em;line-height:1.25;margin:0 0 0.55rem;">'+ent(e.titre)+'</p>\n');
+      h.push('          '+ps.map(function(p,j){return '<p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:'+(j===ps.length-1?"0":"0 0 0.6rem")+';">'+rich(p)+'</p>';}).join("")+'\n        </div>\n      </div>\n');
+    });
+    h.push('    </div>\n');
+  }
+  enc.forEach(function(e){
+    h.push('\n    <div style="background-color:#11103e;border-left:4px solid #21AEAD;padding:1.4rem 1.5rem;margin:1.8rem 0 1.4rem;">\n      <p style="font-size:0.78rem;font-weight:700;color:#21AEAD;margin:0 0 0.45rem;">'+ent(e.etiquette||"À rebours de l'intuition")+'</p>\n'+(e.titre?'      <p style="font-size:1.16rem;font-weight:700;color:#eef0fb;margin:0 0 0.5rem;line-height:1.3;">'+ent(e.titre)+'</p>\n':'')+'      <p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:0;">'+rich(e.texte)+'</p>\n    </div>\n');
+  });
+  if(loin.length){
+    h.push('\n    <details style="border-top:1px solid #1d1b50;border-bottom:1px solid #1d1b50;">\n      <summary style="cursor:pointer;font-size:1.05rem;font-weight:700;color:#21AEAD;padding:0.95rem 0;">Pour aller plus loin dans les connaissances</summary>\n      <div style="padding:0 0 1.4rem 0;">\n');
+    loin.forEach(function(e,i){
+      h.push('        '+(e.titre?'<p style="font-size:1.02rem;font-weight:700;color:#eef0fb;margin:'+(i?"1.3rem":"0")+' 0 0.3rem;line-height:1.3;">'+ent(e.titre)+'</p>\n        ':'')+'<p style="color:#c4c8ea;font-size:0.99rem;line-height:1.55;margin:'+(e.titre||!i?"0":"1.3rem 0 0")+';max-width:40rem;">'+rich(e.texte)+'</p>');
+    });
+    h.push('\n      </div>\n    </details>\n');
+  }
+  h.push('\n'+DIV+WRAPCLOSE);
+  return h.join("");
+}
+function legend(c,before){
+  var link=c.url?' &middot; <a href="'+ent(c.url)+'" target="_blank" rel="noopener" style="color:#6aa6e8;text-decoration:none;font-weight:600;">Ouvrir la carte en pleine page</a>':'';
+  return wrapOpen(before?"0.4rem 1.5rem 2rem":"0.9rem 1.5rem 1.8rem")+
+    '    <p style="margin:0 0 0.35rem;"><span style="'+MONO+'font-size:0.76rem;font-weight:500;color:#21AEAD;margin-right:0.6rem;">Carte '+ent(c.num)+'</span><span style="font-size:1.02rem;font-weight:700;color:#eef0fb;">'+ent(c.titre)+'</span></p>\n'+
+    (c.texte?'    <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.5rem;max-width:40rem;">'+rich(c.texte)+'</p>\n':'')+
+    ((c.sources||link)?'    <p style="margin:0;font-size:0.85rem;color:#8b8fc4;line-height:1.5;">'+(c.sources?'Sources : '+ent(c.sources):'')+link+'</p>\n':'')+WRAPCLOSE;
+}
+function obsBlocks(d){
+  var out=[], cur=null, first=true, prev=null;
+  function open(){ cur={parts:[],open:false}; }
+  function flush(){ if(cur&&cur.parts.length) out.push({kind:"txt",html:cur.parts.join("")}); cur=null; }
+  function body(){ if(!cur) open(); if(!cur.open){ cur.parts.push(wrapOpen()); cur.open=true; if(first){ cur.parts.push(partHead(4,"Ce qu'on observe à Mont-Tremblant")); first=false; } } }
+  function closeWrap(){ if(cur&&cur.open){ cur.parts.push(WRAPCLOSE); cur.open=false; } }
+  d.obs.forEach(function(e){
+    var t=e.type||"texte";
+    if(t==="carte"){
+      var emb={kind:"emb",url:e.url,label:"Carte "+e.num+(e.titre?" : "+e.titre:"")};
+      if(e.position==="avant"){ closeWrap(); if(!cur) open(); cur.parts.push(legend(e,true)); flush(); out.push(emb); }
+      else { closeWrap(); flush(); out.push(emb); open(); cur.parts.push(legend(e,false)); }
+      prev="carte"; return;
+    }
+    body();
+    var afterPan=prev==="panneau";
+    if(t==="texte") lines(e.texte).forEach(function(l){ cur.parts.push('    <p style="color:#c4c8ea;font-size:1.04rem;line-height:1.6;margin:'+(afterPan?"1.3rem 0 1rem":"0 0 1rem")+';max-width:40rem;">'+rich(l)+'</p>\n'); afterPan=false; });
+    else if(t==="phrase") cur.parts.push('\n    <p style="color:#eef0fb;font-size:1.18rem;font-weight:700;line-height:1.4;border-left:3px solid #e6a23c;padding:0.1rem 0 0.1rem 1.1rem;margin:'+(afterPan?"1.3rem":"0")+' 0 1.6rem;max-width:38rem;">'+rich(e.texte)+'</p>\n');
+    else if(t==="chiffres"){
+      var ls=lines(e.lignes).slice(0,4);
+      cur.parts.push('\n    <div style="display:flex;flex-wrap:wrap;margin:0 -0.5rem 1.6rem;">\n'+ls.map(function(l,i){ var p=l.split("|"), c=TILE[i%4];
+        return '      <div style="flex:1 1 210px;margin:0 0.5rem 1rem;padding:1rem 1.15rem;background-color:#11103e;border-top:3px solid '+c+';">\n        <p style="margin:0 0 0.2rem;"><span style="'+MONO+'font-size:1.7rem;font-weight:500;color:'+c+';letter-spacing:-0.02em;">'+ent((p[0]||"").trim())+'</span></p>\n        <p style="color:#c4c8ea;font-size:0.92rem;line-height:1.4;margin:0;">'+ent(p.slice(1).join("|").trim())+'</p>\n      </div>';}).join("")+'\n    </div>\n\n');
+    }
+    else if(t==="soustitre") cur.parts.push('\n    <h4 style="font-size:1.1rem;font-weight:700;color:#eef0fb;margin:'+(prev?"1.8rem":"0")+' 0 0.7rem;">'+ent(e.texte)+'</h4>\n');
+    else if(t==="liste"){
+      if(e.intro) cur.parts.push('\n    <p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:0 0 0.6rem;max-width:40rem;">'+rich(e.intro)+'</p>\n');
+      cur.parts.push('    <div style="max-width:32rem;margin:0 0 1.4rem;border-bottom:1px solid #1d1b50;">\n'+lines(e.lignes).map(function(l){var p=l.split("|");
+        return '        <div style="display:flex;align-items:baseline;border-top:1px solid #1d1b50;padding:0.5rem 0;">\n          <span style="flex:1 1 auto;color:#c4c8ea;font-size:0.98rem;">'+ent((p[0]||"").trim())+'</span>\n          <span style="flex:0 0 auto;'+MONO+'font-size:1rem;font-weight:500;color:#e6a23c;">'+ent((p[1]||"").trim())+'</span>\n        </div>';}).join("")+'\n    </div>\n\n');
+    }
+    else if(t==="panneau"){
+      var c=e.couleur||"#6aa6e8";
+      cur.parts.push('    <p style="font-size:1.02rem;font-weight:700;color:'+c+';margin:'+(afterPan?"1.3rem":"0")+' 0 0.3rem;line-height:1.3;">'+ent(e.titre)+'</p>\n    <p style="color:#c4c8ea;font-size:0.99rem;line-height:1.55;margin:0;max-width:40rem;">'+rich(e.texte)+'</p>\n');
+    }
+    else if(t==="note") cur.parts.push('    <p style="font-size:0.85rem;color:#8b8fc4;line-height:1.5;margin:1.3rem 0 0;max-width:40rem;">'+rich(e.texte)+'</p>\n');
+    prev=t;
+  });
+  if(first) body();
+  closeWrap(); flush();
+  return out;
+}
+function blockE(d){
+  var h=[wrapOpen(), DIV, partHead(5,"Impacts anticipés sur la santé")];
+  if(d.impIntro) h.push(P(d.impIntro));
+  if(d.impacts.length){
+    h.push('    <div style="margin:0 0 1.2rem;">'+["++","+","?","−","−−"].map(function(k){var s=SX[k];return '<span style="display:inline-block;margin:0 1.1rem 0.4rem 0;font-size:0.84rem;color:#8b8fc4;"><span style="'+MONO+'font-weight:500;color:'+s[0]+';margin-right:0.3rem;">'+s[2]+'</span>'+ent(s[1])+'</span>';}).join("")+'</div>\n    <div style="margin:0 0 1.8rem;">\n');
+    d.impacts.forEach(function(r){ var s=SX[r.sens]||SX["?"];
+      var rows=[["Déterminant touché",r.determinant],["Impact sur la santé",r.impact],["Populations touchées",r.populations]].filter(function(x){return x[1];});
+      h.push('      <div style="background-color:#11103e;border-left:3px solid '+s[0]+';padding:1.1rem 1.25rem;margin:0 0 0.8rem;">\n        <div style="display:flex;flex-wrap:wrap;align-items:baseline;margin:0 0 0.6rem;">\n          <span style="flex:0 0 auto;'+MONO+'font-size:1.5rem;font-weight:500;color:'+s[0]+';margin-right:0.8rem;line-height:1;">'+s[2]+'</span>\n          <span style="flex:1 1 240px;font-size:1.06rem;font-weight:700;color:#eef0fb;line-height:1.3;">'+ent(r.effet)+'</span>\n        </div>\n'+
+        '        <p style="margin:0 0 0.7rem;">'+(r.codes?'<span style="display:inline-block;'+MONO+'font-size:0.72rem;color:#8b8fc4;border:1px solid #2a2870;padding:0.08rem 0.4rem;margin-right:0.4rem;">'+ent(r.codes)+'</span>':'')+'<span style="font-size:0.82rem;color:#8b8fc4;">'+ent(s[1])+(r.ampleur?' &middot; ampleur '+ent(r.ampleur):'')+'</span></p>\n'+
+        rows.map(function(x){return '<div style="display:flex;flex-wrap:wrap;margin:0 0 0.35rem;"><span style="flex:0 0 11rem;font-size:0.82rem;color:#8b8fc4;line-height:1.5;">'+ent(x[0])+'</span><span style="flex:1 1 240px;font-size:0.98rem;color:#c4c8ea;line-height:1.5;">'+rich(x[1])+'</span></div>';}).join("\n")+'\n      </div>');
+    });
+    h.push('\n    </div>\n');
+  }
+  if(d.gagne1||d.gagne2) h.push('\n    <div style="background-color:#11103e;border-left:4px solid #e6a23c;padding:1.4rem 1.5rem;margin:0;">\n      <p style="font-size:0.78rem;font-weight:700;color:#e6a23c;margin:0 0 0.45rem;">Qui gagne, qui perd</p>\n'+(d.gagne1?'      <p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:'+(d.gagne2?"0 0 0.6rem":"0")+';">'+rich(d.gagne1)+'</p>\n':'')+(d.gagne2?'      <p style="color:#eef0fb;font-size:1.06rem;font-weight:600;line-height:1.45;margin:0;">'+rich(d.gagne2)+'</p>\n':'')+'    </div>\n');
+  h.push('\n'+DIV+partHead(6,"Nos recommandations"));
+  if(d.recoIntro) h.push(P(d.recoIntro));
+  if(d.recos.length){
+    h.push('    <div style="margin:0;">\n');
+    d.recos.forEach(function(r,i){ var c=r.couleur||CYC[i%3];
+      h.push('      <div style="background-color:#11103e;border-left:3px solid '+c+';padding:1.15rem 1.3rem;margin:0 0 0.8rem;">\n        <p style="margin:0 0 0.5rem;"><span style="'+MONO+'font-size:0.95rem;font-weight:500;color:'+c+';margin-right:0.6rem;">'+ent(r.code)+'</span><span style="font-size:1.08rem;font-weight:700;color:#eef0fb;line-height:1.3;">'+ent(r.titre)+'</span></p>\n'+(r.moyens||[]).map(function(m){return bullet(m,c);}).join("")+'\n      </div>');
+    });
+    h.push('\n    </div>\n');
+  }
+  h.push('\n'+DIV+partHead(7,"Comment savoir si ça fonctionne"));
+  if(d.indIntro) h.push(P(d.indIntro));
+  if(d.indicateurs.length){
+    h.push('    <div style="margin:0 0 2.2rem;border-bottom:1px solid #1d1b50;">\n');
+    d.indicateurs.forEach(function(r){
+      var meta=[["Source",r.source],["Fréquence",r.frequence],["Ventilation",r.ventilation],["Direction attendue",r.direction],["Responsable",r.responsable]].filter(function(x){return x[1];});
+      h.push('      <div style="border-top:1px solid #1d1b50;padding:1rem 0;">\n        <p style="margin:0 0 0.4rem;"><span style="font-size:1.04rem;font-weight:700;color:#eef0fb;line-height:1.35;">'+ent(r.indicateur)+'</span>'+(r.unite?' <span style="'+MONO+'font-size:0.8rem;color:#21AEAD;">('+ent(r.unite)+')</span>':'')+'</p>\n        <p style="margin:0;">'+meta.map(function(x){return '<span style="display:inline-block;margin:0 1.2rem 0.25rem 0;font-size:0.84rem;color:#8b8fc4;">'+ent(x[0])+' <span style="color:#c4c8ea;">'+ent(x[1])+'</span></span>';}).join("")+'</p>\n      </div>');
+    });
+    h.push('\n    </div>\n');
+  }
+  if(d.plusLoin) h.push('\n    <div style="background-color:#11103e;border-left:4px solid #5b54c0;padding:1.3rem 1.4rem;margin:0 0 2.4rem;">\n      <p style="font-size:0.78rem;font-weight:700;color:#a8a2ee;margin:0 0 0.45rem;">Pour aller plus loin</p>\n      <p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:0;">'+rich(d.plusLoin)+'</p>\n    </div>\n');
+  if(d.sources.length){
+    h.push('    <details style="border-top:1px solid #1d1b50;border-bottom:1px solid #1d1b50;">\n      <summary style="cursor:pointer;font-size:1.05rem;font-weight:700;color:#21AEAD;padding:0.95rem 0;">Sources ('+d.sources.length+' r&eacute;f&eacute;rence'+(d.sources.length>1?'s':'')+')</summary>\n      <div style="padding:0 0 1.4rem 0;">\n        <ol style="margin:0;padding-left:1.5rem;font-size:0.88rem;line-height:1.5;">\n');
+    h.push(d.sources.map(function(s,i){ var lib=String(s.libelle||"").trim().replace(/\.$/,"");
+      return '          <li style="margin-bottom:0.55rem;color:#c4c8ea;"><a name="src-'+(i+1)+'"></a>'+(lib?ent(lib)+'. ':'')+(s.url?'<a href="'+ent(s.url)+'" target="_blank" rel="noopener" style="color:#6aa6e8;word-break:break-word;">'+ent(s.url)+'</a>':'')+'</li>';}).join("")+'\n        </ol>\n      </div>\n    </details>\n');
+  }
+  h.push('\n    <div style="border-top:1px solid #2a2870;margin:2.4rem 0 1.4rem;"></div>\n\n    <div style="display:flex;flex-wrap:wrap;align-items:center;">\n      <a href="/pages/'+ent(d.retour||"")+'" style="display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.98rem;font-weight:700;text-decoration:none;padding:0.55rem 1.1rem;border-radius:3px;margin:0 1.1rem 0.4rem 0;">Retour &agrave; l&rsquo;&eacute;valuation d&rsquo;impact sur la sant&eacute;</a>\n      <span style="font-size:0.88rem;color:#8b8fc4;margin:0 0 0.4rem;">Les neuf strat&eacute;gies, le portrait du territoire et le mod&egrave;le logique</span>\n    </div>\n\n');
+  h.push('    <p style="font-size:0.85rem;color:#8b8fc4;margin:1.6rem 0 0;">Fiche-strat&eacute;gie '+ent(d.n)+' &middot; &Eacute;valuation d&rsquo;impact sur la sant&eacute; du plan d&rsquo;urbanisme de Mont-Tremblant &middot; Sant&eacute; Qu&eacute;bec Laurentides, Direction de sant&eacute; publique.</p>\n');
+  h.push(WRAPCLOSE);
+  return h.join("");
+}
+function blockPrint(d){
+  return '<style>\n@media print {\n  body, div, section, article, p, span, li, ol, ul, h1, h2, h3, h4, h5, summary, details, a {\n    background-color: #ffffff !important;\n    background-image: none !important;\n    color: #14143a !important;\n    box-shadow: none !important;\n    text-shadow: none !important;\n  }\n  div[style*="border-left"] { border-left: 3px solid #178f8e !important; }\n  div[style*="border-top"]  { border-top: 1px solid #b8bed6 !important; }\n  details > *        { display: block !important; }\n  summary            { font-weight: 700 !important; border-bottom: 1px solid #b8bed6 !important; }\n  summary::marker, summary::-webkit-details-marker { content: "" !important; }\n  div[style*="position:sticky"], .impression-ecran-seul { display: none !important; }\n  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.75em; color: #4a4f72 !important; word-break: break-all; }\n  a[href^="#"]::after    { content: ""; }\n  h2, h3, h4         { break-after: avoid; page-break-after: avoid; }\n  div[style*="border-left"] { break-inside: avoid; page-break-inside: avoid; }\n  img               { max-width: 100% !important; }\n  @page { margin: 2cm; }\n}\n</style>\n\n'+
+  '<div class="impression-ecran-seul" style="background-color:#11103e;border-left:4px solid #5b54c0;padding:1.3rem 1.5rem;margin:2rem 0 0;'+FONT+'line-height:1.6;">\n  <div style="max-width:52rem;margin:0 auto;">\n\n    <p style="font-size:0.78rem;font-weight:700;color:#a8a2ee;margin:0 0 0.5rem;">Emporter ce document</p>\n\n    <div style="display:flex;flex-wrap:wrap;margin:0 -0.7rem;">\n\n'+
+  '      <div style="flex:1 1 260px;padding:0 0.7rem;margin:0 0 0.9rem;">\n        <p style="font-size:1.05rem;font-weight:700;color:#eef0fb;margin:0 0 0.35rem;line-height:1.3;">Imprimer ou enregistrer en PDF</p>\n        <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.5rem;">Utilisez le raccourci de votre navigateur, puis choisissez votre imprimante ou &laquo;&nbsp;Enregistrer au format PDF&nbsp;&raquo;.</p>\n        <p style="margin:0;">\n          <span style="display:inline-block;'+MONO+'font-size:0.88rem;color:#eef0fb;background-color:#181a52;border:1px solid #2a2870;border-radius:3px;padding:0.25rem 0.6rem;margin:0 0.5rem 0.3rem 0;">Ctrl + P</span>\n          <span style="font-size:0.85rem;color:#8b8fc4;margin-right:0.8rem;">Windows</span>\n          <span style="display:inline-block;'+MONO+'font-size:0.88rem;color:#eef0fb;background-color:#181a52;border:1px solid #2a2870;border-radius:3px;padding:0.25rem 0.6rem;margin:0 0.5rem 0.3rem 0;">&#8984; + P</span>\n          <span style="font-size:0.85rem;color:#8b8fc4;">Mac</span>\n        </p>\n        <p style="color:#8b8fc4;font-size:0.86rem;line-height:1.45;margin:0.6rem 0 0;">La mise en page bascule automatiquement en noir sur blanc, les sections repli&eacute;es s&rsquo;ouvrent et l&rsquo;adresse des liens s&rsquo;affiche.</p>\n      </div>\n\n'+
+  '      <div style="flex:1 1 260px;padding:0 0.7rem;margin:0 0 0.9rem;">\n        <p style="font-size:1.05rem;font-weight:700;color:#eef0fb;margin:0 0 0.35rem;line-height:1.3;">Version officielle en PDF</p>\n        <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.8rem;">Document mis en page au gabarit de Sant&eacute; Qu&eacute;bec, avec pagination et cartes en version statique. C&rsquo;est la version &agrave; citer et &agrave; d&eacute;poser.</p>\n        <p style="margin:0;"><a href="'+ent(d.pdf||"")+'" style="display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.96rem;font-weight:700;text-decoration:none;padding:0.5rem 1rem;border-radius:3px;">T&eacute;l&eacute;charger le PDF</a></p>\n      </div>\n\n    </div>\n  </div>\n</div>\n';
+}
+function allBlocks(d){
+  var out=[{kind:"txt",html:blockA(d),label:"En-tête et parties 1 à 3"}], k=0;
+  obsBlocks(d).forEach(function(b){ if(b.kind==="txt"){ b.label=k===0?"Partie 4, début":"Partie 4, suite"; k++; } out.push(b); });
+  out.push({kind:"txt",html:blockE(d),label:"Parties 5 à 7, sources et retour"});
+  out.push({kind:"txt",html:blockPrint(d),label:"Impression (identique pour toutes les fiches)"});
+  return out;
+}
+function fullPage(d){
+  var bl=allBlocks(d);
+  return '<!DOCTYPE html>\n<html lang="fr-CA">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>Strat&eacute;gie '+ent(d.n)+' : '+ent(d.titre)+'</title>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap">\n</head>\n<body style="margin:0;background-color:#070620;">\n'+
+    bl.map(function(b,i){ return "<!-- ===== BLOC "+(i+1)+" : "+(b.kind==="emb"?"INTEGRER "+(b.url||"(adresse a preciser)"):"TEXTE HTML")+" ===== -->\n"+(b.kind==="emb"?(b.url?'<iframe src="'+ent(b.url)+'" title="'+ent(b.label)+'" style="display:block;width:100%;height:600px;border:0;"></iframe>\n':'<div style="background:#11103e;color:#8b8fc4;font-family:sans-serif;padding:3rem 1.5rem;text-align:center;">'+ent(b.label)+' : adresse de la carte &agrave; pr&eacute;ciser</div>\n'):b.html); }).join("\n")+'\n</body>\n</html>\n';
+}
+
+/* ================= AFFICHAGE DES BLOCS ================= */
+function copyText(t,label){
+  if(navigator.clipboard&&window.isSecureContext){ navigator.clipboard.writeText(t).then(function(){toast(label+" copié");},function(){fallbackCopy(t,label);}); }
+  else fallbackCopy(t,label);
+}
+function fallbackCopy(t,label){ var ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");toast(label+" copié");}catch(e){toast("Copie impossible : sélectionnez le code à la main.");} ta.remove(); }
+function showBlocks(){
+  var box=$("blocks"); box.textContent="";
+  allBlocks(D).forEach(function(b,i){
+    var c=document.createElement("div"); c.className="blk-card";
+    var top=document.createElement("div"); top.className="top";
+    var l=document.createElement("div");
+    var n=document.createElement("span"); n.className="num"; n.textContent="Bloc "+(i+1);
+    var k=document.createElement("span"); k.className="kind "+(b.kind==="emb"?"emb":"txt"); k.textContent=b.kind==="emb"?"Intégrer":"Texte HTML";
+    var t=document.createElement("b"); t.textContent=b.label||"";
+    l.append(n,k,t); top.appendChild(l);
+    var bs=document.createElement("div"); bs.className="btns";
+    if(b.kind==="emb"){
+      var cp=document.createElement("button"); cp.type="button"; cp.className="b small primary"; cp.textContent="Copier l'adresse"; cp.disabled=!b.url; cp.onclick=function(){copyText(b.url,"Adresse");}; bs.appendChild(cp);
+      top.appendChild(bs); c.appendChild(top);
+      var u=document.createElement("p"); u.className="url"; u.textContent=b.url||"Adresse de la carte à préciser dans la partie 4."; c.appendChild(u);
+    } else {
+      var cp2=document.createElement("button"); cp2.type="button"; cp2.className="b small primary"; cp2.textContent="Copier le bloc"; cp2.onclick=function(){copyText(b.html,"Bloc "+(i+1));}; bs.appendChild(cp2);
+      var sh=document.createElement("button"); sh.type="button"; sh.className="b small ghost"; sh.textContent="Voir le code"; bs.appendChild(sh);
+      top.appendChild(bs); c.appendChild(top);
+      var m=document.createElement("span"); m.className="meta"; m.textContent=b.html.length.toLocaleString("fr-CA")+" caractères"; c.appendChild(m);
+      var ta=document.createElement("textarea"); ta.readOnly=true; ta.hidden=true; ta.value=b.html; ta.setAttribute("aria-label","Code du bloc "+(i+1)); c.appendChild(ta);
+      sh.onclick=function(){ ta.hidden=!ta.hidden; sh.textContent=ta.hidden?"Voir le code":"Masquer le code"; };
+    }
+    box.appendChild(c);
+  });
+}
+function preview(){ $("pv").srcdoc=fullPage(D); }
+
+/* ================= IMPORT WORD ================= */
+function isUrl(s){return /^https?:\/\//i.test(s);}
+function normSens(s){ s=String(s||"").replace(/\s/g,"").replace(/[-–—‐]/g,"−"); if(/^\+\+/.test(s)) return "++"; if(/^\+/.test(s)) return "+"; if(/^−−/.test(s)) return "−−"; if(/^−/.test(s)) return "−"; return "?"; }
+function txt(el){ return (el.textContent||"").replace(/\s+/g," ").trim(); }
+function sentences(t){ return String(t).split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«])/).map(function(s){return s.trim();}).filter(Boolean); }
+function urlsIn(el){
+  var out=[];
+  el.querySelectorAll&&el.querySelectorAll("a[href]").forEach(function(a){ var h=a.getAttribute("href"); if(isUrl(h)) out.push(h); });
+  (el.textContent||"").replace(/https?:\/\/[^\s<>()\]]+/g,function(u){ u=u.replace(/[.,;:»]+$/,""); out.push(u); });
+  return out.filter(function(u,i){return out.indexOf(u)===i;});
+}
+function cleanText(el){
+  var c=el.cloneNode(true);
+  c.querySelectorAll("a[href]").forEach(function(a){ var t=txt(a); if(isUrl(t)||/\.(pdf|html?|docx?)$/i.test(t)||t.length<4) a.remove(); });
+  var s=txt(c).replace(/https?:\/\/[^\s<>()\]]+/g,"").replace(/\((établi|etabli|probable|plausible|incertain)\)/ig,"");
+  for(var k=0;k<3;k++){ s=s.replace(/\(\s*[;,]?\s*\)/g,"").replace(/\[\s*\]/g,"").replace(/\s+([.,)])/g,"$1").replace(/\(\s*;?\s*/g,"(").replace(/\s{2,}/g," "); }
+  return s.replace(/\s*;\s*\./g,".").replace(/\.\s*\./g,".").replace(/[;,]\s*$/,".").trim();
+}
+function tableRows(tb){
+  var rows=[].slice.call(tb.querySelectorAll("tr")).map(function(tr){return [].slice.call(tr.children).map(txt);});
+  if(!rows.length) return {head:[],body:[]};
+  return {head:rows[0].map(function(x){return x.toLowerCase();}),body:rows.slice(1).filter(function(r){return r.join("").trim();})};
+}
+function col(head,res){ for(var i=0;i<head.length;i++){ for(var j=0;j<res.length;j++){ if(res[j].test(head[i])) return i; } } return -1; }
+function parseWordHtml(html){
+  var doc=new DOMParser().parseFromString("<div id='r'>"+html+"</div>","text/html"), root=doc.getElementById("r");
+  var d=blank(), part=0, sub="", curReco=null, curPan=null, b1=[], b2=[], bg=[], bl=[];
+  function srcIdx(u){ for(var i=0;i<d.sources.length;i++) if(d.sources[i].url===u) return i+1; d.sources.push({libelle:"",url:u}); return d.sources.length; }
+  function partOf(t){
+    var m=t.match(/^(?:partie|bloc)\s*(\d)/i); if(m) return +m[1];
+    var l=t.toLowerCase();
+    if(/enjeu en trois/.test(l)) return 1; if(/ce que pr[ée]voit/.test(l)) return 2; if(/ce que dit la science/.test(l)) return 3;
+    if(/ce qu.on observe/.test(l)) return 4; if(/impacts anticip/.test(l)) return 5; if(/nos recommandations|^recommandations/.test(l)) return 6;
+    if(/indicateurs de monitorage|comment savoir/.test(l)) return 7; return 0;
+  }
+  [].slice.call(root.children).forEach(function(el){
+    var tag=el.tagName.toLowerCase(), t=txt(el); if(!t && tag!=="table") return;
+    var isHead=/^h[1-6]$/.test(tag);
+    var p=(isHead||(tag==="p"&&el.querySelector("strong")&&txt(el.querySelector("strong"))===t&&t.length<90))?partOf(t):0;
+    if(p){ part=p; sub=""; curReco=null; curPan=null; return; }
+    if(/^pour aller plus loin/i.test(t)&&t.length<40){ part=8; sub=""; return; }
+    if(/^angles? morts?$/i.test(t)){ sub="angles"; return; }
+    if(/^m[ée]dias/i.test(t)&&t.length<60){ sub="medias"; return; }
+    if(/^panneaux/i.test(t)&&t.length<60){ sub="panneaux"; return; }
+    if(/^qui gagne/i.test(t)&&t.length<40){ sub="gagne"; return; }
+    if(part===0){
+      var m=t.match(/(?:fiche-?\s*)?strat[ée]gie\s*(\d+)\s*[—–\-:]+\s*(.+)$/i); if(m&&!d.titre){ d.n=m[1]; d.titre=m[2].replace(/\[|\]/g,"").trim(); return; }
+      m=t.match(/[ÉE]nonc[ée] du plan\s*:\s*(.+)$/i); if(m){ d.enonce=m[1].replace(/^[«"\s]+|[»"\s]+$/g,""); return; }
+      m=t.match(/R[ée]daction\s*:\s*([^·]*)(?:·\s*Date\s*:\s*([^·]*))?(?:·\s*Version\s*:\s*(.*))?/i); if(m){ d.auteur=m[1].trim(); d.date=(m[2]||"").trim(); d.version=(m[3]||"").trim(); return; }
+      m=t.match(/version\s*([\d.]+)/i); if(m&&!d.version) d.version="Version "+m[1];
+      return;
+    }
+    var items=tag==="ul"||tag==="ol"?[].slice.call(el.querySelectorAll("li")):null;
+    if(part===1){ b1.push(t); }
+    else if(part===2){
+      if(sub==="angles"){ if(items) items.forEach(function(li){d.anglesMorts.push(txt(li));}); else sentences(t).forEach(function(s){d.anglesMorts.push(s);}); }
+      else b2.push(t);
+    }
+    else if(part===3){
+      (items||[el]).forEach(function(x){ var c=cleanText(x); if(c.length<16) return; var refs=urlsIn(x).map(srcIdx);
+        d.enonces.push({type:"constat",chiffre:"",chiffreLegende:"",titre:"",texte:c+(refs.length?" ["+refs.join(",")+"]":"")}); });
+    }
+    else if(part===4){
+      if(tag==="table") return;
+      if(sub==="medias"){
+        if(/^panneau/i.test(t)) sub="panneaux";
+        else { (items?items.map(txt):[t]).forEach(function(x){ d.obs.push({type:"carte",num:String(d.obs.filter(function(o){return o.type==="carte";}).length+1),titre:x.replace(/^(carte|figure)\s*\d*\s*[—–\-:]*\s*/i,""),url:"",position:"apres",texte:"",sources:""}); }); return; }
+      }
+      if(sub==="panneaux"){
+        var pm=t.match(/^panneau\s*\d*\s*[—–\-:]*\s*(.*?)\s*(?:\(\s*\d+\s*mots\s*\))?$/i);
+        if(pm&&el.querySelector("strong")){ curPan={type:"panneau",titre:pm[1],couleur:"",texte:""}; d.obs.push(curPan); }
+        else if(curPan){ curPan.texte=(curPan.texte?curPan.texte+" ":"")+t; }
+        return;
+      }
+      var c4=cleanText(el), r4=urlsIn(el).map(srcIdx);
+      d.obs.push({type:"texte",texte:c4+(r4.length?" ["+r4.join(",")+"]":"")});
+    }
+    else if(part===5){
+      if(tag==="table"){ var tr=tableRows(el), H=tr.head;
+        var ci={effet:col(H,[/effet/]),determinant:col(H,[/d[ée]terminant/]),impact:col(H,[/impact/]),sens:col(H,[/sens/]),ampleur:col(H,[/ampleur/]),populations:col(H,[/population/])};
+        tr.body.forEach(function(r){ var o={}; Object.keys(ci).forEach(function(k){o[k]=ci[k]>=0?(r[ci[k]]||""):"";}); o.sens=normSens(o.sens); o.ampleur=(o.ampleur||"").toLowerCase();
+          var cm=o.effet.match(/\s*\(([^()]*\d[^()]*)\)\s*$/); o.codes=""; if(cm){ o.codes=cm[1].trim(); o.effet=o.effet.slice(0,cm.index).trim(); }
+          d.impacts.push(o); }); return; }
+      if(sub==="gagne") bg.push(t);
+    }
+    else if(part===6){
+      var rm=t.match(/^(R\s?-?\s?\d+(?:\.\d+)?)\s*[—–\-:.]?\s*(.*)$/);
+      if(rm&&tag==="p"){ curReco={code:rm[1].replace(/\s/g,""),couleur:"",titre:rm[2],moyens:[]}; d.recos.push(curReco); return; }
+      if(!curReco) return;
+      (items?items.map(txt):[t]).forEach(function(x){ curReco.moyens.push(x.replace(/\s*;\s*$/,".")); });
+    }
+    else if(part===7){
+      if(tag==="table"){ var tr2=tableRows(el), H2=tr2.head;
+        var cj={indicateur:col(H2,[/indicateur/]),source:col(H2,[/source/]),frequence:col(H2,[/fr[ée]quence/]),ventilation:col(H2,[/ventilation/]),direction:col(H2,[/direction/]),responsable:col(H2,[/responsable/])};
+        tr2.body.forEach(function(r){ var o={}; Object.keys(cj).forEach(function(k){o[k]=cj[k]>=0?(r[cj[k]]||""):"";});
+          var um=o.indicateur.match(/\s*\(([^()]{1,20})\)\s*$/); o.unite=""; if(um){ o.unite=um[1]; o.indicateur=o.indicateur.slice(0,um.index).trim(); }
+          d.indicateurs.push(o); }); }
+    }
+    else if(part===8){ bl.push(t); }
+  });
+  var s1=sentences(b1.join(" ")), qi=-1; s1.forEach(function(s,i){ if(qi<0&&/\?/.test(s)) qi=i; });
+  if(qi>=0){ d.enjeu1=s1.slice(0,qi).join(" "); d.enjeuPhrase=s1[qi]; d.enjeu2=s1.slice(qi+1).join(" "); } else d.enjeu1=s1.join(" ");
+  d.planIntro=b2.join("\n");
+  var sg=sentences(bg.join(" ")); if(sg.length>=3){ d.gagne1=sg.slice(0,-2).join(" "); d.gagne2=sg.slice(-2).join(" "); } else d.gagne1=sg.join(" ");
+  d.plusLoin=bl.join(" ");
+  if(d.anglesMorts.length) d.anglesIntro="";
+  if(d.impacts.length) d.impIntro=(NUMW[d.impacts.length]||d.impacts.length)+" chaînes causales relient les effets attendus du plan aux déterminants de la santé.";
+  if(d.recos.length) d.recoIntro=(NUMW[d.recos.length]||d.recos.length)+" recommandations, reprises sans reformulation.";
+  if(d.indicateurs.length) d.indIntro=(NUMW[d.indicateurs.length]||d.indicateurs.length)+" indicateurs de suivi, avec leur source, leur fréquence et le service responsable.";
+  return d;
+}
+async function importDocx(file){
+  if(!window.mammoth){ toast("Le lecteur Word n'a pas pu être chargé. Vérifiez votre connexion."); return; }
+  var buf=await file.arrayBuffer();
+  var res=await window.mammoth.convertToHtml({arrayBuffer:buf},{ignoreEmptyParagraphs:true,convertImage:window.mammoth.images.imgElement(function(){return Promise.resolve({src:""});})});
+  var d=parseWordHtml(res.value);
+  var found=[d.enjeu1,d.planIntro||d.anglesMorts.length,d.enonces.length,d.obs.length,d.impacts.length,d.recos.length,d.indicateurs.length].filter(Boolean).length;
+  load(d);
+  toast(found?("Fiche importée : "+found+" parties sur 7 reconnues. Mettez-la ensuite en forme."):"Aucune partie reconnue. Le document suit-il le gabarit en sept parties ?");
+}
+window.__allBlocks=allBlocks; window.__fullPage=fullPage; window.__getD=function(){return D;}; window.__load=load;
+
+/* ================= ACTIONS ================= */
+function hasContent(){ return !!(D.titre||D.enjeu1||D.planIntro||D.recos.length); }
+$("impWord").onclick=function(){ if(hasContent()&&!confirm("Remplacer la fiche en cours par le contenu du fichier Word ?")) return; $("fWord").click(); };
+$("fWord").onchange=function(e){ var f=e.target.files[0]; if(f) importDocx(f).catch(function(){toast("Lecture du fichier Word impossible.");}); e.target.value=""; };
+$("impJson").onclick=function(){ $("fJson").click(); };
+$("fJson").onchange=function(e){ var f=e.target.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){ try{ var p=JSON.parse(r.result); if(p.format!=="eis-mt-fiche") throw 0; load(p.fiche); toast("Fiche importée"); }catch(x){ toast("Ce fichier n'est pas une fiche valide."); } e.target.value=""; }; r.readAsText(f); };
+$("saveJson").onclick=function(){ fileSave(base()+".json",JSON.stringify({format:"eis-mt-fiche",version:2,exporte:new Date().toISOString(),fiche:D},null,2),"application/json"); toast("Fiche téléchargée"); };
+$("saveAll").onclick=function(){ fileSave(base()+"_fiche_complete_hub.html",fullPage(D),"text/html"); toast("Fiche complète téléchargée"); };
+$("mail").onclick=function(){
+  var s="ÉIS Mont-Tremblant, fiche de la stratégie "+(D.n||"")+(D.titre?" ("+D.titre+")":"");
+  var b="Bonjour,\n\nVoici ma fiche-stratégie, en pièce jointe (fichier "+base()+".json).\n\nMerci!";
+  location.href="mailto:"+encodeURIComponent(DESTINATAIRE)+"?subject="+encodeURIComponent(s)+"&body="+encodeURIComponent(b);
+};
+$("clear").onclick=function(){ if(confirm("Commencer une nouvelle fiche vide ? Téléchargez d'abord la fiche en cours si vous voulez la garder.")) load(blank()); };
+$("loadEx").onclick=function(){ if(hasContent()&&!confirm("Remplacer la fiche en cours par l'exemple de la fiche 8 ?")) return; load(JSON.parse(JSON.stringify(EXEMPLE))); toast("Exemple chargé : fiche 8, Récréotourisme"); };
+function tab(which){
+  [["tForm","paneForm"],["tBlocks","paneBlocks"],["tPrev","panePrev"]].forEach(function(p){ var on=p[0]===which; $(p[0]).setAttribute("aria-selected",on?"true":"false"); $(p[1]).hidden=!on; });
+  if(which==="tPrev") preview(); if(which==="tBlocks") showBlocks();
+}
+$("tForm").onclick=function(){tab("tForm");}; $("tBlocks").onclick=function(){tab("tBlocks");}; $("tPrev").onclick=function(){tab("tPrev");};
+
+
+/* ================= RÉVISION LINGUISTIQUE ================= */
+var LIB_DOCX="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js";
+var LIB_ZIP="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+function loadScript(src){ return new Promise(function(res,rej){ if(document.querySelector('script[src="'+src+'"]')&&(src===LIB_DOCX?window.docx:window.JSZip)) return res(); var sc=document.createElement("script"); sc.src=src; sc.onload=function(){res();}; sc.onerror=rej; document.head.appendChild(sc); }); }
+function getPath(o,k){ return k.split(".").reduce(function(a,p){ return a==null?a:a[/^\d+$/.test(p)?+p:p]; },o); }
+function setPath(o,k,v){ var ps=k.split("."), a=o; for(var i=0;i<ps.length-1;i++){ a=a[/^\d+$/.test(ps[i])?+ps[i]:ps[i]]; if(a==null) return false; } var last=ps[ps.length-1]; last=/^\d+$/.test(last)?+last:last; if(!(last in a)) return false; a[last]=v; return true; }
+var OBLBL={texte:"Paragraphe",phrase:"Phrase-choc",chiffres:"Chiffres clés",soustitre:"Sous-titre",liste:"Liste de valeurs",panneau:"Panneau",note:"Note de sources",carte:"Carte"};
+var ENLBL={constat:"Constat",encadre:"Encadré",loin:"Pour aller plus loin"};
+function reviewFields(d){
+  var F=[];
+  function add(part,label,key,multi){ var v=getPath(d,key); if(v==null) return; if(Array.isArray(v)?!v.length:!String(v).trim()) return; F.push({part:part,label:label,key:key,multi:multi||"s"}); }
+  var P0="Identification",P1="Partie 1 : L'enjeu",P2="Partie 2 : Ce que prévoit le plan",P3="Partie 3 : Ce que dit la science",P4="Partie 4 : Ce qu'on observe à Mont-Tremblant",P5="Partie 5 : Impacts anticipés sur la santé",P6="Partie 6 : Nos recommandations",P7="Partie 7 : Comment savoir si ça fonctionne";
+  add(P0,"Titre de la stratégie","titre"); add(P0,"Énoncé du plan (citation)","enonce");
+  add(P1,"Mise en contexte","enjeu1"); add(P1,"Phrase mise en évidence","enjeuPhrase"); add(P1,"Conclusion","enjeu2");
+  add(P2,"Introduction","planIntro","p");
+  d.objectifs.forEach(function(o,i){ add(P2,"Objectif "+(i+1)+" : titre","objectifs."+i+".titre"); add(P2,"Objectif "+(i+1)+" : texte","objectifs."+i+".texte"); });
+  add(P2,"Angles morts : introduction","anglesIntro");
+  d.anglesMorts.forEach(function(a,i){ add(P2,"Angle mort "+(i+1),"anglesMorts."+i); });
+  add(P3,"Introduction","sciIntro");
+  var cnt={};
+  d.enonces.forEach(function(e,i){ var t=e.type||"constat"; cnt[t]=(cnt[t]||0)+1; var L=ENLBL[t]+" "+cnt[t];
+    if(t==="constat"){ add(P3,L+" : chiffre","enonces."+i+".chiffre"); add(P3,L+" : légende du chiffre","enonces."+i+".chiffreLegende"); }
+    if(t==="encadre") add(P3,L+" : étiquette","enonces."+i+".etiquette");
+    add(P3,L+" : titre","enonces."+i+".titre"); add(P3,L+" : texte","enonces."+i+".texte","p"); });
+  cnt={};
+  d.obs.forEach(function(e,i){ var t=e.type||"texte"; cnt[t]=(cnt[t]||0)+1; var L=OBLBL[t]+" "+(t==="carte"?e.num:cnt[t]), k="obs."+i+".";
+    if(t==="chiffres") add(P4,L,k+"lignes","p");
+    else if(t==="liste"){ add(P4,L+" : introduction",k+"intro"); add(P4,L+" : lignes",k+"lignes","p"); }
+    else if(t==="panneau"){ add(P4,L+" : titre",k+"titre"); add(P4,L+" : texte",k+"texte"); }
+    else if(t==="carte"){ add(P4,L+" : titre",k+"titre"); add(P4,L+" : légende",k+"texte"); add(P4,L+" : sources",k+"sources"); }
+    else add(P4,L,k+"texte",t==="texte"?"p":"s"); });
+  add(P5,"Introduction","impIntro");
+  d.impacts.forEach(function(r,i){ var L="Chaîne "+(i+1)+" : ", k="impacts."+i+".";
+    add(P5,L+"effet attendu",k+"effet"); add(P5,L+"déterminant",k+"determinant"); add(P5,L+"impact sur la santé",k+"impact"); add(P5,L+"populations",k+"populations"); });
+  add(P5,"Qui gagne, qui perd : constat","gagne1"); add(P5,"Qui gagne, qui perd : point de vigilance","gagne2");
+  add(P6,"Introduction","recoIntro");
+  d.recos.forEach(function(r,i){ var L=(r.code||("Recommandation "+(i+1)))+" : "; add(P6,L+"intitulé","recos."+i+".titre"); add(P6,L+"moyens (un par paragraphe)","recos."+i+".moyens","a"); });
+  add(P7,"Introduction","indIntro");
+  d.indicateurs.forEach(function(r,i){ var L="Indicateur "+(i+1)+" : ", k="indicateurs."+i+".";
+    [["indicateur","libellé"],["source","source"],["frequence","fréquence"],["ventilation","ventilation"],["direction","direction attendue"],["responsable","responsable"]].forEach(function(f){ add(P7,L+f[1],k+f[0]); }); });
+  add(P7,"Pour aller plus loin","plusLoin");
+  d.sources.forEach(function(s,i){ add(P7,"Source ["+(i+1)+"] : référence","sources."+i+".libelle"); });
+  return F;
+}
+function asParas(v,multi){ if(multi==="a") return (v||[]).slice(); if(multi==="p") return lines(v); return [String(v||"")]; }
+async function exportReview(){
+  try{ await loadScript(LIB_DOCX); }catch(e){ toast("La bibliothèque Word n'a pas pu être chargée. Vérifiez votre connexion."); return; }
+  var X=window.docx, F=reviewFields(D);
+  var FONT_="Calibri";
+  function run(t,o){ return new X.TextRun(Object.assign({text:t,font:FONT_},o||{})); }
+  function para(t,o,po){ return new X.Paragraph(Object.assign({children:[run(t,o)]},po||{})); }
+  var border={style:X.BorderStyle.SINGLE,size:4,color:"C9CCE0"};
+  var borders={top:border,bottom:border,left:border,right:border};
+  var children=[
+    para("Révision linguistique",{bold:true,size:20,color:"0E7F7E"}),
+    para("Stratégie "+(D.n||"")+" : "+(D.titre||""),{bold:true,size:36,color:"140C74"},{spacing:{after:120}}),
+    para("ÉIS du plan d'urbanisme de Mont-Tremblant · texte destiné à la publication dans ArcGIS Hub",{size:20,color:"5B5F7E"},{spacing:{after:240}}),
+    para("Consignes",{bold:true,size:24,color:"140C74"},{spacing:{after:80}})
+  ];
+  ["Révisez seulement la colonne de droite, en mode suivi des modifications.",
+   "Ne modifiez pas la colonne de gauche et n'ajoutez ni ne supprimez de lignes : elle sert à replacer chaque passage dans la fiche.",
+   "Conservez les numéros entre crochets, par exemple [3] : ce sont les appels de sources.",
+   "Dans les chiffres clés et les listes de valeurs, conservez le trait vertical | qui sépare la valeur du libellé.",
+   "Les commentaires ne sont pas réimportés : utilisez-les pour échanger avec la personne experte."].forEach(function(t){
+    children.push(new X.Paragraph({children:[run(t,{size:21})],bullet:{level:0},spacing:{after:60}})); });
+  var parts=[]; F.forEach(function(f){ if(parts.indexOf(f.part)<0) parts.push(f.part); });
+  parts.forEach(function(pt){
+    children.push(para(pt,{bold:true,size:28,color:"140C74"},{heading:X.HeadingLevel.HEADING_1,spacing:{before:360,after:120},keepNext:true}));
+    var rows=[new X.TableRow({tableHeader:true,children:[
+      new X.TableCell({width:{size:2700,type:X.WidthType.DXA},shading:{type:X.ShadingType.CLEAR,fill:"140C74",color:"auto"},borders:borders,margins:{top:60,bottom:60,left:100,right:100},children:[para("Repère (ne pas modifier)",{bold:true,size:18,color:"FFFFFF"})]}),
+      new X.TableCell({width:{size:6660,type:X.WidthType.DXA},shading:{type:X.ShadingType.CLEAR,fill:"140C74",color:"auto"},borders:borders,margins:{top:60,bottom:60,left:100,right:100},children:[para("Texte à réviser",{bold:true,size:18,color:"FFFFFF"})]})]})];
+    F.filter(function(f){return f.part===pt;}).forEach(function(f){
+      var ps=asParas(getPath(D,f.key),f.multi);
+      rows.push(new X.TableRow({cantSplit:false,children:[
+        new X.TableCell({width:{size:2700,type:X.WidthType.DXA},shading:{type:X.ShadingType.CLEAR,fill:"F1F3F9",color:"auto"},borders:borders,margins:{top:60,bottom:60,left:100,right:100},children:[para(f.label,{bold:true,size:18,color:"1F1F2E"}),para(f.key,{size:14,color:"8B8FC4",font:"Consolas"})]}),
+        new X.TableCell({width:{size:6660,type:X.WidthType.DXA},borders:borders,margins:{top:60,bottom:60,left:120,right:120},children:ps.map(function(t,j){return para(t,{size:22},{spacing:{after:j<ps.length-1?100:0}});})})]}));
+    });
+    children.push(new X.Table({width:{size:9360,type:X.WidthType.DXA},columnWidths:[2700,6660],rows:rows}));
+  });
+  var doc=new X.Document({
+    creator:"Atelier des fiches-stratégies",title:"Révision linguistique, stratégie "+(D.n||""),
+    customProperties:[{name:"eis-fiche",value:JSON.stringify(D)}],
+    styles:{default:{document:{run:{font:FONT_,size:22,language:{value:"fr-CA"}}}}},
+    sections:[{properties:{page:{margin:{top:1134,bottom:1134,left:1134,right:1134}}},children:children}]
+  });
+  var blob=await X.Packer.toBlob(doc);
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=base()+"_revision.docx"; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+  toast("Word de révision téléchargé : "+F.length+" passages");
+}
+async function importReview(file){
+  var buf=await file.arrayBuffer(), baseD=null, note="";
+  try{ await loadScript(LIB_ZIP); var zip=await window.JSZip.loadAsync(buf); var cx=zip.file("docProps/custom.xml");
+    if(cx){ var xml=new DOMParser().parseFromString(await cx.async("string"),"application/xml");
+      [].slice.call(xml.getElementsByTagNameNS("*","property")).forEach(function(pr){ if(pr.getAttribute("name")==="eis-fiche"){ try{ baseD=JSON.parse(pr.textContent); }catch(e){} } }); }
+  }catch(e){}
+  if(baseD){ if(hasContent()&&(String(baseD.n)!==String(D.n)||baseD.titre!==D.titre)&&!confirm("Ce Word a été produit pour la stratégie "+baseD.n+" ("+baseD.titre+"). Remplacer la fiche en cours ?")) return; baseD=Object.assign(blank(),baseD); }
+  else { if(!hasContent()){ toast("Ce Word ne contient pas la fiche d'origine. Chargez d'abord la fiche (.json), puis réimportez."); return; } baseD=JSON.parse(JSON.stringify(D)); note=" (appliqué à la fiche ouverte)"; }
+  if(!window.mammoth){ toast("Le lecteur Word n'a pas pu être chargé. Vérifiez votre connexion."); return; }
+  var res=await window.mammoth.convertToHtml({arrayBuffer:buf},{ignoreEmptyParagraphs:false});
+  var doc=new DOMParser().parseFromString("<div>"+res.value+"</div>","text/html");
+  var F=reviewFields(baseD), fmap={}; F.forEach(function(f){fmap[f.key]=f;});
+  var seen={}, changed=[], unknown=0;
+  [].slice.call(doc.querySelectorAll("tr")).forEach(function(tr){
+    var cells=[].slice.call(tr.children); if(cells.length<2) return;
+    var lp=[].slice.call(cells[0].querySelectorAll("p")).map(txt).filter(Boolean), key=lp[lp.length-1]||"";
+    if(!/^[a-zA-Z][a-zA-Z0-9]*(\.\d+(\.[a-zA-Z0-9]+)?)?$/.test(key)) return;
+    var f=fmap[key]; if(!f){ unknown++; return; } seen[key]=1;
+    var ps=[].slice.call(cells[1].querySelectorAll("p,li")).map(txt);
+    while(ps.length&&!ps[ps.length-1]) ps.pop(); while(ps.length&&!ps[0]) ps.shift();
+    var nv; if(f.multi==="a") nv=ps.filter(Boolean); else if(f.multi==="p") nv=ps.filter(Boolean).join("\n"); else nv=ps.filter(Boolean).join(" ");
+    var ov=getPath(baseD,key);
+    if(JSON.stringify(ov)!==JSON.stringify(nv)){ setPath(baseD,key,nv); changed.push(f.label); }
+  });
+  var missing=F.filter(function(f){return !seen[f.key];}).length;
+  load(baseD);
+  var box=$("revsum"); box.hidden=false;
+  box.textContent=changed.length+" passage"+(changed.length>1?"s":"")+" modifié"+(changed.length>1?"s":"")+note+(changed.length?" : "+changed.slice(0,8).join(" ; ")+(changed.length>8?" ; et "+(changed.length-8)+" autres":""):"")+"."+(missing?" Attention : "+missing+" ligne"+(missing>1?"s":"")+" introuvable"+(missing>1?"s":"")+" dans le Word, contenu d'origine conservé.":"")+(unknown?" "+unknown+" ligne(s) non reconnue(s) ignorée(s).":"");
+  toast("Révision réimportée : "+changed.length+" passage"+(changed.length>1?"s":"")+" modifié"+(changed.length>1?"s":""));
+}
+$("revOut").onclick=function(){ if(!hasContent()){ toast("La fiche est vide : rien à exporter."); return; } exportReview().catch(function(e){ console.error(e); toast("Export Word impossible."); }); };
+$("revIn").onclick=function(){ $("fRev").click(); };
+$("fRev").onchange=function(e){ var f=e.target.files[0]; if(f) importReview(f).catch(function(x){ console.error(x); toast("Lecture du Word révisé impossible."); }); e.target.value=""; };
+window.__reviewFields=reviewFields;
+
+var EXEMPLE=/*EXEMPLE*/{"n": "8", "titre": "Récréotourisme", "auteur": "", "date": "", "version": "Version 1", "retour": "383f99f94ce3407f883a4ce04f065a06", "pdf": "/documents/EIS_Mont-Tremblant.pdf", "enonce": "Consolider l'offre récréotouristique destinée à la population permanente et touristique.", "enjeu1": "Mont-Tremblant vit du plaisir des autres. La montagne, les lacs et les sentiers attirent des visiteurs de partout, et cette économie fait vivre la ville. Mais un territoire de loisir n’est pas automatiquement un territoire où la population résidente bouge, se baigne et se rencontre.", "enjeuPhrase": "Cette stratégie pose une question d’équité : à qui profite le terrain de jeu ?", "enjeu2": "La réponse se joue dans le prix d’un accès, dans la distance jusqu’au parc le plus proche et dans le silence d’une nuit d’été.", "planIntro": "Le plan structure le récréotourisme autour de cinq objectifs.", "objectifs": [{"titre": "Limiter l’impact sur les milieux naturels", "texte": "Contenir l’expansion des pôles hôteliers hors des périmètres urbains et maintenir les résidences de tourisme dans les secteurs déjà voués à cet usage. Favoriser l’écotourisme.", "codes": "obj. 7.1, 7.1.1, 7.1.3"}, {"titre": "Assurer des accès publics aux lacs et milieux naturels", "texte": "Projets Plage et tennis et Gray Rocks, confirmation des lieux de baignade actuels, stratégie d’acquisition de terrains.", "codes": "obj. 7.2, 7.2.1, 7.2.2, 7.2.3, 7.2.4"}, {"titre": "Développer une offre quatre saisons", "texte": "Réseau de parcs et de sentiers, équipements pour les jeunes familles, accès aux activités pour la population locale par la carte du citoyen, mise à niveau des parcs en fonction du vieillissement.", "codes": "obj. 7.3, 7.3.1 à 7.3.8, 7.3.9, 7.3.10, 7.3.12"}, {"titre": "Concentrer l’hébergement dans le pôle de la station", "texte": "Densification de la Base Sud et du Versant Soleil, catégories d’usages destinées à éviter les nuisances.", "codes": "obj. 7.4, 7.4.1, 7.4.5, 7.4.6"}, {"titre": "Arrimer les activités au parc national", "texte": "Arrimage au plan directeur du parc national.", "codes": "obj. 7.5"}], "anglesIntro": "Le plan ne traite pas :", "anglesMorts": ["Les conditions d’emploi de la main-d’œuvre saisonnière, alors que le plan planifie la croissance du secteur qui l’emploie.", "L’exposition aux jeux de hasard, alors que le plan densifie le pôle où se trouve le casino.", "Toute exigence d’accessibilité universelle pour les équipements récréatifs.", "Un programme de surveillance et d’affichage de la qualité de l’eau, alors que le plan confirme les lieux de baignade (7.2.3).", "Tout objectif de cadre bâti applicable au Versant Soleil, malgré la densification prévue."], "sciIntro": "Quatre constats documentés sur le lien entre l’aménagement récréotouristique et la santé.", "enonces": [{"type": "constat", "chiffre": "10 min", "chiffreLegende": "au-delà, le parc cesse d’être fréquenté", "titre": "Dix minutes de marche, pas vingt", "texte": "Un parc à moins de dix minutes de marche est fréquenté. Le même parc à vingt minutes ne l’est plus.[3] Ce n’est pas une question de motivation, mais de distance.\nLà où l’accès est proche, on bouge davantage, le stress baisse et la santé mentale s’améliore. L’effet est plus marqué chez les personnes à faible revenu, qui se déplacent moins loin.[1,2]"}, {"type": "constat", "chiffre": "45 dB", "chiffreLegende": "limite OMS pour le bruit routier la nuit ; 53 dB en moyenne sur 24 heures", "titre": "Le seuil d’une nuit réparatrice", "texte": "L’OMS fixe à 45 décibels la limite du bruit routier nocturne.[5] Au-delà, le sommeil se fragmente. Avec les années, la tension monte et le risque cardiovasculaire suit.\nDans les zones où le touristique touche le résidentiel, le bruit ne vient pas d’abord des activités : il vient de la circulation qu’elles attirent et des stationnements.[6]"}, {"type": "constat", "chiffre": "16", "chiffreLegende": "appareils de loterie vidéo, à deux adresses du centre-ville", "titre": "Les appareils ne sont pas répartis au hasard", "texte": "Plus il y a d’appareils de jeu près de chez soi, plus le jeu problématique est fréquent dans le secteur.[10] Et ces appareils se concentrent dans les quartiers à faible revenu, un écart expliqué d’abord par le revenu des résidents.[13] La publicité agit en plus sur l’initiation des jeunes.[12]\nLe jeu problématique ne reste pas un problème d’argent : détresse, endettement, ruptures familiales, risque suicidaire accru.[11] Au Piémont, réduire le nombre d’appareils et de points de vente a fait baisser le jeu à risque.[15] Une municipalité peut plafonner les appareils dans un périmètre et imposer une distance minimale des lieux fréquentés par les jeunes.[14]"}, {"type": "constat", "chiffre": "Saison", "chiffreLegende": "revenus d’une partie de l’année, loyer de toute l’année", "titre": "Travailler l’hiver, payer le loyer toute l’année", "texte": "L’emploi saisonnier, temporaire et à horaires atypiques va de pair avec une détresse psychologique plus élevée,[7] davantage d’insécurité alimentaire[8] et un moindre recours aux services préventifs.\nQuand s’y ajoute un marché locatif tendu, l’instabilité résidentielle s’installe.[9] La main-d’œuvre qui fait tourner l’offre récréotouristique est la première exposée."}, {"type": "encadre", "etiquette": "À rebours de l’intuition", "titre": "Rendre l’accès gratuit ne ramène pas les absents", "texte": "Le coût est bien une barrière pour les ménages à faible revenu. Mais les évaluations de programmes de gratuité montrent que retirer le prix, seul, profite surtout aux personnes déjà actives. Tout dépend ensuite de la proximité de l’équipement, de l’accompagnement et de la notoriété du programme.[4]"}, {"type": "loin", "titre": "Les lieux publics gratuits font se croiser des gens qui ne se croisent pas", "texte": "La qualité des relations sociales pèse sur la mortalité autant que les grands facteurs de risque comportementaux.[16] Les lieux publics ouverts et confortables favorisent les contacts informels entre groupes sociaux.[17]"}, {"type": "loin", "titre": "Densifier sans commerces reporte tout sur l’automobile", "texte": "Les états des connaissances sur l’action municipale recommandent une densité suffisante pour la marche et une mixité des usages.[18] La cible québécoise du milieu de vie complet est d’au moins un commerce alimentaire à 800 mètres de marche du domicile.[19] L’outil MilieuxVie mesure la proximité de douze catégories de services à partir du rôle foncier, avec une cible de couverture de 70 %.[20]"}, {"type": "loin", "titre": "Un équipement n’est utilisé que s’il est utilisable", "texte": "L’annexe H de la norme CAN/CSA Z614 exige que les composantes de jeu accessibles soient intégrées au reste de l’aire, et non regroupées à part.[21] Chez les aînés, la marche dépend de conditions aménageables : pentes faibles, revêtement adapté, bancs avec dossier, blocs sanitaires accessibles.[22]"}, {"type": "loin", "titre": "Se baigner est aussi une mesure d’adaptation à la chaleur", "texte": "La baignade est une mesure de rafraîchissement accessible et une activité physique répandue.[23] Les lacs et rivières d’une superficie appréciable affichent une température inférieure d’environ 2,5 °C aux secteurs environnants, et élargir les heures d’accès améliore le répit des personnes vulnérables à la chaleur.[24] Les interventions en milieu aquatique améliorent aussi le bien-être psychosocial.[25]"}, {"type": "loin", "titre": "Le vélo utilitaire tient à l’infrastructure, pas à la volonté", "texte": "Près de sept adultes québécois sur dix ne pratiquent pas ou rarement le transport actif.[26] Piétons et cyclistes restent surreprésentés dans les décès routiers : sécuriser les aménagements est une condition, pas un complément.[27] Le transport représente environ 18 % des dépenses des ménages québécois, au second rang derrière le logement.[28]"}, {"type": "loin", "titre": "La qualité des eaux de baignade se surveille et s’affiche", "texte": "Bactéries d’origine fécale et cyanobactéries causent gastro-entérites, dermatites et irritations. Santé Canada fixe les seuils de conformité et recommande l’affichage rapide des résultats aux sites de baignade.[29]"}], "obs": [{"type": "chiffres", "lignes": "7 250 | personnes à Saint-Jovite, les deux tiers de la population\n300 | résidents dans le secteur Tremblant\n38,4 % | des logements occupés par des résidents non habituels, contre 7,4 % au Québec\n16 | appareils de loterie vidéo, à deux adresses"}, {"type": "texte", "texte": "Les grands équipements récréotouristiques se concentrent au nord du territoire : la station, le Domaine Saint-Bernard et ses quelque 600 hectares, le parc national. Les deux tiers de la population résidente vivent ailleurs, dans le secteur de Saint-Jovite : 7 250 personnes, un revenu médian après impôt de 34 000 $, la proportion la plus élevée de personnes sous la mesure de faible revenu (15 %) et de locataires (49 %) de la ville. Le secteur Tremblant, lui, compte 300 résidents et le revenu moyen des ménages le plus élevé (152 000 $)."}, {"type": "phrase", "texte": "Le terrain de jeu et les ménages les plus susceptibles d’en avoir besoin ne sont pas au même endroit."}, {"type": "carte", "num": "1", "titre": "Équipements récréatifs et défavorisation matérielle", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/mont_tremblant_parcs_defavorisation.html", "position": "apres", "texte": "Les grands équipements se lisent au nord, les quintiles les plus défavorisés au centre-ville. Comparez la position des équipements et celle des ménages : c’est l’écart que la stratégie 8 doit combler.", "sources": "inventaire municipal des équipements récréatifs ; indice de défavorisation de Pampalon, quintiles régionaux ; recensement de 2021"}, {"type": "texte", "texte": "La pression touristique se lit dans le parc de logements : 38,4 % des logements de Mont-Tremblant sont occupés par des résidents non habituels, contre 7,4 % pour l’ensemble du Québec. Dans le secteur Village, 29 % des emplois sont temporaires et 20 % saisonniers. Au Versant Soleil, le casino est en exploitation depuis 2009 et un Club Med doit s’implanter à proximité, sur un secteur de 81 hectares dont le plan prévoit la densification, sans objectif de services de proximité pour les résidents et les travailleurs qui s’y trouveront."}, {"type": "soustitre", "texte": "Ce que montre l’analyse des milieux de vie complets"}, {"type": "texte", "texte": "Le principal périmètre urbain de la ville, qui regroupe 3 774 des 8 111 logements du territoire, obtient un score de proximité de 73 %, l’un des deux seuls périmètres des Laurentides à atteindre la cible de 70 %. Il couvre l’ensemble de ses logements pour les commerces alimentaires, l’école secondaire, le transport collectif et le réseau cyclable, ainsi que 99 % pour les espaces naturels et 93 % pour les loisirs et le sport.[20]"}, {"type": "liste", "intro": "Cinq services restent sous la cible.", "lignes": "Mobilité partagée | 0 %\nPharmacie | 30 %\nÉquipements culturels | 53 %\nService de garde | 55 %\nÉcole primaire | 62 %"}, {"type": "texte", "texte": "Les trois autres périmètres urbains obtiennent 53 %, 53 % et 6 %. À l’échelle de la municipalité entière, le score tombe à 50 % : 62 % des logements seulement ont un espace naturel à moins de 800 mètres de marche et 69 % un équipement de loisir ou de sport dans le rayon applicable."}, {"type": "soustitre", "texte": "L’offre de jeu de hasard et d’argent sur le territoire"}, {"type": "panneau", "titre": "Deux offres de jeu, deux publics", "couleur": "", "texte": "Mont-Tremblant compte 34 établissements titulaires d’un permis de bar. Un seul détient un casino. Trois exploitent des appareils de loterie vidéo, tous rue de Saint-Jovite, au centre-ville. Le casino, lui, est au Versant Soleil, à près de neuf kilomètres. L’offre de jeu se divise donc en deux pôles distincts : le casino dessert la clientèle touristique, les appareils de loterie vidéo sont dans le milieu de vie de la population permanente."}, {"type": "panneau", "titre": "Seize appareils, deux adresses", "couleur": "", "texte": "Huit appareils sont au 468, rue de Saint-Jovite. Huit autres se partagent deux portes voisines, aux 1074 et 1076. Six cents mètres séparent les deux grappes. Le reste de la ville n’en compte aucun. Cette concentration est confirmée par les licences inscrites au fichier de la Régie des alcools, des courses et des jeux. Elle n’est pas une estimation."}, {"type": "panneau", "titre": "Là où l’offre rencontre la défavorisation", "couleur": "#e6a23c", "texte": "Dix-sept aires de diffusion couvrent Mont-Tremblant, pour 10 992 résidents en 2021. Environ quatre résidents sur dix vivent dans une aire des deux quintiles les plus défavorisés matériellement de la région. La plus forte concentration d’appareils du territoire se trouve dans l’aire la plus défavorisée à la fois sur le plan matériel et sur le plan social. L’exposition à l’offre de jeu ne se répartit donc pas également sur le territoire."}, {"type": "panneau", "titre": "Ce que le projet du Versant Soleil ajoute", "couleur": "#a8a2ee", "texte": "Le plan prévoit la consolidation du pôle du Versant Soleil. Un projet hôtelier de 300 chambres y est à l’étude, près du casino. Les promoteurs annoncent environ 300 emplois directs et le logement de la moitié du personnel sur le site. Ce personnel vivrait à quelques centaines de mètres du casino, à pied. Il s’agit d’une population jeune, saisonnière et souvent sans véhicule."}, {"type": "note", "texte": "Sources : fichier des licences de la Régie des alcools, des courses et des jeux ; recensement de 2021 ; indice de défavorisation de Pampalon, quintiles régionaux. Le rattachement des adresses d’appareils à leur aire de diffusion reste à confirmer par géocodage."}, {"type": "note", "texte": "Sources de la partie 4 : recensement de la population de 2021, Statistique Canada ; analyse MilieuxVie du 15 septembre 2026, Direction de santé publique des Laurentides."}, {"type": "carte", "num": "2", "titre": "Offre de jeu de hasard et d’argent", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/JHA/cartos_jha_mont_tremblant.html", "position": "avant", "texte": "La carte ci-dessous situe les deux grappes d’appareils de loterie vidéo de la rue de Saint-Jovite et le casino du Versant Soleil sur les quintiles de défavorisation. Six cents mètres séparent les deux grappes ; neuf kilomètres les séparent du casino.", "sources": "fichier des licences de la Régie des alcools, des courses et des jeux ; indice de défavorisation de Pampalon ; recensement de 2021"}], "impIntro": "Sept chaînes causales relient les effets attendus du plan aux déterminants de la santé. Trois sont favorables ou incertaines, quatre signalent un risque.", "impacts": [{"effet": "Consolidation du réseau de parcs, sentiers et équipements quatre saisons", "codes": "7.3.1 à 7.3.12", "sens": "++", "ampleur": "importante", "determinant": "Accès aux espaces verts ; occasions d’activité physique", "impact": "Hausse de l’activité physique, réduction du stress, meilleure santé mentale", "populations": "Familles, personnes aînées, ménages sans automobile"}, {"effet": "Confirmation et acquisition d’accès publics aux lacs et milieux naturels", "codes": "7.2.1 à 7.2.4", "sens": "+", "ampleur": "modérée", "determinant": "Contact avec la nature ; rafraîchissement en canicule", "impact": "Bien-être, baignade sécuritaire, répit thermique", "populations": "Ménages non riverains et à faible revenu de Saint-Jovite"}, {"effet": "Accès aux activités pour la population locale sans engagement tarifaire chiffré", "codes": "7.3.10", "sens": "?", "ampleur": "modérée", "determinant": "Conditions socioéconomiques ; accès aux loisirs", "impact": "Maintien ou creusement des écarts de pratique entre groupes de revenu", "populations": "Ménages à faible revenu, familles monoparentales"}, {"effet": "Densification touristique du pôle Versant Soleil", "codes": "7.4.1, 7.4.5", "sens": "−", "ampleur": "modérée", "determinant": "Environnement social : offre de jeu et d’alcool", "impact": "Jeu problématique, détresse psychologique, endettement", "populations": "Jeunes, travailleurs du secteur, personnes en situation de vulnérabilité"}, {"effet": "Hausse de l’achalandage et de la circulation aux abords des pôles", "codes": "7.4", "sens": "−", "ampleur": "modérée", "determinant": "Environnement sonore ; cohabitation des usages", "impact": "Troubles du sommeil, stress, conflits de voisinage", "populations": "Résidents des zones de transition, Village, abords du chemin Duplessis"}, {"effet": "Croissance de l’emploi récréotouristique sans encadrement des conditions", "codes": "7.1.2, 7.4", "sens": "−", "ampleur": "modérée", "determinant": "Conditions d’emploi et de revenu", "impact": "Détresse psychologique, insécurité alimentaire et résidentielle", "populations": "Travailleurs saisonniers et temporaires, jeunes adultes"}, {"effet": "Confirmation des lieux de baignade sans programme de suivi ni affichage", "codes": "7.2.3", "sens": "−", "ampleur": "limitée", "determinant": "Qualité de l’eau", "impact": "Gastro-entérites, dermatites, exposition aux cyanobactéries", "populations": "Baigneurs, enfants, usagers des accès publics"}], "gagne1": "Les mesures du plan améliorent l’offre récréative moyenne du territoire. Elles ne garantissent pas que les ménages du secteur Saint-Jovite, les travailleurs saisonniers et les personnes en situation de handicap en bénéficient.", "gagne2": "Une offre qui s’enrichit surtout au nord, dans des pôles payants et accessibles en automobile, peut faire progresser la moyenne tout en creusant l’écart. C’est le point de vigilance central de cette fiche.", "recoIntro": "Dix recommandations, reprises sans reformulation.", "recos": [{"code": "R8.1", "couleur": "#21AEAD", "titre": "Renforcer et pérenniser l’accessibilité aux loisirs pour les résidents", "moyens": ["Maintenir et bonifier la carte « Accès Mont-Tremblant » : garantir la pérennité des tarifs préférentiels et de la gratuité pour l’accès aux infrastructures municipales (plage, transports) et négocier des ententes avec les opérateurs privés (ski, golf) pour des accès à tarifs réduits pour les résidents permanents.", "Diversifier l’offre de loisirs abordables : prioriser le développement d’infrastructures récréatives gratuites ou à faible coût (parcs de quartier, sentiers pédestres de proximité) dans les secteurs résidentiels, en dehors des pôles touristiques payants."]}, {"code": "R8.2", "couleur": "#6aa6e8", "titre": "Atténuer les nuisances et les conflits d’usage", "moyens": ["Appliquer strictement le zonage des nuisances (obj. 7.4.6) : s’assurer que les catégories d’usages visant à limiter le bruit et l’achalandage dans les zones de transition entre les secteurs touristiques et résidentiels soient rigoureusement respectées.", "Mettre en place un mécanisme de gestion des plaintes : créer ou renforcer un canal de communication clair et efficace pour que les résidents puissent signaler les nuisances liées aux activités touristiques (bruit, stationnement illégal), avec un suivi rapide des interventions municipales."]}, {"code": "R8.3", "couleur": "#a8a2ee", "titre": "Favoriser la diversification économique et la stabilité de l’emploi", "moyens": ["Soutenir l’entrepreneuriat local non touristique : encourager le développement de PME et de services de proximité (commerces locaux, services professionnels) pour diversifier le marché de l’emploi et réduire la dépendance saisonnière.", "Promouvoir l’emploi à l’année : collaborer avec les employeurs touristiques majeurs pour explorer des modèles de fidélisation de la main-d’œuvre (contrats annuels, avantages sociaux, logement) afin de réduire la précarité financière des travailleurs."]}, {"code": "R8.4", "couleur": "#e6a23c", "titre": "Prévenir les risques liés aux jeux de hasard", "moyens": ["Interdire la publicité pour les jeux de hasard ciblée localement : restreindre l’affichage publicitaire incitant au jeu dans les secteurs résidentiels et à proximité des écoles ou lieux fréquentés par les jeunes et les populations vulnérables.", "Soutenir les organismes communautaires : assurer un financement adéquat aux organismes locaux offrant des services d’aide aux joueurs pathologiques et de soutien psychosocial, en prévision d’une demande accrue liée à la densification du pôle Versant Soleil."]}, {"code": "R8.5", "couleur": "#21AEAD", "titre": "Créer des espaces de rencontre et de mixité sociale", "moyens": ["Aménager des lieux publics inclusifs : concevoir les nouveaux espaces publics (parcs, places publiques) au Centre-ville et au Village comme des lieux de rencontre intergénérationnels et interculturels, favorisant les échanges informels entre résidents de tous horizons socioéconomiques.", "Soutenir les initiatives citoyennes : encourager et financer les projets communautaires (fêtes de quartier, jardins collectifs, événements culturels gratuits) qui renforcent le lien social et le sentiment d’appartenance."]}, {"code": "R8.6", "couleur": "#e6a23c", "titre": "Versant Soleil : éviter la monofonctionnalité touristique", "moyens": ["Le plan ne propose pas d’objectifs de cadre bâti spécifiques au pôle Versant Soleil malgré la densification prévue.", "Exiger dans toute planification détaillée du secteur des services et commerces de proximité du quotidien accessibles à pied aux résidents et travailleurs (épicerie, services de santé de base, parc de quartier, services pour enfants)."]}, {"code": "R8.7", "couleur": "#6aa6e8", "titre": "S’assurer que les parcs, espaces verts et équipements de loisir répondent aux besoins de tous les âges et pour toutes les saisons", "moyens": ["Prévoir des installations qui favorisent le jeu libre pour les tout-petits.", "Planifier des espaces de socialisation et d’activité physique pour les personnes aînées.", "S’assurer que plusieurs infrastructures sportives et récréatives ainsi que les installations sanitaires soient accessibles pour les personnes en situation de handicap."]}, {"code": "R8.8", "couleur": "#21AEAD", "titre": "Garantir un accès universel et inclusif aux cours d’eau et espaces naturels publics", "moyens": ["Assurer un accès équitable aux espaces naturels publics pour l’ensemble de la population, notamment par un maintien de la gratuité, un accès facilité et l’aménagement d’infrastructures favorisant l’accessibilité universelle."]}, {"code": "R8.9", "couleur": "#a8a2ee", "titre": "Promouvoir l’attestation « Bienvenue cyclistes ! » de Vélo Québec", "moyens": ["Promouvoir l’attestation auprès des hébergements et des restaurants pour augmenter la part de touristes qui visitent la ville en vélo."]}, {"code": "R8.10", "couleur": "#6aa6e8", "titre": "Assurer le suivi analytique et l’affichage de la qualité des eaux de baignade aux accès publics", "moyens": ["Se doter d’un programme municipal autonome de surveillance de la qualité des eaux de baignade, fondé sur les Recommandations au sujet de la qualité des eaux utilisées à des fins récréatives au Canada comme cadre de référence normatif.", "Assurer l’accès à l’information en temps opportun sur la qualité des eaux récréatives, notamment les risques à la santé et les mesures à prendre pour se protéger (affiches, dépliants, sources médiatiques)."]}], "indIntro": "Six indicateurs de suivi, avec leur source, leur fréquence et le service responsable.", "indicateurs": [{"indicateur": "Nombre d’accès publics aménagés aux plans d’eau et part conforme à l’accessibilité universelle", "unite": "n, %", "source": "Inventaire municipal", "frequence": "Annuelle", "ventilation": "Secteur", "direction": "Hausse", "responsable": "Loisirs"}, {"indicateur": "Taux d’adhésion à la carte « Accès Mont-Tremblant » parmi les ménages résidents", "unite": "%", "source": "Fichier municipal", "frequence": "Annuelle", "ventilation": "Secteur, revenu médian de l’aire de diffusion", "direction": "Hausse, écart entre secteurs en baisse", "responsable": "Loisirs"}, {"indicateur": "Part des équipements récréatifs et sanitaires municipaux conformes à l’accessibilité universelle", "unite": "%", "source": "Audit d’accessibilité", "frequence": "Aux 3 ans", "ventilation": "Type d’équipement", "direction": "Hausse", "responsable": "Loisirs, Travaux publics"}, {"indicateur": "Plaintes pour nuisances liées aux activités touristiques et délai médian de traitement", "unite": "n, jours", "source": "Registre municipal des plaintes", "frequence": "Trimestrielle", "ventilation": "Secteur, type de nuisance", "direction": "Délai en baisse ; volume suivi et non ciblé", "responsable": "Greffe, Urbanisme"}, {"indicateur": "Part des emplois à l’année dans les entreprises touristiques participantes", "unite": "%", "source": "Entente de suivi avec les employeurs (R8.3)", "frequence": "Annuelle", "ventilation": "Taille d’entreprise", "direction": "Hausse", "responsable": "Développement économique"}, {"indicateur": "Part de la population de 12 ans et plus atteignant les recommandations d’activité physique", "unite": "%", "source": "Enquêtes populationnelles régionales", "frequence": "Au cycle d’enquête", "ventilation": "Âge, sexe, revenu", "direction": "Hausse", "responsable": "Direction de santé publique"}], "plusLoin": "Municipalité comparable : Whistler, en Colombie-Britannique, et ses programmes d’accès réservés aux résidents et aux employés du secteur touristique.", "sources": [{"libelle": "INSPQ. Verdir les villes pour la santé de la population", "url": "https://www.inspq.qc.ca/publications/2517"}, {"libelle": "OMS Europe. Urban green spaces and health", "url": "https://www.who.int/europe/publications/i/item/WHO-EURO-2016-3352-43111-60341"}, {"libelle": "Trust for Public Land. 10-Minute Walk, Key Park Equity Policies ; et Rigolon et coll", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7369687/"}, {"libelle": "Journal of Physical Activity and Health, évaluation de programmes de gratuité", "url": "https://doi.org/10.1123/jpah.6.6.716"}, {"libelle": "OMS Europe. Environmental noise guidelines for the European Region", "url": "https://www.who.int/europe/publications/i/item/9789289053563"}, {"libelle": "Noise & Health, bruit en zones de transition", "url": "https://doi.org/10.4103/1463-1741.155833"}, {"libelle": "Emploi précaire et détresse psychologique", "url": "https://pubmed.ncbi.nlm.nih.gov/38012123/"}, {"libelle": "Canadian Public Policy, emploi atypique et insécurité alimentaire", "url": "https://doi.org/10.3138/cpp.2024-059"}, {"libelle": "Urban Studies, marché locatif tendu et instabilité résidentielle", "url": "https://doi.org/10.1177/0042098017711649"}, {"libelle": "Addiction, proximité et densité de l’offre de jeu", "url": "https://doi.org/10.1111/add.16153"}, {"libelle": "Journal of Public Health, jeu problématique et santé", "url": "https://doi.org/10.1093/pubmed/fdad096"}, {"libelle": "Health Promotion International, exposition publicitaire et initiation des jeunes", "url": "https://doi.org/10.1093/heapro/dah509"}, {"libelle": "BMC Public Health, densité d’appareils et statut socioéconomique", "url": "https://doi.org/10.1186/s12889-019-7535-1"}, {"libelle": "International Journal of Health Geographics, encadrement géographique de l’offre de jeu", "url": "https://doi.org/10.1186/s12942-024-00379-2"}, {"libelle": "BMC Public Health, réduction de l’offre au Piémont", "url": "https://doi.org/10.1186/s12889-022-13398-0"}, {"libelle": "Holt-Lunstad et coll., PLOS Medicine, relations sociales et mortalité", "url": "https://doi.org/10.1371/journal.pmed.1000316"}, {"libelle": "Lieux publics et contacts informels", "url": "https://www.jstor.org/stable/jj.41003893"}, {"libelle": "INSPQ. Qualité de vie et action municipale", "url": "https://www.inspq.qc.ca/sites/default/files/publications/3262-qualite-vie-action-municipale.pdf"}, {"libelle": "Vivre en Ville. Milieux de vie complets, destinations de proximité", "url": "https://carrefour.vivreenville.org/milieux-de-vie-complets/destinations-de-proximite/alimentation"}, {"libelle": "Robitaille et coll., Geographies, outil MilieuxVie", "url": "https://doi.org/10.3390/geographies6030066"}, {"libelle": "Guides Sports Loisirs. Accessibilité universelle des aires de jeu, CAN/CSA Z614 annexe H", "url": "https://www.guides-sports-loisirs.ca/projetespaces/espaces-jeu-enfants/accessibilite-universelle-aire-jeu/"}, {"libelle": "Santé Montérégie. Guide d’aménagement des parcs pour les aînés", "url": "https://extranet.santemonteregie.qc.ca/app/uploads/2024/01/guide-amenagement-parcs-pour-aines.pdf"}, {"libelle": "INSPQ. Baignade et activité physique", "url": "https://www.inspq.qc.ca/publications/2501"}, {"libelle": "INSPQ. Mesures populationnelles d’adaptation à la chaleur", "url": "https://www.inspq.qc.ca/changements-climatiques/menaces/chaleur/mesures-populationnelles"}, {"libelle": "Health Promotion International, interventions en milieu aquatique et bien-être", "url": "https://doi.org/10.1093/heapro/day103"}, {"libelle": "INSPQ. Transport actif et habitudes de vie", "url": "https://www.inspq.qc.ca/habitudes-de-vie/activite-physique/transports"}, {"libelle": "INSPQ. Favoriser la sécurité des transports actifs par l’environnement bâti", "url": "https://www.inspq.qc.ca/sites/default/files/publications/3653-TOPO-favoriser-securite-transports-actifs-environnement-bati.pdf"}, {"libelle": "Vélo Québec. Données et arguments pour le vélo dans la collectivité", "url": "https://velosympathique.velo.qc.ca/ressources/donnees-arguments-velo-collectivite/"}, {"libelle": "Santé Canada. Recommandations au sujet de la qualité des eaux utilisées à des fins récréatives au Canada, 2024", "url": "https://www.canada.ca/fr/sante-canada/services/publications/vie-saine/recommandations-sujet-qualite-eaux-utilisees-fins-recreatives-canada-document-synthese.html"}]}/*FIN*/;
+try{ var sv=JSON.parse(localStorage.getItem(KEY)||"null"); if(sv) D=Object.assign(blank(),sv); }catch(e){}
+buildForm();
+})();
+</script>
+</body>
+</html>
