@@ -91,6 +91,7 @@ button.b:disabled{opacity:.5;cursor:default}
 .codebox textarea{font-family:var(--mono);font-size:.75rem;height:9rem}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:.5rem .9rem;border-radius:4px;font-weight:600;font-size:.88rem}
 .sendbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;border-top:1px solid var(--line);padding-top:1rem}
+.exnote{background:var(--accent-soft);color:var(--accent);border-radius:5px;padding:.5rem .7rem;font-size:.86rem;margin:0}
 .ro-note{background:var(--amber-soft);color:var(--amber);border-radius:5px;padding:.5rem .7rem;font-size:.88rem;margin:0}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -100,7 +101,7 @@ button.b:disabled{opacity:.5;cursor:default}
   <header class="top">
     <p class="eyebrow">ÉIS · Plan d'urbanisme de Mont-Tremblant</p>
     <h1>Atelier des cartes stratégies</h1>
-    <p class="lede">Chaque personne responsable complète la carte d'appel de sa stratégie : <b>l'accroche, trois chiffres sourcés et le paragraphe d'analyse</b>. Les textes de départ sont des propositions à corriger librement. Votre brouillon reste dans ce navigateur. Quand la carte est prête, cliquez sur <b>Envoyer par courriel</b> ou <b>Télécharger ma fiche</b> et transmettez le fichier.</p>
+    <p class="lede">Chaque personne responsable complète la carte d'appel de sa stratégie : <b>l'accroche, trois chiffres sourcés et le paragraphe d'analyse</b>. Les stratégies 4 et 8 sont remplies à titre d'exemples; les autres sont vides, à vous de les écrire. Votre brouillon reste dans ce navigateur. Quand la carte est prête, cliquez sur <b>Envoyer par courriel</b> ou <b>Télécharger ma fiche</b> et transmettez le fichier.</p>
     <p class="conn" id="conn">Brouillon enregistré dans ce navigateur.</p>
   </header>
 
@@ -159,7 +160,7 @@ button.b:disabled{opacity:.5;cursor:default}
       <fieldset>
         <legend>Notes pour l'équipe</legend>
         <div class="row"><label for="notes" class="hint" style="font-weight:400">Questions, doutes sur une donnée, points à trancher. Non publié.</label><textarea id="notes" data-k="notes" rows="3"></textarea></div>
-        <div class="btns"><button type="button" class="b" id="reset">Revenir à la proposition de départ</button></div>
+        <div class="btns"><button type="button" class="b" id="reset">Vider cette carte</button></div>
       </fieldset>
 
       <fieldset>
@@ -175,6 +176,7 @@ button.b:disabled{opacity:.5;cursor:default}
     </form>
 
     <aside class="preview" aria-label="Aperçu">
+      <p class="exnote" id="exnote" hidden>Cette carte est fournie à titre d'exemple. Servez-vous-en comme repère pour écrire la vôtre.</p>
       <div class="head"><p>Aperçu de la carte</p>
         <div class="btns">
           <button type="button" class="b primary" id="copy">Copier le code HTML</button>
@@ -196,37 +198,37 @@ button.b:disabled{opacity:.5;cursor:default}
 (function(){
 "use strict";
 /* ===== À CONFIGURER : adresse qui reçoit les fiches ===== */
-var DESTINATAIRE="eric.robitaille.cissslau@ssss.gouv.qc.ca";   /* ex. "prenom.nom@ssss.gouv.qc.ca" */
+var DESTINATAIRE="";   /* ex. "prenom.nom@ssss.gouv.qc.ca" */
 /* Propositions de départ. Le brouillon de chaque personne est gardé dans son navigateur (localStorage). */
 var T=[
- {n:1,titre:"Milieux naturels",accroche:"La forêt, l'eau et la montagne sont le capital de la ville. Ce sont aussi, pour la santé, une infrastructure de première ligne.",
-  tiles:[["[ n ]","% du territoire en affectation de conservation"],["[ n ]","milieux humides et hydriques recensés sur le territoire"],["[ n ]","% de la population à moins de 800 m d'un espace vert public"]],
-  para:"Le plan protège l'actif naturel à l'échelle du territoire, là où la pression de développement est la plus visible. La protection se joue toutefois surtout dans les secteurs peu habités. La végétation des quartiers construits, la canopée des stationnements commerciaux et l'accès de proximité à un espace vert entretenu restent peu traités, alors que ce sont eux qui agissent sur la chaleur, l'activité physique et la santé mentale au quotidien."},
- {n:2,titre:"Habitation",accroche:"Une station touristique a besoin de bras. Encore faut-il que ceux qui les fournissent puissent habiter la ville.",
-  tiles:[["[ n ]","% des logements occupés par des résidents permanents"],["[ n ]","résidences de tourisme autorisées sur le territoire"],["[ n ]","% des ménages locataires consacrant plus de 30 % de leur revenu au loyer"]],
-  para:"Le plan ouvre des secteurs à la densification et diversifie les typologies, ce qui est la bonne direction : densité, abordabilité et stabilité résidentielle forment une chaîne bien documentée. Mais l'offre nouvelle n'est assortie d'aucune cible d'abordabilité ni d'outil réglementaire qui la garantisse, et l'hébergement de la main-d'œuvre saisonnière n'y est pas nommé. Sans cela, la construction peut suivre la demande touristique plutôt que la demande résidentielle."},
- {n:3,titre:"Mobilité",accroche:"Se déplacer autrement qu'en automobile reste ici un privilège de localisation.",
-  tiles:[["[ n ]","km de parc linéaire et de voies cyclables aménagées"],["[ n ]","% des déplacements domicile-travail faits en automobile"],["[ n ]","km entre le noyau de Saint-Jovite et le pôle de la station"]],
-  para:"Le plan mise sur le parc linéaire et sur les liens entre les pôles, deux leviers dont l'effet sur l'activité physique est établi. La géographie limite toutefois la portée : les distances entre pôles relèvent du transport collectif plus que de la marche, et la continuité des trottoirs dans les quartiers existants n'est pas traitée. Les personnes sans automobile, dont une partie de la main-d'œuvre saisonnière, restent le point aveugle de la stratégie."},
- {n:4,angle:true,titre:"Alimentation durable",accroche:"Aucune stratégie du plan ne porte sur l'alimentation. C'est précisément pour cela que l'ÉIS en fait une.",
+ {n:1,titre:"Milieux naturels",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
+ {n:2,titre:"Habitation",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
+ {n:3,titre:"Mobilité",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
+ {n:4,angle:true,exemple:true,titre:"Alimentation durable",accroche:"Aucune stratégie du plan ne porte sur l'alimentation. C'est précisément pour cela que l'ÉIS en fait une.",
   tiles:[["[ n ]","% de la population à moins de 800 m d'un commerce d'alimentation"],["[ n ]","commerces offrant une gamme complète d'aliments frais"],["[ n ]","% des ménages des Laurentides en situation d'insécurité alimentaire"]],
   para:"Cette fiche ne commente pas une stratégie du plan : elle documente son absence. L'alimentation n'apparaît qu'en creux, à travers l'affectation commerciale et la protection du territoire agricole. Or les outils d'urbanisme agissent directement sur l'accès : localisation des commerces, place des marchés publics et de l'agriculture urbaine, encadrement de l'offre de restauration rapide autour des écoles. Le plan garde ici un levier inutilisé."},
- {n:5,titre:"Centre-ville",accroche:"Saint-Jovite concentre les services, le logement locatif et les revenus les plus bas. C'est là que le plan peut le plus.",
-  tiles:[["7 250","personnes vivent dans le secteur de Saint-Jovite"],["[ n ]","revenu médian des ménages du noyau central"],["[ n ]","logements projetés dans les secteurs de densification"]],
-  para:"C'est le seul secteur où la proximité des services, la densité et la desserte permettent un véritable effet de santé de proximité, et c'est aussi celui où la population est la plus défavorisée sur le plan matériel. Requalifier, verdir et apaiser la circulation y produirait des gains réels. Deux conditions manquent au plan : la protection du parc locatif existant contre les effets de déplacement, et le traitement du bruit et de la circulation de transit."},
- {n:6,titre:"Village",accroche:"Le Village a gardé son échelle. Il n'a pas gardé tous ses habitants.",
-  tiles:[["[ n ]","personnes résident en permanence dans le secteur du Village"],["[ n ]","% du parc résidentiel du secteur en hébergement touristique"],["[ n ]","accès publics au lac Mercier et au parc linéaire"]],
-  para:"Le Village offre ce que la santé publique cherche à reproduire ailleurs : une échelle marchable, un accès à l'eau, un noyau de services et un lien direct au parc linéaire. Le plan protège cette forme et mise sur l'animation. La menace n'est pas bâtie, elle est d'usage : la conversion progressive du parc résidentiel en hébergement touristique vide le secteur de la vie de quartier qui fait sa valeur sanitaire."},
- {n:7,titre:"Route 117",accroche:"Le corridor fait vivre la ville et la coupe en deux.",
-  tiles:[["[ n ]","véhicules par jour en moyenne annuelle sur le corridor"],["[ n ]","personnes vivent à moins de 200 m de l'emprise"],["[ n ]","traversées piétonnes aménagées sur le tronçon urbain"]],
-  para:"Trois effets de santé se superposent le long du corridor : le bruit routier, la qualité de l'air à proximité de l'emprise et l'effet de barrière, qui sépare des quartiers résidentiels de leurs services. Le plan veut requalifier les abords et en améliorer l'image, ce qui est un début. Le gabarit routier lui-même et la vitesse affichée relèvent d'une autre autorité, ce qui rend la concertation avec le ministère déterminante pour tout gain réel."},
- {n:8,titre:"Récréotourisme",statut:"review",nreco:"10",nchaine:"7",nmin:"13",page:"77d6f329c4104685bad74e0f96576196",
+ {n:5,titre:"Centre-ville",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
+ {n:6,titre:"Village",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
+ {n:7,titre:"Route 117",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
+ {n:8,exemple:true,titre:"Récréotourisme",statut:"review",nreco:"10",nchaine:"7",nmin:"13",page:"77d6f329c4104685bad74e0f96576196",
   accroche:"Mont-Tremblant vit du plaisir des autres. Reste à savoir à qui profite le terrain de jeu.",
   tiles:[["7 250","personnes à Saint-Jovite, loin des grands équipements du nord"],["300","résidents permanents dans le secteur Tremblant"],["16","appareils de loterie vidéo, à deux adresses du centre-ville"]],
   para:"Le plan enrichit l'offre récréative, surtout au nord, dans des pôles payants et accessibles en automobile. Il peut donc faire progresser la moyenne tout en creusant l'écart. Il ne dit rien des conditions d'emploi saisonnier ni de l'exposition au jeu, alors qu'il densifie le pôle où se trouve le casino."},
- {n:9,titre:"Infrastructures et eau",accroche:"L'eau potable, les eaux usées et les eaux pluviales sont des enjeux de santé avant d'être des enjeux techniques.",
-  tiles:[["[ n ]","% de la population desservie par le réseau d'aqueduc"],["[ n ]","débordements d'ouvrages de surverse déclarés la dernière année"],["[ n ]","plages suivies par le Programme Environnement-Plage"]],
-  para:"La chaîne est directe : imperméabilisation, eaux pluviales, surverses, qualité des eaux de baignade. Elle relie cette stratégie à toutes les autres, puisque chaque projet de densification s'y inscrit. Le plan encadre l'extension des réseaux et la gestion des eaux pluviales, mais sans faire le lien explicite avec les usages récréatifs de l'eau, qui sont pourtant la raison d'être touristique du territoire et un déterminant direct de santé."}
+ {n:9,titre:"Infrastructures et eau",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""}
 ];
 function base(t){
   return {titre:t.titre,accroche:t.accroche,para:t.para,
@@ -329,6 +331,9 @@ function renderPreview(){
   var ca=$("c-accroche"); ca.textContent=wa+" / 25 mots"; ca.classList.toggle("over",wa>25);
   var cp=$("c-para"); cp.textContent=wp+" mots (cible 60 à 80)"; cp.classList.toggle("over",wp<50||wp>95);
   $("codebox").hidden=true;
+  var ex=!!T[cur-1].exemple;
+  $("reset").textContent=ex?"Revenir au texte de l'exemple":"Vider cette carte";
+  $("exnote").hidden=!ex;
 }
 function renderAll(){ renderPicker(); renderPreview(); renderMeta(); }
 
@@ -349,7 +354,8 @@ function flush(n){
   if(n===cur) renderMeta();
 }
 $("reset").onclick=function(){
-  if(!confirm("Remplacer le contenu de la stratégie "+cur+" par la proposition de départ ? Le responsable, le statut et les notes sont conservés.")) return;
+  var ex=!!T[cur-1].exemple;
+  if(!confirm(ex?("Revenir au texte de l'exemple pour la stratégie "+cur+" ? Le responsable, le statut et les notes sont conservés."):("Vider la carte de la stratégie "+cur+" ? Le responsable, le statut et les notes sont conservés."))) return;
   var keep={resp:state[cur].resp,statut:state[cur].statut,notes:state[cur].notes};
   state[cur]=Object.assign(base(T[cur-1]),keep); fillForm(); renderAll(); flush(cur);
 };
