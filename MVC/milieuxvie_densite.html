@@ -856,7 +856,7 @@ function estPremiereLigne(t){
 
 var PARAMS=[
   {id:"alimentation",label:"Alimentation",icon:"🛒",group:"D",dist_dense:800,dist_inter:1500,dist_rural:3000,color:"#C1272D",shape:"square",fam:"com",
-   match:function(t){return t.shop&&/supermarket|convenience|grocery|butcher|bakery|greengrocer|deli|food|general/.test(t.shop);}},
+   match:function(t){return t.shop&&/supermarket|grocery|butcher|bakery|greengrocer|deli|food|general/.test(t.shop)&&t.shop!=="convenience";}},
   {id:"service_garde",label:"Service de garde",icon:"🧒",group:"D",dist_dense:400,dist_inter:800,dist_rural:1500,color:"#8CBCE8",shape:"circle",fam:"inst",
    caveat:"Couverture OpenStreetMap partielle (environ 28 %) : le score est vraisemblablement sous-estimé. À valider avec la MRC.",
    match:function(t){return t.amenity&&/kindergarten|childcare/.test(t.amenity);}},
@@ -1201,8 +1201,8 @@ function ovPost(q){
 function buildRegionalQuery(){
   var bb="45.3964,-76.1985,47.8133,-73.6802";
   return "[out:json][timeout:180];\n(\n"+
-    "  node[\"shop\"~\"supermarket|convenience|grocery|butcher|bakery|greengrocer|deli|food|general\"]("+bb+");\n"+
-    "  way[\"shop\"~\"supermarket|convenience|grocery\"]("+bb+");\n"+
+    "  node[\"shop\"~\"supermarket|grocery|butcher|bakery|greengrocer|deli|food|general\"]("+bb+");\n"+
+    "  way[\"shop\"~\"supermarket|grocery\"]("+bb+");\n"+
     "  node[\"amenity\"~\"kindergarten|childcare\"]("+bb+");\n"+
     "  node[\"amenity\"=\"school\"]("+bb+");\n"+
     "  way[\"amenity\"=\"school\"]("+bb+");\n"+
@@ -1472,8 +1472,8 @@ function runAnalysis(id){
   // Otherwise fetch from Overpass
   var s=simplify(muni.poly),ps=s.map(function(c){return c[0].toFixed(5)+" "+c[1].toFixed(5);}).join(" "),pp="(poly:\""+ps+"\")";
   var q="[out:json][timeout:90];\n(\n"+
-    "  node[\"shop\"~\"supermarket|convenience|grocery|butcher|bakery|greengrocer|deli|food|general\"]"+pp+";\n"+
-    "  way[\"shop\"~\"supermarket|convenience|grocery\"]"+pp+";\n"+
+    "  node[\"shop\"~\"supermarket|grocery|butcher|bakery|greengrocer|deli|food|general\"]"+pp+";\n"+
+    "  way[\"shop\"~\"supermarket|grocery\"]"+pp+";\n"+
     "  node[\"amenity\"~\"kindergarten|childcare\"]"+pp+";\n"+
     "  node[\"amenity\"=\"school\"]"+pp+";\n"+
     "  way[\"amenity\"=\"school\"]"+pp+";\n"+
@@ -2611,6 +2611,16 @@ renderSidebarLegend();
          recensement et les données de la SCHL : ils sont rapportés à titre descriptif et
          n'entrent pas dans le score.</p>
 
+      <h3>Ce qui est compté comme « alimentation »</h3>
+      <p>Seuls les commerces offrant une <b>alimentation saine et variée</b> sont comptés :
+         supermarchés, épiceries, fruiteries, boucheries, boulangeries, traiteurs et
+         magasins généraux. Les <b>dépanneurs</b> sont exclus du score. Leur offre repose
+         surtout sur des aliments ultratransformés, des boissons sucrées, du tabac et de
+         l'alcool; les compter reviendrait à assimiler à une offre alimentaire de proximité
+         ce que la littérature sur les environnements alimentaires associe plutôt aux
+         marais alimentaires, et gonflerait artificiellement le score des secteurs mal
+         desservis.</p>
+
       <h3>Ce qui est compté comme « soins de santé »</h3>
       <p>Seule la <b>première ligne</b> est comptée : CLSC, GMF, cliniques médicales,
          cabinets de médecine et hôpitaux. Les services complémentaires — massothérapie,
@@ -2925,7 +2935,7 @@ var OSM_CONFIG = {
    propre base et exige un compte distinct. */
 
 var OSM_PRESETS = {
-  alimentation : [['shop=supermarket','Supermarché'],['shop=convenience','Dépanneur'],
+  alimentation : [['shop=supermarket','Supermarché'],
                   ['shop=grocery','Épicerie'],['shop=greengrocer','Fruiterie'],
                   ['shop=butcher','Boucherie'],['shop=bakery','Boulangerie']],
   pharmacie    : [['amenity=pharmacy','Pharmacie']],
