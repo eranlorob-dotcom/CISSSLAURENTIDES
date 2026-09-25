@@ -1,0 +1,1101 @@
+<title>Navettage Mont-Tremblant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url(images/marker-icon.png);
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+</style>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0c191c;--panel:#12262b;--panel2:#173238;--line:#244249;--ink:#e8f1f1;--ink-dim:#9fb6b8;
+  --accent:#3fc7b4;--accent-ink:#06211e;--accent2:#f2d24b;--accent2-ink:#2a2410;--red:#e07a90;--ok:#6fd39a;
+  --shadow:0 8px 30px rgba(0,0,0,.4);
+  --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;
+}
+*{box-sizing:border-box}
+html,body{height:auto}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;line-height:1.45;padding-inline:16px;padding-block:0 32px}
+.wrap{max-width:1480px;margin:0 auto}
+button,select,input{font-family:inherit}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+header.top{display:flex;align-items:center;gap:14px;padding-block:18px 14px;flex-wrap:wrap}
+.mark{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#1c8b7e);display:grid;place-items:center;font-weight:800;color:var(--accent-ink);font-size:18px;flex:none}
+header h1{font-family:'Source Serif 4',Georgia,serif;font-size:22px;margin:0;font-weight:700;text-wrap:balance;line-height:1.15}
+header p{margin:2px 0 0;font-size:12.5px;color:var(--ink-dim)}
+header .grow{flex:1;min-width:200px}
+.badge{font-size:11px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;color:var(--accent2);border:1px solid rgba(242,210,75,.45);border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+/* summary strip */
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-dim);font-weight:600}
+.kpi .v{font-size:26px;font-weight:800;margin-top:2px;line-height:1.1}
+.kpi .s{font-size:12px;color:var(--ink-dim);margin-top:3px}
+.kpi.hi .v{color:var(--accent2)}
+
+/* main grid */
+.main{display:grid;grid-template-columns:290px minmax(0,1fr) 350px;gap:12px;align-items:stretch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ctrl .sec{padding:12px 14px;border-bottom:1px solid var(--line)}
+.ctrl .sec:last-child{border-bottom:none}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--ink-dim);margin:0 0 7px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.lbl output{color:var(--ink);letter-spacing:0;text-transform:none;font-weight:700;font-size:12.5px}
+.seg{display:flex;gap:3px;background:var(--panel2);border-radius:9px;padding:3px}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink-dim);padding:7px 3px;border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.seg.sc button.on{background:var(--accent2);color:var(--accent2-ink)}
+select{width:100%;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 9px;font-size:13px;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.hint{font-size:11.5px;color:var(--ink-dim);margin-top:6px;line-height:1.4}
+.legend-bar{height:10px;border-radius:5px;border:1px solid var(--line)}
+.legend-ends{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-dim);margin-top:4px}
+details.meth summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--accent)}
+details.meth p{font-size:12px;color:var(--ink-dim);margin:8px 0 0}
+
+/* map */
+.mapcard{position:relative;min-height:560px}
+#map{position:absolute;inset:0;background:#0f2226}
+.leaflet-container{background:#0f2226;font-family:inherit}
+.maptools{position:absolute;top:10px;right:10px;z-index:500;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.maptools select{width:auto;font-size:12px;padding:6px 8px;background:rgba(18,38,43,.92)}
+.allbtn{border:1px solid var(--line);background:rgba(18,38,43,.92);color:var(--ink);font-size:12px;font-weight:600;border-radius:8px;padding:6px 10px;cursor:pointer}
+.allbtn.on{border-color:var(--accent);color:var(--accent)}
+.mapnote{position:absolute;left:10px;bottom:10px;z-index:500;font-size:11px;color:var(--ink-dim);background:rgba(12,25,28,.85);border-radius:6px;padding:4px 8px;max-width:70%}
+.leaflet-tooltip.slab{background:rgba(8,18,20,.86);border:1px solid var(--line);color:var(--ink);border-radius:8px;box-shadow:none;padding:5px 9px;text-align:center;font-family:inherit}
+.leaflet-tooltip.slab::before{display:none}
+.slab b{display:block;font-size:12.5px}
+.slab span{font-size:15px;font-weight:800;color:var(--accent2)}
+.leaflet-control-attribution{background:rgba(12,25,28,.8)!important;color:var(--ink-dim)!important}
+.leaflet-control-attribution a{color:var(--accent)!important}
+.leaflet-bar a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+
+/* fiche */
+.fiche{display:flex;flex-direction:column;max-height:760px}
+.fh{padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.fh h2{margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:700;display:flex;align-items:center;gap:8px}
+.fh h2 i{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
+.fh .sub{font-size:12px;color:var(--ink-dim);margin-top:2px}
+.fb{padding:4px 16px 16px;overflow:auto}
+.bt{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin:14px 0 6px;font-weight:700}
+.big2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.big2 .b{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.big2 .b .n{font-size:22px;font-weight:800;line-height:1.1}
+.big2 .b .n.hi{color:var(--accent2)}
+.big2 .b .t{font-size:11px;color:var(--ink-dim);margin-top:2px;line-height:1.3}
+.scen{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.scen .s{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 4px;text-align:center}
+.scen .s.on{border-color:var(--accent2)}
+.scen .s .n{font-size:15px;font-weight:700}
+.scen .s .l{font-size:9.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.4px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--ink-dim)}
+.kv .v{font-weight:600;text-align:right;white-space:nowrap}
+.pace{margin-top:8px;background:var(--panel2);border-radius:10px;padding:10px;border:1px solid var(--line)}
+.pace .row{display:grid;grid-template-columns:112px 1fr 44px;gap:8px;align-items:center;font-size:12px;margin:4px 0}
+.pace .tr{height:9px;background:#0f2226;border-radius:5px;overflow:hidden}
+.pace .tr span{display:block;height:100%;border-radius:5px}
+.stack{display:flex;height:12px;border-radius:6px;overflow:hidden;border:1px solid var(--line);margin-top:4px}
+.stack span{display:block;height:100%}
+.sleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;color:var(--ink-dim);margin-top:5px}
+.sleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.stk-t{font-size:11.5px;color:var(--ink-dim);margin-top:8px}
+.flags{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.flags li{font-size:12.5px;line-height:1.4;background:var(--panel2);border-radius:8px;padding:8px 10px;border-left:3px solid var(--accent2)}
+.flags li.good{border-left-color:var(--ok)}
+.flags li.info{border-left-color:var(--accent)}
+.chartbox{position:relative;height:190px;margin-top:4px}
+
+/* bottom */
+.lower{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;margin-top:12px}
+.lower .card{padding:14px 16px}
+.lower h3{margin:0 0 2px;font-family:'Source Serif 4',Georgia,serif;font-size:17px}
+.lower .desc{font-size:12px;color:var(--ink-dim);margin:0 0 10px}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:640px}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-dim);font-weight:600;vertical-align:bottom}
+th:first-child,td:first-child{text-align:left}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:rgba(63,199,180,.06)}
+tbody tr.sel td{background:rgba(242,210,75,.08)}
+tfoot td{font-weight:700;border-bottom:none;border-top:2px solid var(--line)}
+td .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+td.barc{min-width:120px}
+.ib{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.ib .tr{width:54px;height:8px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.ib .tr span{display:block;height:100%;background:var(--accent2)}
+.neg{color:var(--ok)}
+.tblfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.copybtn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);font-size:12px;font-weight:600;padding:7px 12px;border-radius:8px;cursor:pointer}
+.copybtn:hover{border-color:var(--accent)}
+.sources{margin-top:12px;font-size:12px;color:var(--ink-dim);line-height:1.5}
+.sources b{color:var(--ink)}
+#csvfallback{width:100%;height:90px;margin-top:8px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:11px}
+
+@media (max-width:1180px){
+  .main{grid-template-columns:270px minmax(0,1fr)}
+  .fiche{grid-column:1 / -1;max-height:none}
+  .lower{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .main{grid-template-columns:1fr}
+  .mapcard{min-height:420px}
+  .kpi .v{font-size:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.leaflet-tooltip.htip{background:rgba(8,18,20,.92);border:1px solid var(--line);color:var(--ink);border-radius:8px;box-shadow:none;padding:6px 9px;font-family:inherit;font-size:12.5px}
+.leaflet-tooltip.htip::before{display:none}
+.htip b{color:var(--accent2)}
+.rank{display:grid;gap:5px}
+.rk{display:grid;grid-template-columns:minmax(120px,190px) 1fr 92px;gap:10px;align-items:center;font-size:13px;cursor:pointer;border-radius:7px;padding:3px 6px}
+.rk:hover{background:rgba(63,199,180,.06)}
+.rk.sel{background:rgba(242,210,75,.09)}
+.rk .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk .bars{display:grid;gap:2px}
+.rk .b{height:8px;border-radius:4px}
+.rk .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.rk .v small{color:var(--ink-dim);font-weight:400}
+.rleg{display:flex;gap:14px;font-size:11.5px;color:var(--ink-dim);margin:0 0 8px}
+.rleg i{display:inline-block;width:12px;height:8px;border-radius:3px;margin-right:5px;vertical-align:0}
+.modes{display:grid;gap:8px;margin-top:6px}
+.md{display:grid;grid-template-columns:130px 1fr 54px;gap:10px;align-items:center;font-size:12.5px}
+.md .st{display:flex;height:14px;border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.md .st span{display:block;height:100%}
+.md .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-dim)}
+.durleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--ink-dim);margin-top:8px}
+.durleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.note-s{font-size:11.5px;color:var(--ink-dim);margin-top:6px;line-height:1.4}
+.rangeout{font-weight:700}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="mark">N</div>
+  <div class="grow">
+    <h1>Le bassin de main-d'œuvre de Mont-Tremblant</h1>
+    <p>Navettage entre le lieu de résidence et le lieu de travail, recensements de 2016 et de 2021 · ÉIS du plan d'urbanisme · Direction de santé publique des Laurentides</p>
+  </div>
+  <span class="badge">Prototype · aide à la décision</span>
+</header>
+
+<section class="strip" aria-label="Sommaire">
+  <div class="kpi hi"><div class="l" id="k1l">Emplois occupés par des non-résidents</div><div class="v num" id="k1">–</div><div class="s" id="k1s"></div></div>
+  <div class="kpi"><div class="l">Distance moyenne à vol d'oiseau</div><div class="v num" id="k2">–</div><div class="s" id="k2s"></div></div>
+  <div class="kpi"><div class="l">Kilomètres par jour de travail</div><div class="v num" id="k3">–</div><div class="s" id="k3s"></div></div>
+  <div class="kpi"><div class="l">Trajets en automobile, 2021</div><div class="v num" id="k4">–</div><div class="s" id="k4s"></div></div>
+</section>
+
+<div class="main">
+  <aside class="card ctrl" aria-label="Paramètres">
+    <div class="sec">
+      <p class="lbl">Sens des déplacements</p>
+      <div class="seg" id="dirSeg"><button data-v="in" class="on">Vers Mont-Tremblant</button><button data-v="out">Depuis Mont-Tremblant</button></div>
+      <div class="hint" id="dirHint"></div>
+    </div>
+    <div class="sec">
+      <p class="lbl">Recensement</p>
+      <div class="seg sc" id="yrSeg"><button data-v="21" class="on">2021</button><button data-v="16">2016</button><button data-v="d">Écart</button></div>
+      <div class="hint" id="yrHint"></div>
+    </div>
+    <div class="sec">
+      <p class="lbl"><label for="thr">Flux minimal affiché</label><output id="thrO">10</output></p>
+      <input type="range" id="thr" min="10" max="100" step="5" value="10">
+      <div class="hint">Les flux sont arrondis au multiple de 5 par Statistique Canada : les petits flux sont peu fiables.</div>
+    </div>
+    <div class="sec">
+      <p class="lbl"><label for="choro">Remplissage des municipalités</label></p>
+      <select id="choro">
+        <option value="n">Nombre de navetteurs</option>
+        <option value="p">Navetteurs pour 1 000 habitants</option>
+        <option value="none">Aucun</option>
+      </select>
+    </div>
+    <div class="sec">
+      <p class="lbl">Légende</p>
+      <div class="legend-bar" id="legBar"></div>
+      <div class="legend-ends num"><span id="legMin"></span><span id="legMax"></span></div>
+      <div class="hint" id="legNote"></div>
+    </div>
+  </aside>
+
+  <div class="card mapcard">
+    <div id="map" role="img" aria-label="Carte des flux de navettage vers Mont-Tremblant"></div>
+    <div class="maptools">
+      <button class="allbtn" id="zoomBtn">Voir toutes les origines</button>
+      <button class="allbtn on" id="allBtn">Vue d'ensemble</button>
+    </div>
+    <div class="mapnote" id="mapNote" hidden></div>
+  </div>
+
+  <aside class="card fiche" aria-live="polite">
+    <div class="fh"><h2 id="fTitle"></h2><div class="sub" id="fSub"></div></div>
+    <div class="fb" id="fBody"></div>
+  </aside>
+</div>
+
+<div class="lower">
+  <section class="card">
+    <h3 id="rkTitle">Principales municipalités</h3>
+    <p class="desc" id="rkDesc"></p>
+    <div class="rleg"><span><i style="background:#f2d24b"></i>2021</span><span><i style="background:#5f7f86"></i>2016</span></div>
+    <div class="rank" id="rank"></div>
+    <div class="tblfoot"><span class="hint" style="margin:0">Cliquez une municipalité pour ouvrir sa fiche.</span><button class="copybtn" id="copyCsv">Copier les flux (CSV)</button></div>
+    <textarea id="csvfallback" hidden readonly aria-label="Flux CSV à copier"></textarea>
+  </section>
+  <section class="card">
+    <h3>Mode et durée du trajet, 2021</h3>
+    <p class="desc">Personnes qui travaillent à Mont-Tremblant, toutes provenances confondues (5 475 travailleurs).</p>
+    <div class="modes" id="modes"></div>
+    <div class="durleg" id="durleg"></div>
+    <p class="note-s">Durée moyenne : 19,6 minutes pour l'ensemble et 20,1 minutes en automobile. Le transport en commun ne représente que 110 trajets, pour une durée moyenne de 25,4 minutes.</p>
+  </section>
+</div>
+
+<section class="card sources" style="padding:14px 16px">
+  <b>Méthode.</b> Les flux proviennent des tableaux de navettage entre subdivisions de recensement : 98-10-0459-01 pour 2021 et 98-400-X2016325 pour 2016. Ils comprennent la population active occupée de 15 ans et plus qui a un lieu habituel de travail. Chaque municipalité est représentée par le centre de son territoire. Mont-Tremblant est représentée par le centre du secteur Saint-Jovite, qui regroupe l'essentiel des emplois. Les distances sont calculées à vol d'oiseau et sous-estiment donc les distances par la route. La distance moyenne et les kilomètres par jour ne comptent que les flux de 100 km ou moins, qui correspondent à un navettage quotidien plausible. Les kilomètres par jour sont calculés ainsi : navetteurs × distance × 2 (aller-retour), pour un jour de travail. Les municipalités situées hors des Laurentides (Montréal, Laval, Outaouais, Ottawa et autres) sont placées à un point approximatif de leur centre.<br>
+  <b>Limites.</b> Le recensement de 2021 a eu lieu en mai 2021, pendant la pandémie et hors saison touristique : les flux de 2021 sont probablement sous-estimés, d'où la comparaison avec 2016. Les personnes sans lieu habituel de travail et celles qui travaillent à domicile ne sont pas comptées. Statistique Canada arrondit les chiffres de façon aléatoire à un multiple de 5. Les flux de très longue distance (Val-d'Or, Ottawa, Montréal) correspondent probablement à des personnes qui séjournent près de leur travail pendant la semaine. Saint-Faustin–Lac-Carré a pris le nom de Mont-Blanc après le recensement de 2021.<br>
+  <b>Sources.</b> Statistique Canada, Recensement de la population de 2021, tableaux 98-10-0459-01 et 98-10-0503-01 · Recensement de 2016, tableau 98-400-X2016325 · Limites municipales : Diagnostic habitation Laurentides (SDA, MRNF). Outil d'aide à la décision, non réglementaire.
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const D={"munis":{"2422040":{"nom":"Lac-Beauport","nom_actuel":null,"lat":46.96,"lon":-71.29,"src":"approx","dist":269.4,"pop":null,"mrc":null,"in21":15,"in16":0,"out21":0,"out16":0},"2454048":{"nom":"Saint-Hyacinthe","nom_actuel":null,"lat":45.63,"lon":-72.957,"src":"approx","dist":137.6,"pop":null,"mrc":null,"in21":10,"in16":0,"out21":0,"out16":0},"2462060":{"nom":"Saint-Donat","nom_actuel":null,"lat":46.319,"lon":-74.222,"src":"approx","dist":36.3,"pop":null,"mrc":null,"in21":15,"in16":20,"out21":0,"out16":0},"2463060":{"nom":"Sainte-Julienne","nom_actuel":null,"lat":45.97,"lon":-73.72,"src":"approx","dist":69.2,"pop":null,"mrc":null,"in21":10,"in16":0,"out21":0,"out16":0},"2464008":{"nom":"Terrebonne","nom_actuel":null,"lat":45.7,"lon":-73.647,"src":"approx","dist":86.5,"pop":null,"mrc":null,"in21":10,"in16":0,"out21":10,"out16":0},"2465005":{"nom":"Laval","nom_actuel":null,"lat":45.57,"lon":-73.72,"src":"approx","dist":90.8,"pop":null,"mrc":null,"in21":10,"in16":35,"out21":25,"out16":25},"2466023":{"nom":"Montréal","nom_actuel":null,"lat":45.502,"lon":-73.567,"src":"approx","dist":104.7,"pop":null,"mrc":null,"in21":40,"in16":80,"out21":80,"out16":95},"2473005":{"nom":"Boisbriand","nom_actuel":null,"lat":45.6172,"lon":-73.8599,"src":"polygone","dist":79.3,"pop":28308,"mrc":"Thérèse-De Blainville","in21":0,"in16":0,"out21":10,"out16":0},"2473015":{"nom":"Blainville","nom_actuel":null,"lat":45.6843,"lon":-73.8541,"src":"polygone","dist":74.6,"pop":59819,"mrc":"Thérèse-De Blainville","in21":10,"in16":20,"out21":0,"out16":0},"2473020":{"nom":"Rosemère","nom_actuel":null,"lat":45.6375,"lon":-73.7974,"src":"polygone","dist":81.3,"pop":14090,"mrc":"Thérèse-De Blainville","in21":10,"in16":0,"out21":0,"out16":0},"2474005":{"nom":"Mirabel","nom_actuel":null,"lat":45.6521,"lon":-74.0598,"src":"polygone","dist":66.0,"pop":61108,"mrc":"Mirabel","in21":20,"in16":0,"out21":25,"out16":0},"2475017":{"nom":"Saint-Jérôme","nom_actuel":null,"lat":45.7962,"lon":-74.0405,"src":"polygone","dist":55.5,"pop":80213,"mrc":"La Rivière-du-Nord","in21":35,"in16":40,"out21":50,"out16":40},"2475040":{"nom":"Prévost","nom_actuel":null,"lat":45.8628,"lon":-74.0594,"src":"polygone","dist":49.8,"pop":13692,"mrc":"La Rivière-du-Nord","in21":20,"in16":35,"out21":0,"out16":0},"2475045":{"nom":"Saint-Hippolyte","nom_actuel":null,"lat":45.9199,"lon":-73.9982,"src":"polygone","dist":50.7,"pop":10669,"mrc":"La Rivière-du-Nord","in21":15,"in16":0,"out21":0,"out16":0},"2476065":{"nom":"Harrington","nom_actuel":null,"lat":45.8534,"lon":-74.6234,"src":"polygone","dist":29.3,"pop":967,"mrc":"Argenteuil","in21":0,"in16":40,"out21":0,"out16":0},"2477012":{"nom":"Sainte-Marguerite-du-Lac-Masson","nom_actuel":null,"lat":46.0557,"lon":-74.0722,"src":"polygone","dist":40.6,"pop":3367,"mrc":"Les Pays-d'en-Haut","in21":15,"in16":0,"out21":0,"out16":0},"2477022":{"nom":"Sainte-Adèle","nom_actuel":null,"lat":45.968,"lon":-74.1228,"src":"polygone","dist":39.7,"pop":14010,"mrc":"Les Pays-d'en-Haut","in21":40,"in16":85,"out21":0,"out16":0},"2477030":{"nom":"Piedmont","nom_actuel":null,"lat":45.9024,"lon":-74.113,"src":"polygone","dist":43.9,"pop":3476,"mrc":"Les Pays-d'en-Haut","in21":10,"in16":0,"out21":10,"out16":0},"2477043":{"nom":"Saint-Sauveur","nom_actuel":null,"lat":45.8754,"lon":-74.1909,"src":"polygone","dist":40.9,"pop":11580,"mrc":"Les Pays-d'en-Haut","in21":10,"in16":45,"out21":0,"out16":0},"2477050":{"nom":"Morin-Heights","nom_actuel":null,"lat":45.9013,"lon":-74.259,"src":"polygone","dist":35.1,"pop":4678,"mrc":"Les Pays-d'en-Haut","in21":15,"in16":0,"out21":0,"out16":0},"2477065":{"nom":"Saint-Adolphe-d'Howard","nom_actuel":null,"lat":45.9538,"lon":-74.3533,"src":"polygone","dist":25.7,"pop":3824,"mrc":"Les Pays-d'en-Haut","in21":10,"in16":35,"out21":0,"out16":0},"2478005":{"nom":"Val-Morin","nom_actuel":null,"lat":45.9962,"lon":-74.1981,"src":"polygone","dist":33.1,"pop":3123,"mrc":"Les Laurentides","in21":35,"in16":40,"out21":0,"out16":0},"2478010":{"nom":"Val-David","nom_actuel":null,"lat":46.0337,"lon":-74.2111,"src":"polygone","dist":30.7,"pop":5558,"mrc":"Les Laurentides","in21":95,"in16":100,"out21":15,"out16":20},"2478015":{"nom":"Lantier","nom_actuel":null,"lat":46.1631,"lon":-74.2565,"src":"polygone","dist":26.3,"pop":891,"mrc":"Les Laurentides","in21":15,"in16":0,"out21":0,"out16":0},"2478020":{"nom":"Sainte-Lucie-des-Laurentides","nom_actuel":null,"lat":46.1533,"lon":-74.1854,"src":"polygone","dist":31.6,"pop":1445,"mrc":"Les Laurentides","in21":25,"in16":20,"out21":0,"out16":0},"2478032":{"nom":"Sainte-Agathe-des-Monts","nom_actuel":null,"lat":46.0714,"lon":-74.3047,"src":"polygone","dist":22.6,"pop":11211,"mrc":"Les Laurentides","in21":170,"in16":245,"out21":190,"out16":160},"2478042":{"nom":"Ivry-sur-le-Lac","nom_actuel":null,"lat":46.0736,"lon":-74.3685,"src":"polygone","dist":17.8,"pop":391,"mrc":"Les Laurentides","in21":25,"in16":20,"out21":0,"out16":0},"2478047":{"nom":"Saint-Faustin--Lac-Carré","nom_actuel":"Mont-Blanc","lat":46.0812,"lon":-74.4668,"src":"polygone","dist":10.4,"pop":3780,"mrc":"Les Laurentides","in21":535,"in16":705,"out21":115,"out16":100},"2478050":{"nom":"Barkmere","nom_actuel":null,"lat":45.9952,"lon":-74.5414,"src":"polygone","dist":14.0,"pop":81,"mrc":"Les Laurentides","in21":10,"in16":0,"out21":0,"out16":0},"2478055":{"nom":"Montcalm","nom_actuel":null,"lat":45.9698,"lon":-74.4954,"src":"polygone","dist":17.9,"pop":632,"mrc":"Les Laurentides","in21":0,"in16":45,"out21":0,"out16":0},"2478060":{"nom":"Arundel","nom_actuel":null,"lat":45.9801,"lon":-74.61,"src":"polygone","dist":15.2,"pop":578,"mrc":"Les Laurentides","in21":55,"in16":90,"out21":10,"out16":0},"2478065":{"nom":"Huberdeau","nom_actuel":null,"lat":45.9964,"lon":-74.6642,"src":"polygone","dist":14.4,"pop":863,"mrc":"Les Laurentides","in21":85,"in16":100,"out21":25,"out16":25},"2478070":{"nom":"Amherst","nom_actuel":null,"lat":46.0533,"lon":-74.7987,"src":"polygone","dist":17.4,"pop":1728,"mrc":"Les Laurentides","in21":200,"in16":160,"out21":0,"out16":0},"2478075":{"nom":"Brébeuf","nom_actuel":null,"lat":46.0814,"lon":-74.6767,"src":"polygone","dist":7.6,"pop":1009,"mrc":"Les Laurentides","in21":195,"in16":220,"out21":0,"out16":0},"2478095":{"nom":"Lac-Supérieur","nom_actuel":null,"lat":46.3049,"lon":-74.4807,"src":"polygone","dist":22.7,"pop":1972,"mrc":"Les Laurentides","in21":325,"in16":325,"out21":15,"out16":0},"2478100":{"nom":"Val-des-Lacs","nom_actuel":null,"lat":46.2191,"lon":-74.375,"src":"polygone","dist":20.2,"pop":750,"mrc":"Les Laurentides","in21":45,"in16":25,"out21":0,"out16":0},"2478102":{"nom":"Mont-Tremblant","nom_actuel":null,"lat":46.116,"lon":-74.5913,"src":"centre","dist":0.0,"pop":10992,"mrc":"Les Laurentides","in21":2365,"in16":2690,"out21":2365,"out16":2690},"2478115":{"nom":"La Conception","nom_actuel":null,"lat":46.1672,"lon":-74.7402,"src":"polygone","dist":12.8,"pop":1527,"mrc":"Les Laurentides","in21":205,"in16":300,"out21":15,"out16":0},"2478120":{"nom":"Labelle","nom_actuel":null,"lat":46.2515,"lon":-74.7697,"src":"polygone","dist":20.4,"pop":2765,"mrc":"Les Laurentides","in21":300,"in16":270,"out21":35,"out16":35},"2478130":{"nom":"La Minerve","nom_actuel":null,"lat":46.2081,"lon":-74.9667,"src":"polygone","dist":30.7,"pop":1421,"mrc":"Les Laurentides","in21":50,"in16":40,"out21":0,"out16":0},"2479030":{"nom":"Nominingue","nom_actuel":null,"lat":46.3853,"lon":-75.0795,"src":"polygone","dist":48.0,"pop":2255,"mrc":"Antoine-Labelle","in21":20,"in16":30,"out21":20,"out16":0},"2479037":{"nom":"Rivière-Rouge","nom_actuel":null,"lat":46.5066,"lon":-74.9544,"src":"polygone","dist":51.6,"pop":4631,"mrc":"Antoine-Labelle","in21":90,"in16":85,"out21":75,"out16":55},"2479047":{"nom":"La Macaza","nom_actuel":null,"lat":46.3893,"lon":-74.7328,"src":"polygone","dist":32.3,"pop":1094,"mrc":"Antoine-Labelle","in21":25,"in16":30,"out21":35,"out16":70},"2479050":{"nom":"L'Ascension","nom_actuel":null,"lat":46.5619,"lon":-74.8055,"src":"polygone","dist":52.2,"pop":899,"mrc":"Antoine-Labelle","in21":15,"in16":0,"out21":0,"out16":0},"2479088":{"nom":"Mont-Laurier","nom_actuel":null,"lat":46.5617,"lon":-75.5999,"src":"polygone","dist":91.9,"pop":14180,"mrc":"Antoine-Labelle","in21":10,"in16":20,"out21":0,"out16":0},"2480020":{"nom":"Notre-Dame-de-la-Paix","nom_actuel":null,"lat":45.79,"lon":-75.2,"src":"approx","dist":59.4,"pop":null,"mrc":null,"in21":15,"in16":0,"out21":0,"out16":0},"2480115":{"nom":"Boileau","nom_actuel":null,"lat":45.91,"lon":-74.86,"src":"approx","dist":30.9,"pop":null,"mrc":null,"in21":20,"in16":20,"out21":0,"out16":0},"2480125":{"nom":"Saint-Émile-de-Suffolk","nom_actuel":null,"lat":45.93,"lon":-74.92,"src":"approx","dist":32.7,"pop":null,"mrc":null,"in21":0,"in16":30,"out21":0,"out16":0},"2480130":{"nom":"Lac-des-Plages","nom_actuel":null,"lat":46.0,"lon":-74.92,"src":"approx","dist":28.5,"pop":null,"mrc":null,"in21":45,"in16":25,"out21":0,"out16":0},"2481017":{"nom":"Gatineau","nom_actuel":null,"lat":45.477,"lon":-75.701,"src":"approx","dist":111.6,"pop":null,"mrc":null,"in21":15,"in16":20,"out21":10,"out16":0},"2489008":{"nom":"Val-d'Or","nom_actuel":null,"lat":48.097,"lon":-77.783,"src":"approx","dist":326.9,"pop":null,"mrc":null,"in21":0,"in16":0,"out21":15,"out16":0},"3506008":{"nom":"Ottawa","nom_actuel":null,"lat":45.421,"lon":-75.697,"src":"approx","dist":115.4,"pop":null,"mrc":null,"in21":50,"in16":0,"out21":10,"out16":0}},"poly":[{"nom":"Bois-des-Filion","mrc":"Thérèse-De Blainville","code":null,"pop":10159,"geom":{"type":"Polygon","coordinates":[[[-73.7465,45.6699],[-73.7509,45.664],[-73.768,45.6538],[-73.7726,45.6568],[-73.7628,45.6658],[-73.7835,45.6803],[-73.7786,45.6815],[-73.7776,45.6856],[-73.7723,45.6818],[-73.7671,45.6858],[-73.7591,45.6802],[-73.7571,45.6816],[-73.7465,45.6699]]]}},{"nom":"Lorraine","mrc":"Thérèse-De Blainville","code":null,"pop":9502,"geom":{"type":"Polygon","coordinates":[[[-73.7677,45.649],[-73.7936,45.6647],[-73.7971,45.6622],[-73.8078,45.6695],[-73.789,45.684],[-73.7628,45.6658],[-73.7726,45.6568],[-73.7647,45.6516],[-73.7677,45.649]]]}},{"nom":"Rosemère","mrc":"Thérèse-De Blainville","code":"2473020","pop":14090,"geom":{"type":"Polygon","coordinates":[[[-73.8021,45.6586],[-73.7936,45.6647],[-73.7677,45.649],[-73.7762,45.6426],[-73.779,45.6351],[-73.788,45.6302],[-73.7883,45.6231],[-73.7956,45.6152],[-73.804,45.6112],[-73.8286,45.6303],[-73.8122,45.6406],[-73.8127,45.6447],[-73.8074,45.6499],[-73.7906,45.651],[-73.8021,45.6586]]]}},{"nom":"Blainville","mrc":"Thérèse-De Blainville","code":"2473015","pop":59819,"geom":{"type":"Polygon","coordinates":[[[-73.7906,45.651],[-73.8074,45.6499],[-73.8131,45.6429],[-73.8401,45.6609],[-73.8425,45.6592],[-73.8338,45.6533],[-73.8449,45.647],[-73.8701,45.6633],[-73.8805,45.6554],[-73.9255,45.6855],[-73.9134,45.6948],[-73.916,45.6966],[-73.8908,45.7138],[-73.8505,45.7248],[-73.789,45.684],[-73.8078,45.6695],[-73.7971,45.6622],[-73.8021,45.6586],[-73.7906,45.651]]]}},{"nom":"Sainte-Anne-des-Plaines","mrc":"Thérèse-De Blainville","code":null,"pop":15221,"geom":{"type":"Polygon","coordinates":[[[-73.7562,45.7179],[-73.7671,45.713],[-73.7973,45.7162],[-73.8014,45.7194],[-73.8448,45.721],[-73.9135,45.7666],[-73.8602,45.8023],[-73.8687,45.8086],[-73.8251,45.8176],[-73.7302,45.7545],[-73.7511,45.7507],[-73.7457,45.7324],[-73.7591,45.7282],[-73.7562,45.7179]]]}},{"nom":"Mille-Isles","mrc":"Argenteuil","code":null,"pop":1721,"geom":{"type":"Polygon","coordinates":[[[-74.2264,45.8476],[-74.2272,45.845],[-74.2244,45.8471],[-74.1158,45.8103],[-74.1108,45.8038],[-74.1229,45.8027],[-74.1095,45.7943],[-74.1059,45.7834],[-74.1214,45.7813],[-74.1822,45.795],[-74.183,45.7916],[-74.3093,45.8241],[-74.3095,45.8288],[-74.2633,45.8597],[-74.2264,45.8476]]]}},{"nom":"Gore","mrc":"Argenteuil","code":null,"pop":2283,"geom":{"type":"Polygon","coordinates":[[[-74.1841,45.7867],[-74.19,45.7883],[-74.1925,45.7774],[-74.1867,45.7759],[-74.204,45.7055],[-74.2364,45.7165],[-74.3282,45.7387],[-74.3119,45.8012],[-74.3093,45.8241],[-74.183,45.7916],[-74.1841,45.7867]]]}},{"nom":"Saint-Colomban","mrc":"La Rivière-du-Nord","code":null,"pop":17740,"geom":{"type":"MultiPolygon","coordinates":[[[[-74.039,45.7637],[-74.0743,45.7482],[-74.057,45.7369],[-74.058,45.7312],[-74.066,45.7326],[-74.0852,45.723],[-74.0907,45.7183],[-74.0923,45.7118],[-74.0995,45.7076],[-74.1137,45.7002],[-74.1282,45.6979],[-74.1288,45.7007],[-74.1342,45.7002],[-74.1665,45.6888],[-74.1816,45.691],[-74.1863,45.685],[-74.1939,45.6877],[-74.1988,45.6847],[-74.198,45.6815],[-74.2068,45.6825],[-74.2027,45.6765],[-74.212,45.6708],[-74.1867,45.7759],[-74.1925,45.7774],[-74.19,45.7883],[-74.1841,45.7867],[-74.1822,45.795],[-74.039,45.7637]]],[[[-74.1918,45.6811],[-74.1961,45.6821],[-74.1905,45.6819],[-74.1918,45.6811]]]]}},{"nom":"Lachute","mrc":"Argenteuil","code":null,"pop":14100,"geom":{"type":"Polygon","coordinates":[[[-74.3282,45.7387],[-74.2364,45.7165],[-74.204,45.7055],[-74.208,45.6872],[-74.2153,45.6866],[-74.2119,45.7004],[-74.2235,45.6993],[-74.2264,45.6878],[-74.2374,45.6979],[-74.243,45.6958],[-74.2396,45.6922],[-74.2433,45.6901],[-74.2407,45.6875],[-74.2509,45.6834],[-74.255,45.6875],[-74.2656,45.6807],[-74.2525,45.6649],[-74.2492,45.6647],[-74.2454,45.6468],[-74.2626,45.6493],[-74.2676,45.632],[-74.2228,45.6259],[-74.2296,45.599],[-74.275,45.6053],[-74.2779,45.603],[-74.2816,45.6043],[-74.2869,45.6163],[-74.3055,45.6191],[-74.3085,45.6257],[-74.3336,45.6176],[-74.3606,45.6213],[-74.3594,45.6256],[-74.3793,45.6292],[-74.3668,45.6703],[-74.3474,45.6671],[-74.3282,45.7387]]]}},{"nom":"Mirabel","mrc":"Mirabel","code":"2474005","pop":61108,"geom":{"type":"Polygon","coordinates":[[[-73.8505,45.7248],[-73.8908,45.7138],[-73.916,45.6966],[-73.9134,45.6948],[-73.9255,45.6855],[-73.8643,45.6443],[-73.8672,45.6425],[-73.8816,45.6499],[-73.8716,45.6419],[-73.8802,45.6387],[-73.8894,45.6408],[-73.8951,45.639],[-73.8915,45.6366],[-73.9195,45.6334],[-73.9318,45.6398],[-73.8965,45.6169],[-73.8961,45.6067],[-73.9008,45.607],[-73.9054,45.6129],[-73.9162,45.6057],[-73.9329,45.6163],[-73.933,45.6192],[-73.9443,45.6186],[-73.9445,45.6216],[-73.9511,45.6167],[-73.9505,45.6024],[-73.9594,45.6067],[-73.9826,45.5997],[-73.9781,45.5815],[-73.9876,45.572],[-73.9923,45.5773],[-73.9984,45.576],[-74.011,45.5797],[-74.0096,45.577],[-74.0131,45.5757],[-74.0204,45.5775],[-74.0257,45.5676],[-74.0352,45.5682],[-74.0452,45.561],[-74.0492,45.5628],[-74.0846,45.539],[-74.0676,45.5266],[-74.0741,45.522],[-74.0911,45.5346],[-74.1208,45.5148],[-74.1364,45.5262],[-74.1232,45.535],[-74.1452,45.5512],[-74.1484,45.549],[-74.1907,45.58],[-74.2377,45.5485],[-74.2427,45.5489],[-74.2228,45.6259],[-74.2676,45.632],[-74.2626,45.6493],[-74.2454,45.6468],[-74.2492,45.6647],[-74.2525,45.6649],[-74.2656,45.6807],[-74.255,45.6875],[-74.2509,45.6834],[-74.2407,45.6875],[-74.2433,45.6901],[-74.2396,45.6922],[-74.2422,45.6967],[-74.2372,45.698],[-74.2264,45.6878],[-74.2235,45.6993],[-74.2119,45.7004],[-74.2153,45.6866],[-74.208,45.6872],[-74.2121,45.6706],[-74.2022,45.6768],[-74.2061,45.6825],[-74.1902,45.6815],[-74.1987,45.6836],[-74.1937,45.6875],[-74.1864,45.6848],[-74.1817,45.6908],[-74.1665,45.6886],[-74.1335,45.7001],[-74.1291,45.7004],[-74.1281,45.6976],[-74.1138,45.6999],[-74.0921,45.7117],[-74.0905,45.7181],[-74.0795,45.7259],[-74.0659,45.7324],[-74.0577,45.7312],[-74.0568,45.7368],[-74.0743,45.7482],[-74.0521,45.7578],[-74.0298,45.7434],[-74.0149,45.7534],[-74.001,45.7487],[-73.9979,45.7553],[-73.9811,45.7444],[-73.9763,45.7481],[-73.9794,45.7504],[-73.9681,45.7587],[-73.9758,45.7643],[-73.9677,45.7649],[-73.9726,45.7682],[-73.9477,45.7895],[-73.8505,45.7248]]]}},{"nom":"Ferme-Neuve","mrc":"Antoine-Labelle","code":null,"pop":2716,"geom":{"type":"Polygon","coordinates":[[[-75.3476,46.6523],[-75.2909,46.6149],[-75.4061,46.6151],[-75.4061,46.6258],[-75.4484,46.6258],[-75.4484,46.6446],[-75.5969,46.6419],[-75.5967,46.7085],[-75.7473,46.7088],[-75.747,47.0668],[-75.4858,46.8856],[-75.3862,46.822],[-75.4381,46.7845],[-75.3804,46.7418],[-75.3706,46.7387],[-75.3532,46.7256],[-75.3776,46.7089],[-75.3216,46.67],[-75.3476,46.6523]]]}},{"nom":"Grenville","mrc":"Argenteuil","code":null,"pop":1816,"geom":{"type":"Polygon","coordinates":[[[-74.5972,45.6331],[-74.5825,45.6327],[-74.5872,45.6162],[-74.6092,45.626],[-74.6108,45.6305],[-74.6025,45.6337],[-74.5984,45.6385],[-74.6001,45.6425],[-74.5947,45.6418],[-74.5972,45.6331]]]}},{"nom":"Saint-Jérôme","mrc":"La Rivière-du-Nord","code":"2475017","pop":80213,"geom":{"type":"Polygon","coordinates":[[[-74.1261,45.8315],[-74.1085,45.832],[-74.1062,45.8286],[-74.0908,45.8306],[-74.0964,45.8371],[-74.0893,45.8406],[-74.0907,45.8474],[-74.0677,45.8504],[-74.0638,45.845],[-74.0647,45.8379],[-74.05,45.8181],[-74.0265,45.8207],[-74.0244,45.8185],[-74.0221,45.8244],[-74.0315,45.8248],[-74.0338,45.8285],[-74.0297,45.8292],[-74.0291,45.8333],[-74.0384,45.8375],[-74.0235,45.8418],[-73.9477,45.7895],[-73.9726,45.7682],[-73.9677,45.7649],[-73.9758,45.7643],[-73.9681,45.7587],[-73.9794,45.7504],[-73.9763,45.7481],[-73.9811,45.7444],[-73.9979,45.7553],[-74.001,45.7487],[-74.0149,45.7534],[-74.0298,45.7434],[-74.0521,45.7578],[-74.039,45.7637],[-74.1214,45.7813],[-74.1051,45.7852],[-74.1095,45.7943],[-74.1229,45.8027],[-74.1108,45.8038],[-74.1158,45.8103],[-74.1439,45.8198],[-74.1261,45.8315]]]}},{"nom":"Mont-Laurier","mrc":"Antoine-Labelle","code":"2479088","pop":14180,"geom":{"type":"Polygon","coordinates":[[[-75.7452,46.4383],[-75.7515,46.6637],[-75.7473,46.7088],[-75.5967,46.7085],[-75.5969,46.6419],[-75.4484,46.6446],[-75.4484,46.6258],[-75.4061,46.6258],[-75.4071,46.5727],[-75.4282,46.5728],[-75.4284,46.5681],[-75.4283,46.5586],[-75.4043,46.5586],[-75.4068,46.5546],[-75.3999,46.5455],[-75.4187,46.5337],[-75.4169,46.5252],[-75.4026,46.5177],[-75.4069,46.5011],[-75.4984,46.5001],[-75.5033,46.4961],[-75.4962,46.4826],[-75.4845,46.4735],[-75.4572,46.4626],[-75.4435,46.4451],[-75.4429,46.4394],[-75.7452,46.4383]]]}},{"nom":"Lac-Douaire","mrc":"Antoine-Labelle","code":null,"pop":5,"geom":{"type":"MultiPolygon","coordinates":[[[[-75.827,47.3128],[-75.7957,47.3184],[-75.7813,47.3086],[-75.7683,47.3051],[-75.7469,47.2931],[-75.7478,47.2729],[-75.739,47.2742],[-75.726,47.2682],[-75.7246,47.2709],[-75.7129,47.269],[-75.7113,47.2758],[-75.7144,47.2857],[-75.6906,47.2777],[-75.6838,47.2783],[-75.6786,47.2856],[-75.6478,47.2818],[-75.6491,47.2723],[-75.6522,47.2705],[-75.6481,47.2666],[-75.6467,47.2535],[-75.6391,47.2501],[-75.6341,47.2394],[-75.6222,47.2286],[-75.629,47.2189],[-75.6254,47.2133],[-75.6266,47.2073],[-75.6223,47.2056],[-75.6205,47.2001],[-75.6288,47.1992],[-75.6258,47.1809],[-75.5948,47.1854],[-75.5726,47.2067],[-75.5593,47.2073],[-75.5427,47.2227],[-75.5208,47.2526],[-75.5126,47.2584],[-75.5039,47.2597],[-75.4925,47.2729],[-75.4786,47.2768],[-75.4674,47.2921],[-75.466,47.3067],[-75.2974,47.1888],[-75.1425,47.0879],[-74.9426,46.9498],[-74.924,46.9406],[-74.7955,46.8499],[-74.9467,46.7466],[-74.8424,46.6757],[-74.9401,46.6089],[-74.9549,46.6193],[-74.9525,46.6209],[-74.9542,46.6741],[-74.9908,46.6658],[-74.9879,46.7135],[-74.9778,46.7209],[-74.9841,46.7214],[-74.9875,46.7271],[-74.9965,46.7256],[-75.0001,46.7343],[-75.013,46.7387],[-75.0124,46.7443],[-75.0157,46.7479],[-75.0248,46.748],[-75.0289,46.7563],[-75.0341,46.7561],[-75.0397,46.7605],[-75.0373,46.7644],[-75.041,46.7691],[-75.0178,46.785],[-75.3326,47.0049],[-75.3395,47.0032],[-75.3514,47.0122],[-75.371,47.0062],[-75.3663,47.004],[-75.3636,47.0005],[-75.3658,46.9984],[-75.36,46.9935],[-75.3659,46.9855],[-75.3625,46.9762],[-75.3673,46.9727],[-75.3693,46.9748],[-75.372,46.9697],[-75.3658,46.968],[-75.3689,46.9637],[-75.3658,46.9575],[-75.3685,46.955],[-75.3621,46.9485],[-75.3726,46.9518],[-75.3721,46.958],[-75.3758,46.9584],[-75.3746,46.9632],[-75.3832,46.9687],[-75.3795,46.9712],[-75.381,46.9745],[-75.3852,46.9734],[-75.3853,46.9694],[-75.3916,46.9736],[-75.3917,46.9843],[-75.4115,46.9918],[-75.4084,46.9929],[-75.4106,46.9968],[-75.4139,46.9961],[-75.4125,47.0026],[-75.4148,47.0042],[-75.4234,47.0025],[-75.4225,46.9997],[-75.4275,47.0012],[-75.4305,46.9976],[-75.4245,46.9922],[-75.4293,46.9904],[-75.4313,46.9973],[-75.4383,46.9882],[-75.4403,46.9899],[-75.4354,46.9976],[-75.438,46.9981],[-75.44,46.994],[-75.4462,46.9994],[-75.4462,46.9967],[-75.4517,46.9963],[-75.4547,46.9921],[-75.4664,46.9901],[-75.468,46.9871],[-75.4627,46.9877],[-75.4622,46.9848],[-75.4687,46.9872],[-75.4734,46.9799],[-75.4831,46.9789],[-75.4876,46.9728],[-75.5034,46.9842],[-75.5017,46.9942],[-75.5098,46.9955],[-75.5245,46.9858],[-75.5413,46.9852],[-75.5481,46.9814],[-75.553,46.9891],[-75.5586,46.9885],[-75.5559,46.9825],[-75.5532,46.9835],[-75.5541,46.9805],[-75.5469,46.9766],[-75.5601,46.9704],[-75.5566,46.9707],[-75.5439,46.9391],[-75.548,46.9299],[-75.7255,47.0531],[-75.9674,47.2131],[-75.9529,47.2226],[-75.9516,47.2285],[-75.942,47.2329],[-75.9419,47.2368],[-75.9327,47.2391],[-75.9319,47.2411],[-75.9344,47.2407],[-75.9297,47.2446],[-75.9245,47.2445],[-75.92,47.2466],[-75.9244,47.2478],[-75.9018,47.2671],[-75.8935,47.269],[-75.8939,47.2717],[-75.8687,47.2912],[-75.8603,47.294],[-75.8622,47.2922],[-75.8587,47.292],[-75.827,47.3128]]],[[[-75.0605,46.7077],[-75.0584,46.6897],[-75.0649,46.6767],[-75.0634,46.6622],[-75.0671,46.6566],[-75.0655,46.6418],[-75.07,46.6353],[-75.0828,46.6441],[-75.0928,46.6368],[-75.1205,46.654],[-75.1317,46.666],[-75.1289,46.6762],[-75.1063,46.6805],[-75.0992,46.692],[-75.0704,46.6992],[-75.0605,46.7077]]]]}},{"nom":"Sainte-Anne-du-Lac","mrc":"Antoine-Labelle","code":null,"pop":556,"geom":{"type":"Polygon","coordinates":[[[-75.3465,47.0105],[-75.3395,47.0032],[-75.3326,47.0049],[-75.195,46.9105],[-75.331,46.8161],[-75.3466,46.8265],[-75.3693,46.8115],[-75.4858,46.8856],[-75.548,46.9299],[-75.5439,46.9391],[-75.5566,46.9707],[-75.5601,46.9704],[-75.5469,46.9766],[-75.5541,46.9805],[-75.5532,46.9835],[-75.5559,46.9825],[-75.5586,46.9885],[-75.553,46.9891],[-75.5481,46.9814],[-75.5413,46.9852],[-75.5245,46.9858],[-75.5098,46.9955],[-75.5017,46.9942],[-75.5034,46.9842],[-75.4876,46.9728],[-75.4831,46.9789],[-75.4734,46.9799],[-75.4687,46.9872],[-75.467,46.9848],[-75.4622,46.9848],[-75.4627,46.9877],[-75.468,46.9871],[-75.4664,46.9901],[-75.4547,46.9921],[-75.4517,46.9963],[-75.4462,46.9967],[-75.4462,46.9994],[-75.44,46.994],[-75.438,46.9981],[-75.4354,46.9976],[-75.4403,46.9899],[-75.4383,46.9882],[-75.4313,46.9973],[-75.4293,46.9904],[-75.4245,46.9922],[-75.4305,46.9976],[-75.4275,47.0012],[-75.4225,46.9997],[-75.4234,47.0025],[-75.4148,47.0042],[-75.4125,47.0026],[-75.4139,46.9961],[-75.4106,46.9968],[-75.4084,46.9929],[-75.4115,46.9918],[-75.3917,46.9843],[-75.3916,46.9736],[-75.3853,46.9694],[-75.3852,46.9734],[-75.381,46.9745],[-75.3795,46.9712],[-75.3832,46.9687],[-75.3746,46.9632],[-75.3758,46.9584],[-75.3721,46.958],[-75.3726,46.9518],[-75.362,46.9485],[-75.3685,46.955],[-75.3658,46.9575],[-75.3689,46.9637],[-75.3658,46.968],[-75.372,46.9697],[-75.3693,46.9748],[-75.3673,46.9727],[-75.3625,46.9762],[-75.3659,46.9855],[-75.36,46.9935],[-75.3658,46.9984],[-75.3636,47.0005],[-75.3663,47.004],[-75.371,47.0062],[-75.3618,47.0106],[-75.3465,47.0105]]]}},{"nom":"Mont-Saint-Michel","mrc":"Antoine-Labelle","code":null,"pop":581,"geom":{"type":"Polygon","coordinates":[[[-75.3862,46.822],[-75.3693,46.8115],[-75.3466,46.8265],[-75.331,46.8161],[-75.195,46.9105],[-75.1593,46.8858],[-75.1673,46.8852],[-75.1697,46.8815],[-75.1613,46.8741],[-75.1622,46.8668],[-75.1688,46.8591],[-75.1858,46.8483],[-75.1859,46.8437],[-75.1795,46.8395],[-75.1865,46.8358],[-75.1897,46.8281],[-75.2007,46.8199],[-75.2023,46.8125],[-75.2117,46.8085],[-75.2182,46.8094],[-75.2192,46.8152],[-75.2147,46.8212],[-75.2168,46.823],[-75.2364,46.8037],[-75.2672,46.7869],[-75.2786,46.7926],[-75.2867,46.7929],[-75.2921,46.8007],[-75.3032,46.8018],[-75.3151,46.7927],[-75.3118,46.7857],[-75.3225,46.7808],[-75.3042,46.7691],[-75.3607,46.7308],[-75.3706,46.7387],[-75.3804,46.7418],[-75.4381,46.7845],[-75.3862,46.822]]]}},{"nom":"Chute-Saint-Philippe","mrc":"Antoine-Labelle","code":null,"pop":1039,"geom":{"type":"Polygon","coordinates":[[[-75.041,46.7691],[-75.0373,46.7527],[-75.0487,46.7425],[-75.0505,46.7253],[-75.0632,46.7038],[-75.0704,46.6992],[-75.0992,46.692],[-75.1063,46.6805],[-75.1278,46.6767],[-75.1312,46.6736],[-75.1311,46.6647],[-75.1205,46.654],[-75.0928,46.6368],[-75.2,46.5582],[-75.2853,46.6165],[-75.2899,46.6132],[-75.3476,46.6523],[-75.3216,46.67],[-75.3062,46.6598],[-75.258,46.6922],[-75.2512,46.6874],[-75.2234,46.726],[-75.096,46.8389],[-75.0178,46.785],[-75.041,46.7691]]]}},{"nom":"Lac-Saguay","mrc":"Antoine-Labelle","code":null,"pop":526,"geom":{"type":"Polygon","coordinates":[[[-75.0719,46.4873],[-75.0727,46.4655],[-75.0946,46.4654],[-75.0972,46.4431],[-75.2338,46.443],[-75.2345,46.4724],[-75.2661,46.4724],[-75.2659,46.51],[-75.0964,46.6343],[-75.0928,46.4874],[-75.0719,46.4873]]]}},{"nom":"Baie-des-Chaloupes","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-74.5011,46.655],[-74.5087,46.6432],[-74.4969,46.6359],[-74.5008,46.596],[-74.4975,46.5914],[-74.4893,46.595],[-74.478,46.6079],[-74.4668,46.6107],[-74.451,46.6076],[-74.45,46.6167],[-74.4446,46.6208],[-74.3436,46.5493],[-74.4775,46.4541],[-74.4829,46.458],[-74.6434,46.3491],[-74.675,46.3704],[-74.6715,46.375],[-74.6801,46.3736],[-74.714,46.3943],[-74.6618,46.4303],[-74.7217,46.4711],[-74.6198,46.5416],[-74.7516,46.6324],[-74.7695,46.6259],[-74.9467,46.7466],[-74.7943,46.8504],[-74.7037,46.7966],[-74.528,46.6787],[-74.5096,46.6659],[-74.5011,46.655]]]}},{"nom":"Lac-des-Seize-Îles","mrc":"Les Pays-d'en-Haut","code":null,"pop":175,"geom":{"type":"Polygon","coordinates":[[[-74.4585,45.9077],[-74.4486,45.9064],[-74.4581,45.8763],[-74.4653,45.8774],[-74.4693,45.8669],[-74.4833,45.8684],[-74.4753,45.8949],[-74.4901,45.8973],[-74.4855,45.9109],[-74.481,45.9104],[-74.4762,45.9297],[-74.4531,45.9271],[-74.4585,45.9077]]]}},{"nom":"Wentworth-Nord","mrc":"Les Pays-d'en-Haut","code":null,"pop":1672,"geom":{"type":"Polygon","coordinates":[[[-74.4855,45.9109],[-74.4901,45.8973],[-74.4753,45.8949],[-74.4833,45.8684],[-74.4693,45.8669],[-74.4653,45.8774],[-74.4581,45.8763],[-74.4486,45.9064],[-74.2965,45.8886],[-74.3085,45.8356],[-74.4201,45.8463],[-74.424,45.8177],[-74.441,45.7526],[-74.5378,45.763],[-74.5217,45.8214],[-74.5028,45.913],[-74.4855,45.9109]]]}},{"nom":"Sainte-Lucie-des-Laurentides","mrc":"Les Laurentides","code":"2478020","pop":1445,"geom":{"type":"Polygon","coordinates":[[[-74.1136,46.2041],[-74.1944,46.1434],[-74.1457,46.1093],[-74.1121,46.0934],[-74.1586,46.0611],[-74.1995,46.0868],[-74.2127,46.0777],[-74.2658,46.1155],[-74.231,46.1408],[-74.2164,46.1308],[-74.1998,46.1411],[-74.2159,46.1521],[-74.2015,46.1588],[-74.2173,46.1698],[-74.207,46.1775],[-74.2203,46.1871],[-74.2281,46.1815],[-74.2416,46.1905],[-74.2256,46.202],[-74.2181,46.2038],[-74.2205,46.2098],[-74.2319,46.2168],[-74.1828,46.2501],[-74.1136,46.2041]]]}},{"nom":"Sainte-Agathe-des-Monts","mrc":"Les Laurentides","code":"2478032","pop":11211,"geom":{"type":"Polygon","coordinates":[[[-74.3393,46.1398],[-74.3182,46.1556],[-74.2891,46.1334],[-74.2812,46.1238],[-74.1999,46.0687],[-74.2206,46.0539],[-74.2245,46.0564],[-74.2484,46.0449],[-74.2495,46.0409],[-74.2347,46.0301],[-74.2568,46.0148],[-74.262,45.9995],[-74.4075,46.0188],[-74.4015,46.0428],[-74.3755,46.0389],[-74.3736,46.0463],[-74.3443,46.0407],[-74.3272,46.0989],[-74.3853,46.1115],[-74.3682,46.1587],[-74.3393,46.1398]]]}},{"nom":"Brownsburg-Chatham","mrc":"Argenteuil","code":null,"pop":7247,"geom":{"type":"Polygon","coordinates":[[[-74.5149,45.76],[-74.3277,45.7401],[-74.3474,45.6671],[-74.3668,45.6703],[-74.3793,45.6292],[-74.3686,45.6278],[-74.3744,45.622],[-74.371,45.6157],[-74.3813,45.61],[-74.3881,45.6011],[-74.3857,45.5948],[-74.3908,45.5936],[-74.3909,45.5882],[-74.3843,45.5854],[-74.3857,45.5806],[-74.3807,45.5835],[-74.3716,45.581],[-74.3812,45.5831],[-74.3841,45.5803],[-74.3916,45.5792],[-74.3946,45.5739],[-74.44,45.58],[-74.4314,45.5767],[-74.4444,45.5808],[-74.4785,45.5979],[-74.5064,45.5928],[-74.5195,45.5937],[-74.5368,45.5968],[-74.5554,45.6065],[-74.5149,45.76]]]}},{"nom":"Sainte-Marguerite-du-Lac-Masson","mrc":"Les Pays-d'en-Haut","code":"2477012","pop":3367,"geom":{"type":"MultiPolygon","coordinates":[[[[-74.0774,46.1172],[-74.0252,46.0808],[-74.0029,46.0957],[-73.9605,46.0647],[-73.9889,46.0445],[-74.006,46.0568],[-74.0021,46.058],[-74.0121,46.0659],[-74.0192,46.0609],[-74.0509,46.079],[-74.0561,46.0752],[-74.045,46.0677],[-74.0609,46.0561],[-74.0436,46.0437],[-74.0542,46.0362],[-74.0435,46.0371],[-74.0407,46.0416],[-74.0291,46.0322],[-74.0368,46.0305],[-74.0387,46.0261],[-74.048,46.0252],[-74.0444,46.0226],[-74.0468,46.0206],[-74.0349,46.0123],[-74.0689,45.9878],[-74.1665,46.0555],[-74.0774,46.1172]]],[[[-74.0151,46.0525],[-74.0049,46.0519],[-73.9916,46.0426],[-74.0029,46.0348],[-74.0159,46.0439],[-74.0096,46.0475],[-74.0151,46.0525]]]]}},{"nom":"Estérel","mrc":"Les Pays-d'en-Haut","code":null,"pop":262,"geom":{"type":"Polygon","coordinates":[[[-74.0349,46.0123],[-74.0468,46.0206],[-74.0444,46.0226],[-74.048,46.0252],[-74.0387,46.0261],[-74.0368,46.0305],[-74.0296,46.0337],[-74.0407,46.0416],[-74.0435,46.0371],[-74.047,46.0388],[-74.0526,46.035],[-74.0436,46.0437],[-74.0609,46.0561],[-74.045,46.0677],[-74.0561,46.0752],[-74.0509,46.079],[-74.0192,46.0609],[-74.0121,46.0659],[-74.0021,46.058],[-74.006,46.0568],[-73.9889,46.0445],[-73.9916,46.0426],[-74.0049,46.0519],[-74.0075,46.05],[-74.0149,46.0526],[-74.0096,46.0475],[-74.0159,46.0439],[-74.0029,46.0348],[-74.0349,46.0123]]]}},{"nom":"Sainte-Marthe-sur-le-Lac","mrc":"Deux-Montagnes","code":null,"pop":19797,"geom":{"type":"Polygon","coordinates":[[[-73.9715,45.5325],[-73.9735,45.54],[-73.957,45.5387],[-73.9282,45.545],[-73.8995,45.5245],[-73.9347,45.5064],[-73.9715,45.5325]]]}},{"nom":"Saint-Eustache","mrc":"Deux-Montagnes","code":null,"pop":45276,"geom":{"type":"Polygon","coordinates":[[[-73.933,45.6192],[-73.9329,45.6163],[-73.9162,45.6057],[-73.9054,45.6129],[-73.9008,45.607],[-73.8961,45.6067],[-73.8965,45.6169],[-73.8804,45.6066],[-73.8751,45.5971],[-73.8701,45.6],[-73.8408,45.5831],[-73.8437,45.5816],[-73.8428,45.5787],[-73.8622,45.5709],[-73.8653,45.5652],[-73.8836,45.5597],[-73.8864,45.5509],[-73.8844,45.5437],[-73.9009,45.5559],[-73.9051,45.5544],[-73.9007,45.5511],[-73.9029,45.5504],[-73.9126,45.5577],[-73.9203,45.5592],[-73.9178,45.5489],[-73.9208,45.5449],[-73.957,45.5387],[-73.9735,45.54],[-73.9715,45.5325],[-74.0188,45.5669],[-74.0258,45.5675],[-74.0204,45.5775],[-74.0131,45.5757],[-74.0096,45.577],[-74.0112,45.5797],[-73.9984,45.576],[-73.9919,45.5772],[-73.9876,45.572],[-73.9781,45.5815],[-73.9824,45.5957],[-73.9802,45.6023],[-73.9594,45.6067],[-73.9505,45.6024],[-73.9511,45.6167],[-73.9445,45.6216],[-73.9443,45.6186],[-73.933,45.6192]]]}},{"nom":"Deux-Montagnes","mrc":"Deux-Montagnes","code":null,"pop":17915,"geom":{"type":"Polygon","coordinates":[[[-73.918,45.5479],[-73.9203,45.5592],[-73.9126,45.5577],[-73.9029,45.5504],[-73.9007,45.5511],[-73.9051,45.5544],[-73.9009,45.5559],[-73.8844,45.5437],[-73.8809,45.5364],[-73.8995,45.5245],[-73.9263,45.5436],[-73.918,45.5479]]]}},{"nom":"L'Ascension","mrc":"Antoine-Labelle","code":"2479050","pop":899,"geom":{"type":"Polygon","coordinates":[[[-74.7695,46.6259],[-74.7516,46.6324],[-74.6198,46.5416],[-74.7216,46.4712],[-74.7518,46.492],[-74.7542,46.4903],[-74.7693,46.5003],[-74.7814,46.4923],[-74.7668,46.4819],[-74.8063,46.4546],[-74.9865,46.5776],[-74.8424,46.6757],[-74.7695,46.6259]]]}},{"nom":"Lac-Ernest","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-75.3267,46.3721],[-75.3011,46.3651],[-75.2965,46.3697],[-75.2963,46.3654],[-75.289,46.3608],[-75.2761,46.3592],[-75.2653,46.3535],[-75.2644,46.3113],[-75.0351,46.3106],[-75.03,46.2153],[-75.1174,46.2152],[-75.1166,46.1848],[-75.1376,46.185],[-75.1373,46.1606],[-75.1563,46.1606],[-75.1559,46.1323],[-75.177,46.1323],[-75.1764,46.1034],[-75.2106,46.1033],[-75.2156,46.1731],[-75.2149,46.2148],[-75.2309,46.2148],[-75.2311,46.2305],[-75.3961,46.2306],[-75.3962,46.2676],[-75.3793,46.2804],[-75.3786,46.2842],[-75.3905,46.3058],[-75.3881,46.3119],[-75.3817,46.3159],[-75.3781,46.3268],[-75.369,46.3332],[-75.3664,46.3584],[-75.3515,46.3469],[-75.3337,46.3466],[-75.3323,46.3518],[-75.3367,46.3568],[-75.3359,46.366],[-75.3391,46.372],[-75.3267,46.3721]]]}},{"nom":"Val-Morin","mrc":"Les Laurentides","code":"2478005","pop":3123,"geom":{"type":"Polygon","coordinates":[[[-74.1873,45.9887],[-74.245,45.9479],[-74.2725,45.9661],[-74.2679,45.9818],[-74.2596,45.9759],[-74.2001,46.0171],[-74.1825,46.0278],[-74.1771,46.0243],[-74.1519,46.0438],[-74.1241,46.024],[-74.1506,46.0068],[-74.1447,46.003],[-74.1721,45.9857],[-74.1691,45.9833],[-74.1715,45.9814],[-74.1873,45.9887]]]}},{"nom":"Montcalm","mrc":"Les Laurentides","code":"2478055","pop":632,"geom":{"type":"Polygon","coordinates":[[[-74.4293,46.0265],[-74.4115,46.02],[-74.4423,45.9055],[-74.4585,45.9077],[-74.4531,45.9271],[-74.4762,45.9297],[-74.481,45.9104],[-74.5028,45.913],[-74.5034,45.91],[-74.5881,45.9197],[-74.5676,45.9895],[-74.5545,45.9879],[-74.5568,45.9816],[-74.5503,45.9809],[-74.553,45.9722],[-74.524,45.9688],[-74.5221,45.976],[-74.5134,45.975],[-74.5116,45.9819],[-74.5066,45.9812],[-74.5002,45.9948],[-74.4945,45.994],[-74.4926,46.0094],[-74.5152,46.0119],[-74.517,46.0045],[-74.5493,46.0087],[-74.5469,46.018],[-74.5602,46.0195],[-74.5555,46.0388],[-74.4293,46.0265]]]}},{"nom":"Piedmont","mrc":"Les Pays-d'en-Haut","code":"2477030","pop":3476,"geom":{"type":"Polygon","coordinates":[[[-74.1536,45.9062],[-74.1492,45.9096],[-74.1543,45.9132],[-74.1479,45.9129],[-74.1423,45.9185],[-74.1398,45.9176],[-74.1398,45.9231],[-74.1269,45.9144],[-74.0936,45.9378],[-74.0796,45.9275],[-74.0958,45.9156],[-74.08,45.9049],[-74.0833,45.9023],[-74.0787,45.8992],[-74.0813,45.8973],[-74.0708,45.8904],[-74.0794,45.8852],[-74.0845,45.8886],[-74.0873,45.8865],[-74.0797,45.8811],[-74.0888,45.879],[-74.0996,45.8825],[-74.0942,45.8842],[-74.1031,45.8893],[-74.1227,45.8732],[-74.1295,45.8755],[-74.1322,45.873],[-74.1427,45.8795],[-74.1388,45.8828],[-74.1494,45.8888],[-74.1412,45.8955],[-74.1536,45.9062]]]}},{"nom":"Saint-Adolphe-d'Howard","mrc":"Les Pays-d'en-Haut","code":"2477065","pop":3824,"geom":{"type":"Polygon","coordinates":[[[-74.4115,46.02],[-74.262,45.9995],[-74.2965,45.8886],[-74.4423,45.9052],[-74.4115,46.02]]]}},{"nom":"Morin-Heights","mrc":"Les Pays-d'en-Haut","code":"2477050","pop":4678,"geom":{"type":"Polygon","coordinates":[[[-74.1921,45.9108],[-74.3095,45.8288],[-74.2955,45.8929],[-74.2725,45.9661],[-74.1921,45.9108]]]}},{"nom":"Saint-Sauveur","mrc":"Les Pays-d'en-Haut","code":"2477043","pop":11580,"geom":{"type":"Polygon","coordinates":[[[-74.165,45.9136],[-74.1584,45.9159],[-74.1492,45.9096],[-74.1536,45.9062],[-74.1412,45.8955],[-74.1494,45.8888],[-74.1388,45.8828],[-74.1427,45.8795],[-74.1338,45.874],[-74.188,45.8347],[-74.2244,45.8471],[-74.2272,45.845],[-74.2264,45.8476],[-74.2633,45.8597],[-74.1764,45.9216],[-74.165,45.9136]]]}},{"nom":"Harrington","mrc":"Argenteuil","code":"2476065","pop":967,"geom":{"type":"Polygon","coordinates":[[[-74.5034,45.91],[-74.5198,45.8298],[-74.5363,45.7702],[-74.5957,45.7841],[-74.6902,45.791],[-74.7546,45.801],[-74.7353,45.8523],[-74.7265,45.8524],[-74.715,45.8883],[-74.7104,45.9317],[-74.6155,45.924],[-74.5034,45.91]]]}},{"nom":"Wentworth","mrc":"Argenteuil","code":null,"pop":682,"geom":{"type":"Polygon","coordinates":[[[-74.3085,45.8356],[-74.3108,45.8064],[-74.3277,45.7401],[-74.441,45.7526],[-74.424,45.8177],[-74.4201,45.8463],[-74.3085,45.8356]]]}},{"nom":"Grenville-sur-la-Rouge","mrc":"Argenteuil","code":null,"pop":2883,"geom":{"type":"Polygon","coordinates":[[[-74.7022,45.7924],[-74.5957,45.7841],[-74.5363,45.7702],[-74.5378,45.763],[-74.5149,45.76],[-74.5554,45.6065],[-74.5872,45.6162],[-74.5825,45.6327],[-74.5972,45.6331],[-74.5947,45.6418],[-74.6001,45.6425],[-74.5984,45.6385],[-74.6025,45.6337],[-74.6173,45.6423],[-74.6474,45.6407],[-74.6437,45.6427],[-74.6482,45.6455],[-74.6522,45.6413],[-74.6501,45.6401],[-74.6542,45.6413],[-74.6543,45.643],[-74.6634,45.6433],[-74.6516,45.6401],[-74.6627,45.6365],[-74.6871,45.6405],[-74.6852,45.638],[-74.6901,45.6434],[-74.7027,45.6398],[-74.7196,45.6421],[-74.7367,45.6392],[-74.7728,45.6474],[-74.8068,45.6416],[-74.7699,45.7647],[-74.7546,45.801],[-74.7022,45.7924]]]}},{"nom":"Val-des-Lacs","mrc":"Les Laurentides","code":"2478100","pop":750,"geom":{"type":"Polygon","coordinates":[[[-74.2739,46.2028],[-74.2973,46.1924],[-74.282,46.1817],[-74.3393,46.1398],[-74.4593,46.2216],[-74.4431,46.2328],[-74.4746,46.2546],[-74.4131,46.2989],[-74.2739,46.2028]]]}},{"nom":"Lantier","mrc":"Les Laurentides","code":"2478015","pop":891,"geom":{"type":"Polygon","coordinates":[[[-74.2319,46.2168],[-74.2182,46.2035],[-74.2256,46.202],[-74.2416,46.1905],[-74.2281,46.1815],[-74.2203,46.1871],[-74.207,46.1775],[-74.2173,46.1698],[-74.2015,46.1588],[-74.2159,46.1521],[-74.1998,46.1411],[-74.2164,46.1308],[-74.231,46.1408],[-74.2658,46.1155],[-74.2812,46.1238],[-74.2891,46.1334],[-74.3182,46.1556],[-74.282,46.1817],[-74.2973,46.1924],[-74.2874,46.1988],[-74.2839,46.1963],[-74.2739,46.2028],[-74.2672,46.1981],[-74.2581,46.1984],[-74.2319,46.2168]]]}},{"nom":"Saint-André-d'Argenteuil","mrc":"Argenteuil","code":null,"pop":3053,"geom":{"type":"MultiPolygon","coordinates":[[[[-74.3606,45.6213],[-74.3336,45.6176],[-74.3085,45.6257],[-74.3055,45.6191],[-74.2869,45.6163],[-74.2816,45.6043],[-74.2779,45.603],[-74.275,45.6053],[-74.2296,45.599],[-74.242,45.5515],[-74.2484,45.5536],[-74.2647,45.5493],[-74.2672,45.5434],[-74.2743,45.543],[-74.2786,45.5274],[-74.2937,45.523],[-74.3116,45.5244],[-74.3053,45.5292],[-74.3085,45.5331],[-74.3245,45.5328],[-74.3221,45.524],[-74.3323,45.5245],[-74.3403,45.5153],[-74.3554,45.5463],[-74.3622,45.5537],[-74.3585,45.556],[-74.3818,45.5698],[-74.3951,45.5723],[-74.3931,45.5781],[-74.3841,45.5803],[-74.3815,45.583],[-74.3744,45.5809],[-74.3716,45.581],[-74.3807,45.5835],[-74.3829,45.5827],[-74.384,45.5807],[-74.3857,45.5806],[-74.3843,45.5854],[-74.3909,45.5882],[-74.3908,45.5936],[-74.3857,45.5948],[-74.3881,45.6011],[-74.3813,45.61],[-74.371,45.6157],[-74.3742,45.6204],[-74.3694,45.627],[-74.3594,45.6256],[-74.3606,45.6213]]],[[[-74.2563,45.5131],[-74.2476,45.5117],[-74.2687,45.5099],[-74.2563,45.5131]]],[[[-74.2543,45.519],[-74.2515,45.5164],[-74.2601,45.519],[-74.2724,45.5103],[-74.3057,45.5077],[-74.2701,45.522],[-74.2543,45.519]]],[[[-74.2688,45.5102],[-74.2721,45.5103],[-74.2668,45.5117],[-74.2688,45.5102]]],[[[-74.2965,45.518],[-74.2944,45.5197],[-74.286,45.522],[-74.2965,45.518]]],[[[-74.2976,45.5179],[-74.297,45.5184],[-74.2969,45.5179],[-74.2976,45.5179]]],[[[-74.3287,45.5232],[-74.3302,45.5145],[-74.3202,45.5108],[-74.2992,45.5168],[-74.3136,45.5093],[-74.3234,45.5095],[-74.3357,45.5158],[-74.3315,45.5239],[-74.3287,45.5232]]],[[[-74.3074,45.5062],[-74.3073,45.5064],[-74.3072,45.5063],[-74.3074,45.5062]]]]}},{"nom":"Saint-Joseph-du-Lac","mrc":"Deux-Montagnes","code":null,"pop":7031,"geom":{"type":"Polygon","coordinates":[[[-74.0352,45.5682],[-74.0188,45.5669],[-73.952,45.5187],[-73.9975,45.4931],[-74.0333,45.5188],[-74.0414,45.5131],[-74.0812,45.5412],[-74.0492,45.5628],[-74.0452,45.561],[-74.0352,45.5682]]]}},{"nom":"Pointe-Calumet","mrc":"Deux-Montagnes","code":null,"pop":6281,"geom":{"type":"Polygon","coordinates":[[[-73.9677,45.4714],[-73.9975,45.4931],[-73.952,45.5187],[-73.9347,45.5064],[-73.9677,45.4714]]]}},{"nom":"Kanesatake","mrc":"Deux-Montagnes","code":null,"pop":0,"geom":{"type":"MultiPolygon","coordinates":[[[[-74.0744,45.5106],[-74.0773,45.5127],[-74.069,45.5183],[-74.0664,45.5163],[-74.0744,45.5106]]],[[[-74.0788,45.5139],[-74.0823,45.5164],[-74.0741,45.5219],[-74.0705,45.5194],[-74.0788,45.5139]]],[[[-74.083,45.4634],[-74.0836,45.4644],[-74.0826,45.4636],[-74.083,45.4634]]],[[[-74.0853,45.461],[-74.0856,45.4612],[-74.0852,45.4614],[-74.0853,45.461]]],[[[-74.0859,45.4616],[-74.0855,45.4618],[-74.0853,45.4615],[-74.0859,45.4616]]],[[[-74.0862,45.4627],[-74.0865,45.4632],[-74.0861,45.4634],[-74.0862,45.4627]]],[[[-74.0864,45.4605],[-74.0867,45.4608],[-74.0864,45.461],[-74.0864,45.4605]]],[[[-74.0866,45.4634],[-74.0869,45.4639],[-74.0864,45.464],[-74.0866,45.4634]]],[[[-74.0869,45.461],[-74.0867,45.4613],[-74.0865,45.461],[-74.0869,45.461]]],[[[-74.087,45.4606],[-74.0868,45.4607],[-74.0866,45.4605],[-74.087,45.4606]]],[[[-74.0874,45.4609],[-74.0875,45.4612],[-74.087,45.4611],[-74.0874,45.4609]]],[[[-74.0881,45.46],[-74.0876,45.4602],[-74.0877,45.4601],[-74.0881,45.46]]],[[[-74.0878,45.4602],[-74.088,45.4604],[-74.0879,45.4604],[-74.0878,45.4602]]],[[[-74.0883,45.4602],[-74.0883,45.4604],[-74.0878,45.4602],[-74.0883,45.4602]]],[[[-74.0883,45.4605],[-74.0885,45.4606],[-74.0883,45.4608],[-74.0883,45.4605]]],[[[-74.0915,45.4605],[-74.0914,45.4597],[-74.0919,45.4599],[-74.0915,45.4605]]],[[[-74.091,45.4596],[-74.0912,45.4597],[-74.091,45.46],[-74.091,45.4596]]],[[[-74.1264,45.4925],[-74.1209,45.4912],[-74.1196,45.4885],[-74.1108,45.4925],[-74.105,45.4906],[-74.0932,45.4818],[-74.0969,45.4763],[-74.0915,45.4746],[-74.0936,45.4698],[-74.1036,45.4652],[-74.1068,45.4661],[-74.104,45.4666],[-74.1059,45.4684],[-74.1071,45.4661],[-74.1171,45.4688],[-74.1139,45.471],[-74.117,45.4713],[-74.1168,45.4722],[-74.1179,45.4739],[-74.1176,45.4752],[-74.1199,45.4736],[-74.117,45.4722],[-74.118,45.4693],[-74.1238,45.4726],[-74.1279,45.4767],[-74.1283,45.4799],[-74.1308,45.484],[-74.1308,45.488],[-74.1316,45.4901],[-74.1264,45.4925]]],[[[-74.0915,45.4606],[-74.0919,45.4607],[-74.0918,45.4611],[-74.0915,45.4606]]],[[[-74.0917,45.4611],[-74.0919,45.4612],[-74.0917,45.4617],[-74.0917,45.4611]]],[[[-74.0929,45.4608],[-74.0928,45.4614],[-74.0918,45.4611],[-74.0929,45.4608]]],[[[-74.0921,45.4595],[-74.0926,45.4597],[-74.0924,45.4599],[-74.0921,45.4595]]],[[[-74.0923,45.46],[-74.0926,45.4601],[-74.0925,45.4603],[-74.0923,45.46]]],[[[-74.0927,45.46],[-74.0924,45.46],[-74.0927,45.4597],[-74.0927,45.46]]],[[[-74.0933,45.4621],[-74.0932,45.4629],[-74.0926,45.4628],[-74.0933,45.4621]]],[[[-74.0926,45.4603],[-74.0929,45.4604],[-74.0928,45.4607],[-74.0926,45.4603]]],[[[-74.0926,45.4602],[-74.0929,45.4602],[-74.0928,45.4604],[-74.0926,45.4602]]],[[[-74.0932,45.4599],[-74.0928,45.4601],[-74.093,45.4599],[-74.0932,45.4599]]],[[[-74.0934,45.461],[-74.0931,45.4615],[-74.0929,45.4614],[-74.0934,45.461]]],[[[-74.0929,45.4603],[-74.0934,45.4604],[-74.0932,45.4605],[-74.0929,45.4603]]],[[[-74.0937,45.46],[-74.0935,45.4603],[-74.093,45.4602],[-74.0937,45.46]]],[[[-74.1003,45.4641],[-74.099,45.4658],[-74.0983,45.4652],[-74.1003,45.4641]]],[[[-74.106,45.4646],[-74.1042,45.4638],[-74.1067,45.4638],[-74.106,45.4646]]],[[[-74.1258,45.5114],[-74.1154,45.5185],[-74.1066,45.5119],[-74.1217,45.5052],[-74.1259,45.5001],[-74.1245,45.504],[-74.1299,45.5067],[-74.137,45.5032],[-74.1325,45.5076],[-74.1422,45.5142],[-74.1404,45.5184],[-74.1373,45.5176],[-74.143,45.5218],[-74.1258,45.5114]]],[[[-74.1162,45.468],[-74.1179,45.4667],[-74.1169,45.4684],[-74.1162,45.468]]],[[[-74.1243,45.4695],[-74.1239,45.4701],[-74.1231,45.4696],[-74.1243,45.4695]]],[[[-74.1329,45.4928],[-74.1308,45.483],[-74.128,45.4763],[-74.1249,45.4727],[-74.128,45.4721],[-74.1362,45.4819],[-74.132,45.4852],[-74.1328,45.4908],[-74.1478,45.4971],[-74.1555,45.4966],[-74.156,45.5035],[-74.1525,45.5037],[-74.1465,45.4979],[-74.1329,45.4928]],[[-74.1419,45.4953],[-74.1414,45.4958],[-74.1417,45.4959],[-74.1419,45.4953]],[[-74.1426,45.4961],[-74.1424,45.4963],[-74.1427,45.4964],[-74.1426,45.4961]]],[[[-74.1266,45.5006],[-74.1289,45.497],[-74.127,45.4955],[-74.1322,45.4923],[-74.1331,45.4933],[-74.1348,45.4942],[-74.1309,45.4999],[-74.1266,45.5006]]],[[[-74.1401,45.5014],[-74.1337,45.5009],[-74.1369,45.4948],[-74.1517,45.5035],[-74.1434,45.5071],[-74.1404,45.5061],[-74.1401,45.5014]]]]}},{"nom":"Oka","mrc":"Deux-Montagnes","code":null,"pop":3968,"geom":{"type":"MultiPolygon","coordinates":[[[[-74.0414,45.5131],[-74.0333,45.5188],[-73.9677,45.4714],[-73.9822,45.4625],[-74.0084,45.4535],[-74.0457,45.4466],[-74.0694,45.4526],[-74.0986,45.4542],[-74.1435,45.4723],[-74.1615,45.4839],[-74.19,45.4921],[-74.143,45.5218],[-74.1373,45.5176],[-74.1404,45.5184],[-74.1422,45.5142],[-74.1325,45.5076],[-74.137,45.5032],[-74.1299,45.5067],[-74.1245,45.504],[-74.1259,45.5001],[-74.1237,45.4998],[-74.1217,45.5052],[-74.1066,45.5119],[-74.1154,45.5185],[-74.0911,45.5346],[-74.0741,45.522],[-74.0676,45.5266],[-74.0846,45.539],[-74.0812,45.5412],[-74.0414,45.5131]],[[-74.0773,45.5127],[-74.0744,45.5106],[-74.0664,45.5163],[-74.069,45.5183],[-74.0773,45.5127]],[[-74.0788,45.5139],[-74.0705,45.5194],[-74.0741,45.5219],[-74.0823,45.5164],[-74.0788,45.5139]],[[-74.083,45.4634],[-74.0826,45.4636],[-74.0832,45.4643],[-74.083,45.4634]],[[-74.0857,45.4613],[-74.0853,45.4615],[-74.0855,45.4618],[-74.0857,45.4613]],[[-74.0855,45.4613],[-74.0856,45.4612],[-74.0853,45.461],[-74.0855,45.4613]],[[-74.0861,45.4634],[-74.0865,45.4632],[-74.0862,45.4627],[-74.0861,45.4634]],[[-74.0862,45.4635],[-74.0864,45.464],[-74.0869,45.4639],[-74.0862,45.4635]],[[-74.0864,45.461],[-74.0867,45.4608],[-74.0864,45.4605],[-74.0864,45.461]],[[-74.0868,45.4609],[-74.0865,45.461],[-74.0867,45.4613],[-74.0868,45.4609]],[[-74.0868,45.4607],[-74.087,45.4606],[-74.0868,45.4605],[-74.0868,45.4607]],[[-74.0874,45.4609],[-74.0871,45.4607],[-74.087,45.4611],[-74.0874,45.4609]],[[-74.0877,45.4602],[-74.0881,45.46],[-74.0876,45.4602],[-74.0877,45.4602]],[[-74.0879,45.4604],[-74.088,45.4604],[-74.0878,45.4602],[-74.0879,45.4604]],[[-74.0881,45.4605],[-74.0883,45.4602],[-74.0878,45.4602],[-74.0881,45.4605]],[[-74.0883,45.4608],[-74.0885,45.4606],[-74.0883,45.4605],[-74.0883,45.4608]],[[-74.0915,45.4605],[-74.0919,45.4599],[-74.091,45.46],[-74.0915,45.4605]],[[-74.091,45.46],[-74.0912,45.4597],[-74.091,45.4596],[-74.091,45.46]],[[-74.0919,45.4612],[-74.0917,45.4611],[-74.0914,45.4616],[-74.0919,45.4612]],[[-74.1283,45.4799],[-74.118,45.4693],[-74.117,45.4722],[-74.1199,45.4736],[-74.1176,45.4752],[-74.1179,45.4739],[-74.1168,45.4722],[-74.117,45.4713],[-74.1139,45.471],[-74.1171,45.4688],[-74.115,45.4676],[-74.1071,45.4661],[-74.1059,45.4684],[-74.104,45.4666],[-74.1068,45.4661],[-74.1036,45.4652],[-74.0936,45.4698],[-74.0915,45.4745],[-74.0969,45.4763],[-74.0932,45.4818],[-74.1108,45.4925],[-74.1196,45.4885],[-74.1264,45.4925],[-74.1316,45.4901],[-74.1308,45.488],[-74.1308,45.484],[-74.1283,45.4799]],[[-74.0918,45.4611],[-74.0919,45.4607],[-74.0915,45.4606],[-74.0918,45.4611]],[[-74.0918,45.4611],[-74.0928,45.4614],[-74.0929,45.4608],[-74.0918,45.4611]],[[-74.0924,45.4599],[-74.0926,45.4597],[-74.0921,45.4595],[-74.0924,45.4599]],[[-74.0923,45.46],[-74.0922,45.4602],[-74.0926,45.4601],[-74.0923,45.46]],[[-74.0926,45.4603],[-74.0924,45.4606],[-74.0928,45.4607],[-74.0926,45.4603]],[[-74.0926,45.4602],[-74.0925,45.4603],[-74.0929,45.4602],[-74.0926,45.4602]],[[-74.0927,45.46],[-74.0929,45.4598],[-74.0927,45.4597],[-74.0927,45.46]],[[-74.0932,45.4629],[-74.0933,45.4621],[-74.0927,45.4621],[-74.0932,45.4629]],[[-74.093,45.4599],[-74.0928,45.4601],[-74.0932,45.4599],[-74.093,45.4599]],[[-74.0929,45.4603],[-74.0929,45.4604],[-74.0932,45.4605],[-74.0929,45.4603]],[[-74.0929,45.4614],[-74.0931,45.4615],[-74.0934,45.461],[-74.0929,45.4614]],[[-74.0935,45.4603],[-74.0937,45.46],[-74.0932,45.4599],[-74.0935,45.4603]],[[-74.099,45.4658],[-74.1003,45.4641],[-74.0983,45.4652],[-74.099,45.4658]],[[-74.1054,45.4634],[-74.1029,45.4648],[-74.106,45.4646],[-74.1054,45.4634]],[[-74.1171,45.4662],[-74.1169,45.4684],[-74.1179,45.4667],[-74.1171,45.4662]],[[-74.1243,45.4695],[-74.1234,45.4691],[-74.1231,45.4696],[-74.1243,45.4695]],[[-74.1465,45.4979],[-74.156,45.5035],[-74.1555,45.4966],[-74.1478,45.4971],[-74.1328,45.4908],[-74.132,45.4852],[-74.1362,45.4819],[-74.128,45.4721],[-74.1249,45.4727],[-74.128,45.4763],[-74.1308,45.483],[-74.1329,45.4928],[-74.1465,45.4979]],[[-74.1266,45.5006],[-74.1309,45.4999],[-74.1348,45.4942],[-74.1331,45.4933],[-74.1322,45.4923],[-74.127,45.4955],[-74.1289,45.497],[-74.1266,45.5006]],[[-74.1517,45.5035],[-74.1369,45.4948],[-74.1337,45.5009],[-74.1401,45.5014],[-74.1404,45.5061],[-74.1434,45.5071],[-74.1517,45.5035]]],[[[-74.1258,45.5114],[-74.1413,45.5229],[-74.1364,45.5262],[-74.1208,45.5148],[-74.1258,45.5114]]],[[[-74.1421,45.4954],[-74.1414,45.4958],[-74.1417,45.4955],[-74.1421,45.4954]]],[[[-74.1426,45.4961],[-74.1428,45.4962],[-74.1427,45.4964],[-74.1426,45.4961]]]]}},{"nom":"La Macaza","mrc":"Antoine-Labelle","code":"2479047","pop":1094,"geom":{"type":"Polygon","coordinates":[[[-74.7693,46.5003],[-74.7542,46.4903],[-74.7518,46.492],[-74.6618,46.4303],[-74.714,46.3943],[-74.6801,46.3736],[-74.6715,46.375],[-74.675,46.3704],[-74.618,46.3319],[-74.6185,46.3148],[-74.7881,46.3152],[-74.7855,46.3237],[-74.791,46.3257],[-74.7915,46.3316],[-74.7786,46.3549],[-74.7838,46.3585],[-74.8059,46.359],[-74.8176,46.3657],[-74.8151,46.3723],[-74.82,46.3764],[-74.8068,46.3832],[-74.819,46.3945],[-74.7852,46.4125],[-74.8061,46.4311],[-74.7868,46.4413],[-74.8063,46.4546],[-74.7668,46.4819],[-74.7814,46.4923],[-74.7693,46.5003]]]}},{"nom":"Labelle","mrc":"Les Laurentides","code":"2478120","pop":2765,"geom":{"type":"Polygon","coordinates":[[[-74.87,46.3147],[-74.5938,46.3156],[-74.6137,46.2611],[-74.6313,46.2612],[-74.6316,46.2756],[-74.6527,46.2756],[-74.6524,46.2881],[-74.6795,46.2879],[-74.6789,46.2775],[-74.6743,46.2776],[-74.6789,46.276],[-74.6735,46.2707],[-74.6774,46.2683],[-74.6772,46.2649],[-74.6806,46.266],[-74.6767,46.2567],[-74.6765,46.2207],[-74.8302,46.2165],[-74.8302,46.133],[-74.8925,46.133],[-74.8926,46.2158],[-74.8514,46.2168],[-74.8513,46.2539],[-74.8366,46.2541],[-74.8299,46.2594],[-74.8298,46.2846],[-74.8705,46.2833],[-74.87,46.3147]]]}},{"nom":"Nominingue","mrc":"Antoine-Labelle","code":"2479030","pop":2255,"geom":{"type":"Polygon","coordinates":[[[-75.0724,46.4725],[-74.9434,46.4755],[-74.9432,46.3137],[-74.9957,46.3105],[-75.2343,46.3107],[-75.2332,46.3721],[-75.2134,46.3719],[-75.2132,46.3925],[-75.2133,46.4001],[-75.2332,46.4002],[-75.234,46.443],[-75.0972,46.4431],[-75.0946,46.4654],[-75.0727,46.4655],[-75.0724,46.4725]]]}},{"nom":"Kiamika","mrc":"Antoine-Labelle","code":null,"pop":790,"geom":{"type":"Polygon","coordinates":[[[-75.2659,46.51],[-75.2661,46.4724],[-75.2345,46.4724],[-75.2332,46.4002],[-75.2133,46.4001],[-75.2134,46.3719],[-75.2332,46.3721],[-75.2343,46.3107],[-75.2644,46.3113],[-75.2653,46.3535],[-75.2687,46.3565],[-75.289,46.3608],[-75.2963,46.3654],[-75.2965,46.3697],[-75.3011,46.3651],[-75.3371,46.3728],[-75.3391,46.372],[-75.3359,46.366],[-75.3367,46.3568],[-75.3323,46.3518],[-75.3337,46.3466],[-75.3515,46.3469],[-75.3664,46.3584],[-75.369,46.3332],[-75.3781,46.3268],[-75.3817,46.3159],[-75.3885,46.3109],[-75.3902,46.3026],[-75.3786,46.2842],[-75.3793,46.2804],[-75.3962,46.2676],[-75.3961,46.2306],[-75.4601,46.2308],[-75.4598,46.3571],[-75.4521,46.3622],[-75.4425,46.3637],[-75.4377,46.3697],[-75.4293,46.3713],[-75.4142,46.3832],[-75.4191,46.3892],[-75.4339,46.3962],[-75.4256,46.4052],[-75.4301,46.4148],[-75.4283,46.4295],[-75.4425,46.4367],[-75.4435,46.4451],[-75.4576,46.463],[-75.4833,46.4727],[-75.4958,46.4822],[-75.5028,46.4917],[-75.5026,46.4976],[-75.4984,46.5001],[-75.3425,46.5018],[-75.3208,46.5174],[-75.3112,46.5108],[-75.2962,46.5211],[-75.2865,46.514],[-75.2703,46.5251],[-75.2565,46.5165],[-75.2659,46.51]]]}},{"nom":"Lac-des-Écorces","mrc":"Antoine-Labelle","code":null,"pop":2885,"geom":{"type":"Polygon","coordinates":[[[-75.407,46.6151],[-75.2899,46.6132],[-75.2853,46.6165],[-75.2,46.5582],[-75.2565,46.5165],[-75.2703,46.5251],[-75.2865,46.514],[-75.2962,46.5211],[-75.3112,46.5108],[-75.3208,46.5174],[-75.3425,46.5018],[-75.4069,46.5011],[-75.4026,46.5177],[-75.4169,46.5252],[-75.4187,46.5337],[-75.3999,46.5455],[-75.4068,46.5546],[-75.4043,46.5586],[-75.4283,46.5586],[-75.4284,46.5681],[-75.4282,46.5728],[-75.4071,46.5727],[-75.407,46.6151]]]}},{"nom":"Rivière-Rouge","mrc":"Antoine-Labelle","code":"2479037","pop":4631,"geom":{"type":"MultiPolygon","coordinates":[[[[-74.5938,46.3156],[-74.6185,46.3148],[-74.618,46.3319],[-74.6077,46.3246],[-74.5938,46.3156]]],[[[-75.0382,46.7574],[-75.0289,46.7563],[-75.0248,46.748],[-75.0157,46.7479],[-75.0124,46.7443],[-75.013,46.7387],[-75.0001,46.7343],[-74.9965,46.7256],[-74.9875,46.7271],[-74.9841,46.7214],[-74.9778,46.7209],[-74.9879,46.7135],[-74.9908,46.6658],[-74.9542,46.6741],[-74.9525,46.6209],[-74.9549,46.6193],[-74.9401,46.6089],[-74.9865,46.5776],[-74.7868,46.4413],[-74.8061,46.4311],[-74.7852,46.4125],[-74.819,46.3945],[-74.8068,46.3832],[-74.82,46.3764],[-74.8151,46.3723],[-74.8177,46.3658],[-74.812,46.362],[-74.8042,46.3587],[-74.7838,46.3585],[-74.7788,46.3554],[-74.7915,46.3316],[-74.791,46.3257],[-74.7855,46.3237],[-74.788,46.3152],[-74.9432,46.3137],[-74.9434,46.4755],[-75.0716,46.4728],[-75.0719,46.4873],[-75.0928,46.4874],[-75.0964,46.6343],[-75.0828,46.6441],[-75.07,46.6353],[-75.0666,46.6388],[-75.0671,46.6566],[-75.0634,46.6622],[-75.0653,46.6748],[-75.0584,46.6897],[-75.0605,46.7077],[-75.0505,46.7253],[-75.0471,46.7456],[-75.0375,46.7524],[-75.0382,46.7574]]]]}},{"nom":"Saint-Aimé-du-Lac-des-Îles","mrc":"Antoine-Labelle","code":null,"pop":815,"geom":{"type":"Polygon","coordinates":[[[-75.4453,46.4394],[-75.4314,46.4323],[-75.4274,46.4258],[-75.4301,46.4148],[-75.4256,46.4052],[-75.4338,46.3959],[-75.4175,46.3881],[-75.4152,46.3801],[-75.4297,46.3711],[-75.4377,46.3697],[-75.4425,46.3637],[-75.4521,46.3622],[-75.4606,46.3568],[-75.5069,46.3537],[-75.5345,46.334],[-75.6006,46.334],[-75.5992,46.3715],[-75.6836,46.3717],[-75.682,46.4386],[-75.4453,46.4394]]]}},{"nom":"La Minerve","mrc":"Les Laurentides","code":"2478130","pop":1421,"geom":{"type":"Polygon","coordinates":[[[-74.8513,46.2539],[-74.8514,46.2168],[-74.8926,46.2158],[-74.8925,46.1188],[-74.9262,46.1188],[-74.9258,46.1061],[-75.0898,46.1031],[-75.0741,46.2152],[-75.03,46.2153],[-75.0351,46.3105],[-74.87,46.3147],[-74.8705,46.2833],[-74.8298,46.2846],[-74.8316,46.2561],[-74.8513,46.2539]]]}},{"nom":"Saint-Placide","mrc":"Deux-Montagnes","code":null,"pop":1784,"geom":{"type":"Polygon","coordinates":[[[-74.19,45.4921],[-74.2136,45.5005],[-74.2458,45.5027],[-74.2458,45.5225],[-74.2585,45.5255],[-74.2797,45.5235],[-74.2743,45.543],[-74.2672,45.5434],[-74.2647,45.5493],[-74.2484,45.5536],[-74.2377,45.5485],[-74.1907,45.58],[-74.1484,45.549],[-74.1452,45.5512],[-74.1232,45.535],[-74.19,45.4921]]]}},{"nom":"Mont-Tremblant","mrc":"Les Laurentides","code":"2478102","pop":10992,"geom":{"type":"Polygon","coordinates":[[[-74.5032,46.2536],[-74.517,46.2017],[-74.5185,46.1708],[-74.5555,46.0388],[-74.5731,46.0398],[-74.6372,46.0538],[-74.6324,46.0679],[-74.6254,46.067],[-74.6218,46.0805],[-74.649,46.084],[-74.6459,46.0969],[-74.6647,46.0997],[-74.6437,46.1635],[-74.6715,46.1633],[-74.6676,46.1763],[-74.6743,46.1772],[-74.6622,46.2211],[-74.6389,46.2219],[-74.6281,46.2176],[-74.5942,46.3153],[-74.5032,46.2536]]]}},{"nom":"Lac-Tremblant-Nord","mrc":"Les Laurentides","code":null,"pop":60,"geom":{"type":"Polygon","coordinates":[[[-74.6527,46.2756],[-74.6316,46.2756],[-74.6313,46.2612],[-74.6137,46.2611],[-74.6281,46.2176],[-74.6389,46.2219],[-74.6765,46.2207],[-74.6767,46.2567],[-74.6806,46.266],[-74.6772,46.2649],[-74.6774,46.2683],[-74.6735,46.2707],[-74.6789,46.276],[-74.6743,46.2776],[-74.6789,46.2775],[-74.6795,46.2879],[-74.6524,46.2881],[-74.6527,46.2756]]]}},{"nom":"Notre-Dame-du-Laus","mrc":"Antoine-Labelle","code":null,"pop":1730,"geom":{"type":"Polygon","coordinates":[[[-75.2149,46.2148],[-75.2156,46.1731],[-75.2107,46.0978],[-75.4072,46.0979],[-75.4072,45.973],[-75.5992,45.9715],[-75.5992,45.9947],[-75.6208,45.9947],[-75.6209,45.9827],[-75.6631,45.9819],[-75.6632,45.9748],[-75.6675,45.9704],[-75.7458,45.973],[-75.7593,45.9604],[-75.772,45.9546],[-75.7772,45.9529],[-75.7848,45.9598],[-75.7741,45.9678],[-75.7759,45.9723],[-75.7828,45.9701],[-75.7825,45.9737],[-75.7747,45.9769],[-75.7812,45.9802],[-75.7768,45.9811],[-75.7763,45.9857],[-75.7683,45.9857],[-75.7482,45.999],[-75.7467,46.0011],[-75.75,46.0034],[-75.7403,46.0056],[-75.7455,46.0076],[-75.7401,46.007],[-75.7272,46.0153],[-75.7169,46.0154],[-75.6973,46.0239],[-75.7644,46.0222],[-75.7683,46.1742],[-75.6775,46.1746],[-75.6832,46.1965],[-75.6626,46.2152],[-75.6697,46.2301],[-75.2311,46.2305],[-75.2309,46.2148],[-75.2149,46.2148]]]}},{"nom":"Ivry-sur-le-Lac","mrc":"Les Laurentides","code":"2478042","pop":391,"geom":{"type":"Polygon","coordinates":[[[-74.3272,46.0989],[-74.3443,46.0407],[-74.3736,46.0463],[-74.3755,46.0389],[-74.4015,46.0428],[-74.399,46.0541],[-74.4155,46.0559],[-74.4129,46.0712],[-74.3965,46.0686],[-74.3933,46.0893],[-74.3853,46.1115],[-74.3272,46.0989]]]}},{"nom":"Doncaster","mrc":"Les Laurentides","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-74.112,46.0935],[-74.1457,46.1093],[-74.1944,46.1434],[-74.1135,46.2041],[-74.0326,46.1483],[-74.112,46.0935]]]}},{"nom":"Lac-Saint-Paul","mrc":"Antoine-Labelle","code":null,"pop":525,"geom":{"type":"Polygon","coordinates":[[[-75.1608,46.8852],[-75.096,46.8389],[-75.2234,46.726],[-75.2512,46.6874],[-75.258,46.6922],[-75.3062,46.6598],[-75.3776,46.7089],[-75.3532,46.7256],[-75.3607,46.7308],[-75.3042,46.7691],[-75.3225,46.7808],[-75.3118,46.7857],[-75.3151,46.7927],[-75.3032,46.8018],[-75.2921,46.8007],[-75.2867,46.7929],[-75.2786,46.7926],[-75.2672,46.7869],[-75.2364,46.8037],[-75.2168,46.823],[-75.2147,46.8212],[-75.2192,46.8152],[-75.2182,46.8094],[-75.2117,46.8085],[-75.2023,46.8125],[-75.2007,46.8199],[-75.1897,46.8281],[-75.1865,46.8358],[-75.1795,46.8395],[-75.1859,46.8437],[-75.1858,46.8483],[-75.1688,46.8591],[-75.1622,46.8668],[-75.1613,46.8741],[-75.1697,46.8815],[-75.1673,46.8852],[-75.1608,46.8852]]]}},{"nom":"Lac-du-Cerf","mrc":"Antoine-Labelle","code":null,"pop":445,"geom":{"type":"Polygon","coordinates":[[[-75.4601,46.2308],[-75.543,46.2309],[-75.5432,46.2547],[-75.5637,46.2546],[-75.564,46.2828],[-75.5848,46.2831],[-75.5716,46.2886],[-75.5596,46.3058],[-75.5521,46.307],[-75.5375,46.3242],[-75.5345,46.334],[-75.5069,46.3537],[-75.4598,46.3571],[-75.4601,46.2308]]]}},{"nom":"Notre-Dame-de-Pontmain","mrc":"Antoine-Labelle","code":null,"pop":790,"geom":{"type":"MultiPolygon","coordinates":[[[[-75.5348,46.3336],[-75.5343,46.3289],[-75.5506,46.3083],[-75.5596,46.3058],[-75.5717,46.2885],[-75.5848,46.2831],[-75.564,46.2828],[-75.5637,46.2546],[-75.5432,46.2547],[-75.543,46.2309],[-75.6697,46.2301],[-75.6626,46.2152],[-75.6832,46.1965],[-75.6767,46.1774],[-75.6817,46.1732],[-75.6882,46.1759],[-75.7901,46.1742],[-75.7876,46.1796],[-75.7937,46.1803],[-75.7975,46.1848],[-75.7996,46.1954],[-75.7962,46.1973],[-75.7958,46.2081],[-75.7848,46.2178],[-75.7815,46.2237],[-75.7865,46.2226],[-75.7851,46.2252],[-75.7788,46.2264],[-75.7836,46.2314],[-75.7815,46.2456],[-75.7886,46.2467],[-75.7838,46.262],[-75.7771,46.2628],[-75.7751,46.2712],[-75.7754,46.2989],[-75.78,46.3016],[-75.7795,46.3057],[-75.707,46.3092],[-75.706,46.4388],[-75.682,46.4386],[-75.6836,46.3717],[-75.5992,46.3715],[-75.6006,46.334],[-75.5348,46.3336]]],[[[-75.7781,46.3072],[-75.7782,46.3073],[-75.7779,46.3073],[-75.7781,46.3072]]],[[[-75.7819,46.3072],[-75.783,46.3034],[-75.7878,46.3022],[-75.7872,46.2936],[-75.7929,46.2987],[-75.7903,46.3045],[-75.7997,46.302],[-75.7976,46.298],[-75.8105,46.3058],[-75.7819,46.3072]]]]}},{"nom":"Mont-Blanc","mrc":"Les Laurentides","code":"2478047","pop":3780,"geom":{"type":"Polygon","coordinates":[[[-74.3798,46.127],[-74.3933,46.0893],[-74.3965,46.0686],[-74.4129,46.0712],[-74.4155,46.0559],[-74.399,46.0541],[-74.4075,46.0188],[-74.43,46.0266],[-74.5555,46.0388],[-74.5285,46.1317],[-74.4857,46.1261],[-74.4822,46.1344],[-74.4795,46.1372],[-74.4746,46.1363],[-74.4733,46.1397],[-74.3798,46.127]]]}},{"nom":"Brébeuf","mrc":"Les Laurentides","code":"2478075","pop":1009,"geom":{"type":"Polygon","coordinates":[[[-74.6647,46.0997],[-74.6459,46.0969],[-74.649,46.084],[-74.6218,46.0805],[-74.6254,46.067],[-74.6324,46.0679],[-74.6372,46.0538],[-74.6757,46.0591],[-74.6787,46.0473],[-74.7115,46.0469],[-74.7115,46.0995],[-74.7076,46.0996],[-74.7071,46.1183],[-74.6585,46.1184],[-74.6647,46.0997]]]}},{"nom":"Huberdeau","mrc":"Les Laurentides","code":"2478065","pop":863,"geom":{"type":"Polygon","coordinates":[[[-74.6757,46.0591],[-74.6175,46.049],[-74.6246,46.0425],[-74.6158,46.0364],[-74.6198,46.0306],[-74.6302,46.0307],[-74.6278,46.015],[-74.6376,45.9985],[-74.6336,45.9836],[-74.6221,45.9757],[-74.63,45.9779],[-74.633,45.9706],[-74.641,45.9701],[-74.644,45.963],[-74.6529,45.9595],[-74.6585,45.9469],[-74.6704,45.9463],[-74.6743,45.9363],[-74.671,45.9292],[-74.7104,45.9317],[-74.6844,46.0165],[-74.6757,46.0591]]]}},{"nom":"Arundel","mrc":"Les Laurentides","code":"2478060","pop":578,"geom":{"type":"Polygon","coordinates":[[[-74.6282,46.0527],[-74.577,46.0405],[-74.5555,46.0388],[-74.5602,46.0195],[-74.5686,46.0205],[-74.571,46.0134],[-74.5814,46.0145],[-74.5873,45.9852],[-74.5699,45.9831],[-74.5881,45.9197],[-74.671,45.9292],[-74.6743,45.9363],[-74.6704,45.9463],[-74.6585,45.9469],[-74.6529,45.9595],[-74.644,45.963],[-74.641,45.9701],[-74.633,45.9706],[-74.63,45.9779],[-74.6219,45.9758],[-74.634,45.9843],[-74.6375,45.9993],[-74.6278,46.015],[-74.6301,46.0308],[-74.6198,46.0306],[-74.6158,46.0364],[-74.6246,46.0425],[-74.6175,46.049],[-74.6282,46.0527]]]}},{"nom":"Barkmere","mrc":"Les Laurentides","code":"2478050","pop":81,"geom":{"type":"Polygon","coordinates":[[[-74.5469,46.0178],[-74.5493,46.0087],[-74.517,46.0045],[-74.5152,46.0119],[-74.4926,46.0094],[-74.4945,45.994],[-74.5002,45.9948],[-74.5066,45.9812],[-74.5116,45.9819],[-74.5134,45.975],[-74.5221,45.976],[-74.524,45.9688],[-74.553,45.9722],[-74.5503,45.9809],[-74.5568,45.9816],[-74.5545,45.9879],[-74.5676,45.9895],[-74.5699,45.9831],[-74.5873,45.9852],[-74.5814,46.0145],[-74.571,46.0134],[-74.5686,46.0205],[-74.5469,46.0178]]]}},{"nom":"Lac-Supérieur","mrc":"Les Laurentides","code":"2478095","pop":1972,"geom":{"type":"Polygon","coordinates":[[[-74.3798,46.127],[-74.4733,46.1397],[-74.4746,46.1363],[-74.4795,46.1372],[-74.4822,46.1344],[-74.4857,46.1261],[-74.5285,46.1317],[-74.5185,46.1708],[-74.517,46.2017],[-74.5032,46.2536],[-74.6434,46.3491],[-74.4829,46.458],[-74.334,46.3539],[-74.4746,46.2546],[-74.4431,46.2328],[-74.4593,46.2216],[-74.3682,46.1587],[-74.3798,46.127]]]}},{"nom":"La Conception","mrc":"Les Laurentides","code":"2478115","pop":1527,"geom":{"type":"Polygon","coordinates":[[[-74.6622,46.2211],[-74.6743,46.1772],[-74.6676,46.1763],[-74.6715,46.1633],[-74.6437,46.1635],[-74.6585,46.1184],[-74.7071,46.1183],[-74.7076,46.0996],[-74.7493,46.0996],[-74.7486,46.1279],[-74.7706,46.1275],[-74.77,46.1348],[-74.83,46.1347],[-74.8302,46.2165],[-74.7826,46.2158],[-74.6622,46.2211]]]}},{"nom":"Amherst","mrc":"Les Laurentides","code":"2478070","pop":1728,"geom":{"type":"Polygon","coordinates":[[[-74.8925,46.133],[-74.77,46.1348],[-74.7706,46.1275],[-74.7486,46.1279],[-74.7493,46.0996],[-74.7115,46.0995],[-74.7115,46.0469],[-74.6797,46.0473],[-74.6844,46.0165],[-74.6988,45.9718],[-74.7631,45.9727],[-74.7631,45.9457],[-74.8014,45.9452],[-74.798,45.9479],[-74.7999,45.959],[-74.8065,45.9586],[-74.8089,45.973],[-74.8317,45.9731],[-74.8314,46.0031],[-74.8376,46.0031],[-74.8376,46.0168],[-74.858,46.0168],[-74.8586,46.0608],[-74.9395,46.0617],[-74.9395,46.1055],[-74.9258,46.1061],[-74.9262,46.1188],[-74.8925,46.1188],[-74.8925,46.133]]]}},{"nom":"Val-David","mrc":"Les Laurentides","code":"2478010","pop":5558,"geom":{"type":"Polygon","coordinates":[[[-74.2568,46.0148],[-74.2347,46.0301],[-74.2495,46.0409],[-74.2484,46.0449],[-74.2245,46.0564],[-74.2206,46.0539],[-74.1999,46.0687],[-74.2126,46.0778],[-74.1995,46.0868],[-74.1586,46.0611],[-74.1665,46.0555],[-74.1519,46.0438],[-74.1771,46.0243],[-74.1825,46.0278],[-74.2596,45.9759],[-74.2679,45.9818],[-74.2568,46.0148]]]}},{"nom":"Sainte-Thérèse","mrc":"Thérèse-De Blainville","code":null,"pop":26533,"geom":{"type":"Polygon","coordinates":[[[-73.8805,45.6554],[-73.8701,45.6633],[-73.8449,45.647],[-73.8338,45.6533],[-73.8425,45.6592],[-73.8401,45.6609],[-73.8122,45.6406],[-73.8228,45.6318],[-73.8378,45.6278],[-73.8805,45.6554]]]}},{"nom":"Boisbriand","mrc":"Thérèse-De Blainville","code":"2473005","pop":28308,"geom":{"type":"Polygon","coordinates":[[[-73.8672,45.6425],[-73.8643,45.6443],[-73.8378,45.6278],[-73.8286,45.6303],[-73.8054,45.6145],[-73.8066,45.6115],[-73.8018,45.6119],[-73.825,45.6077],[-73.8259,45.5985],[-73.8324,45.5938],[-73.8321,45.5871],[-73.8428,45.5787],[-73.8437,45.5816],[-73.8408,45.5831],[-73.8475,45.589],[-73.8497,45.5876],[-73.8701,45.6],[-73.8751,45.5971],[-73.8804,45.6066],[-73.9318,45.6398],[-73.9195,45.6334],[-73.8915,45.6366],[-73.8951,45.639],[-73.8879,45.6411],[-73.8802,45.6387],[-73.8716,45.6419],[-73.8825,45.6492],[-73.8789,45.6503],[-73.8672,45.6425]]]}},{"nom":"Prévost","mrc":"La Rivière-du-Nord","code":"2475040","pop":13692,"geom":{"type":"Polygon","coordinates":[[[-74.0315,45.8248],[-74.0221,45.8244],[-74.0243,45.8186],[-74.0265,45.8207],[-74.05,45.8181],[-74.0647,45.8379],[-74.0638,45.845],[-74.0677,45.8504],[-74.098,45.8466],[-74.1052,45.8484],[-74.1123,45.8574],[-74.0987,45.8601],[-74.1062,45.865],[-74.0965,45.8661],[-74.0986,45.8698],[-74.1023,45.8694],[-74.1021,45.8743],[-74.0988,45.8758],[-74.1097,45.876],[-74.1107,45.8786],[-74.0993,45.8835],[-74.0888,45.879],[-74.0797,45.8811],[-74.0873,45.8865],[-74.0845,45.8886],[-74.0794,45.8852],[-74.051,45.9057],[-74.0413,45.8986],[-74.0461,45.8947],[-74.0294,45.8829],[-74.027,45.8846],[-74.0277,45.8795],[-74.0179,45.8787],[-74.0129,45.8825],[-74.0091,45.8792],[-74.0424,45.855],[-74.0235,45.8418],[-74.0384,45.8375],[-74.0291,45.8333],[-74.0297,45.8292],[-74.0338,45.8285],[-74.0315,45.8248]]]}},{"nom":"Sainte-Sophie","mrc":"La Rivière-du-Nord","code":null,"pop":18080,"geom":{"type":"Polygon","coordinates":[[[-73.9012,45.8846],[-73.8078,45.8215],[-73.8687,45.8086],[-73.8602,45.8023],[-73.9135,45.7666],[-74.0328,45.8483],[-73.9012,45.8846]]]}},{"nom":"Sainte-Adèle","mrc":"Les Pays-d'en-Haut","code":"2477022","pop":14010,"geom":{"type":"Polygon","coordinates":[[[-74.245,45.9479],[-74.1873,45.9887],[-74.1715,45.9814],[-74.1691,45.9833],[-74.1721,45.9857],[-74.1447,46.003],[-74.1506,46.0068],[-74.1241,46.024],[-74.0689,45.9878],[-74.0058,46.0328],[-73.9792,46.0146],[-74.0639,45.9532],[-74.0682,45.9508],[-74.0712,45.9528],[-74.1269,45.9144],[-74.1398,45.9231],[-74.1398,45.9176],[-74.1423,45.9185],[-74.1481,45.9128],[-74.1584,45.9159],[-74.1649,45.9136],[-74.1764,45.9216],[-74.1921,45.9108],[-74.245,45.9479]]]}},{"nom":"Saint-Hippolyte","mrc":"La Rivière-du-Nord","code":"2475045","pop":10669,"geom":{"type":"Polygon","coordinates":[[[-74.0787,45.8992],[-74.0833,45.9023],[-74.08,45.9049],[-74.0958,45.9156],[-74.0796,45.9275],[-74.0936,45.9379],[-74.0712,45.9528],[-74.0682,45.9508],[-74.0639,45.9532],[-74.0023,45.997],[-73.9479,45.9576],[-73.9533,45.954],[-73.9346,45.9448],[-73.9504,45.9335],[-73.8827,45.8883],[-74.0328,45.8483],[-74.0424,45.855],[-74.0091,45.8792],[-74.0137,45.8826],[-74.0179,45.8787],[-74.0277,45.8795],[-74.027,45.8846],[-74.0294,45.8829],[-74.0461,45.8947],[-74.0413,45.8986],[-74.051,45.9057],[-74.0716,45.8909],[-74.0813,45.8973],[-74.0787,45.8992]]]}},{"nom":"Sainte-Anne-des-Lacs","mrc":"Les Pays-d'en-Haut","code":null,"pop":3862,"geom":{"type":"Polygon","coordinates":[[[-74.0942,45.8841],[-74.1107,45.8786],[-74.1097,45.876],[-74.0988,45.8758],[-74.1021,45.8743],[-74.1023,45.8694],[-74.0986,45.8698],[-74.0965,45.8661],[-74.1062,45.865],[-74.0987,45.8601],[-74.1123,45.8574],[-74.1052,45.8484],[-74.0907,45.8474],[-74.0893,45.8406],[-74.0964,45.8371],[-74.0908,45.8306],[-74.1062,45.8286],[-74.1085,45.832],[-74.1261,45.8315],[-74.1439,45.8198],[-74.188,45.8347],[-74.1338,45.874],[-74.1227,45.8732],[-74.1031,45.8893],[-74.0942,45.8841]]]}},{"nom":"Lac-de-la-Maison-de-Pierre","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-74.7943,46.8504],[-74.5747,46.9975],[-74.4274,46.8966],[-74.4382,46.8951],[-74.4565,46.8846],[-74.4532,46.8792],[-74.4675,46.8659],[-74.4749,46.8663],[-74.4786,46.8732],[-74.4847,46.867],[-74.4824,46.8526],[-74.4843,46.8386],[-74.4759,46.8275],[-74.4764,46.8098],[-74.4715,46.7979],[-74.4717,46.7898],[-74.4836,46.7903],[-74.4835,46.7683],[-74.4924,46.76],[-74.5,46.7598],[-74.497,46.7398],[-74.5009,46.7337],[-74.4899,46.7343],[-74.4876,46.7316],[-74.4879,46.7269],[-74.4952,46.7253],[-74.4991,46.7186],[-74.4881,46.7147],[-74.4906,46.7104],[-74.5016,46.7049],[-74.4975,46.6977],[-74.5029,46.6851],[-74.5143,46.6803],[-74.5096,46.6659],[-74.7037,46.7966],[-74.7943,46.8504]]]}},{"nom":"Lac-Oscar","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-75.336,47.5163],[-75.3138,47.5001],[-74.5747,46.9975],[-74.7955,46.8499],[-74.924,46.9406],[-74.9426,46.9498],[-75.1425,47.0879],[-75.2974,47.1888],[-75.466,47.3067],[-75.4574,47.3181],[-75.4618,47.3271],[-75.4676,47.3294],[-75.4739,47.3389],[-75.4555,47.3744],[-75.4308,47.3891],[-75.4223,47.4025],[-75.389,47.4282],[-75.3832,47.4405],[-75.3841,47.45],[-75.3786,47.4696],[-75.3674,47.4805],[-75.368,47.4853],[-75.3573,47.4919],[-75.3491,47.5048],[-75.336,47.5163]]]}},{"nom":"Lac-De La Bidière","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-75.336,47.5163],[-75.308,47.5479],[-75.3107,47.5556],[-75.319,47.5534],[-75.3293,47.5629],[-75.3391,47.564],[-75.3448,47.572],[-75.3565,47.567],[-75.3635,47.5746],[-75.3656,47.5942],[-75.3542,47.6095],[-75.3559,47.6149],[-75.3648,47.6189],[-75.3707,47.6269],[-75.38,47.622],[-75.3814,47.6162],[-75.3957,47.6013],[-75.3905,47.5894],[-75.4027,47.5866],[-75.4142,47.5886],[-75.4289,47.6162],[-75.4194,47.6298],[-75.4218,47.6347],[-75.4457,47.6553],[-75.4465,47.6636],[-75.4542,47.6675],[-75.4558,47.6725],[-75.473,47.6724],[-75.4739,47.679],[-75.4865,47.6904],[-75.4932,47.691],[-75.5056,47.6982],[-75.5081,47.7055],[-75.5137,47.7102],[-75.5243,47.7105],[-75.5292,47.7239],[-75.5249,47.7305],[-75.5336,47.7347],[-75.5295,47.7406],[-75.531,47.7461],[-75.5425,47.7563],[-75.5386,47.7633],[-75.3908,47.7628],[-74.631,47.2482],[-74.6397,47.2523],[-74.6496,47.2515],[-74.657,47.244],[-74.6541,47.2413],[-74.6541,47.234],[-74.6063,47.2312],[-74.4152,47.1007],[-74.4841,47.0531],[-74.5747,46.9975],[-75.336,47.5163]]]}},{"nom":"Lac-Bazinet","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-74.6152,47.5767],[-74.5981,47.5568],[-74.5878,47.553],[-74.5806,47.5418],[-74.5675,47.5401],[-74.5581,47.5353],[-74.5608,47.5342],[-74.5535,47.5296],[-74.5565,47.5241],[-74.5434,47.5158],[-74.5396,47.51],[-74.5234,47.5066],[-74.5071,47.4984],[-74.5074,47.5037],[-74.4508,47.464],[-74.4618,47.4488],[-74.4638,47.4499],[-74.4905,47.4265],[-74.4965,47.4259],[-74.5137,47.4063],[-74.5221,47.3902],[-74.5228,47.3818],[-74.529,47.3733],[-74.5293,47.359],[-74.5337,47.3571],[-74.5516,47.329],[-74.5524,47.3241],[-74.5487,47.3211],[-74.5396,47.3215],[-74.5421,47.3134],[-74.5451,47.3126],[-74.5425,47.3134],[-74.5427,47.3192],[-74.5531,47.3213],[-74.5592,47.3251],[-74.5543,47.3266],[-74.5563,47.3295],[-74.5611,47.328],[-74.5735,47.3122],[-74.5755,47.3053],[-74.5805,47.3025],[-74.5839,47.3026],[-74.5842,47.3127],[-74.5871,47.3164],[-74.5894,47.2979],[-74.586,47.2987],[-74.5863,47.2958],[-74.5922,47.289],[-74.6049,47.2872],[-74.6042,47.2819],[-74.6132,47.2709],[-74.6182,47.2509],[-74.6247,47.2517],[-74.631,47.2482],[-75.3908,47.7628],[-74.8894,47.7626],[-74.6152,47.5767]]]}},{"nom":"Lac-Wagwabika","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-74.6986,47.6335],[-74.69,47.6363],[-74.6872,47.6296],[-74.6539,47.6171],[-74.6278,47.5925],[-74.63,47.5885],[-74.6233,47.588],[-74.6152,47.5767],[-74.6986,47.6335]]]}},{"nom":"Lac-Marguerite","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-76.0197,46.8861],[-76.0199,46.8941],[-76.0149,46.8937],[-76.0148,46.8967],[-76.0277,46.8953],[-76.0367,46.89],[-76.0502,46.8962],[-76.0491,46.9013],[-76.0521,46.9031],[-76.0653,46.901],[-76.0804,46.9086],[-76.0833,46.9056],[-76.0844,46.9117],[-76.0921,46.9108],[-76.0971,46.9136],[-76.0919,46.9171],[-76.0941,46.9172],[-76.0917,46.9199],[-76.0926,46.9216],[-76.0953,46.9164],[-76.1056,46.9119],[-76.1148,46.9195],[-76.1282,46.921],[-76.1336,46.9356],[-76.1373,46.9374],[-76.1336,46.9534],[-76.1365,46.9617],[-76.1329,46.9692],[-76.1391,46.9762],[-76.1387,46.9793],[-76.1284,46.9849],[-76.1398,46.9946],[-76.1391,47.0011],[-76.1485,47.0062],[-76.1456,47.0111],[-76.1401,47.0117],[-76.1304,47.0196],[-76.119,47.0201],[-76.1024,47.0305],[-76.1061,47.034],[-76.1022,47.0365],[-76.1029,47.0474],[-76.0979,47.0504],[-76.1006,47.0636],[-76.0973,47.0789],[-76.0995,47.1006],[-76.095,47.1268],[-76.091,47.1306],[-76.0932,47.143],[-76.0995,47.1506],[-76.0981,47.1556],[-76.1013,47.1629],[-76.098,47.1679],[-76.1032,47.1735],[-76.101,47.1798],[-76.0977,47.1791],[-76.0957,47.1825],[-76.1006,47.1831],[-76.0906,47.1828],[-76.0942,47.1876],[-76.0775,47.1884],[-76.0523,47.1988],[-76.0415,47.1979],[-76.04,47.1937],[-76.0297,47.1952],[-76.0322,47.19],[-76.0235,47.1889],[-76.0029,47.1994],[-75.997,47.1978],[-75.9941,47.2015],[-75.9903,47.2012],[-75.9916,47.1987],[-75.9854,47.1998],[-75.9869,47.2024],[-75.981,47.2021],[-75.9805,47.2048],[-75.9762,47.2032],[-75.9712,47.2089],[-75.9672,47.209],[-75.9674,47.2131],[-75.747,47.0668],[-75.747,46.8448],[-75.8109,46.8449],[-75.8143,46.8337],[-75.8258,46.8255],[-75.8463,46.8207],[-75.8588,46.8142],[-75.8715,46.8191],[-75.89,46.8155],[-75.8994,46.8207],[-75.912,46.8423],[-75.951,46.8691],[-75.9724,46.8789],[-75.9878,46.882],[-75.9944,46.8878],[-76.0197,46.8861]]]}},{"nom":"Lac-Akonapwehikan","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-74.5074,47.5037],[-74.5088,47.5101],[-74.4877,47.5141],[-74.4861,47.5093],[-74.4795,47.5061],[-74.4719,47.5092],[-74.4565,47.5015],[-74.4453,47.5099],[-74.445,47.5157],[-74.4367,47.5192],[-74.433,47.5147],[-74.4416,47.5146],[-74.4405,47.511],[-74.4455,47.5093],[-74.4259,47.5047],[-74.4441,47.4828],[-74.4463,47.4771],[-74.4413,47.4735],[-74.4508,47.464],[-74.5074,47.5037]]]}},{"nom":"Lac-de-la-Pomme","mrc":"Antoine-Labelle","code":null,"pop":0,"geom":{"type":"Polygon","coordinates":[[[-74.4661,47.1357],[-74.6063,47.2312],[-74.4897,47.2246],[-74.4345,47.1575],[-74.4661,47.1357]]]}}],"mode":{"total":[5475.0,2365.0,1850.0,740.0,305.0,205.0,19.6],"auto":[4985.0,2090.0,1710.0,700.0,285.0,205.0,20.1],"seul":[4395.0,1855.0,1520.0,600.0,240.0,175.0,19.9],"tc":[110.0,20.0,50.0,20.0,20.0,0.0,25.4],"actif":[285.0,200.0,60.0,20.0,0.0,0.0,10.2],"autre":[65.0,40.0,30.0,0.0,0.0,0.0,10.0],"moto":[30.0,20.0,0.0,0.0,0.0,0.0,11.6]},"dest":[46.116,-74.5913]};
+const nf0=new Intl.NumberFormat('fr-CA',{maximumFractionDigits:0}), nf1=new Intl.NumberFormat('fr-CA',{maximumFractionDigits:1,minimumFractionDigits:1});
+const f0=v=>v==null||isNaN(v)?"n.d.":nf0.format(Math.round(v)), f1=v=>v==null||isNaN(v)?"n.d.":nf1.format(v), pc=v=>v==null||isNaN(v)?"n.d.":nf0.format(Math.round(v))+" %";
+const sg=v=>(v>0?"+":"")+f0(v);
+const MT="2478102", M=D.munis, DEST=D.dest;
+const st={dir:"in",yr:"21",thr:10,choro:"n",sel:null,all:false};
+const disp=m=>m.nom.replace("--","–")+(m.nom_actuel?" ("+m.nom_actuel+")":"");
+function val(m,yr){yr=yr||st.yr; const k=st.dir; if(yr==="d") return m[k+"21"]-m[k+"16"]; return m[k+yr];}
+function others(){return Object.entries(M).filter(([c])=>c!==MT).map(([c,m])=>Object.assign({code:c},m));}
+
+/* totals */
+function totals(yr){ const k=st.dir+yr; const all=Object.values(M).reduce((t,m)=>t+m[k],0); const mt=M[MT][k];
+  const ext=others(); let n=0,km=0,far=0,gt30=0; ext.forEach(m=>{const v=m[k]; if(!v) return; if(m.dist<=100){n+=v;km+=v*m.dist; if(m.dist>30) gt30+=v;} else far+=v;});
+  return {all,mt,ext:all-mt,share:(all-mt)/all*100,n,avg:n?km/n:0,kmday:2*km,far,gt30}; }
+
+/* map */
+const map=L.map("map",{scrollWheelZoom:false,zoomSnap:.25});
+const polyLayer=L.geoJSON({type:"FeatureCollection",features:D.poly.map(p=>({type:"Feature",geometry:p.geom,properties:p}))},{
+  style:{color:"#2d4c52",weight:.7,fillColor:"#12262b",fillOpacity:1},
+  onEachFeature:(f,l)=>{const p=f.properties; if(p.code){l.on("click",()=>select(p.code)); l.bindTooltip(()=>tip(p.code),{className:"htip",sticky:true});} else l.bindTooltip(p.nom,{className:"htip",sticky:true});}
+}).addTo(map);
+const mtPoly=D.poly.find(p=>p.code===MT);
+const arcs=L.layerGroup().addTo(map), dots=L.layerGroup().addTo(map);
+const LAUR=polyLayer.getBounds();
+function fitDefault(){map.invalidateSize(); const b=L.latLngBounds([[45.55,-75.35],[46.8,-73.95]]); map.fitBounds(b,{padding:[10,10]});}
+fitDefault(); setTimeout(fitDefault,250); window.addEventListener("load",fitDefault);
+document.getElementById("zoomBtn").addEventListener("click",()=>{const pts=others().filter(m=>val(m)>=st.thr||val(m,"16")>=st.thr).map(m=>[m.lat,m.lon]); pts.push(DEST); map.fitBounds(L.latLngBounds(pts),{padding:[20,20]});});
+
+function arcPts(a,b){ // quadratic bezier, bulge to the right of travel
+  const la=a[0],lo=a[1]*Math.cos(a[0]*Math.PI/180), lb=b[0], lob=b[1]*Math.cos(a[0]*Math.PI/180);
+  const mx=(la+lb)/2, my=(lo+lob)/2, dx=lb-la, dy=lob-lo, k=.18;
+  const cx=mx - dy*k, cy=my + dx*k; const out=[];
+  for(let t=0;t<=1.0001;t+=1/28){const x=(1-t)*(1-t)*la+2*(1-t)*t*cx+t*t*lb, y=(1-t)*(1-t)*lo+2*(1-t)*t*cy+t*t*lob; out.push([x,y/Math.cos(a[0]*Math.PI/180)]);}
+  return out; }
+const RAMP=["#16363b","#1f6f68","#3fc7b4","#b9d86a","#f2d24b"];
+function h2r(h){h=h.replace("#","");return[0,2,4].map(i=>parseInt(h.substr(i,2),16));}
+function ramp(t){t=Math.max(0,Math.min(1,t));const n=RAMP.length-1,i=Math.min(n-1,Math.floor(t*n)),u=t*n-i;const a=h2r(RAMP[i]),b=h2r(RAMP[i+1]);return"rgb("+a.map((x,k)=>Math.round(x+(b[k]-x)*u)).join(",")+")";}
+function mix(a,b,t){const A=h2r(a),B=h2r(b);return"rgb("+A.map((x,k)=>Math.round(x+(B[k]-x)*t)).join(",")+")";}
+
+function tip(code){const m=M[code]; if(code===MT){const k=st.dir; return "<b>Mont-Tremblant</b><br>"+f0(m[k+"21"])+" résidents qui y travaillent (2021)";}
+  return disp(m)+"<br>"+(st.dir==="in"?"Vers Mont-Tremblant":"Depuis Mont-Tremblant")+" : <b>"+f0(m[st.dir+"21"])+"</b> en 2021, "+f0(m[st.dir+"16"])+" en 2016<br><span style='color:#9fb6b8'>"+f1(m.dist)+" km à vol d'oiseau</span>";}
+
+function draw(){
+  arcs.clearLayers(); dots.clearLayers();
+  const ext=others(); const isD=st.yr==="d";
+  const vals=ext.map(m=>val(m)); const vmax=Math.max(...ext.map(m=>Math.max(m[st.dir+"21"],m[st.dir+"16"])));
+  // choropleth
+  const cv={}; ext.forEach(m=>{ let v=val(m); if(st.choro==="p") v = m.pop? v/m.pop*1000 : null; cv[m.code]=v; });
+  const arr=Object.values(cv).filter(v=>v!=null&&!isNaN(v));
+  let mn=Math.min(0,...arr), mx=Math.max(...arr); if(isD){const a=Math.max(Math.abs(mn),Math.abs(mx)); mn=-a; mx=a;}
+  polyLayer.eachLayer(l=>{const p=l.feature.properties; let fc="#12262b", w=.7, col="#2d4c52";
+    if(p.code===MT){fc="#0f3b37"; w=2.2; col="#3fc7b4";}
+    else if(st.choro!=="none" && p.code && cv[p.code]!=null && cv[p.code]!==0){const v=cv[p.code];
+      fc= isD ? (v>0?mix("#12262b","#e8a04b",Math.min(1,v/mx)):mix("#12262b","#5ca0ff",Math.min(1,-v/mx))) : ramp(Math.sqrt(v/mx));}
+    if(st.sel && st.sel===p.code){w=2.5;col="#f2d24b";}
+    l.setStyle({fillColor:fc,weight:w,color:col,fillOpacity:.85});});
+  // arcs
+  const list=ext.filter(m=>Math.max(m[st.dir+"21"],m[st.dir+"16"])>=st.thr).sort((a,b)=>Math.abs(val(a))-Math.abs(val(b)));
+  list.forEach(m=>{const v=val(m); if(!isD && v<st.thr) return; if(isD && v===0) return;
+    const w=1+9*Math.sqrt(Math.abs(v)/vmax); const col=isD?(v>0?"#e8a04b":"#5ca0ff"):"#f2d24b";
+    const pts= st.dir==="in"? arcPts([m.lat,m.lon],DEST) : arcPts(DEST,[m.lat,m.lon]);
+    const on=st.sel===m.code;
+    const pl=L.polyline(pts,{color:on?"#ffffff":col,weight:w,opacity:on?.95:.72,lineCap:"round"}).addTo(arcs);
+    pl.bindTooltip(()=>tip(m.code),{className:"htip",sticky:true}); pl.on("click",()=>select(m.code));
+    const c=L.circleMarker([m.lat,m.lon],{radius:2.5+6*Math.sqrt(Math.abs(v)/vmax),color:"#0c191c",weight:1,fillColor:col,fillOpacity:.95}).addTo(dots);
+    c.bindTooltip(()=>tip(m.code),{className:"htip"}); c.on("click",()=>select(m.code));
+  });
+  L.circleMarker(DEST,{radius:8,color:"#0c191c",weight:2,fillColor:"#3fc7b4",fillOpacity:1}).addTo(dots).bindTooltip(()=>tip(MT),{className:"htip"}).on("click",()=>select(MT));
+  // legend
+  const lb=document.getElementById("legBar");
+  if(st.choro==="none"){lb.style.background="linear-gradient(90deg,#12262b,#12262b)";document.getElementById("legMin").textContent="";document.getElementById("legMax").textContent="";}
+  else if(isD){lb.style.background="linear-gradient(90deg,#5ca0ff,#12262b,#e8a04b)";document.getElementById("legMin").textContent=(st.choro==="p"?f1(mn):sg(mn));document.getElementById("legMax").textContent=(st.choro==="p"?f1(mx):sg(mx));}
+  else {lb.style.background="linear-gradient(90deg,"+RAMP.join(",")+")";document.getElementById("legMin").textContent="0";document.getElementById("legMax").textContent=st.choro==="p"?f1(mx):f0(mx);}
+  document.getElementById("legNote").textContent=(st.choro==="p"?"Navetteurs pour 1 000 habitants de la municipalité (population 2021). ":st.choro==="n"?"Nombre de navetteurs. ":"")+(isD?"Orange : hausse de 2016 à 2021. Bleu : baisse. ":"Échelle en racine carrée. ")+"L'épaisseur des arcs suit le nombre de navetteurs.";
+}
+
+/* strip */
+function strip(){
+  const t=totals(st.yr==="d"?"21":st.yr), yl=st.yr==="16"?"2016":"2021";
+  if(st.dir==="in"){
+    document.getElementById("k1l").textContent="Emplois occupés par des non-résidents";
+    document.getElementById("k1").textContent=pc(t.share);
+    document.getElementById("k1s").textContent=f0(t.ext)+" navetteurs sur "+f0(t.all)+" emplois à lieu habituel ("+yl+")";
+  } else {
+    document.getElementById("k1l").textContent="Résidents qui travaillent ailleurs";
+    document.getElementById("k1").textContent=pc(t.share);
+    document.getElementById("k1s").textContent=f0(t.ext)+" résidents sur "+f0(t.all)+" travailleurs à lieu habituel ("+yl+")";
+  }
+  document.getElementById("k2").textContent=f1(t.avg)+" km";
+  document.getElementById("k2s").textContent="moyenne pondérée des flux de 100 km ou moins · "+f0(t.gt30)+" navetteurs à plus de 30 km";
+  document.getElementById("k3").textContent=f0(Math.round(t.kmday/1000)*1000);
+  document.getElementById("k3s").textContent="km aller-retour à vol d'oiseau, au minimum ("+yl+")";
+  const md=D.mode; document.getElementById("k4").textContent=pc(md.auto[0]/md.total[0]*100);
+  document.getElementById("k4s").textContent=pc(md.seul[0]/md.total[0]*100)+" conduisent seuls · "+pc((md.total[3]+md.total[4]+md.total[5])/md.total[0]*100)+" roulent 30 minutes ou plus";
+  const t16=totals("16"), t21=totals("21");
+  document.getElementById("yrHint").textContent=(st.dir==="in"?"Navetteurs vers Mont-Tremblant : ":"Résidents travaillant ailleurs : ")+f0(t16.ext)+" en 2016, "+f0(t21.ext)+" en 2021 ("+sg(t21.ext-t16.ext)+").";
+  document.getElementById("dirHint").textContent=st.dir==="in"?"Où habitent les personnes qui travaillent à Mont-Tremblant.":"Où travaillent les résidents de Mont-Tremblant.";
+}
+
+/* fiche */
+function kv(k,v){return "<div class='kv'><span class='k'>"+k+"</span><span class='v num'>"+v+"</span></div>";}
+function fiche(){
+  const T=document.getElementById("fTitle"),S=document.getElementById("fSub"),B=document.getElementById("fBody");
+  const t21=totals("21"), t16=totals("16");
+  if(!st.sel || st.sel===MT){
+    T.textContent="Mont-Tremblant"; S.textContent=st.dir==="in"?"Lieu de travail · toutes provenances":"Lieu de résidence · tous lieux de travail";
+    const ext=others().filter(m=>m[st.dir+"21"]>0).sort((a,b)=>b[st.dir+"21"]-a[st.dir+"21"]);
+    const top3=ext.slice(0,3).reduce((s,m)=>s+m[st.dir+"21"],0);
+    B.innerHTML="<div class='bt'>2021</div><div class='big2'>"+
+      "<div class='b'><div class='n num hi'>"+f0(t21.ext)+"</div><div class='t'>"+(st.dir==="in"?"navetteurs venant d'ailleurs":"résidents travaillant ailleurs")+"</div></div>"+
+      "<div class='b'><div class='n num'>"+f0(M[MT][st.dir+"21"])+"</div><div class='t'>résidents qui travaillent à Mont-Tremblant</div></div>"+
+      "<div class='b'><div class='n num'>"+ext.length+"</div><div class='t'>municipalités "+(st.dir==="in"?"d'origine":"de destination")+"</div></div>"+
+      "<div class='b'><div class='n num'>"+pc(top3/t21.ext*100)+"</div><div class='t'>viennent des trois premières</div></div></div>"+
+      "<div class='bt'>Évolution de 2016 à 2021</div>"+kv(st.dir==="in"?"Emplois à lieu habituel":"Travailleurs résidents",f0(t16.all)+" → "+f0(t21.all))+kv("Part non résidente",pc(t16.share)+" → "+pc(t21.share))+kv("Distance moyenne",f1(t16.avg)+" → "+f1(t21.avg)+" km")+kv("Km par jour (aller-retour)",f0(Math.round(t16.kmday/1000)*1000)+" → "+f0(Math.round(t21.kmday/1000)*1000))+
+      "<div class='bt'>Lecture</div><ul class='flags'>"+
+      (st.dir==="in"?
+       "<li>Plus de la moitié des personnes qui travaillent à Mont-Tremblant habitent ailleurs, surtout dans les municipalités voisines de la MRC des Laurentides. Cette part est stable entre 2016 et 2021.</li>"+
+       "<li>Ces trajets représentent au moins "+f0(Math.round(t21.kmday/1000)*1000)+" km par jour de travail, presque tous en automobile. C'est l'effet, en déplacements, du manque de logements accessibles à la main-d'œuvre.</li>"+
+       "<li class='info'>Le recensement de 2021 a eu lieu en mai, pendant la pandémie et hors saison touristique. Le recul de 2016 à 2021 doit être lu avec prudence.</li>"
+      :"<li>Un quart des résidents qui ont un lieu habituel de travail travaillent hors de Mont-Tremblant, une part en hausse depuis 2016.</li><li class='info'>Les destinations lointaines (Montréal, Laval, Val-d'Or) peuvent correspondre à des personnes qui séjournent près de leur travail pendant la semaine.</li>")+"</ul>";
+    return;
+  }
+  const m=M[st.sel], a=m[st.dir+"21"], b=m[st.dir+"16"];
+  T.textContent=disp(m); S.textContent=(m.mrc?"MRC "+m.mrc+" · ":"")+f1(m.dist)+" km à vol d'oiseau"+(m.src==="approx"?" (position approximative)":"");
+  B.innerHTML="<div class='bt'>"+(st.dir==="in"?"Personnes qui travaillent à Mont-Tremblant":"Résidents de Mont-Tremblant qui y travaillent")+"</div><div class='big2'>"+
+    "<div class='b'><div class='n num hi'>"+f0(a)+"</div><div class='t'>en 2021 ("+pc(a/t21.ext*100)+" des "+(st.dir==="in"?"navetteurs":"sorties")+")</div></div>"+
+    "<div class='b'><div class='n num'>"+f0(b)+"</div><div class='t'>en 2016 ("+sg(a-b)+")</div></div>"+
+    "<div class='b'><div class='n num'>"+f0(2*a*m.dist)+"</div><div class='t'>km aller-retour par jour de travail (2021)</div></div>"+
+    "<div class='b'><div class='n num'>"+(m.pop?f1(a/m.pop*1000):"n.d.")+"</div><div class='t'>pour 1 000 habitants</div></div></div>"+
+    "<div class='bt'>Dans l'autre sens</div>"+kv(st.dir==="in"?"Résidents de Mont-Tremblant qui y travaillent":"Personnes qui en viennent pour travailler à Mont-Tremblant",f0(m[(st.dir==="in"?"out":"in")+"21"])+" (2021)")+
+    kv("Population 2021",m.pop?f0(m.pop):"n.d.")+
+    (m.nom_actuel?"<div class='note-s'>Nommée "+m.nom.replace("--","–")+" au recensement de 2021, aujourd'hui "+m.nom_actuel+".</div>":"")+
+    (m.dist>100?"<div class='note-s'>Distance supérieure à 100 km : il s'agit probablement de personnes qui séjournent près de leur travail. Ce flux n'est pas compté dans la distance moyenne.</div>":"");
+}
+
+/* ranking */
+let lastCsv="";
+function rank(){
+  const ext=others().filter(m=>m[st.dir+"21"]>=st.thr||m[st.dir+"16"]>=st.thr).sort((a,b)=>(b[st.dir+"21"]-a[st.dir+"21"])||(b[st.dir+"16"]-a[st.dir+"16"]));
+  const mx=Math.max(...ext.map(m=>Math.max(m[st.dir+"21"],m[st.dir+"16"])),1); const nAll=ext.length; const shown=st.all?ext:ext.slice(0,15);
+  document.getElementById("rkTitle").textContent=st.dir==="in"?"D'où viennent les travailleurs":"Où travaillent les résidents qui sortent";
+  document.getElementById("rkDesc").textContent="Municipalités avec au moins "+st.thr+" navetteurs en 2016 ou en 2021, de la plus importante à la moins importante en 2021.";
+  const R=document.getElementById("rank");
+  R.innerHTML=shown.map(m=>"<div class='rk"+(st.sel===m.code?" sel":"")+"' data-c='"+m.code+"' tabindex='0'><span class='nm'>"+disp(m)+"</span><div class='bars'><div class='b' style='width:"+(m[st.dir+"21"]/mx*100)+"%;background:#f2d24b'></div><div class='b' style='width:"+(m[st.dir+"16"]/mx*100)+"%;background:#5f7f86'></div></div><span class='v'>"+f0(m[st.dir+"21"])+" <small>("+sg(m[st.dir+"21"]-m[st.dir+"16"])+")</small></span></div>").join("");
+  if(nAll>15) R.insertAdjacentHTML('beforeend',"<button class='copybtn' id='moreBtn' style='justify-self:start;margin-top:6px'>"+(st.all?"Afficher les 15 premières":"Afficher les "+nAll+" municipalités")+"</button>"); const mb=document.getElementById('moreBtn'); if(mb) mb.addEventListener('click',()=>{st.all=!st.all;rank();});
+  R.querySelectorAll(".rk").forEach(el=>{const go=()=>select(el.dataset.c);el.addEventListener("click",go);el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});});
+  const rows=[["code","municipalite","distance_km","vers_MT_2016","vers_MT_2021","depuis_MT_2016","depuis_MT_2021"]];
+  Object.entries(M).sort((a,b)=>b[1].in21-a[1].in21).forEach(([c,m])=>rows.push([c,m.nom.replace("--","–"),m.dist,m.in16,m.in21,m.out16,m.out21]));
+  lastCsv=rows.map(r=>r.join(";")).join("\n");
+}
+document.getElementById("copyCsv").addEventListener("click",()=>{const b=document.getElementById("copyCsv"),ta=document.getElementById("csvfallback");
+  const done=()=>{b.textContent="Flux copiés";setTimeout(()=>b.textContent="Copier les flux (CSV)",1800);};
+  try{navigator.clipboard.writeText(lastCsv).then(done).catch(()=>{ta.value=lastCsv;ta.hidden=false;ta.select();});}catch(e){ta.value=lastCsv;ta.hidden=false;ta.select();}});
+
+/* modes */
+(function(){const md=D.mode, DUR=[["< 15 min","#3fc7b4"],["15 à 29","#8fcf8a"],["30 à 44","#f2d24b"],["45 à 59","#f29a4b"],["60 et +","#e07a90"]];
+  const rows=[["Automobile, total",md.auto],["Conducteur seul",md.seul],["Transport en commun",md.tc],["Transport actif",md.actif],["Autre, moto",[md.autre[0]+md.moto[0],md.autre[1]+md.moto[1],md.autre[2]+md.moto[2],md.autre[3]+md.moto[3],md.autre[4]+md.moto[4],md.autre[5]+md.moto[5]]]];
+  document.getElementById("modes").innerHTML=rows.map(([l,r])=>"<div class='md'><span>"+l+"</span><div class='st' style='width:"+Math.max(4,r[0]/md.total[0]*100)+"%'>"+DUR.map((d,i)=>"<span style='width:"+(r[0]?r[i+1]/r[0]*100:0)+"%;background:"+d[1]+"'></span>").join("")+"</div><span class='v'>"+f0(r[0])+"</span></div>").join("");
+  document.getElementById("durleg").innerHTML="La longueur de la barre suit le nombre de travailleurs, les couleurs la durée du trajet : "+DUR.map(d=>"<span><i style='background:"+d[1]+"'></i>"+d[0]+"</span>").join("");})();
+
+/* controls */
+function seg(id,key,parse){document.querySelectorAll("#"+id+" button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.toggle("on",x===b));st[key]=parse?parse(b.dataset.v):b.dataset.v;render();}));}
+seg("dirSeg","dir"); seg("yrSeg","yr");
+document.getElementById("thr").addEventListener("input",e=>{st.thr=+e.target.value;document.getElementById("thrO").textContent=st.thr;render();});
+document.getElementById("choro").addEventListener("change",e=>{st.choro=e.target.value;draw();});
+document.getElementById("allBtn").addEventListener("click",()=>{select(null);fitDefault();});
+function select(c){st.sel=(c===st.sel)?null:c; document.getElementById("allBtn").classList.toggle("on",!st.sel); draw(); fiche(); rank();}
+function render(){strip();draw();fiche();rank();}
+render();
+</script>
