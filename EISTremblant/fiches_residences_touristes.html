@@ -1,0 +1,302 @@
+<title>Fiche méthode parc non permanent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f8f8;--paper:#ffffff;--ink:#132428;--dim:#566b6f;--line:#d6e1e2;--soft:#eaf2f2;
+  --accent:#17766b;--accent-soft:#dff1ee;--amber:#8a6400;--amber-soft:#fbf1d2;--rose:#a3405a;
+  --s-village:#1f9e8e;--s-jovite:#c9a100;--s-tremblant:#4f7fe0;--s-hors:#9a62c7;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+    --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+    --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+  --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+  --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 56px}
+.doc{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(18px,5vw,56px) 48px}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;text-wrap:balance;line-height:1.2}
+h1{font-size:clamp(26px,4vw,34px);margin:6px 0 10px}
+h2{font-size:22px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;color:var(--accent);font-weight:500}
+h3{font-size:17px;margin:26px 0 6px}
+p,li{max-width:68ch}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:0 0 12px}
+li{margin:3px 0}
+.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.meta b{color:var(--ink);font-weight:600}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+.summary p{margin:0 0 8px}.summary p:last-child{margin:0}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:20px;margin-top:14px}
+.toc a{color:var(--accent);text-decoration:none}.toc a:hover{text-decoration:underline}
+@media (max-width:620px){.toc{columns:1}}
+.num{font-variant-numeric:tabular-nums}
+code,.f{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.formula{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;background:var(--soft);border-radius:8px;padding:12px 16px;margin:8px 0 14px;overflow-x:auto;white-space:pre;line-height:1.7}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px 14px;margin:22px 0 0}
+.step .k{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:14px;margin-top:2px}
+.step h3{margin:2px 0 6px}
+.ex{border-left:3px solid var(--amber);background:var(--amber-soft);padding:8px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin:6px 0 10px}
+.ex b{color:var(--amber)}
+.tbl{overflow-x:auto;margin:10px 0 16px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);font-weight:700;background:var(--soft)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--soft)}
+td .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+td.hi{color:var(--amber);font-weight:700}
+.note{font-size:13.5px;color:var(--dim)}
+.callout{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.callout.warn{border-color:var(--rose)}
+.callout h3{margin-top:0}
+.chk{list-style:none;padding:0}
+.chk li{padding-left:28px;position:relative;margin:8px 0}
+.chk li::before{content:"";position:absolute;left:2px;top:5px;width:14px;height:14px;border:2px solid var(--accent);border-radius:3px}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px}
+.flow span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.flow i{color:var(--dim);font-style:normal}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+</style>
+<article class="doc">
+<div class="eyebrow">Fiche méthodologique · ÉIS du plan d'urbanisme de Mont-Tremblant</div>
+<h1>Le parc qui échappe aux résidents</h1>
+<div class="meta">
+  <span><b>Outil :</b> Le parc qui échappe aux résidents, Mont-Tremblant (prototype)</span>
+  <span><b>Production :</b> Direction de santé publique, Santé Québec Laurentides</span>
+  <span><b>Version :</b> septembre 2026</span>
+</div>
+
+<div class="summary">
+  <p><b>En bref.</b> L'outil mesure la part des logements de Mont-Tremblant qui ne sont pas occupés par des ménages résidents. Il localise ensuite les résidences de tourisme, îlot par îlot, à partir de deux sources indépendantes : le rôle d'évaluation foncière et le registre du ministère du Tourisme.</p>
+  <p>Il les confronte enfin aux règles de localisation du plan d'urbanisme : la prohibition au centre-ville et au Village (objectif 2.3.4) et les critères de la section 6.6. Le plan annonce qu'il va encadrer la localisation des résidences de tourisme sans montrer où elles se trouvent. L'outil comble ce manque et montre où la réglementation aurait un effet réel.</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#objet">Objet et usages</a></li>
+  <li><a href="#territoire">Territoire et unités d'analyse</a></li>
+  <li><a href="#sources">Sources de données</a></li>
+  <li><a href="#traitement">Chaîne de traitement</a></li>
+  <li><a href="#resultats">Résultats</a></li>
+  <li><a href="#sensibilite">Sensibilité à la définition des rives</a></li>
+  <li><a href="#indicateurs">Indicateurs de la carte</a></li>
+  <li><a href="#lecture">Règles de lecture automatique</a></li>
+  <li><a href="#limites">Limites et précautions</a></li>
+</ol>
+
+<h2 id="objet"><span class="n">1</span>Objet et usages</h2>
+<p>Selon le plan d'urbanisme, 38,4 % des logements de Mont-Tremblant sont occupés par des résidents non habituels, contre 7,4 % pour l'ensemble du Québec. Le plan reconnaît aussi que les résidences de tourisme « contribuent à réduire une partie de l'offre locative disponible pour les ménages locaux ». Chaque logement retiré du marché résidentiel réduit l'offre pour la population permanente et la main-d'œuvre, et pèse sur l'abordabilité. Or l'abordabilité est un déterminant de la santé que l'ÉIS place au cœur de l'enjeu 2 (logement de la main-d'œuvre).</p>
+<p>L'outil sert à répondre à trois questions :</p>
+<ul>
+  <li>Où se concentre le parc qui n'est pas habité en permanence ?</li>
+  <li>Où se trouvent les résidences de tourisme, et combien d'entre elles seraient touchées par la prohibition prévue au centre-ville et au Village ?</li>
+  <li>Combien se trouvent là où le plan ne veut pas les voir : en rive, et hors des secteurs desservis par les réseaux d'aqueduc et d'égout ?</li>
+</ul>
+<p>Il complète l'outil des besoins en logement par secteur, qui ne compte que les ménages privés et ne tient pas compte du parc touristique.</p>
+
+<h2 id="territoire"><span class="n">2</span>Territoire et unités d'analyse</h2>
+<p>L'outil travaille à trois échelles emboîtées :</p>
+<ul>
+  <li><b>188 îlots de diffusion</b> (Statistique Canada, 2021). C'est l'échelle de localisation des résidences de tourisme, des unités du rôle et des règles du plan.</li>
+  <li><b>18 aires de diffusion</b>, formées en regroupant les îlots selon les huit premiers chiffres de leur identifiant. C'est l'échelle du calcul du parc non occupé (voir l'étape 5).</li>
+  <li><b>4 secteurs</b> : Village, Saint-Jovite, Tremblant et hors périmètre urbain. Ce sont les mêmes que dans les autres outils de l'ÉIS.</li>
+</ul>
+<p><b>Sélection des îlots.</b> Le fichier de départ comptait 209 îlots. On a gardé ceux dont au moins la moitié de la superficie se trouve dans la limite municipale, ce qui donne 188 îlots. Chacun est rattaché au secteur qui en couvre la plus grande part. Cinq îlots sont signalés « à vérifier » :</p>
+<ul>
+  <li>un îlot est partagé entre deux secteurs, à 55 % et 45 % ;</li>
+  <li>deux îlots tombent dans un espace entre les polygons de secteurs et sont rattachés au secteur le plus proche ;</li>
+  <li>deux très petits îlots se trouvent en bordure.</li>
+</ul>
+
+<h2 id="sources"><span class="n">3</span>Sources de données</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Source</th><th class="l">Contenu utilisé</th><th class="l">Rôle dans l'outil</th></tr></thead>
+  <tbody>
+    <tr><td class="l"><b>Rôle d'évaluation foncière 2025</b> (MAMH), unités d'évaluation de Mont-Tremblant (code 78102)</td><td class="l">Code d'utilisation (CUBF), usage prédominant, nombre de logements, géométrie du lot. 15 057 unités.</td><td class="l">Parc de logements, résidences de tourisme (5834), unités hôtelières, terrains de golf.</td></tr>
+    <tr><td class="l"><b>SIT Québec</b>, « Chalets, appartements et résidences de tourisme » (ministère du Tourisme, CC-BY 4.0)</td><td class="l">Établissements ayant un certificat d'enregistrement en vigueur : coordonnées, nombre d'unités, capacité maximale, type d'exploitation. 1 021 établissements à Mont-Tremblant (code géographique 2478102).</td><td class="l">Deuxième source indépendante sur les résidences de tourisme.</td></tr>
+    <tr><td class="l"><b>Environics Analytics DemoStats 2025</b>, via l'enrichissement Esri par îlot</td><td class="l">Ménages (<code>ECYSTYHHD</code>) et population (<code>ECYPTAPOP</code>) en 2025.</td><td class="l">Parc occupé par des ménages résidents.</td></tr>
+    <tr><td class="l"><b>Statistique Canada</b>, îlots de diffusion 2021</td><td class="l">Géométrie et identifiants (<code>IDIDU</code>).</td><td class="l">Unité de base.</td></tr>
+    <tr><td class="l"><b>GRHQ</b> (MRNF), bassin 04AP</td><td class="l">Lacs (type 21) et cours d'eau surfaciques (type 10).</td><td class="l">Secteurs riverains.</td></tr>
+    <tr><td class="l"><b>Grandes affectations du schéma</b> (MRC des Laurentides)</td><td class="l">Thèmes d'affectation. L'affectation « Urbaine » couvre les noyaux de Saint-Jovite et du Village.</td><td class="l">Zone de prohibition et répartition par affectation.</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Le registre contient les noms, téléphones et courriels des exploitants. L'outil ne conserve aucune de ces données : il garde seulement la position, le nombre d'unités, la capacité et le type d'exploitation. Aucun établissement n'est affiché individuellement.</p>
+
+<h2 id="traitement"><span class="n">4</span>Chaîne de traitement</h2>
+<div class="flow"><span>Îlots de Mont-Tremblant</span><i>→</i><span>Unités du rôle</span><i>→</i><span>Registre</span><i>→</i><span>Parc non occupé</span><i>→</i><span>Règles du plan</span><i>→</i><span>Situations</span></div>
+
+<div class="step"><div class="k">1</div><div>
+  <h3>Rattacher les unités du rôle aux îlots</h3>
+  <p>Pour chaque unité d'évaluation, on calcule un point représentatif, c'est-à-dire un point situé à coup sûr à l'intérieur du lot. On rattache ensuite l'unité à l'îlot qui contient ce point, ou à l'îlot le plus proche s'il se trouve à moins de 50 m. Au total, 130 unités restent hors des îlots retenus, principalement en bordure de la municipalité.</p>
+</div></div>
+
+<div class="step"><div class="k">2</div><div>
+  <h3>Classer les unités du rôle</h3>
+  <div class="tbl"><table>
+    <thead><tr><th class="l">Catégorie de l'outil</th><th class="l">Règle de classement</th><th>Logements</th></tr></thead>
+    <tbody class="num">
+      <tr><td class="l">Logements résidentiels</td><td class="l">Usage prédominant « Résidentiel » ou « Résidentiel institutionnel ». On compte le nombre de logements, ou 1 s'il n'est pas renseigné.</td><td>9 779</td></tr>
+      <tr><td class="l">Résidences de tourisme</td><td class="l">Code d'utilisation 5834 (résidence de tourisme, appartement, maison ou chalet meublé)</td><td>1 194</td></tr>
+      <tr><td class="l">Unités hôtelières</td><td class="l">Codes 5831 (hôtel, y compris les condos-hôtels), 5832, 5833 et 5836</td><td>1 826</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Les unités hôtelières sont comptées à part et ne font pas partie du parc de logements. La plupart sont des condos-hôtels du pôle de la station, que le plan considère comme de l'hébergement hôtelier.</p>
+</div></div>
+
+<div class="step"><div class="k">3</div><div>
+  <h3>Extraire et rattacher le registre</h3>
+  <p>On garde les établissements dont l'adresse d'exploitation est à Mont-Tremblant. Leurs coordonnées servent à les rattacher aux îlots. Dans le registre, 77 établissements partagent exactement le même point au centre de Saint-Jovite. C'est sans doute une localisation par défaut. Ils restent dans le total municipal, mais sont exclus de la répartition entre îlots. Il reste 944 établissements localisés, pour 1 086 unités et une capacité de 7 042 personnes.</p>
+</div></div>
+
+<div class="step"><div class="k">4</div><div>
+  <h3>Définir le parc de logements</h3>
+  <div class="formula">parc = logements résidentiels du rôle + logements 5834 du rôle</div>
+  <p>Le parc comprend donc les résidences permanentes, les chalets de villégiature et les résidences de tourisme. Il exclut l'hébergement hôtelier.</p>
+</div></div>
+
+<div class="step"><div class="k">5</div><div>
+  <h3>Mesurer le parc non occupé par des ménages</h3>
+  <div class="formula">non occupé = max(0, parc − ménages 2025)
+part non occupée = non occupé / parc</div>
+  <p><b>Pourquoi à l'échelle de l'aire de diffusion.</b> Environics estime les ménages par aire de diffusion, puis les répartit entre les îlots selon un modèle. À l'échelle de l'îlot, cette répartition donne des valeurs impossibles : 49 îlots comptent plus de ménages que de logements au rôle. En regroupant les îlots en aires de diffusion, il ne reste qu'une seule valeur impossible, en limite de secteur, qui est ramenée à zéro.</p>
+  <p class="note">Le rôle et Environics portent tous deux sur 2025, ce qui évite de comparer des années différentes. Le recensement donne un ordre de grandeur de comparaison : 38,4 % de logements occupés par des résidents non habituels. L'outil obtient 45,2 %, notamment parce qu'il ajoute au parc les résidences de tourisme du rôle.</p>
+</div></div>
+
+<div class="step"><div class="k">6</div><div>
+  <h3>Traduire les règles du plan sur la carte</h3>
+  <p>La section 6.6 énumère huit critères de localisation. Une zone peut en remplir un ou plusieurs pour que les résidences de tourisme y soient autorisées. L'objectif 2.3.4 prohibe la location à court terme au centre-ville et au Village. Voici comment chaque règle est représentée :</p>
+  <div class="tbl"><table>
+    <thead><tr><th class="l">Règle du plan</th><th class="l">Couche utilisée</th><th class="l">Statut</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Prohibition au centre-ville et au Village (2.3.4)</td><td class="l">Affectation « Urbaine » du schéma (noyaux de Saint-Jovite et du Village)</td><td class="l">Indicateur de substitution</td></tr>
+      <tr><td class="l">Hors des secteurs riverains</td><td class="l">300 m (ou 100 m) autour des lacs, 100 m autour des cours d'eau surfaciques</td><td class="l">Évalué</td></tr>
+      <tr><td class="l">Secteur desservi par l'aqueduc et l'égout</td><td class="l">Périmètre d'urbanisation</td><td class="l">Indicateur de substitution</td></tr>
+      <tr><td class="l">À proximité d'un golf</td><td class="l">750 m autour du point représentatif des terrains de golf du rôle (codes 7411 et 7412)</td><td class="l">Évalué</td></tr>
+      <tr><td class="l">Usage déjà pratiqué dans le secteur</td><td class="l">Présence de résidences de tourisme dans l'îlot</td><td class="l">Évalué</td></tr>
+      <tr><td class="l">Hors des secteurs résidentiels établis</td><td class="l">–</td><td class="l">Non évalué</td></tr>
+      <tr><td class="l">À proximité d'un corridor de signature</td><td class="l">–</td><td class="l">Non évalué</td></tr>
+      <tr><td class="l">Affectation compatible au plan</td><td class="l">–</td><td class="l">Non évalué</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Les trois critères non évalués nécessitent des couches de la Ville : le zonage, les corridors de signature (carte 14) et les aires d'affectation du plan (carte 20).</p>
+</div></div>
+
+<div class="step"><div class="k">7</div><div>
+  <h3>Classer chaque résidence de tourisme selon sa situation</h3>
+  <p>Chaque unité du rôle et chaque établissement du registre reçoit une seule situation. On applique les règles dans l'ordre ci-dessous, et la première qui s'applique l'emporte :</p>
+  <div class="tbl"><table>
+    <thead><tr><th class="l">Ordre</th><th class="l">Situation</th><th class="l">Lecture au regard du plan</th></tr></thead>
+    <tbody>
+      <tr><td class="l">1</td><td class="l">Centre-ville ou Village</td><td class="l">Zone où le plan veut prohiber la location à court terme</td></tr>
+      <tr><td class="l">2</td><td class="l">Riverain, hors périmètre urbain</td><td class="l">Cas que le plan décrit comme source de pression sur les installations septiques et les lacs</td></tr>
+      <tr><td class="l">3</td><td class="l">Riverain, en périmètre urbain</td><td class="l">Contraire au critère riverain, mais secteur présumé desservi</td></tr>
+      <tr><td class="l">4</td><td class="l">Hors rive, hors périmètre urbain</td><td class="l">Secteur présumé non desservi</td></tr>
+      <tr><td class="l">5</td><td class="l">Hors rive, en périmètre urbain</td><td class="l">Forme de concentration que vise le plan</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">La proximité d'un golf est indiquée à part, car elle se combine avec n'importe laquelle de ces situations.</p>
+</div></div>
+
+<h2 id="resultats"><span class="n">5</span>Résultats</h2>
+<h3>Parc et résidences de tourisme par secteur</h3>
+<div class="tbl"><table>
+  <thead><tr><th>Secteur</th><th>Ménages 2025</th><th>Parc au rôle</th><th>Non occupé</th><th>Part non occupée</th><th>Rés. de tourisme (rôle)</th><th>Enregistrées (unités)</th><th>Unités hôtelières</th></tr></thead>
+  <tbody class="num">
+    <tr><td><span class="sw" style="background:var(--s-village)"></span>Village</td><td>451</td><td>1 059</td><td>608</td><td class="hi">57 %</td><td>127</td><td>195</td><td>264</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-jovite)"></span>Saint-Jovite</td><td>4 155</td><td>5 460</td><td>1 305</td><td class="hi">24 %</td><td>83</td><td>78</td><td>38</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-tremblant)"></span>Tremblant</td><td>286</td><td>2 433</td><td>2 147</td><td class="hi">88 %</td><td>848</td><td>716</td><td>1 337</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-hors)"></span>Hors PU</td><td>1 123</td><td>2 021</td><td>898</td><td class="hi">44 %</td><td>136</td><td>97</td><td>187</td></tr>
+    <tr class="tot"><td>Mont-Tremblant</td><td>6 015</td><td>10 973</td><td>4 958</td><td class="hi">45 %</td><td>1 194</td><td>1 086</td><td>1 826</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Les unités enregistrées ne comptent que les 944 établissements localisés. Si l'on ajoute les 77 établissements localisés par défaut, le registre compte 1 021 établissements et 1 171 unités.</p>
+
+<h3>Situation des résidences de tourisme (rives à 300 m des lacs)</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Situation</th><th>Rôle (logements)</th><th>Part</th><th>Registre (établissements)</th><th>Part</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Centre-ville ou Village</td><td>138</td><td>12 %</td><td>150</td><td>16 %</td></tr>
+    <tr><td class="l">Riverain, hors périmètre urbain</td><td>90</td><td>8 %</td><td>68</td><td>7 %</td></tr>
+    <tr><td class="l">Riverain, en périmètre urbain</td><td>785</td><td>66 %</td><td>545</td><td>58 %</td></tr>
+    <tr><td class="l">Hors rive, hors périmètre urbain</td><td>46</td><td>4 %</td><td>22</td><td>2 %</td></tr>
+    <tr><td class="l">Hors rive, en périmètre urbain</td><td>135</td><td>11 %</td><td>159</td><td>17 %</td></tr>
+    <tr class="tot"><td class="l">Total</td><td>1 194</td><td>100 %</td><td>944</td><td>100 %</td></tr>
+  </tbody>
+</table></div>
+<p><b>Ce qu'il faut retenir.</b></p>
+<ul>
+  <li><b>Le secteur Tremblant concentre 71 % des résidences de tourisme du rôle.</b> Près de 90 % de son parc n'est pas habité par des ménages résidents.</li>
+  <li><b>La prohibition prévue au centre-ville et au Village toucherait environ 140 à 150 résidences de tourisme,</b> dont environ les deux tiers au Village. C'est de l'ordre du quart du besoin résiduel en logements estimé pour Saint-Jovite dans l'outil logement (540 logements).</li>
+  <li><b>Les deux sources concordent sur la répartition,</b> même si elles ne comptent pas exactement la même chose.</li>
+</ul>
+
+<h2 id="sensibilite"><span class="n">6</span>Sensibilité à la définition des rives</h2>
+<p>Le plan exclut les « secteurs riverains » sans en préciser la largeur. Or le résultat dépend presque entièrement de cette largeur, parce que le pôle de la station est entouré de petits lacs.</p>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Résidences de tourisme du rôle</th><th>Rives à 300 m</th><th>Rives à 100 m</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Riveraines, hors périmètre urbain</td><td>90</td><td>39</td></tr>
+    <tr><td class="l">Riveraines, en périmètre urbain</td><td>785</td><td>131</td></tr>
+    <tr><td class="l">Hors rive, en périmètre urbain</td><td>135</td><td>789</td></tr>
+    <tr class="tot"><td class="l">Part riveraine</td><td>79 %</td><td>16 %</td></tr>
+  </tbody>
+</table></div>
+<p>Avec 300 m, qui correspond au corridor riverain des normes de lotissement, la majorité des résidences de tourisme de la station contreviennent au critère. Avec 100 m, la plupart le respectent. <b>La largeur que la Ville retiendra dans son règlement décidera donc de la portée réelle du critère riverain.</b> L'outil permet de passer d'une largeur à l'autre pour le montrer.</p>
+
+<h2 id="indicateurs"><span class="n">7</span>Indicateurs de la carte</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Indicateur</th><th class="l">Échelle</th><th class="l">Calcul</th></tr></thead>
+  <tbody>
+    <tr><td class="l">Part du parc non occupée par des ménages</td><td class="l">Aire de diffusion</td><td class="l">Étape 5</td></tr>
+    <tr><td class="l">Logements non occupés par des ménages</td><td class="l">Aire de diffusion</td><td class="l">Parc − ménages, ramené à zéro au besoin</td></tr>
+    <tr><td class="l">Résidences de tourisme</td><td class="l">Îlot</td><td class="l">Logements 5834 du rôle, ou établissements du registre, selon la source choisie</td></tr>
+    <tr><td class="l">Résidences de tourisme pour 100 logements</td><td class="l">Îlot</td><td class="l">Résidences de tourisme ÷ parc de l'îlot × 100</td></tr>
+    <tr><td class="l">Capacité d'accueil enregistrée</td><td class="l">Îlot</td><td class="l">Somme des capacités maximales déclarées au registre</td></tr>
+    <tr><td class="l">Écart entre le rôle et le registre</td><td class="l">Îlot</td><td class="l">Logements 5834 − unités enregistrées. Un écart positif signale des unités classées touristiques au rôle qui sont absentes du registre, ou un classement différent.</td></tr>
+    <tr><td class="l">Unités hôtelières</td><td class="l">Îlot</td><td class="l">Codes 5831, 5832, 5833 et 5836</td></tr>
+    <tr><td class="l">Part de l'îlot en secteur riverain</td><td class="l">Îlot</td><td class="l">Superficie en rive ÷ superficie de l'îlot</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Pour les comptes (résidences, capacité, unités hôtelières, logements non occupés), l'échelle de couleur est en racine carrée, afin que quelques îlots très chargés n'écrasent pas les autres. Les îlots sans valeur sont en gris foncé.</p>
+
+<h2 id="lecture"><span class="n">8</span>Règles de lecture automatique</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Condition</th><th class="l">Message affiché</th></tr></thead>
+  <tbody>
+    <tr><td class="l">Part non occupée ≥ 50 %</td><td class="l">Plus de la moitié du parc n'est pas disponible pour la population permanente et la main-d'œuvre.</td></tr>
+    <tr><td class="l">Au moins une résidence de tourisme au centre-ville ou au Village</td><td class="l">Effet direct possible de l'objectif 2.3.4.</td></tr>
+    <tr><td class="l">Riveraines hors périmètre urbain ≥ 15 %</td><td class="l">Pression sur les installations septiques et les lacs, relevée par le plan.</td></tr>
+    <tr><td class="l">Hors rive et en périmètre urbain ≥ 50 %</td><td class="l">Forme de concentration visée par le plan.</td></tr>
+    <tr><td class="l">Rôle − registre &gt; 50 unités</td><td class="l">Possibles unités non enregistrées ou classement différent.</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="limites"><span class="n">9</span>Limites et précautions</h2>
+<ul>
+  <li><b>Le rôle classe selon l'usage prédominant.</b> Une maison louée à court terme de temps à autre reste classée résidentielle. Le rôle sous-estime donc la location touristique occasionnelle.</li>
+  <li><b>Le registre ne compte que les établissements enregistrés.</b> L'écart avec le rôle ne permet pas, à lui seul, de conclure qu'il y a de la location illégale.</li>
+  <li><b>Le parc non occupé n'est pas fait que de résidences de tourisme.</b> Il comprend aussi les chalets de villégiature, les logements vacants et les résidences secondaires. Seule une partie de ces logements pourrait revenir au marché résidentiel.</li>
+  <li><b>Les ménages sont des estimations modélisées.</b> C'est pourquoi le calcul se fait par aire de diffusion et non par îlot.</li>
+  <li><b>Deux règles reposent sur des indicateurs de substitution.</b> L'affectation « Urbaine » du schéma est plus large que le centre-ville au sens du plan. Le périmètre d'urbanisation ne garantit pas que les réseaux d'aqueduc et d'égout desservent chaque terrain.</li>
+  <li><b>Les cours d'eau linéaires ne sont pas inclus.</b> Seuls les cours d'eau représentés par des surfaces dans la GRHQ le sont. Les secteurs riverains des petits ruisseaux sont donc sous-représentés.</li>
+  <li><b>La proximité des golfs est approximative.</b> Elle est mesurée depuis un point au centre de chaque terrain, faute d'en avoir le contour complet.</li>
+  <li><b>La localisation des établissements du registre dépend de leur géocodage.</b> Les 77 points localisés par défaut sont exclus de la carte.</li>
+</ul>
+
+<footer>
+  Direction de santé publique, Santé Québec Laurentides · Évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant · Suite C.A.R.T.O.S.<br>
+  Sources : MAMH, rôle d'évaluation foncière 2025 · Ministère du Tourisme, SIT Québec (CC-BY 4.0) · Environics Analytics, DemoStats 2025 (via Esri) · Statistique Canada, îlots de diffusion 2021 · MRNF, GRHQ · MRC des Laurentides, grandes affectations · Ville de Mont-Tremblant, plan d'urbanisme (objectif 2.3.4 et section 6.6). Outil d'aide à la décision, non réglementaire.
+</footer>
+</article>
