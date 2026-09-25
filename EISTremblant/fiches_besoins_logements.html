@@ -1,0 +1,303 @@
+<title>Fiche méthode logement Mont-Tremblant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f8f8;--paper:#ffffff;--ink:#132428;--dim:#566b6f;--line:#d6e1e2;--soft:#eaf2f2;
+  --accent:#17766b;--accent-soft:#dff1ee;--amber:#8a6400;--amber-soft:#fbf1d2;--rose:#a3405a;
+  --s-village:#1f9e8e;--s-jovite:#c9a100;--s-tremblant:#4f7fe0;--s-hors:#9a62c7;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+    --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+    --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+  --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+  --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 56px}
+.doc{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(18px,5vw,56px) 48px}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;text-wrap:balance;line-height:1.2}
+h1{font-size:clamp(26px,4vw,34px);margin:6px 0 10px}
+h2{font-size:22px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;color:var(--accent);font-weight:500}
+h3{font-size:17px;margin:26px 0 6px}
+p,li{max-width:68ch}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:0 0 12px}
+li{margin:3px 0}
+.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.meta b{color:var(--ink);font-weight:600}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+.summary p{margin:0 0 8px}.summary p:last-child{margin:0}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:20px;margin-top:14px}
+.toc a{color:var(--accent);text-decoration:none}.toc a:hover{text-decoration:underline}
+@media (max-width:620px){.toc{columns:1}}
+.num{font-variant-numeric:tabular-nums}
+code,.f{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.formula{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;background:var(--soft);border-radius:8px;padding:12px 16px;margin:8px 0 14px;overflow-x:auto;white-space:pre;line-height:1.7}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px 14px;margin:22px 0 0}
+.step .k{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:14px;margin-top:2px}
+.step h3{margin:2px 0 6px}
+.ex{border-left:3px solid var(--amber);background:var(--amber-soft);padding:8px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin:6px 0 10px}
+.ex b{color:var(--amber)}
+.tbl{overflow-x:auto;margin:10px 0 16px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);font-weight:700;background:var(--soft)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--soft)}
+td .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+td.hi{color:var(--amber);font-weight:700}
+.note{font-size:13.5px;color:var(--dim)}
+.callout{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.callout.warn{border-color:var(--rose)}
+.callout h3{margin-top:0}
+.chk{list-style:none;padding:0}
+.chk li{padding-left:28px;position:relative;margin:8px 0}
+.chk li::before{content:"";position:absolute;left:2px;top:5px;width:14px;height:14px;border:2px solid var(--accent);border-radius:3px}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px}
+.flow span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.flow i{color:var(--dim);font-style:normal}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+</style>
+
+<article class="doc">
+<div class="eyebrow">Fiche méthodologique · ÉIS du plan d'urbanisme de Mont-Tremblant</div>
+<h1>Estimation des besoins en logement par secteur</h1>
+<div class="meta">
+  <span><b>Outil :</b> Besoins en logement par secteur, Mont-Tremblant (prototype)</span>
+  <span><b>Production :</b> Direction de santé publique, Santé Québec Laurentides</span>
+  <span><b>Version :</b> septembre 2026</span>
+</div>
+
+<div class="summary">
+  <p><b>En bref.</b> L'Institut de la statistique du Québec (ISQ) projette le nombre de ménages pour l'ensemble de Mont-Tremblant, mais pas pour ses secteurs. L'outil répartit donc la croissance municipale projetée entre les quatre secteurs (Village, Saint-Jovite, Tremblant et hors périmètre urbain), puis la convertit en nombre de logements à construire.</p>
+  <p>Il présente deux mesures : les logements requis depuis 2021 et le <b>besoin résiduel</b>, soit ce qu'il reste à construire après la croissance déjà observée de 2021 à 2025. L'outil sert à l'aide à la décision : ses résultats sont des ordres de grandeur et n'ont aucune valeur réglementaire.</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#objet">Objet et usages</a></li>
+  <li><a href="#territoire">Territoire et unités d'analyse</a></li>
+  <li><a href="#sources">Sources de données</a></li>
+  <li><a href="#calcul">Chaîne de calcul</a></li>
+  <li><a href="#exemple">Résultats du scénario de référence</a></li>
+  <li><a href="#sensibilite">Sensibilité aux paramètres</a></li>
+  <li><a href="#indicateurs">Indicateurs de portrait et de tendance</a></li>
+  <li><a href="#lecture">Règles de lecture automatique</a></li>
+  <li><a href="#limites">Limites et précautions</a></li>
+</ol>
+
+<h2 id="objet"><span class="n">1</span>Objet et usages</h2>
+<p>Le logement est un déterminant majeur de la santé. Son abordabilité, sa qualité, sa taille et sa localisation influencent la santé physique et mentale, l'accès aux services et le recours aux modes de transport actifs. Dans le cadre de l'évaluation d'impact sur la santé (ÉIS) du plan d'urbanisme, l'outil sert à répondre à trois questions :</p>
+<ul>
+  <li>Combien de logements faudra-t-il pour loger la croissance des ménages, et dans quels secteurs ?</li>
+  <li>Le rythme de construction récent suffit-il à suivre ce besoin ?</li>
+  <li>Quelle part de la croissance serait logée dans les périmètres urbains plutôt qu'à l'extérieur, et quel serait l'effet d'une orientation plus forte vers ces périmètres ?</li>
+</ul>
+<p>Il complète le Diagnostic habitation régional (Laurentides, RSS 15), qui fait le même calcul à l'échelle des MRC et des municipalités, en descendant au niveau infra-municipal.</p>
+
+<h2 id="territoire"><span class="n">2</span>Territoire et unités d'analyse</h2>
+<p>L'analyse porte sur quatre secteurs, qui ensemble couvrent environ 247 km² de la ville.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Secteur</th><th class="l">Type</th><th>Superficie (km²)</th><th>Ménages 2025</th><th>Part des ménages</th></tr></thead>
+  <tbody class="num">
+    <tr><td><span class="sw" style="background:var(--s-village)"></span>Village</td><td class="l">Périmètre urbain</td><td>13,1</td><td>451</td><td>7,5 %</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-jovite)"></span>Saint-Jovite</td><td class="l">Périmètre urbain</td><td>51,4</td><td>4 155</td><td>69,1 %</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-tremblant)"></span>Tremblant</td><td class="l">Périmètre urbain</td><td>84,1</td><td>286</td><td>4,8 %</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-hors)"></span>Hors périmètre urbain</td><td class="l">Hors PU</td><td>98,1</td><td>1 123</td><td>18,7 %</td></tr>
+    <tr class="tot"><td>Ensemble</td><td class="l"></td><td>246,8</td><td>6 015</td><td>100 %</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Ménages : estimation Environics 2025, non ajustée. Le découpage provient du fichier <code>secteurs_tremblant_donnees3.geojson</code> (EPSG:4326). Le secteur hors périmètre urbain est composé de plusieurs polygones distincts.</p>
+
+<h2 id="sources"><span class="n">3</span>Sources de données</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Source</th><th class="l">Variables utilisées</th><th class="l">Rôle dans l'outil</th></tr></thead>
+  <tbody>
+    <tr><td class="l"><b>ISQ</b>, projections de ménages privés, édition 2025, Mont-Tremblant</td><td class="l">Ménages 2021 : 5 470. Ménages 2041 : 6 311 (faible), 6 798 (référence), 7 291 (fort).</td><td class="l">Croissance municipale visée. Source officielle et référence principale.</td></tr>
+    <tr><td class="l"><b>Environics Analytics DemoStats</b>, via l'enrichissement Esri (répartition par îlots de diffusion)</td><td class="l">Ménages : <code>EHYSTYHHD</code> (2021), <code>ECYSTYHHD</code> (2025), <code>P0YSTYHHD</code> (2035). Mode d'occupation : <code>ECYTEN*</code>, <code>P0YTEN*</code>. Typologie : <code>ECYSTY*</code>, <code>P0YSTY*</code>. Période de construction : <code>ECYPOC*</code>. Âge : <code>ECYPTA*</code>. Revenu médian : <code>ECYHNIMED</code>. Travailleurs sur place : <code>ECYWORKPOP</code>. Population projetée : <code>Y21BASHPOP</code> à <code>Y46BASHPOP</code>.</td><td class="l">Clé de répartition entre les secteurs, état du parc en 2025, rythme de construction récent, portrait.</td></tr>
+    <tr><td class="l"><b>Statistique Canada</b>, recensement 2021, îlots agrégés par secteur</td><td class="l"><code>PCT_INABOR</code>, <code>PCT_BESOIN</code>, <code>PCT_REPAR_</code>, <code>PCT_MEN_1P</code>, <code>PCT_MFR_AP</code>, <code>LOG_OCC_20</code>, <code>POP_TOT_20</code></td><td class="l">Portrait des conditions de logement et règles de lecture.</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Pour s'arrimer aux autres outils de la suite C.A.R.T.O.S., l'outil utilise les mêmes projections ISQ que le Diagnostic habitation régional.</p>
+
+<h2 id="calcul"><span class="n">4</span>Chaîne de calcul</h2>
+<p>Le calcul suit huit étapes, toujours dans le même ordre. L'appli permet de modifier cinq paramètres : le scénario, l'horizon, le taux d'inoccupation visé, la clé de répartition et la part de la croissance hors du périmètre urbain. Les exemples ci-dessous portent sur Saint-Jovite, avec les réglages par défaut : scénario de référence, horizon 2041, taux d'inoccupation de 3 %, clé « tendance ».</p>
+<div class="flow"><span>Croissance ISQ</span><i>→</i><span>Clé de répartition</span><i>→</i><span>Croissance du secteur</span><i>→</i><span>Ménages visés</span><i>→</i><span>Logements requis</span><i>→</i><span>Besoin résiduel</span><i>→</i><span>Rythme annuel et part locative</span></div>
+
+<div class="step"><div class="k">1</div><div>
+  <h3>Croissance municipale à l'horizon choisi</h3>
+  <p>La croissance du nombre de ménages entre 2021 et 2041 provient directement de l'ISQ. Pour les horizons 2031 et 2036, l'outil fait une interpolation linéaire, faute d'avoir les valeurs intermédiaires dans le fichier.</p>
+  <div class="formula">ΔM(H) = (M2041,scénario − 5 470) × (H − 2021) / 20</div>
+  <div class="ex"><b>Référence, 2041 :</b> ΔM = 6 798 − 5 470 = 1 328 ménages.</div>
+</div></div>
+
+<div class="step"><div class="k">2</div><div>
+  <h3>Clé de répartition entre les secteurs</h3>
+  <p>La croissance municipale est répartie entre les secteurs selon l'une de deux clés :</p>
+  <ul>
+    <li><b>Tendance</b> (par défaut) : la part du secteur dans la croissance des ménages de 2021 à 2035 selon Environics. Cette clé suit la dynamique récente et projetée de chaque secteur.</li>
+    <li><b>Poids actuel</b> : la part du secteur dans les ménages de 2025. Elle suppose que chaque secteur croît au même rythme.</li>
+  </ul>
+  <div class="formula">clé tendance : p(s) = (P0Y(s) − EHY(s)) / Σ (P0Y − EHY)
+clé poids   : p(s) = ECY(s) / Σ ECY</div>
+  <div class="ex"><b>Saint-Jovite :</b> (4 366 − 3 803) / 855 = 65,8 % avec la clé tendance, et 69,1 % avec la clé poids.</div>
+  <p><b>Orientation vers les périmètres urbains.</b> Le curseur « Croissance dirigée hors PU » fixe directement la part h du secteur hors périmètre. Le reste de la croissance est redistribué aux trois périmètres urbains, en proportion de leur part dans la clé :</p>
+  <div class="formula">p'(hors PU) = h
+p'(s ∈ PU) = p(s) / Σ p(PU) × (1 − h)</div>
+  <p class="note">Avec la clé tendance, h vaut 21 % au départ. Ce curseur ne prédit rien : il sert à comparer l'effet d'une orientation du plan d'urbanisme.</p>
+</div></div>
+
+<div class="step"><div class="k">3</div><div>
+  <h3>Arrimage des estimations Environics à la base ISQ</h3>
+  <p>Environics compte 5 488 ménages dans les quatre secteurs en 2021, contre 5 470 pour l'ISQ. Pour garder les deux sources compatibles, les effectifs Environics de 2021 et de 2025 sont multipliés par un facteur d'ajustement.</p>
+  <div class="formula">k = 5 470 / 5 488 = 0,9967
+base(s)   = EHY(s) × k        (ménages 2021)
+actuel(s) = ECY(s) × k        (ménages 2025)</div>
+</div></div>
+
+<div class="step"><div class="k">4</div><div>
+  <h3>Ménages visés dans chaque secteur</h3>
+  <div class="formula">visé(s, H) = base(s) + p'(s) × ΔM(H)</div>
+  <div class="ex"><b>Saint-Jovite :</b> 3 791 + 0,658 × 1 328 = 4 665 ménages en 2041.</div>
+</div></div>
+
+<div class="step"><div class="k">5</div><div>
+  <h3>Logements requis de 2021 à l'horizon</h3>
+  <p>La croissance des ménages est convertie en logements en tenant compte d'une réserve de logements vacants. Sans cette réserve, le marché ne peut pas absorber les déménagements. Un taux d'inoccupation autour de 3 % est habituellement considéré comme un marché équilibré. Le paramètre peut varier de 0 % à 6 %.</p>
+  <div class="formula">requis(s, H) = p'(s) × ΔM(H) / (1 − v)</div>
+  <div class="ex"><b>Saint-Jovite :</b> 874 / 0,97 = 901 logements de 2021 à 2041.</div>
+  <p class="note">Il s'agit de la même règle que dans le Diagnostic habitation régional. Elle calcule le stock de logements nécessaire. Elle ne tient pas compte des démolitions, des conversions en résidences secondaires ni du retard accumulé avant 2021.</p>
+</div></div>
+
+<div class="step"><div class="k">6</div><div>
+  <h3>Besoin résiduel de 2025 à l'horizon</h3>
+  <p>Une partie de la croissance de 2021 à 2041 a déjà eu lieu. Le besoin résiduel retire donc les ménages supplémentaires déjà estimés en 2025. Lorsqu'un secteur a déjà dépassé sa cible, son besoin résiduel est ramené à zéro, et un message l'indique dans la fiche.</p>
+  <div class="formula">résiduel(s, H) = max(0, visé(s, H) − actuel(s)) / (1 − v)</div>
+  <div class="ex"><b>Saint-Jovite :</b> (4 665 − 4 141) / 0,97 = 540 logements de 2025 à 2041.</div>
+  <p class="note">Le total municipal est la somme des besoins résiduels des secteurs, chacun ramené à zéro au besoin. Quand un secteur dépasse sa cible, ce total peut donc être un peu plus élevé que l'écart calculé pour l'ensemble de la ville.</p>
+</div></div>
+
+<div class="step"><div class="k">7</div><div>
+  <h3>Rythme annuel requis et rythme récent</h3>
+  <p>Le besoin résiduel est ramené à une moyenne annuelle, puis comparé au nombre de logements occupés construits de 2016 à 2025, soit environ dix ans.</p>
+  <div class="formula">requis par an = résiduel(s, H) / (H − 2025)
+récent par an = (ECYPOC1621 + ECYPOC22P) / 10
+ratio         = requis par an / récent par an × 100</div>
+  <div class="ex"><b>Saint-Jovite :</b> 540 / 16 = 33,7 logements par année, contre (486 + 296) / 10 = 78,2 par année récemment, soit un ratio de 43 %.</div>
+</div></div>
+
+<div class="step"><div class="k">8</div><div>
+  <h3>Part locative du besoin</h3>
+  <p>La part du besoin résiduel qui devrait être en logements locatifs est estimée de l'une de deux façons :</p>
+  <ul>
+    <li><b>Parc 2025</b> (par défaut) : la proportion de ménages locataires en 2025 (<code>ECYTENRENT / ECYSTYHHD</code>).</li>
+    <li><b>Tendance 2025 à 2035</b> : la part des locataires parmi les ménages supplémentaires projetés par Environics, bornée entre 0 et 1. À Saint-Jovite, presque toute la croissance projetée est locative (97 %).</li>
+  </ul>
+  <div class="ex"><b>Saint-Jovite, parc 2025 :</b> 540 × 49,6 % = 268 logements locatifs.</div>
+</div></div>
+
+<h3>Scénario Environics</h3>
+<p>Le quatrième scénario remplace la projection de l'ISQ par la tendance Environics de 2021 à 2035, ajustée par le facteur k et prolongée en ligne droite. Au-delà de 2035, il s'agit d'une extrapolation. Ce scénario sert de point de comparaison et ne remplace pas la projection officielle.</p>
+<div class="formula">ΔM(H) = 855 × 0,9967 × (H − 2021) / 14</div>
+
+<h2 id="exemple"><span class="n">5</span>Résultats du scénario de référence</h2>
+<p>Réglages : scénario de référence de l'ISQ, horizon 2041, taux d'inoccupation de 3 %, clé tendance, part locative selon le parc 2025.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Secteur</th><th>Part de la croissance</th><th>Ménages 2021 (base)</th><th>Ménages 2025</th><th>Ménages visés 2041</th><th>Requis 2021 à 2041</th><th>Résiduel 2025 à 2041</th><th>Dont locatif</th><th>Requis par an</th><th>Récent par an</th></tr></thead>
+  <tbody class="num">
+    <tr><td><span class="sw" style="background:var(--s-village)"></span>Village</td><td>8,3 %</td><td>407</td><td>450</td><td>517</td><td>114</td><td class="hi">70</td><td>14</td><td>4,3</td><td>9,6</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-jovite)"></span>Saint-Jovite</td><td>65,8 %</td><td>3 791</td><td>4 141</td><td>4 665</td><td>902</td><td class="hi">540</td><td>268</td><td>33,7</td><td>78,2</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-tremblant)"></span>Tremblant</td><td>4,7 %</td><td>258</td><td>285</td><td>320</td><td>64</td><td class="hi">36</td><td>8</td><td>2,3</td><td>6,1</td></tr>
+    <tr><td><span class="sw" style="background:var(--s-hors)"></span>Hors PU</td><td>21,2 %</td><td>1 015</td><td>1 119</td><td>1 296</td><td>290</td><td class="hi">182</td><td>37</td><td>11,4</td><td>22,5</td></tr>
+    <tr class="tot"><td>Mont-Tremblant</td><td>100 %</td><td>5 470</td><td>5 995</td><td>6 798</td><td>1 369</td><td class="hi">828</td><td>328</td><td>51,7</td><td>116,4</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Ménages 2021 et 2025 : estimations Environics ajustées par le facteur k (étape 3). Les totaux peuvent différer légèrement à cause des arrondis.</p>
+<p>Ce qu'il faut retenir : environ 40 % de la croissance à loger d'ici 2041 a déjà eu lieu de 2021 à 2025, selon les estimations Environics. Saint-Jovite porte les deux tiers du besoin résiduel. Dans tous les secteurs, le rythme annuel requis est inférieur au rythme de construction observé depuis 2016.</p>
+
+<h2 id="sensibilite"><span class="n">6</span>Sensibilité aux paramètres</h2>
+<p>Besoin pour l'ensemble de la ville selon le scénario et l'horizon (taux d'inoccupation de 3 %, clé tendance). Dans chaque case, le premier chiffre donne les logements requis depuis 2021 et le second, le besoin résiduel après 2025.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Scénario</th><th>Croissance 2021 à 2041</th><th>2031</th><th>2036</th><th>2041</th></tr></thead>
+  <tbody class="num">
+    <tr><td>ISQ faible</td><td>+841</td><td>434 / 0</td><td>650 / 109</td><td>867 / 325</td></tr>
+    <tr><td>ISQ référence</td><td>+1 328</td><td>685 / 143</td><td>1 027 / 485</td><td>1 369 / 828</td></tr>
+    <tr><td>ISQ fort</td><td>+1 821</td><td>939 / 397</td><td>1 408 / 866</td><td>1 877 / 1 336</td></tr>
+    <tr><td>Environics (tendance)</td><td>+1 217</td><td>628 / 86</td><td>941 / 400</td><td>1 255 / 714</td></tr>
+  </tbody>
+</table></div>
+<p><b>Le besoin résiduel dépend surtout de l'estimation Environics de 2025.</b> Après ajustement, Environics compte 5 995 ménages en 2025. C'est environ 260 de plus que ce que donnerait une progression linéaire vers la cible de référence de l'ISQ (5 736 ménages en 2025). Si cette estimation est trop élevée, le besoin résiduel est sous-estimé d'autant. Si elle est juste, la croissance récente a été plus rapide que ce que prévoit l'ISQ.</p>
+<p><b>La clé de répartition influence surtout le partage entre les secteurs.</b> Avec la clé poids, Saint-Jovite passe de 540 à 584 logements et le secteur hors périmètre, de 182 à 148. Le total municipal ne change presque pas.</p>
+<p><b>Le taux d'inoccupation a un effet modeste.</b> De 3 % à 5 %, le besoin résiduel de référence en 2041 passe de 828 à environ 845 logements.</p>
+
+<h2 id="indicateurs"><span class="n">7</span>Indicateurs de portrait et de tendance</h2>
+<p>La carte peut afficher l'un ou l'autre des 19 indicateurs, regroupés en trois familles. La couleur est répartie de façon continue entre le secteur le plus faible et le plus élevé. La lecture est donc <b>relative aux quatre secteurs</b> : une couleur ne correspond pas à un seuil fixe.</p>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Indicateur</th><th class="l">Définition et calcul</th></tr></thead>
+  <tbody>
+    <tr><td class="l" colspan="2"><b>Besoins</b> (varient selon les paramètres)</td></tr>
+    <tr><td class="l">Besoin résiduel, logements requis, par an, dont locatif</td><td class="l">Voir les étapes 5 à 8.</td></tr>
+    <tr><td class="l">Besoin résiduel pour 1 000 ménages</td><td class="l">Besoin résiduel ÷ ménages 2025 × 1 000. Permet de comparer des secteurs de taille très différente.</td></tr>
+    <tr><td class="l">Rythme requis ÷ rythme récent</td><td class="l">En pourcentage. Au-delà de 100 %, il faudrait construire plus vite qu'au cours des dix dernières années.</td></tr>
+    <tr><td class="l" colspan="2"><b>Tendances</b></td></tr>
+    <tr><td class="l">Croissance des ménages 2021 à 2025 et 2025 à 2035</td><td class="l"><code>ECY/EHY − 1</code> et <code>P0Y/ECY − 1</code> (ménages, Environics)</td></tr>
+    <tr><td class="l">Croissance de la population 2021 à 2046</td><td class="l"><code>Y46BASHPOP / Y21BASHPOP − 1</code></td></tr>
+    <tr><td class="l">Logements construits de 2016 à 2025</td><td class="l">En pourcentage du parc occupé en 2025.</td></tr>
+    <tr><td class="l">Parc construit avant 1981</td><td class="l">En pourcentage du parc occupé. Indique un parc vieillissant, avec des besoins possibles de rénovation et d'adaptation.</td></tr>
+    <tr><td class="l" colspan="2"><b>Portrait</b></td></tr>
+    <tr><td class="l">Ménages, part de locataires, revenu médian (2025)</td><td class="l">Environics DemoStats.</td></tr>
+    <tr><td class="l">Taux d'effort de 30 % ou plus</td><td class="l">Part des ménages qui consacrent 30 % ou plus de leur revenu au logement (recensement 2021, <code>PCT_INABOR</code>).</td></tr>
+    <tr><td class="l">Besoins impérieux de logement</td><td class="l">Recensement 2021, <code>PCT_BESOIN</code>.</td></tr>
+    <tr><td class="l">65 ans et plus, ménages d'une personne</td><td class="l">Environics 2025 pour l'âge, et recensement 2021 pour les ménages d'une personne.</td></tr>
+    <tr><td class="l">Travailleurs par résident</td><td class="l"><code>ECYWORKPOP / ECYPTAPOP</code>. Au-dessus de 1, le secteur compte plus de personnes qui y travaillent que de personnes qui y habitent.</td></tr>
+  </tbody>
+</table></div>
+<p class="note">La fiche « Ensemble de Mont-Tremblant » additionne les effectifs des quatre secteurs. Les pourcentages du recensement y sont pondérés par le nombre de logements occupés, sauf le faible revenu et la part des 65 ans et plus, qui sont pondérés par la population. Un revenu médian ne peut pas s'additionner : la fiche de l'ensemble affiche plutôt le revenu moyen des ménages.</p>
+
+<h2 id="lecture"><span class="n">8</span>Règles de lecture automatique</h2>
+<p>La section « Lecture » de chaque fiche affiche des messages selon des seuils fixes. Ces seuils servent à attirer l'attention : ils ne constituent pas des normes.</p>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Condition</th><th class="l">Message affiché</th></tr></thead>
+  <tbody>
+    <tr><td class="l">Ménages visés ≤ ménages 2025</td><td class="l">La croissance récente dépasse déjà la cible : aucun besoin résiduel.</td></tr>
+    <tr><td class="l">Ratio des rythmes &gt; 110 %</td><td class="l">Le rythme requis dépasse le rythme de construction récent.</td></tr>
+    <tr><td class="l">Ratio des rythmes &lt; 90 %</td><td class="l">Le rythme récent couvrirait le besoin s'il se maintient.</td></tr>
+    <tr><td class="l">Locataires ≥ 40 %</td><td class="l">Le besoin porte d'abord sur du logement locatif, dont une part abordable.</td></tr>
+    <tr><td class="l">Taux d'effort de 30 % et plus ≥ 15 %</td><td class="l">L'abordabilité est un enjeu de santé dans ce secteur.</td></tr>
+    <tr><td class="l">65 ans et plus ≥ 30 %</td><td class="l">Logements adaptés, de petite taille et à distance de marche des services.</td></tr>
+    <tr><td class="l">Ménages d'une personne ≥ 40 %</td><td class="l">Demande pour de plus petits logements.</td></tr>
+    <tr><td class="l">Travailleurs par résident ≥ 1,15</td><td class="l">Le logement de la main-d'œuvre touristique est à considérer.</td></tr>
+    <tr><td class="l">Hors PU et part de la croissance &gt; 12 %</td><td class="l">Dépendance à l'automobile et coûts de desserte. Invite à tester une réorientation avec le curseur.</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="limites"><span class="n">9</span>Limites et précautions</h2>
+<div class="callout warn">
+<h3>Le parc touristique</h3>
+<p>L'ISQ et Environics comptent des <b>ménages privés</b>, c'est-à-dire des personnes qui résident en permanence dans un logement. Les résidences secondaires, les résidences de tourisme et l'hébergement commercial ne sont pas comptés. À Mont-Tremblant, une partie importante du parc bâti sert à ces usages. Le besoin calculé porte donc sur la population permanente. Il ne tient pas compte des logements qui sortent du marché résidentiel, par exemple par conversion en location de courte durée : pour loger la même croissance, il pourrait falloir construire davantage.</p>
+</div>
+<ul>
+  <li><b>La répartition par secteur est une estimation.</b> Elle applique une clé fondée sur les tendances Environics à une projection municipale. Il ne s'agit pas d'une projection de l'ISQ par secteur.</li>
+  <li><b>Les horizons 2031 et 2036 sont interpolés en ligne droite.</b> L'ISQ publie des valeurs quinquennales qui pourraient remplacer cette interpolation.</li>
+  <li><b>Le retard accumulé n'est pas compté.</b> Le calcul ne tient pas compte des besoins antérieurs à 2021 : ménages mal logés, cohabitation non choisie, taux d'inoccupation déjà bas. Il ne mesure donc pas les besoins en logement abordable ou social.</li>
+  <li><b>Le rythme récent compte des logements occupés.</b> Il ne comprend ni les logements construits puis convertis en résidences secondaires, ni les démolitions. De plus, la catégorie « 2022 et après » s'arrête à l'année de l'estimation.</li>
+  <li><b>Les données Environics sont modélisées.</b> Elles sont réparties par îlots de diffusion. Pour de petits secteurs comme Tremblant (286 ménages), l'incertitude relative est plus grande.</li>
+  <li><b>La typologie et la part locative sont descriptives.</b> Elles reproduisent le parc existant ou la tendance projetée. Ce ne sont pas des recommandations d'offre.</li>
+</ul>
+
+<footer>
+  Direction de santé publique, Santé Québec Laurentides · Évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant · Suite C.A.R.T.O.S.<br>
+  Sources : Institut de la statistique du Québec, projections de ménages 2025 · Environics Analytics, DemoStats (via Esri) · Statistique Canada, recensement de 2021. Outil d'aide à la décision, non réglementaire.
+</footer>
+</article>
