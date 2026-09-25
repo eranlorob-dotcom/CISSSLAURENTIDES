@@ -1,0 +1,1292 @@
+<title>Logement Mont-Tremblant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url(images/marker-icon.png);
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+</style>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0c191c;--panel:#12262b;--panel2:#173238;--line:#244249;--ink:#e8f1f1;--ink-dim:#9fb6b8;
+  --accent:#3fc7b4;--accent-ink:#06211e;--accent2:#f2d24b;--accent2-ink:#2a2410;--red:#e07a90;--ok:#6fd39a;
+  --shadow:0 8px 30px rgba(0,0,0,.4);
+  --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;
+}
+*{box-sizing:border-box}
+html,body{height:auto}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;line-height:1.45;padding-inline:16px;padding-block:0 32px}
+.wrap{max-width:1480px;margin:0 auto}
+button,select,input{font-family:inherit}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+header.top{display:flex;align-items:center;gap:14px;padding-block:18px 14px;flex-wrap:wrap}
+.mark{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#1c8b7e);display:grid;place-items:center;font-weight:800;color:var(--accent-ink);font-size:18px;flex:none}
+header h1{font-family:'Source Serif 4',Georgia,serif;font-size:22px;margin:0;font-weight:700;text-wrap:balance;line-height:1.15}
+header p{margin:2px 0 0;font-size:12.5px;color:var(--ink-dim)}
+header .grow{flex:1;min-width:200px}
+.badge{font-size:11px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;color:var(--accent2);border:1px solid rgba(242,210,75,.45);border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+/* summary strip */
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-dim);font-weight:600}
+.kpi .v{font-size:26px;font-weight:800;margin-top:2px;line-height:1.1}
+.kpi .s{font-size:12px;color:var(--ink-dim);margin-top:3px}
+.kpi.hi .v{color:var(--accent2)}
+
+/* main grid */
+.main{display:grid;grid-template-columns:290px minmax(0,1fr) 350px;gap:12px;align-items:stretch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ctrl .sec{padding:12px 14px;border-bottom:1px solid var(--line)}
+.ctrl .sec:last-child{border-bottom:none}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--ink-dim);margin:0 0 7px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.lbl output{color:var(--ink);letter-spacing:0;text-transform:none;font-weight:700;font-size:12.5px}
+.seg{display:flex;gap:3px;background:var(--panel2);border-radius:9px;padding:3px}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink-dim);padding:7px 3px;border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.seg.sc button.on{background:var(--accent2);color:var(--accent2-ink)}
+select{width:100%;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 9px;font-size:13px;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.hint{font-size:11.5px;color:var(--ink-dim);margin-top:6px;line-height:1.4}
+.legend-bar{height:10px;border-radius:5px;border:1px solid var(--line)}
+.legend-ends{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-dim);margin-top:4px}
+details.meth summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--accent)}
+details.meth p{font-size:12px;color:var(--ink-dim);margin:8px 0 0}
+
+/* map */
+.mapcard{position:relative;min-height:560px}
+#map{position:absolute;inset:0;background:#0f2226}
+.leaflet-container{background:#0f2226;font-family:inherit}
+.maptools{position:absolute;top:10px;right:10px;z-index:500;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.maptools select{width:auto;font-size:12px;padding:6px 8px;background:rgba(18,38,43,.92)}
+.allbtn{border:1px solid var(--line);background:rgba(18,38,43,.92);color:var(--ink);font-size:12px;font-weight:600;border-radius:8px;padding:6px 10px;cursor:pointer}
+.allbtn.on{border-color:var(--accent);color:var(--accent)}
+.mapnote{position:absolute;left:10px;bottom:10px;z-index:500;font-size:11px;color:var(--ink-dim);background:rgba(12,25,28,.85);border-radius:6px;padding:4px 8px;max-width:70%}
+.leaflet-tooltip.slab{background:rgba(8,18,20,.86);border:1px solid var(--line);color:var(--ink);border-radius:8px;box-shadow:none;padding:5px 9px;text-align:center;font-family:inherit}
+.leaflet-tooltip.slab::before{display:none}
+.slab b{display:block;font-size:12.5px}
+.slab span{font-size:15px;font-weight:800;color:var(--accent2)}
+.leaflet-control-attribution{background:rgba(12,25,28,.8)!important;color:var(--ink-dim)!important}
+.leaflet-control-attribution a{color:var(--accent)!important}
+.leaflet-bar a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+
+/* fiche */
+.fiche{display:flex;flex-direction:column;max-height:760px}
+.fh{padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.fh h2{margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:700;display:flex;align-items:center;gap:8px}
+.fh h2 i{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
+.fh .sub{font-size:12px;color:var(--ink-dim);margin-top:2px}
+.fb{padding:4px 16px 16px;overflow:auto}
+.bt{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin:14px 0 6px;font-weight:700}
+.big2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.big2 .b{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.big2 .b .n{font-size:22px;font-weight:800;line-height:1.1}
+.big2 .b .n.hi{color:var(--accent2)}
+.big2 .b .t{font-size:11px;color:var(--ink-dim);margin-top:2px;line-height:1.3}
+.scen{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.scen .s{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 4px;text-align:center}
+.scen .s.on{border-color:var(--accent2)}
+.scen .s .n{font-size:15px;font-weight:700}
+.scen .s .l{font-size:9.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.4px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--ink-dim)}
+.kv .v{font-weight:600;text-align:right;white-space:nowrap}
+.pace{margin-top:8px;background:var(--panel2);border-radius:10px;padding:10px;border:1px solid var(--line)}
+.pace .row{display:grid;grid-template-columns:112px 1fr 44px;gap:8px;align-items:center;font-size:12px;margin:4px 0}
+.pace .tr{height:9px;background:#0f2226;border-radius:5px;overflow:hidden}
+.pace .tr span{display:block;height:100%;border-radius:5px}
+.stack{display:flex;height:12px;border-radius:6px;overflow:hidden;border:1px solid var(--line);margin-top:4px}
+.stack span{display:block;height:100%}
+.sleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;color:var(--ink-dim);margin-top:5px}
+.sleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.stk-t{font-size:11.5px;color:var(--ink-dim);margin-top:8px}
+.flags{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.flags li{font-size:12.5px;line-height:1.4;background:var(--panel2);border-radius:8px;padding:8px 10px;border-left:3px solid var(--accent2)}
+.flags li.good{border-left-color:var(--ok)}
+.flags li.info{border-left-color:var(--accent)}
+.chartbox{position:relative;height:190px;margin-top:4px}
+
+/* bottom */
+.lower{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;margin-top:12px}
+.lower .card{padding:14px 16px}
+.lower h3{margin:0 0 2px;font-family:'Source Serif 4',Georgia,serif;font-size:17px}
+.lower .desc{font-size:12px;color:var(--ink-dim);margin:0 0 10px}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:640px}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-dim);font-weight:600;vertical-align:bottom}
+th:first-child,td:first-child{text-align:left}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:rgba(63,199,180,.06)}
+tbody tr.sel td{background:rgba(242,210,75,.08)}
+tfoot td{font-weight:700;border-bottom:none;border-top:2px solid var(--line)}
+td .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+td.barc{min-width:120px}
+.ib{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.ib .tr{width:54px;height:8px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.ib .tr span{display:block;height:100%;background:var(--accent2)}
+.neg{color:var(--ok)}
+.tblfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.copybtn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);font-size:12px;font-weight:600;padding:7px 12px;border-radius:8px;cursor:pointer}
+.copybtn:hover{border-color:var(--accent)}
+.sources{margin-top:12px;font-size:12px;color:var(--ink-dim);line-height:1.5}
+.sources b{color:var(--ink)}
+#csvfallback{width:100%;height:90px;margin-top:8px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:11px}
+
+@media (max-width:1180px){
+  .main{grid-template-columns:270px minmax(0,1fr)}
+  .fiche{grid-column:1 / -1;max-height:none}
+  .lower{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .main{grid-template-columns:1fr}
+  .mapcard{min-height:420px}
+  .kpi .v{font-size:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="mark">H</div>
+  <div class="grow">
+    <h1>Besoins en logement par secteur, Mont-Tremblant</h1>
+    <p>Évaluation d'impact sur la santé du plan d'urbanisme · Direction de santé publique des Laurentides</p>
+  </div>
+  <span class="badge">Prototype · aide à la décision</span>
+</header>
+
+<section class="strip" aria-label="Sommaire municipal">
+  <div class="kpi hi"><div class="l" id="k1l">Logements requis</div><div class="v num" id="k1">–</div><div class="s" id="k1s"></div></div>
+  <div class="kpi"><div class="l" id="k2l">Besoin résiduel</div><div class="v num" id="k2">–</div><div class="s" id="k2s"></div></div>
+  <div class="kpi"><div class="l">Rythme requis vs récent</div><div class="v num" id="k3">–</div><div class="s" id="k3s"></div></div>
+  <div class="kpi"><div class="l">Part dans les périmètres urbains</div><div class="v num" id="k4">–</div><div class="s" id="k4s"></div></div>
+</section>
+
+<div class="main">
+  <aside class="card ctrl" aria-label="Paramètres">
+    <div class="sec">
+      <p class="lbl"><label for="ind">Indicateur cartographié</label></p>
+      <select id="ind"></select>
+    </div>
+    <div class="sec">
+      <p class="lbl">Scénario de ménages</p>
+      <div class="seg sc" id="scSeg">
+        <button data-v="faible">Faible</button><button data-v="ref" class="on">Référence</button><button data-v="fort">Fort</button><button data-v="env">Environics</button>
+      </div>
+      <div class="hint" id="scHint"></div>
+    </div>
+    <div class="sec">
+      <p class="lbl">Horizon</p>
+      <div class="seg" id="hzSeg"><button data-v="2031">2031</button><button data-v="2036">2036</button><button data-v="2041" class="on">2041</button></div>
+    </div>
+    <div class="sec">
+      <p class="lbl"><label for="vac">Taux d'inoccupation visé</label><output id="vacO">3,0 %</output></p>
+      <input type="range" id="vac" min="0" max="6" step="0.5" value="3">
+      <div class="hint">Logements requis = croissance des ménages ÷ (1 − taux visé). Un marché équilibré se situe autour de 3 %.</div>
+    </div>
+    <div class="sec">
+      <p class="lbl">Répartition entre secteurs</p>
+      <div class="seg" id="keySeg"><button data-v="tend" class="on">Tendance</button><button data-v="poids">Poids actuel</button></div>
+      <div class="hint" id="keyHint"></div>
+    </div>
+    <div class="sec">
+      <p class="lbl"><label for="hors">Croissance dirigée hors PU</label><output id="horsO">–</output></p>
+      <input type="range" id="hors" min="0" max="40" step="1" value="21">
+      <div class="hint">Simule une orientation du plan d'urbanisme : la part retirée du secteur hors périmètre est redistribuée aux trois périmètres urbains au prorata de la clé. <button class="copybtn" id="horsReset" style="padding:3px 8px;font-size:11px;margin-top:4px">Revenir à la clé</button></div>
+    </div>
+    <div class="sec">
+      <p class="lbl">Part locative du besoin</p>
+      <div class="seg" id="tenSeg"><button data-v="actuel" class="on">Parc 2025</button><button data-v="tend">Tendance 2025–2035</button></div>
+    </div>
+    <div class="sec">
+      <p class="lbl">Légende</p>
+      <div class="legend-bar" id="legBar"></div>
+      <div class="legend-ends num"><span id="legMin"></span><span id="legMax"></span></div>
+      <div class="hint" id="legNote"></div>
+    </div>
+  </aside>
+
+  <div class="card mapcard">
+    <div id="map" role="img" aria-label="Carte des quatre secteurs de Mont-Tremblant"></div>
+    <div class="maptools">
+      <button class="allbtn on" id="allBtn">Ensemble de la ville</button>
+      <select id="baseSel" aria-label="Fond de carte">
+        <option value="esri">Esri gris foncé</option>
+        <option value="qc">Gouvernement du Québec</option>
+        <option value="none">Sans fond</option>
+      </select>
+    </div>
+    <div class="mapnote" id="mapNote" hidden></div>
+  </div>
+
+  <aside class="card fiche" aria-live="polite">
+    <div class="fh"><h2 id="fTitle"></h2><div class="sub" id="fSub"></div></div>
+    <div class="fb" id="fBody"></div>
+  </aside>
+</div>
+
+<div class="lower">
+  <section class="card">
+    <h3>Comparaison des secteurs</h3>
+    <p class="desc" id="tblDesc"></p>
+    <div class="tblwrap"><table id="tbl"></table></div>
+    <div class="tblfoot">
+      <span class="hint" style="margin:0">Cliquez une ligne pour ouvrir la fiche du secteur.</span>
+      <button class="copybtn" id="copyCsv">Copier le tableau (CSV)</button>
+    </div>
+    <textarea id="csvfallback" hidden readonly aria-label="Tableau CSV à copier"></textarea>
+  </section>
+  <section class="card">
+    <h3>Population projetée, 2021 à 2046</h3>
+    <p class="desc">Indice 2021 = 100, série de projection Environics par secteur.</p>
+    <div class="chartbox" style="height:240px"><canvas id="popChart"></canvas></div>
+  </section>
+</div>
+
+<section class="card sources" style="padding:14px 16px">
+  <b>Méthode.</b> La projection officielle de l'ISQ (ménages privés, scénarios 2025) n'existe qu'à l'échelle municipale : 5 470 ménages en 2021 et 6 311, 6 798 ou 7 291 ménages en 2041 selon les scénarios faible, référence et fort. L'outil répartit cette croissance entre les quatre secteurs selon une clé : la tendance Environics 2021→2035 de chaque secteur, ou son poids dans les ménages de 2025. Les horizons 2031 et 2036 sont interpolés linéairement. Le scénario Environics prolonge la tendance 2021→2035 des estimations DemoStats. Le <b>besoin résiduel</b> retranche la croissance des ménages déjà estimée entre 2021 et 2025. Le <b>rythme récent</b> correspond aux logements occupés construits de 2016 à 2025, sur dix ans.<br>
+  <b>Limites.</b> Les ménages privés excluent les résidences secondaires et les hébergements touristiques; le parc réellement disponible pour la population permanente peut donc être plus faible que le parc bâti. La répartition par secteur est une estimation, pas une projection de l'ISQ. Millésime supposé des données Environics : estimation 2025 (ECY) et projection 2035 (P0Y), à confirmer.<br>
+  <b>Sources.</b> ISQ, projections de ménages 2025 · Environics Analytics DemoStats (via Esri) · Statistique Canada, recensement 2021 (îlots agrégés par secteur). Outil d'aide à la décision, non réglementaire.
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const SECT = [{"nom":"Village","type":"Périmètre urbain","sup":13.1101,"lab":[46.20043,-74.62931],"men21":408,"men25":451,"men35":479,"pop21":788,"pop25":865,"popY":{"21":782,"22":803,"23":821,"24":834,"25":840,"26":846,"27":850,"28":855,"29":861,"30":865,"31":869,"32":874,"33":878,"34":881,"35":885,"36":890,"37":891,"38":895,"39":898,"40":903,"41":904,"42":910,"43":914,"44":917,"45":921,"46":926},"own25":357,"rent25":94,"own35":371,"rent35":108,"revMed":134226.19,"revAvg":211804.02,"work":973,"typo25":{"indiv":245,"jum":25,"rang":40,"dup":31,"apu5":110,"ap5p":0,"autre":0},"typo35":{"indiv":254,"jum":29,"rang":50,"dup":30,"apu5":116,"ap5p":0,"autre":0},"poc":{"av61":50,"c6180":82,"c8190":50,"c9100":82,"c0105":30,"c0610":35,"c1115":26,"c1621":38,"c22p":58},"age":{"a0_14":74,"a15_24":75,"a25_44":161,"a45_64":242,"a65_74":188,"a75p":125},"rc":{"pop":750,"log":360,"prop":79.2,"loc":22.2,"inabor":11,"repar":5.5,"besoin":0,"men1p":43.1,"mfr":7.3,"p65":26,"densLog":27.5,"densPop":57.2,"monop":22.7,"vitSeul":24.2},"geom":{"type":"Polygon","coordinates":[[[-74.61345,46.17579],[-74.61439,46.17673],[-74.61489,46.17771],[-74.61494,46.17858],[-74.61441,46.1808],[-74.61488,46.18185],[-74.61561,46.18239],[-74.61701,46.18289],[-74.62363,46.18353],[-74.62553,46.18395],[-74.627,46.18463],[-74.63018,46.1869],[-74.63085,46.18687],[-74.63276,46.18763],[-74.63337,46.18836],[-74.63364,46.18844],[-74.63672,46.18916],[-74.63962,46.18882],[-74.64075,46.18915],[-74.64407,46.19077],[-74.64601,46.1932],[-74.64689,46.1953],[-74.64845,46.19598],[-74.64984,46.19781],[-74.652,46.19952],[-74.65819,46.20237],[-74.66021,46.20306],[-74.66136,46.2031],[-74.66126,46.20335],[-74.65989,46.20395],[-74.66002,46.20462],[-74.65905,46.20579],[-74.65603,46.20662],[-74.65335,46.20666],[-74.65132,46.20705],[-74.65045,46.20737],[-74.64959,46.20805],[-74.64888,46.20789],[-74.64741,46.20814],[-74.64203,46.20725],[-74.64142,46.20719],[-74.64073,46.20739],[-74.63906,46.20859],[-74.63729,46.21255],[-74.63554,46.21447],[-74.63163,46.21583],[-74.6314,46.21641],[-74.63128,46.2167],[-74.63072,46.2173],[-74.62828,46.21687],[-74.62598,46.22431],[-74.62426,46.22385],[-74.62105,46.22096],[-74.61868,46.22039],[-74.61686,46.22041],[-74.61572,46.21983],[-74.61364,46.21804],[-74.61225,46.21636],[-74.61096,46.21418],[-74.60979,46.21299],[-74.6089,46.21249],[-74.60805,46.21193],[-74.60672,46.21155],[-74.60408,46.20958],[-74.60441,46.20919],[-74.60404,46.20955],[-74.60331,46.20889],[-74.603,46.20931],[-74.60216,46.20973],[-74.6012,46.21011],[-74.60051,46.20988],[-74.6,46.20943],[-74.60098,46.20889],[-74.60133,46.20749],[-74.60138,46.20458],[-74.60241,46.20376],[-74.60309,46.20293],[-74.60319,46.20214],[-74.60401,46.20133],[-74.6059,46.19867],[-74.60594,46.19816],[-74.60546,46.1971],[-74.60463,46.19652],[-74.604,46.19643],[-74.60393,46.19619],[-74.60415,46.19592],[-74.60654,46.1947],[-74.60601,46.1939],[-74.60493,46.19381],[-74.60458,46.19349],[-74.60107,46.19404],[-74.59842,46.19372],[-74.59628,46.19368],[-74.59597,46.19058],[-74.59705,46.19062],[-74.59904,46.1903],[-74.5993,46.19024],[-74.5995,46.19019],[-74.59965,46.19002],[-74.59974,46.18991],[-74.59976,46.18982],[-74.59986,46.1893],[-74.5992,46.1886],[-74.59913,46.18807],[-74.59908,46.18767],[-74.59882,46.18739],[-74.5979,46.18693],[-74.59776,46.18558],[-74.59729,46.18531],[-74.59931,46.18279],[-74.6016,46.17774],[-74.60395,46.17521],[-74.60432,46.17517],[-74.607,46.17607],[-74.60878,46.17632],[-74.61028,46.1763],[-74.61298,46.17574],[-74.61332,46.17578],[-74.61345,46.17579]]]}},{"nom":"Saint-Jovite","type":"Périmètre urbain","sup":51.3697,"lab":[46.11686,-74.59583],"men21":3803,"men25":4155,"men35":4366,"pop21":7493,"pop25":8127,"popY":{"21":7303,"22":7493,"23":7649,"24":7757,"25":7800,"26":7829,"27":7847,"28":7887,"29":7927,"30":7963,"31":7996,"32":8024,"33":8047,"34":8074,"35":8097,"36":8126,"37":8149,"38":8172,"39":8196,"40":8221,"41":8247,"42":8276,"43":8304,"44":8338,"45":8367,"46":8398},"own25":2094,"rent25":2061,"own35":2100,"rent35":2266,"revMed":75495.61,"revAvg":107740.81,"work":7130,"typo25":{"indiv":1784,"jum":199,"rang":99,"dup":664,"apu5":1239,"ap5p":74,"autre":194},"typo35":{"indiv":1831,"jum":232,"rang":128,"dup":663,"apu5":1343,"ap5p":78,"autre":182},"poc":{"av61":498,"c6180":942,"c8190":448,"c9100":494,"c0105":330,"c0610":360,"c1115":301,"c1621":486,"c22p":296},"age":{"a0_14":908,"a15_24":636,"a25_44":1706,"a45_64":2225,"a65_74":1438,"a75p":1216},"rc":{"pop":7250,"log":3825,"prop":51.5,"loc":48.5,"inabor":17.2,"repar":4.3,"besoin":5,"men1p":43.5,"mfr":14.9,"p65":28,"densLog":74.5,"densPop":141.1,"monop":37.4,"vitSeul":26.1},"geom":{"type":"Polygon","coordinates":[[[-74.65359,46.12414],[-74.65595,46.12172],[-74.65498,46.12271],[-74.65594,46.12172],[-74.65482,46.12102],[-74.65458,46.12087],[-74.65277,46.11974],[-74.65213,46.11984],[-74.65202,46.12104],[-74.65193,46.12204],[-74.65157,46.12599],[-74.65091,46.12569],[-74.65091,46.12643],[-74.65122,46.1264],[-74.65092,46.12732],[-74.65093,46.12883],[-74.65036,46.13009],[-74.64925,46.13115],[-74.6491,46.13152],[-74.64864,46.13261],[-74.64849,46.13331],[-74.64825,46.13449],[-74.64854,46.13596],[-74.6481,46.13748],[-74.6478,46.13791],[-74.64744,46.13842],[-74.64712,46.13858],[-74.64585,46.13867],[-74.64543,46.13943],[-74.64395,46.13937],[-74.64005,46.13961],[-74.63692,46.13932],[-74.635,46.13887],[-74.63337,46.13828],[-74.62976,46.13636],[-74.62821,46.13576],[-74.62642,46.13542],[-74.62256,46.13532],[-74.62072,46.13503],[-74.61649,46.13363],[-74.61643,46.13382],[-74.61552,46.13666],[-74.61547,46.13682],[-74.61519,46.13692],[-74.61332,46.13681],[-74.6117,46.139],[-74.61144,46.14005],[-74.61135,46.14043],[-74.61058,46.14108],[-74.60966,46.14151],[-74.60774,46.14172],[-74.60542,46.14002],[-74.60442,46.1396],[-74.60363,46.14126],[-74.60401,46.14242],[-74.60392,46.14318],[-74.60358,46.14346],[-74.60239,46.14373],[-74.60207,46.14415],[-74.60244,46.14452],[-74.60424,46.14488],[-74.6048,46.14508],[-74.60537,46.14527],[-74.60684,46.14667],[-74.60687,46.14742],[-74.60629,46.14816],[-74.60525,46.14892],[-74.60429,46.15],[-74.60306,46.15049],[-74.60154,46.15035],[-74.60073,46.14997],[-74.60046,46.14918],[-74.60017,46.14899],[-74.59976,46.14887],[-74.59917,46.14896],[-74.59896,46.14919],[-74.59886,46.1493],[-74.59886,46.15013],[-74.60024,46.15175],[-74.6003,46.15242],[-74.59998,46.1529],[-74.5984,46.15307],[-74.58641,46.15097],[-74.58537,46.15131],[-74.5865,46.14635],[-74.58494,46.14649],[-74.58407,46.14682],[-74.58356,46.14717],[-74.58328,46.14758],[-74.58308,46.14787],[-74.58275,46.14836],[-74.58222,46.14882],[-74.5786,46.15068],[-74.57626,46.1524],[-74.57038,46.1533],[-74.56452,46.15262],[-74.56243,46.15185],[-74.55822,46.1507],[-74.5549,46.14951],[-74.5516,46.14852],[-74.55599,46.1308],[-74.55775,46.12514],[-74.55531,46.1255],[-74.55322,46.12528],[-74.54901,46.12394],[-74.53665,46.12051],[-74.53473,46.12031],[-74.5329,46.11955],[-74.53184,46.11936],[-74.54206,46.08204],[-74.54228,46.08063],[-74.54385,46.07567],[-74.54503,46.07636],[-74.54798,46.07743],[-74.55111,46.07822],[-74.55354,46.07924],[-74.55979,46.08148],[-74.5615,46.08257],[-74.56476,46.08512],[-74.56772,46.08639],[-74.56899,46.0871],[-74.57005,46.08852],[-74.57071,46.08895],[-74.57605,46.08989],[-74.57751,46.09062],[-74.5807,46.09084],[-74.58209,46.09116],[-74.58275,46.09153],[-74.58394,46.09282],[-74.58438,46.09303],[-74.58455,46.09305],[-74.59,46.09355],[-74.59267,46.09413],[-74.59474,46.0942],[-74.59587,46.09456],[-74.59773,46.09556],[-74.59856,46.09543],[-74.60169,46.09548],[-74.60327,46.09568],[-74.60422,46.09603],[-74.60584,46.09753],[-74.60598,46.09758],[-74.60647,46.09695],[-74.60716,46.09606],[-74.60745,46.09536],[-74.60752,46.09519],[-74.60713,46.09209],[-74.60744,46.09049],[-74.60809,46.08947],[-74.61014,46.08746],[-74.6108,46.08658],[-74.61318,46.08119],[-74.61472,46.07928],[-74.6182,46.08019],[-74.61853,46.08012],[-74.6201,46.08049],[-74.62154,46.0805],[-74.62179,46.0805],[-74.62178,46.08053],[-74.62193,46.08055],[-74.62937,46.08146],[-74.63194,46.08186],[-74.63206,46.08188],[-74.63238,46.08222],[-74.63278,46.08265],[-74.63277,46.08266],[-74.63209,46.08312],[-74.63195,46.08332],[-74.63168,46.08372],[-74.63057,46.08854],[-74.63005,46.08972],[-74.62865,46.09117],[-74.62425,46.09416],[-74.62501,46.09458],[-74.62556,46.09488],[-74.6263,46.09561],[-74.62662,46.09627],[-74.62729,46.09683],[-74.6281,46.09751],[-74.62875,46.09866],[-74.62986,46.09931],[-74.63002,46.0994],[-74.63005,46.09945],[-74.63109,46.10108],[-74.63184,46.10277],[-74.63325,46.10406],[-74.63489,46.10627],[-74.63541,46.10647],[-74.63581,46.10663],[-74.63661,46.10721],[-74.63696,46.10725],[-74.6411,46.10647],[-74.64367,46.1066],[-74.64695,46.10636],[-74.64913,46.10684],[-74.65091,46.10747],[-74.65329,46.10968],[-74.65484,46.11033],[-74.65571,46.1105],[-74.65838,46.11048],[-74.66077,46.11072],[-74.66111,46.11075],[-74.6608,46.1117],[-74.66001,46.11435],[-74.65562,46.12687],[-74.65512,46.12678],[-74.65475,46.12671],[-74.65311,46.12668],[-74.6524,46.12636],[-74.65161,46.12622],[-74.65178,46.12608],[-74.65173,46.12606],[-74.65359,46.12414]]]}},{"nom":"Tremblant","type":"Périmètre urbain","sup":84.1409,"lab":[46.24714,-74.56236],"men21":259,"men25":286,"men35":299,"pop21":479,"pop25":525,"popY":{"21":474,"22":488,"23":499,"24":507,"25":511,"26":514,"27":515,"28":518,"29":520,"30":523,"31":525,"32":527,"33":528,"34":530,"35":531,"36":533,"37":534,"38":536,"39":537,"40":539,"41":540,"42":543,"43":544,"44":546,"45":548,"46":550},"own25":221,"rent25":65,"own35":226,"rent35":73,"revMed":128571.43,"revAvg":197720.27,"work":814,"typo25":{"indiv":119,"jum":20,"rang":43,"dup":21,"apu5":83,"ap5p":0,"autre":0},"typo35":{"indiv":116,"jum":23,"rang":55,"dup":20,"apu5":86,"ap5p":0,"autre":0},"poc":{"av61":33,"c6180":43,"c8190":26,"c9100":60,"c0105":21,"c0610":23,"c1115":19,"c1621":21,"c22p":40},"age":{"a0_14":46,"a15_24":44,"a25_44":95,"a45_64":159,"a65_74":108,"a75p":75},"rc":{"pop":300,"log":135,"prop":92.6,"loc":11.1,"inabor":0,"repar":0,"besoin":0,"men1p":14.8,"mfr":0,"p65":36.7,"densLog":1.6,"densPop":3.6,"monop":0,"vitSeul":7},"geom":{"type":"Polygon","coordinates":[[[-74.62527,46.22737],[-74.61979,46.24425],[-74.61594,46.25541],[-74.61341,46.26176],[-74.60796,46.27583],[-74.60702,46.2778],[-74.59336,46.31434],[-74.55623,46.2894],[-74.53247,46.27365],[-74.51312,46.25955],[-74.51318,46.25731],[-74.51205,46.2555],[-74.51084,46.25454],[-74.50987,46.25315],[-74.509,46.25255],[-74.50817,46.25214],[-74.50647,46.25193],[-74.50606,46.25172],[-74.5051,46.25002],[-74.51309,46.22213],[-74.51384,46.21627],[-74.51638,46.20444],[-74.51696,46.20165],[-74.51752,46.19508],[-74.5182,46.18656],[-74.52009,46.18569],[-74.52073,46.18561],[-74.52416,46.18604],[-74.52577,46.18707],[-74.52818,46.18733],[-74.52978,46.18705],[-74.53117,46.18703],[-74.53455,46.18661],[-74.53576,46.18682],[-74.53836,46.18793],[-74.54129,46.18835],[-74.54327,46.18818],[-74.54578,46.18863],[-74.55017,46.18808],[-74.55137,46.18834],[-74.55287,46.18901],[-74.5539,46.19013],[-74.55469,46.19066],[-74.55563,46.19093],[-74.55752,46.19147],[-74.55768,46.19094],[-74.56084,46.19166],[-74.56241,46.19184],[-74.56444,46.19126],[-74.56532,46.19125],[-74.57041,46.19357],[-74.57363,46.19443],[-74.57526,46.19446],[-74.57817,46.19408],[-74.58141,46.19421],[-74.58414,46.19406],[-74.58702,46.19429],[-74.58893,46.1946],[-74.59228,46.19471],[-74.59392,46.19449],[-74.59628,46.19368],[-74.59788,46.19371],[-74.60107,46.19404],[-74.60458,46.19349],[-74.60493,46.19381],[-74.60601,46.1939],[-74.60654,46.1947],[-74.60415,46.19592],[-74.60393,46.19619],[-74.604,46.19643],[-74.60463,46.19652],[-74.60546,46.1971],[-74.60594,46.19816],[-74.6059,46.19867],[-74.60401,46.20133],[-74.60319,46.20214],[-74.60309,46.20293],[-74.60241,46.20376],[-74.60138,46.20458],[-74.60133,46.20749],[-74.60098,46.20889],[-74.6,46.20943],[-74.60051,46.20988],[-74.60065,46.20993],[-74.60072,46.20998],[-74.60089,46.21001],[-74.6012,46.21011],[-74.60128,46.21008],[-74.60136,46.21009],[-74.60187,46.20985],[-74.60216,46.20973],[-74.603,46.20931],[-74.60331,46.20889],[-74.60404,46.20955],[-74.60405,46.20954],[-74.60409,46.20957],[-74.60408,46.20958],[-74.6042,46.20967],[-74.60504,46.21048],[-74.60623,46.21128],[-74.60648,46.21137],[-74.60672,46.21155],[-74.60805,46.21193],[-74.6089,46.21249],[-74.60979,46.21299],[-74.61096,46.21418],[-74.61225,46.21636],[-74.61262,46.21681],[-74.61283,46.21714],[-74.61329,46.21762],[-74.61364,46.21804],[-74.61399,46.21834],[-74.61439,46.21876],[-74.61572,46.21983],[-74.61686,46.22041],[-74.61699,46.22041],[-74.61712,46.22047],[-74.61868,46.22039],[-74.62105,46.22096],[-74.62404,46.22373],[-74.62417,46.22377],[-74.62426,46.22385],[-74.62598,46.22431],[-74.62828,46.21687],[-74.63072,46.2173],[-74.63045,46.21759],[-74.62952,46.21747],[-74.62813,46.21756],[-74.62527,46.22737]]]}},{"nom":"Hors périmètre urbain","type":"Hors périmètre urbain","sup":98.1388,"lab":[46.0718,-74.5846],"men21":1018,"men25":1123,"men35":1199,"pop21":2278,"pop25":2489,"popY":{"21":2175,"22":2239,"23":2291,"24":2325,"25":2341,"26":2356,"27":2367,"28":2383,"29":2394,"30":2407,"31":2421,"32":2433,"33":2444,"34":2455,"35":2466,"36":2476,"37":2485,"38":2491,"39":2503,"40":2512,"41":2524,"42":2532,"43":2544,"44":2556,"45":2568,"46":2579},"own25":894,"rent25":229,"own35":929,"rent35":270,"revMed":119282.95,"revAvg":172878.84,"work":1124,"typo25":{"indiv":853,"jum":47,"rang":53,"dup":92,"apu5":75,"ap5p":0,"autre":6},"typo35":{"indiv":897,"jum":56,"rang":67,"dup":95,"apu5":82,"ap5p":0,"autre":6},"poc":{"av61":127,"c6180":202,"c8190":123,"c9100":181,"c0105":114,"c0610":81,"c1115":71,"c1621":102,"c22p":123},"age":{"a0_14":264,"a15_24":215,"a25_44":475,"a45_64":730,"a65_74":473,"a75p":330},"rc":{"pop":2690,"log":1085,"prop":83.9,"loc":15.7,"inabor":12.6,"repar":10.2,"besoin":2.8,"men1p":33.9,"mfr":9.5,"p65":29.6,"densLog":11.1,"densPop":27.4,"monop":35.5,"vitSeul":18.7},"geom":{"type":"MultiPolygon","coordinates":[[[[-74.66215,46.22108],[-74.64754,46.22157],[-74.64277,46.22194],[-74.6389,46.2219],[-74.63798,46.22171],[-74.63706,46.22152],[-74.6356,46.22093],[-74.63525,46.22103],[-74.63458,46.22049],[-74.63414,46.22013],[-74.63383,46.21925],[-74.63259,46.21828],[-74.63156,46.21773],[-74.63045,46.21759],[-74.63072,46.2173],[-74.63128,46.2167],[-74.6314,46.21641],[-74.63163,46.21583],[-74.63554,46.21447],[-74.63729,46.21255],[-74.63906,46.20859],[-74.64073,46.20739],[-74.64142,46.20719],[-74.64203,46.20725],[-74.64741,46.20814],[-74.64888,46.20789],[-74.64959,46.20805],[-74.65045,46.20737],[-74.65132,46.20705],[-74.65335,46.20666],[-74.65603,46.20662],[-74.65905,46.20579],[-74.66002,46.20462],[-74.65989,46.20395],[-74.66126,46.20335],[-74.66136,46.2031],[-74.66021,46.20306],[-74.65819,46.20237],[-74.652,46.19952],[-74.64984,46.19781],[-74.64845,46.19598],[-74.64689,46.1953],[-74.64601,46.1932],[-74.64407,46.19077],[-74.64075,46.18915],[-74.63962,46.18882],[-74.63672,46.18916],[-74.63364,46.18844],[-74.63337,46.18836],[-74.63276,46.18763],[-74.63085,46.18687],[-74.63018,46.1869],[-74.627,46.18463],[-74.62553,46.18395],[-74.62363,46.18353],[-74.61701,46.18289],[-74.61561,46.18239],[-74.61488,46.18185],[-74.61441,46.1808],[-74.61494,46.17858],[-74.61489,46.17771],[-74.61439,46.17673],[-74.61345,46.17579],[-74.61332,46.17578],[-74.61328,46.17574],[-74.61318,46.17576],[-74.61298,46.17574],[-74.61042,46.17627],[-74.60878,46.17632],[-74.607,46.17607],[-74.60432,46.17517],[-74.60395,46.17521],[-74.6016,46.17774],[-74.59931,46.18279],[-74.59729,46.18531],[-74.59776,46.18558],[-74.5979,46.18693],[-74.59882,46.18739],[-74.59908,46.18767],[-74.59913,46.18807],[-74.5992,46.1886],[-74.59986,46.1893],[-74.59974,46.18991],[-74.5995,46.19019],[-74.59904,46.1903],[-74.59705,46.19062],[-74.59597,46.19058],[-74.59628,46.19368],[-74.59347,46.19455],[-74.59257,46.19467],[-74.58893,46.1946],[-74.58702,46.19429],[-74.58414,46.19406],[-74.58141,46.19421],[-74.57817,46.19408],[-74.57526,46.19446],[-74.57363,46.19443],[-74.57041,46.19357],[-74.56532,46.19125],[-74.56444,46.19126],[-74.56241,46.19184],[-74.56084,46.19166],[-74.55768,46.19094],[-74.55752,46.19147],[-74.55469,46.19066],[-74.5539,46.19013],[-74.55287,46.18901],[-74.55137,46.18834],[-74.55017,46.18808],[-74.54578,46.18863],[-74.54327,46.18818],[-74.54129,46.18835],[-74.53836,46.18793],[-74.53576,46.18682],[-74.53455,46.18661],[-74.53117,46.18703],[-74.52978,46.18705],[-74.52818,46.18733],[-74.52577,46.18707],[-74.52416,46.18604],[-74.52073,46.18561],[-74.52009,46.18569],[-74.5182,46.18656],[-74.51842,46.18361],[-74.51793,46.17906],[-74.51855,46.17476],[-74.51851,46.17162],[-74.52048,46.16447],[-74.52494,46.14519],[-74.53167,46.11992],[-74.53184,46.11936],[-74.53276,46.11953],[-74.53473,46.12031],[-74.53665,46.12051],[-74.54901,46.12394],[-74.55322,46.12528],[-74.55334,46.12529],[-74.55339,46.12531],[-74.55531,46.1255],[-74.55775,46.12514],[-74.55599,46.1308],[-74.5516,46.14852],[-74.5549,46.14951],[-74.55822,46.1507],[-74.56243,46.15185],[-74.56452,46.15262],[-74.57012,46.1533],[-74.57022,46.15328],[-74.57038,46.1533],[-74.57626,46.1524],[-74.5786,46.15068],[-74.58222,46.14882],[-74.58275,46.14836],[-74.58356,46.14717],[-74.58407,46.14682],[-74.58494,46.14649],[-74.5865,46.14635],[-74.58537,46.15131],[-74.58641,46.15097],[-74.5984,46.15307],[-74.59998,46.1529],[-74.6003,46.15242],[-74.60024,46.15175],[-74.59886,46.15013],[-74.59896,46.14919],[-74.5991,46.14904],[-74.59932,46.14894],[-74.59943,46.14892],[-74.59961,46.14889],[-74.60017,46.14899],[-74.60046,46.14918],[-74.60059,46.14978],[-74.60069,46.14987],[-74.60073,46.14997],[-74.60096,46.15008],[-74.60103,46.15014],[-74.60121,46.1502],[-74.60154,46.15035],[-74.6018,46.15037],[-74.60204,46.15045],[-74.60306,46.15049],[-74.60429,46.15],[-74.60525,46.14892],[-74.60629,46.14816],[-74.60687,46.14742],[-74.60684,46.14667],[-74.60537,46.14527],[-74.60424,46.14488],[-74.60244,46.14452],[-74.60207,46.14415],[-74.60239,46.14373],[-74.60358,46.14346],[-74.60392,46.14318],[-74.60401,46.14242],[-74.60363,46.14126],[-74.60442,46.1396],[-74.60542,46.14002],[-74.60774,46.14172],[-74.60966,46.14151],[-74.61058,46.14108],[-74.61135,46.14043],[-74.6117,46.139],[-74.61332,46.13681],[-74.61519,46.13692],[-74.61526,46.1369],[-74.61537,46.1369],[-74.61541,46.13684],[-74.61547,46.13682],[-74.61552,46.13666],[-74.61559,46.13655],[-74.61643,46.13382],[-74.61649,46.13363],[-74.62072,46.13503],[-74.62256,46.13532],[-74.62642,46.13542],[-74.62821,46.13576],[-74.62976,46.13636],[-74.63337,46.13828],[-74.635,46.13887],[-74.63625,46.13916],[-74.63649,46.13924],[-74.63665,46.13926],[-74.63692,46.13932],[-74.64005,46.13961],[-74.64395,46.13937],[-74.64543,46.13943],[-74.64585,46.13867],[-74.64712,46.13858],[-74.64744,46.13842],[-74.6478,46.13791],[-74.6481,46.13748],[-74.64816,46.13728],[-74.64819,46.13723],[-74.64854,46.13596],[-74.64825,46.13449],[-74.64864,46.13261],[-74.6491,46.13152],[-74.64925,46.13115],[-74.65036,46.13009],[-74.65093,46.12883],[-74.65092,46.12732],[-74.65122,46.1264],[-74.65091,46.12643],[-74.65091,46.12569],[-74.65157,46.12599],[-74.65193,46.12204],[-74.65202,46.12104],[-74.65213,46.11984],[-74.65277,46.11974],[-74.65458,46.12087],[-74.65482,46.12102],[-74.65594,46.12172],[-74.65498,46.12271],[-74.65359,46.12414],[-74.65173,46.12606],[-74.65178,46.12608],[-74.65161,46.12622],[-74.6524,46.12636],[-74.65311,46.12668],[-74.65475,46.12671],[-74.65512,46.12678],[-74.65562,46.12687],[-74.64628,46.15457],[-74.64371,46.16345],[-74.6715,46.16327],[-74.66765,46.17634],[-74.67434,46.17721],[-74.67122,46.18877],[-74.66215,46.22108]]],[[[-74.6108,46.08658],[-74.61014,46.08746],[-74.60809,46.08947],[-74.60744,46.09049],[-74.60713,46.09209],[-74.60752,46.09519],[-74.60716,46.09606],[-74.60598,46.09758],[-74.60422,46.09603],[-74.60354,46.09574],[-74.60338,46.09572],[-74.60327,46.09568],[-74.60169,46.09548],[-74.59856,46.09543],[-74.59773,46.09556],[-74.59587,46.09456],[-74.59474,46.0942],[-74.59267,46.09413],[-74.59,46.09355],[-74.58456,46.09305],[-74.58394,46.09282],[-74.58275,46.09153],[-74.58209,46.09116],[-74.5807,46.09084],[-74.57751,46.09062],[-74.57605,46.08989],[-74.57071,46.08895],[-74.57005,46.08852],[-74.56899,46.0871],[-74.56772,46.08639],[-74.56476,46.08512],[-74.5615,46.08257],[-74.55979,46.08148],[-74.55354,46.07924],[-74.55111,46.07822],[-74.54798,46.07743],[-74.54503,46.07636],[-74.54385,46.07567],[-74.55141,46.04987],[-74.55551,46.03882],[-74.57111,46.03946],[-74.57705,46.04054],[-74.58049,46.04137],[-74.58565,46.04309],[-74.59298,46.04511],[-74.59434,46.04563],[-74.59795,46.04634],[-74.60462,46.04805],[-74.60995,46.04918],[-74.61731,46.05129],[-74.63719,46.05385],[-74.63238,46.06787],[-74.62542,46.067],[-74.62179,46.0805],[-74.62154,46.0805],[-74.6201,46.08049],[-74.61901,46.08019],[-74.61883,46.08019],[-74.61853,46.08012],[-74.6182,46.08019],[-74.61472,46.07928],[-74.61435,46.07963],[-74.61371,46.08053],[-74.61318,46.08119],[-74.61307,46.08143],[-74.61301,46.08152],[-74.6108,46.08658]]],[[[-74.63109,46.10108],[-74.63008,46.09947],[-74.63005,46.09945],[-74.63002,46.0994],[-74.62875,46.09866],[-74.62816,46.09758],[-74.62812,46.09755],[-74.6281,46.09751],[-74.62729,46.09683],[-74.62662,46.09627],[-74.6263,46.09561],[-74.62608,46.09539],[-74.62601,46.09528],[-74.62586,46.09517],[-74.62556,46.09488],[-74.62501,46.09458],[-74.62425,46.09416],[-74.62865,46.09117],[-74.63005,46.08972],[-74.63057,46.08854],[-74.63168,46.08372],[-74.63209,46.08312],[-74.63277,46.08266],[-74.63278,46.08265],[-74.63238,46.08222],[-74.63206,46.08188],[-74.64393,46.08352],[-74.649,46.08398],[-74.64768,46.09004],[-74.64587,46.09688],[-74.66474,46.0997],[-74.66111,46.11075],[-74.66077,46.11072],[-74.65838,46.11048],[-74.65571,46.1105],[-74.65484,46.11033],[-74.65329,46.10968],[-74.65091,46.10747],[-74.64913,46.10684],[-74.64695,46.10636],[-74.64367,46.1066],[-74.6411,46.10647],[-74.63705,46.10723],[-74.63661,46.10721],[-74.63581,46.10663],[-74.63541,46.10647],[-74.63489,46.10627],[-74.63325,46.10406],[-74.63184,46.10277],[-74.63109,46.10108]]]]}}];
+const ISQ = {m21:5470, m41:{faible:6311, ref:6798, fort:7291}};
+const Y_ECY = 2025, Y_P0Y = 2035, Y_BASE = 2021;
+const COL = {"Village":"var(--s-village)","Saint-Jovite":"var(--s-jovite)","Tremblant":"var(--s-tremblant)","Hors périmètre urbain":"var(--s-hors)"};
+const COLHEX = {"Village":"#3fc7b4","Saint-Jovite":"#f2d24b","Tremblant":"#7fa8ff","Hors périmètre urbain":"#c79be8"};
+const SC_LBL = {faible:"Faible", ref:"Référence", fort:"Fort", env:"Environics"};
+const TYPO = [["indiv","Individuelle","#3fc7b4"],["jum","Jumelée","#2a9d8f"],["rang","En rangée","#7fa8ff"],["dup","Duplex","#c79be8"],["apu5","App. < 5 étages","#f2d24b"],["ap5p","App. 5 étages +","#f29a4b"],["autre","Autre","#6d8a8d"]];
+const POC = [["av61","Avant 1961"],["c6180","1961–80"],["c8190","1981–90"],["c9100","1991–2000"],["c0105","2001–05"],["c0610","2006–10"],["c1115","2011–15"],["c1621","2016–21"],["c22p","2022 +"]];
+const AGE = [["a0_14","0–14","#7fa8ff"],["a15_24","15–24","#5ab8d8"],["a25_44","25–44","#3fc7b4"],["a45_64","45–64","#9ccf6a"],["a65_74","65–74","#f2d24b"],["a75p","75 +","#f29a4b"]];
+
+const st = {sc:"ref", H:2041, vac:3, key:"tend", hors:null, ten:"actuel", ind:"res", sel:null};
+
+const nf0 = new Intl.NumberFormat('fr-CA',{maximumFractionDigits:0});
+const nf1 = new Intl.NumberFormat('fr-CA',{maximumFractionDigits:1,minimumFractionDigits:1});
+const f0 = v => v==null||isNaN(v) ? "n.d." : nf0.format(Math.round(v));
+const f1 = v => v==null||isNaN(v) ? "n.d." : nf1.format(v);
+const pct = v => v==null||isNaN(v) ? "n.d." : nf1.format(v)+" %";
+const money = v => v==null||isNaN(v) ? "n.d." : nf0.format(Math.round(v/100)*100)+" $";
+const sgn = v => (v>0?"+":"")+f0(v);
+
+const sum = (a,f) => a.reduce((s,x)=>s+f(x),0);
+const S21 = sum(SECT,s=>s.men21);
+const ISQscale = ISQ.m21 / S21;
+SECT.forEach(s=>{
+  s.isHors = s.type.startsWith("Hors");
+  s.dEnv = s.men35 - s.men21;
+  s.recentYr = (s.poc.c1621 + s.poc.c22p)/10;
+  s.parc = Object.values(s.poc).reduce((a,b)=>a+b,0);
+});
+const DENV = sum(SECT,s=>s.dEnv);
+
+function keyShares(){
+  const raw = SECT.map(s => st.key==="tend" ? s.dEnv/DENV : s.men25/sum(SECT,x=>x.men25));
+  return raw;
+}
+function shares(){
+  const k = keyShares();
+  const iH = SECT.findIndex(s=>s.isHors);
+  const hors = st.hors==null ? k[iH] : st.hors/100;
+  const puTot = k.reduce((a,v,i)=> i===iH?a:a+v,0);
+  return k.map((v,i)=> i===iH ? hors : v/puTot*(1-hors));
+}
+function munDelta(sc,H){
+  if(sc==="env") return DENV*ISQscale*(H-Y_BASE)/(Y_P0Y-Y_BASE);
+  return (ISQ.m41[sc]-ISQ.m21)*(H-Y_BASE)/20;
+}
+function rentShare(s){
+  if(st.ten==="actuel") return s.rent25/s.men25;
+  const dm = s.men35-s.men25, dr = s.rent35-s.rent25;
+  return dm>0 ? Math.min(1,Math.max(0,dr/dm)) : s.rent25/s.men25;
+}
+function compute(sc=st.sc){
+  const sh = shares(), D = munDelta(sc,st.H), v = st.vac/100, H = st.H;
+  const rows = SECT.map((s,i)=>{
+    const base = s.men21*ISQscale, cur = s.men25*ISQscale;
+    const dH = sh[i]*D, target = base+dH;
+    const tot = dH/(1-v);
+    const resRaw = (target-cur)/(1-v);
+    const res = Math.max(0,resRaw);
+    const perYr = res/(H-Y_ECY);
+    const rs = rentShare(s);
+    return {s, share:sh[i], base, cur, target, tot, resRaw, res, perYr, loc:res*rs, rs,
+      ratio: s.recentYr>0 ? perYr/s.recentYr*100 : null,
+      per1000: res/s.men25*1000};
+  });
+  const T = {share:1, base:sum(rows,r=>r.base), cur:sum(rows,r=>r.cur), target:sum(rows,r=>r.target),
+    tot:sum(rows,r=>r.tot), res:sum(rows,r=>r.res), resRaw:sum(rows,r=>r.resRaw), loc:sum(rows,r=>r.loc)};
+  T.perYr = T.res/(H-Y_ECY); T.recentYr = sum(SECT,s=>s.recentYr);
+  T.ratio = T.perYr/T.recentYr*100; T.rs = T.loc/(T.res||1);
+  T.per1000 = T.res/sum(SECT,s=>s.men25)*1000;
+  return {rows, T};
+}
+
+/* aggregate profile for "ensemble" */
+const AGG = (()=>{
+  const a = {nom:"Ensemble de Mont-Tremblant", type:"Quatre secteurs", sup:sum(SECT,s=>s.sup)};
+  ["men21","men25","men35","pop21","pop25","own25","rent25","own35","rent35","work","recentYr","parc"].forEach(k=>a[k]=sum(SECT,s=>s[k]));
+  a.popY={}; Object.keys(SECT[0].popY).forEach(y=>a.popY[y]=sum(SECT,s=>s.popY[y]));
+  ["typo25","typo35","poc","age"].forEach(g=>{a[g]={}; Object.keys(SECT[0][g]).forEach(k=>a[g][k]=sum(SECT,s=>s[g][k]));});
+  const wL = SECT.map(s=>s.rc.log), wP = SECT.map(s=>s.rc.pop);
+  const wavg = (k,w)=> SECT.reduce((t,s,i)=>t+s.rc[k]*w[i],0)/w.reduce((x,y)=>x+y,0);
+  a.rc = {pop:sum(SECT,s=>s.rc.pop), log:sum(SECT,s=>s.rc.log), loc:wavg("loc",wL), inabor:wavg("inabor",wL), repar:wavg("repar",wL), besoin:wavg("besoin",wL), men1p:wavg("men1p",wL), mfr:wavg("mfr",wP), p65:wavg("p65",wP), densLog:null};
+  a.revMed = null; a.revAvg = SECT.reduce((t,s)=>t+s.revAvg*s.men25,0)/a.men25;
+  a.isHors=false; return a;
+})();
+
+/* indicators */
+const IND = [
+ {g:"Besoins (selon les paramètres)", id:"res", l:"Besoin résiduel 2025 → horizon", u:"logements", f:f0, get:r=>r.res},
+ {g:"Besoins (selon les paramètres)", id:"tot", l:"Logements requis 2021 → horizon", u:"logements", f:f0, get:r=>r.tot},
+ {g:"Besoins (selon les paramètres)", id:"yr", l:"Logements requis par année (résiduel)", u:"logements / an", f:f1, get:r=>r.perYr},
+ {g:"Besoins (selon les paramètres)", id:"loc", l:"Dont logements locatifs (résiduel)", u:"logements", f:f0, get:r=>r.loc},
+ {g:"Besoins (selon les paramètres)", id:"p1000", l:"Besoin résiduel pour 1 000 ménages", u:"logements", f:f0, get:r=>r.per1000},
+ {g:"Besoins (selon les paramètres)", id:"ratio", l:"Rythme requis ÷ rythme récent", u:"%", f:v=>f0(v)+" %", get:r=>r.ratio},
+ {g:"Tendances", id:"cm2125", l:"Croissance des ménages 2021 → 2025", u:"%", f:pct, get:r=>(r.s.men25/r.s.men21-1)*100},
+ {g:"Tendances", id:"cm2535", l:"Croissance projetée des ménages 2025 → 2035", u:"%", f:pct, get:r=>(r.s.men35/r.s.men25-1)*100},
+ {g:"Tendances", id:"cp2146", l:"Croissance de la population 2021 → 2046", u:"%", f:pct, get:r=>(r.s.popY["46"]/r.s.popY["21"]-1)*100},
+ {g:"Tendances", id:"rec", l:"Logements construits 2016–2025 (% du parc)", u:"%", f:pct, get:r=>(r.s.poc.c1621+r.s.poc.c22p)/r.s.parc*100},
+ {g:"Tendances", id:"old", l:"Parc construit avant 1981", u:"%", f:pct, get:r=>(r.s.poc.av61+r.s.poc.c6180)/r.s.parc*100},
+ {g:"Portrait", id:"men", l:"Ménages 2025", u:"ménages", f:f0, get:r=>r.s.men25},
+ {g:"Portrait", id:"locat", l:"Ménages locataires 2025", u:"%", f:pct, get:r=>r.s.rent25/r.s.men25*100},
+ {g:"Portrait", id:"rev", l:"Revenu médian des ménages 2025", u:"$", f:money, get:r=>r.s.revMed},
+ {g:"Portrait", id:"inab", l:"Taux d'effort de 30 % ou plus (2021)", u:"%", f:pct, get:r=>r.s.rc.inabor},
+ {g:"Portrait", id:"bes", l:"Besoins impérieux de logement (2021)", u:"%", f:pct, get:r=>r.s.rc.besoin},
+ {g:"Portrait", id:"p65", l:"Population de 65 ans et plus 2025", u:"%", f:pct, get:r=>(r.s.age.a65_74+r.s.age.a75p)/r.s.pop25*100},
+ {g:"Portrait", id:"m1p", l:"Ménages d'une personne (2021)", u:"%", f:pct, get:r=>r.s.rc.men1p},
+ {g:"Portrait", id:"work", l:"Travailleurs par résident", u:"ratio", f:v=>f1(v).replace(",0",",0"), get:r=>r.s.work/r.s.pop25},
+];
+const INDM = Object.fromEntries(IND.map(i=>[i.id,i]));
+
+/* build selector */
+(function(){
+  const sel = document.getElementById("ind"); let g=null, og=null;
+  IND.forEach(i=>{ if(i.g!==g){ og=document.createElement("optgroup"); og.label=i.g; sel.appendChild(og); g=i.g;}
+    const o=document.createElement("option"); o.value=i.id; o.textContent=i.l; og.appendChild(o);});
+  sel.value = st.ind;
+})();
+
+/* color ramp */
+const RAMP = ["#16363b","#1f6f68","#3fc7b4","#b9d86a","#f2d24b"];
+function hex2rgb(h){h=h.replace("#","");return [0,2,4].map(i=>parseInt(h.substr(i,2),16));}
+function ramp(t){
+  t=Math.max(0,Math.min(1,t)); const n=RAMP.length-1, i=Math.min(n-1,Math.floor(t*n)), u=t*n-i;
+  const a=hex2rgb(RAMP[i]), b=hex2rgb(RAMP[i+1]);
+  return "rgb("+a.map((x,k)=>Math.round(x+(b[k]-x)*u)).join(",")+")";
+}
+document.getElementById("legBar").style.background = "linear-gradient(90deg,"+RAMP.join(",")+")";
+
+/* map */
+const map = L.map("map",{zoomControl:true, attributionControl:true, scrollWheelZoom:false});
+const BASES = {
+  esri: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",{maxZoom:16, attribution:"Tuiles © Esri"}),
+  qc: L.tileLayer("https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png",{maxZoom:17, tms:false, attribution:"© Gouvernement du Québec"}),
+};
+let curBase=null, tileFail=false;
+function setBase(k){
+  if(curBase){map.removeLayer(curBase);curBase=null;}
+  document.getElementById("mapNote").hidden = true; tileFail=false;
+  if(k==="none") return;
+  curBase = BASES[k].addTo(map); curBase.bringToBack();
+  curBase.off("tileerror").on("tileerror",()=>{ if(tileFail) return; tileFail=true;
+    const n=document.getElementById("mapNote"); n.textContent="Fond de carte indisponible dans cet affichage : les secteurs restent lisibles sans fond."; n.hidden=false; });
+}
+document.getElementById("baseSel").addEventListener("change",e=>setBase(e.target.value));
+
+const layers = [];
+const group = L.featureGroup().addTo(map);
+SECT.forEach((s,i)=>{
+  const lyr = L.geoJSON({type:"Feature",geometry:s.geom,properties:{}},{style:{weight:1.5,color:"#e8f1f1",fillOpacity:.72}});
+  lyr.on("click",()=>select(i));
+  lyr.on("mouseover",()=>lyr.setStyle({weight:3}));
+  lyr.on("mouseout",()=>styleMap());
+  lyr.addTo(group);
+  const tt = L.tooltip({permanent:true,direction:"center",className:"slab",interactive:false}).setLatLng(s.lab).setContent("");
+  tt.addTo(map);
+  layers.push({lyr,tt});
+});
+map.fitBounds(group.getBounds(),{padding:[20,20]});
+setBase("esri");
+
+function styleMap(){
+  const {rows} = compute(); const ind = INDM[st.ind];
+  const vals = rows.map(r=>ind.get(r)); const mn=Math.min(...vals), mx=Math.max(...vals);
+  rows.forEach((r,i)=>{
+    const v=vals[i], t = mx>mn ? (v-mn)/(mx-mn) : .5;
+    const on = st.sel===i;
+    layers[i].lyr.setStyle({fillColor:ramp(t), weight:on?3.5:1.4, color:on?"#f2d24b":"#e8f1f1", fillOpacity:.74});
+    layers[i].tt.setContent("<b>"+r.s.nom+"</b><span class='num'>"+ind.f(v)+"</span>");
+  });
+  document.getElementById("legMin").textContent = ind.f(mn);
+  document.getElementById("legMax").textContent = ind.f(mx);
+  document.getElementById("legNote").textContent = ind.l+" ("+ind.u+"). Échelle continue entre le plus faible et le plus élevé des quatre secteurs.";
+}
+
+/* summary strip */
+function strip(){
+  const {rows,T} = compute(); const H=st.H;
+  document.getElementById("k1l").textContent = "Logements requis 2021 → "+H;
+  document.getElementById("k1").textContent = f0(T.tot);
+  document.getElementById("k1s").textContent = "Scénario "+SC_LBL[st.sc].toLowerCase()+", inoccupation "+f1(st.vac)+" %";
+  document.getElementById("k2l").textContent = "Besoin résiduel 2025 → "+H;
+  document.getElementById("k2").textContent = f0(T.res);
+  document.getElementById("k2s").textContent = "dont "+f0(T.loc)+" locatifs ("+f0(T.rs*100)+" %)";
+  document.getElementById("k3").textContent = f0(T.perYr)+" / "+f0(T.recentYr);
+  document.getElementById("k3s").textContent = "logements par an, requis vs construits 2016–2025";
+  const pu = rows.filter(r=>!r.s.isHors).reduce((a,r)=>a+r.share,0);
+  document.getElementById("k4").textContent = f0(pu*100)+" %";
+  document.getElementById("k4s").textContent = "de la croissance allouée à Village, Saint-Jovite et Tremblant";
+}
+
+/* fiche */
+let trajChart=null;
+function stackBar(obj, defs, total){
+  const t = total || defs.reduce((a,d)=>a+Math.max(0,obj[d[0]]),0) || 1;
+  return "<div class='stack'>"+defs.map(d=>"<span style='width:"+(Math.max(0,obj[d[0]])/t*100)+"%;background:"+d[2]+"' title='"+d[1]+"'></span>").join("")+"</div>"+
+    "<div class='sleg'>"+defs.filter(d=>obj[d[0]]>0).map(d=>"<span><i style='background:"+d[2]+"'></i>"+d[1]+" "+f0(obj[d[0]]/t*100)+" %</span>").join("")+"</div>";
+}
+function flagsFor(s, r, isAll){
+  const L=[]; const H=st.H, sc=SC_LBL[st.sc].toLowerCase();
+  if(r.resRaw<=0) L.push(["good","La croissance estimée des ménages de 2021 à 2025 dépasse déjà la cible du scénario "+sc+" pour "+H+" : aucun besoin résiduel dans ces paramètres."]);
+  else if(r.ratio!=null && r.ratio>110) L.push(["","Le rythme requis ("+f1(r.perYr)+" logements par an) dépasse le rythme de construction récent ("+f1(isAll?r.recentYr:s.recentYr)+" par an)."]);
+  else if(r.ratio!=null && r.ratio<90) L.push(["good","Le rythme de construction récent ("+f1(isAll?r.recentYr:s.recentYr)+" par an) couvrirait le besoin ("+f1(r.perYr)+" par an) s'il se maintient."]);
+  const loc = s.rent25/s.men25*100;
+  if(loc>=40) L.push(["","Parc à forte présence locative ("+f0(loc)+" % de locataires) : le besoin porte d'abord sur du logement locatif, dont une part abordable."]);
+  if(s.rc.inabor>=15) L.push(["",f1(s.rc.inabor)+" % des ménages consacraient 30 % ou plus de leur revenu au logement en 2021 : l'abordabilité est un enjeu de santé dans ce secteur."]);
+  const p65 = (s.age.a65_74+s.age.a75p)/s.pop25*100;
+  if(p65>=30) L.push(["info",f0(p65)+" % de la population a 65 ans et plus : logements adaptés, de petite taille et à distance de marche des services."]);
+  if(s.rc.men1p>=40) L.push(["info",f0(s.rc.men1p)+" % de ménages d'une personne en 2021 : demande pour de plus petits logements."]);
+  const wr = s.work/s.pop25;
+  if(wr>=1.15) L.push(["info","Plus de travailleurs que de résidents (ratio "+f1(wr)+") : le logement de la main-d'œuvre touristique est à considérer."]);
+  if(s.isHors && r.share>0.12) L.push(["","Une part de "+f0(r.share*100)+" % de la croissance serait logée hors périmètre urbain : cette forme de développement augmente la dépendance à l'automobile et les coûts de desserte. Le curseur « Croissance dirigée hors PU » permet de tester une réorientation."]);
+  if(!L.length) L.push(["info","Aucun signal particulier avec les paramètres actuels."]);
+  return "<ul class='flags'>"+L.map(x=>"<li class='"+x[0]+"'>"+x[1]+"</li>").join("")+"</ul>";
+}
+function fiche(){
+  const isAll = st.sel==null;
+  const C = compute(); const s = isAll ? AGG : SECT[st.sel]; const r = isAll ? C.T : C.rows[st.sel];
+  const H = st.H;
+  const t = document.getElementById("fTitle");
+  t.innerHTML = (isAll?"":"<i style='background:"+COL[s.nom]+"'></i>")+s.nom;
+  document.getElementById("fSub").textContent = isAll ? "4 secteurs · "+f0(s.sup)+" km² · "+f0(s.men25)+" ménages (2025)"
+    : s.type+" · "+f1(s.sup)+" km² · "+f0(r.share*100)+" % de la croissance allouée";
+  const scBoxes = ["faible","ref","fort","env"].map(k=>{
+    const cc = compute(k); const rr = isAll?cc.T:cc.rows[st.sel];
+    return "<div class='s"+(k===st.sc?" on":"")+"'><div class='n num'>"+f0(rr.res)+"</div><div class='l'>"+SC_LBL[k]+"</div></div>";}).join("");
+  const maxPace = Math.max(r.perYr, isAll?r.recentYr:s.recentYr, 1);
+  const rec = isAll?r.recentYr:s.recentYr;
+  const rentNow = s.rent25/s.men25*100;
+  const growth = {}; TYPO.forEach(d=>growth[d[0]]=Math.max(0,s.typo35[d[0]]-s.typo25[d[0]]));
+  const pocTot = Object.values(s.poc).reduce((a,b)=>a+b,0);
+  const pocMax = Math.max(...Object.values(s.poc));
+  const p65 = (s.age.a65_74+s.age.a75p)/s.pop25*100;
+  document.getElementById("fBody").innerHTML =
+    "<div class='bt'>Besoin estimé, horizon "+H+"</div>"+
+    "<div class='big2'>"+
+      "<div class='b'><div class='n num hi'>"+f0(r.res)+"</div><div class='t'>logements, besoin résiduel 2025 → "+H+"</div></div>"+
+      "<div class='b'><div class='n num'>"+f0(r.tot)+"</div><div class='t'>logements requis 2021 → "+H+"</div></div>"+
+      "<div class='b'><div class='n num'>"+f0(r.loc)+"</div><div class='t'>dont locatifs ("+f0((isAll?r.rs:r.rs)*100)+" %)</div></div>"+
+      "<div class='b'><div class='n num'>"+f0(r.target)+"</div><div class='t'>ménages visés en "+H+" (vs "+f0(r.cur)+" en 2025)</div></div>"+
+    "</div>"+
+    "<div class='bt'>Besoin résiduel selon le scénario</div><div class='scen'>"+scBoxes+"</div>"+
+    "<div class='pace'><div class='row'><span>Requis</span><div class='tr'><span style='width:"+(r.perYr/maxPace*100)+"%;background:var(--accent2)'></span></div><span class='num' style='text-align:right'>"+f1(r.perYr)+"</span></div>"+
+      "<div class='row'><span>Récent 2016–25</span><div class='tr'><span style='width:"+(rec/maxPace*100)+"%;background:var(--accent)'></span></div><span class='num' style='text-align:right'>"+f1(rec)+"</span></div>"+
+      "<div class='hint' style='margin-top:4px'>Logements par année.</div></div>"+
+    "<div class='bt'>Ménages : estimations et cibles</div><div class='chartbox'><canvas id='trajChart'></canvas></div>"+
+    "<div class='bt'>Lecture</div>"+flagsFor(s,r,isAll)+
+    "<div class='bt'>Portrait</div>"+
+      kv("Population 2025", f0(s.pop25))+
+      kv("Ménages 2021 → 2025 → 2035", f0(s.men21)+" → "+f0(s.men25)+" → "+f0(s.men35))+
+      kv("Locataires 2025", pct(rentNow))+
+      kv(isAll?"Revenu moyen des ménages":"Revenu médian des ménages", isAll?money(s.revAvg):money(s.revMed))+
+      kv("Taux d'effort ≥ 30 % (2021)", pct(s.rc.inabor))+
+      kv("Besoins impérieux (2021)", pct(s.rc.besoin))+
+      kv("Réparations majeures (2021)", pct(s.rc.repar))+
+      kv("Ménages d'une personne (2021)", pct(s.rc.men1p))+
+      kv("Faible revenu, MFR-ApI (2021)", pct(s.rc.mfr))+
+      kv("65 ans et plus (2025)", pct(p65))+
+      kv("Travailleurs sur place", f0(s.work))+
+    "<div class='bt'>Âge de la population, 2025</div>"+stackBar(s.age,AGE,s.pop25)+
+    "<div class='bt'>Type de logement</div><div class='stk-t'>Parc occupé 2025</div>"+stackBar(s.typo25,TYPO)+
+    "<div class='stk-t'>Ajouts projetés 2025 → 2035 (Environics)</div>"+(Object.values(growth).some(v=>v>0)?stackBar(growth,TYPO):"<div class='hint'>Aucun ajout net projeté.</div>")+
+    "<div class='bt'>Période de construction du parc occupé</div>"+
+      POC.map(([k,l])=>"<div class='pace' style='background:none;border:none;padding:0;margin:0'><div class='row' style='grid-template-columns:78px 1fr 40px;margin:3px 0'><span class='hint' style='margin:0'>"+l+"</span><div class='tr'><span style='width:"+(s.poc[k]/pocMax*100)+"%;background:"+(k==="c1621"||k==="c22p"?"var(--accent2)":"var(--accent)")+"'></span></div><span class='num' style='text-align:right'>"+f0(s.poc[k]/pocTot*100)+" %</span></div></div>").join("");
+  drawTraj(s, isAll);
+}
+function kv(k,v){return "<div class='kv'><span class='k'>"+k+"</span><span class='v num'>"+v+"</span></div>";}
+
+const chartTxt = "#9fb6b8", chartGrid = "rgba(159,182,184,.14)";
+function drawTraj(s,isAll){
+  const ctx = document.getElementById("trajChart"); if(!ctx) return;
+  if(trajChart){trajChart.destroy();trajChart=null;}
+  const ds = [];
+  ds.push({label:"Environics (estimé, projeté)", data:[{x:2021,y:s.men21*ISQscale},{x:2025,y:s.men25*ISQscale},{x:2035,y:s.men35*ISQscale}],
+    borderColor:"#3fc7b4", backgroundColor:"#3fc7b4", borderWidth:2.5, pointRadius:4, tension:0});
+  ["faible","ref","fort","env"].forEach(k=>{
+    const pts=[2021,2031,2036,2041].map(h=>{ const sv=st.H; st.H=h; const c=compute(k); st.H=sv;
+      return {x:h, y: isAll? c.T.target : c.rows[st.sel].target}; });
+    const on = k===st.sc;
+    ds.push({label:"Cible "+SC_LBL[k].toLowerCase(), data:pts, borderColor:on?"#f2d24b":"rgba(232,241,241,.35)", backgroundColor:on?"#f2d24b":"rgba(232,241,241,.35)",
+      borderWidth:on?2.5:1, borderDash:on?[]:[4,4], pointRadius:on?3:0, tension:0});
+  });
+  trajChart = new Chart(ctx,{type:"line", data:{datasets:ds},
+    options:{responsive:true, maintainAspectRatio:false, animation:false, parsing:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>c.dataset.label+" : "+f0(c.parsed.y)}}},
+      scales:{x:{type:"linear",min:2021,max:2041,ticks:{color:chartTxt,stepSize:5,callback:v=>String(v)},grid:{color:chartGrid}},
+              y:{ticks:{color:chartTxt,callback:v=>nf0.format(v)},grid:{color:chartGrid}}}}});
+}
+
+/* table */
+let lastCsv="";
+function table(){
+  const {rows,T} = compute(); const H=st.H;
+  document.getElementById("tblDesc").textContent = "Scénario "+SC_LBL[st.sc].toLowerCase()+", horizon "+H+", inoccupation visée "+f1(st.vac)+" %, clé « "+(st.key==="tend"?"tendance":"poids actuel")+" », part locative selon "+(st.ten==="actuel"?"le parc 2025":"la tendance 2025–2035")+".";
+  const mx = Math.max(...rows.map(r=>r.res),1);
+  const head = ["Secteur","Ménages<br>2025","Part de la<br>croissance","Requis<br>2021→"+H,"Résiduel<br>2025→"+H,"Dont<br>locatif","Requis<br>par an","Récent<br>par an","Locataires"];
+  let h = "<thead><tr>"+head.map(x=>"<th>"+x+"</th>").join("")+"</tr></thead><tbody>";
+  rows.forEach((r,i)=>{
+    h += "<tr data-i='"+i+"' class='"+(st.sel===i?"sel":"")+"' tabindex='0'><td><span class='sw' style='background:"+COL[r.s.nom]+"'></span>"+r.s.nom+"</td>"+
+      "<td class='num'>"+f0(r.s.men25)+"</td><td class='num'>"+f0(r.share*100)+" %</td><td class='num'>"+f0(r.tot)+"</td>"+
+      "<td class='num barc'><div class='ib'><span>"+f0(r.res)+"</span><div class='tr'><span style='width:"+(r.res/mx*100)+"%'></span></div></div></td>"+
+      "<td class='num'>"+f0(r.loc)+"</td><td class='num'>"+f1(r.perYr)+"</td><td class='num'>"+f1(r.s.recentYr)+"</td><td class='num'>"+f0(r.s.rent25/r.s.men25*100)+" %</td></tr>";
+  });
+  h += "</tbody><tfoot><tr><td>Mont-Tremblant</td><td class='num'>"+f0(AGG.men25)+"</td><td class='num'>100 %</td><td class='num'>"+f0(T.tot)+"</td><td class='num'>"+f0(T.res)+"</td><td class='num'>"+f0(T.loc)+"</td><td class='num'>"+f1(T.perYr)+"</td><td class='num'>"+f1(T.recentYr)+"</td><td class='num'>"+f0(AGG.rent25/AGG.men25*100)+" %</td></tr></tfoot>";
+  const tb = document.getElementById("tbl"); tb.innerHTML = h;
+  tb.querySelectorAll("tbody tr").forEach(tr=>{
+    const go=()=>select(+tr.dataset.i); tr.addEventListener("click",go);
+    tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+  });
+  const csvRows = [["secteur","menages_2025","part_croissance_pct","requis_2021_"+H,"residuel_2025_"+H,"dont_locatif","par_an","recent_par_an","locataires_pct"]];
+  rows.forEach(r=>csvRows.push([r.s.nom,r.s.men25,(r.share*100).toFixed(1),Math.round(r.tot),Math.round(r.res),Math.round(r.loc),r.perYr.toFixed(1),r.s.recentYr.toFixed(1),(r.s.rent25/r.s.men25*100).toFixed(1)]));
+  csvRows.push(["Mont-Tremblant",AGG.men25,"100",Math.round(T.tot),Math.round(T.res),Math.round(T.loc),T.perYr.toFixed(1),T.recentYr.toFixed(1),(AGG.rent25/AGG.men25*100).toFixed(1)]);
+  lastCsv = "# scenario="+st.sc+";horizon="+H+";inoccupation="+st.vac+";cle="+st.key+";hors_pu="+(shares()[SECT.findIndex(s=>s.isHors)]*100).toFixed(0)+"\n"+csvRows.map(r=>r.map(x=>/[;,"]/.test(String(x))?'"'+x+'"':x).join(";")).join("\n");
+}
+document.getElementById("copyCsv").addEventListener("click",()=>{
+  const b=document.getElementById("copyCsv"), ta=document.getElementById("csvfallback");
+  const done=()=>{b.textContent="Tableau copié";setTimeout(()=>b.textContent="Copier le tableau (CSV)",1800);};
+  try{ navigator.clipboard.writeText(lastCsv).then(done).catch(()=>{ta.value=lastCsv;ta.hidden=false;ta.select();b.textContent="Sélectionnez le texte ci-dessous";}); }
+  catch(e){ta.value=lastCsv;ta.hidden=false;ta.select();}
+});
+
+/* population chart */
+(function(){
+  const years = Object.keys(SECT[0].popY).map(Number).sort((a,b)=>a-b);
+  new Chart(document.getElementById("popChart"),{type:"line",
+    data:{labels:years.map(y=>2000+y), datasets:SECT.map(s=>({label:s.nom, data:years.map(y=>s.popY[y]/s.popY["21"]*100),
+      borderColor:COLHEX[s.nom], backgroundColor:COLHEX[s.nom], borderWidth:2, pointRadius:0, tension:.2}))},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,
+      plugins:{legend:{position:"bottom",labels:{color:"#e8f1f1",boxWidth:10,boxHeight:10,font:{family:"'Source Sans 3', sans-serif"}}},
+        tooltip:{callbacks:{label:c=>c.dataset.label+" : "+f1(c.parsed.y)}}},
+      scales:{x:{ticks:{color:chartTxt,maxTicksLimit:6},grid:{color:chartGrid}},y:{ticks:{color:chartTxt},grid:{color:chartGrid}}}}});
+})();
+
+/* controls */
+function segWire(id,key,parse){
+  document.querySelectorAll("#"+id+" button").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.toggle("on",x===b));
+    st[key]=parse?parse(b.dataset.v):b.dataset.v;
+    if(key==="key"){ st.hors=null; }
+    render();
+  }));
+}
+segWire("scSeg","sc"); segWire("hzSeg","H",Number); segWire("keySeg","key"); segWire("tenSeg","ten");
+document.getElementById("ind").addEventListener("change",e=>{st.ind=e.target.value;styleMap();});
+document.getElementById("vac").addEventListener("input",e=>{st.vac=+e.target.value;render();});
+document.getElementById("hors").addEventListener("input",e=>{st.hors=+e.target.value;render();});
+document.getElementById("horsReset").addEventListener("click",()=>{st.hors=null;render();});
+document.getElementById("allBtn").addEventListener("click",()=>select(null));
+
+function select(i){
+  st.sel = (i===st.sel)?null:i;
+  document.getElementById("allBtn").classList.toggle("on",st.sel==null);
+  styleMap(); fiche(); table();
+}
+function render(){
+  const iH = SECT.findIndex(s=>s.isHors);
+  const hv = shares()[iH]*100;
+  const hs = document.getElementById("hors"); if(st.hors==null) hs.value = Math.round(hv);
+  document.getElementById("horsO").textContent = f0(hv)+" %";
+  document.getElementById("vacO").textContent = f1(st.vac)+" %";
+  const d = munDelta(st.sc,2041);
+  document.getElementById("scHint").textContent = st.sc==="env"
+    ? "Tendance Environics 2021→2035 prolongée : +"+f0(d)+" ménages en 2041. Au-delà de 2035, extrapolation."
+    : "ISQ 2025, ensemble de la ville : "+f0(ISQ.m21)+" → "+f0(ISQ.m41[st.sc])+" ménages de 2021 à 2041 ("+sgn(d)+").";
+  const k = keyShares();
+  document.getElementById("keyHint").textContent = (st.key==="tend"?"Part de chaque secteur dans la croissance des ménages 2021→2035 (Environics) : ":"Part de chaque secteur dans les ménages 2025 : ")+
+    SECT.map((s,i)=>s.nom.replace(" périmètre urbain"," PU")+" "+f0(k[i]*100)+" %").join(", ")+".";
+  strip(); styleMap(); fiche(); table();
+}
+render();
+</script>
