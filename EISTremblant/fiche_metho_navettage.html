@@ -1,0 +1,230 @@
+<title>Fiche méthode navettage Tremblant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f8f8;--paper:#ffffff;--ink:#132428;--dim:#566b6f;--line:#d6e1e2;--soft:#eaf2f2;
+  --accent:#17766b;--accent-soft:#dff1ee;--amber:#8a6400;--amber-soft:#fbf1d2;--rose:#a3405a;
+  --s-village:#1f9e8e;--s-jovite:#c9a100;--s-tremblant:#4f7fe0;--s-hors:#9a62c7;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+    --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+    --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+  --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+  --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 56px}
+.doc{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(18px,5vw,56px) 48px}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;text-wrap:balance;line-height:1.2}
+h1{font-size:clamp(26px,4vw,34px);margin:6px 0 10px}
+h2{font-size:22px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;color:var(--accent);font-weight:500}
+h3{font-size:17px;margin:26px 0 6px}
+p,li{max-width:68ch}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:0 0 12px}
+li{margin:3px 0}
+.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.meta b{color:var(--ink);font-weight:600}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+.summary p{margin:0 0 8px}.summary p:last-child{margin:0}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:20px;margin-top:14px}
+.toc a{color:var(--accent);text-decoration:none}.toc a:hover{text-decoration:underline}
+@media (max-width:620px){.toc{columns:1}}
+.num{font-variant-numeric:tabular-nums}
+code,.f{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.formula{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;background:var(--soft);border-radius:8px;padding:12px 16px;margin:8px 0 14px;overflow-x:auto;white-space:pre;line-height:1.7}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px 14px;margin:22px 0 0}
+.step .k{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:14px;margin-top:2px}
+.step h3{margin:2px 0 6px}
+.ex{border-left:3px solid var(--amber);background:var(--amber-soft);padding:8px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin:6px 0 10px}
+.ex b{color:var(--amber)}
+.tbl{overflow-x:auto;margin:10px 0 16px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);font-weight:700;background:var(--soft)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--soft)}
+td .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+td.hi{color:var(--amber);font-weight:700}
+.note{font-size:13.5px;color:var(--dim)}
+.callout{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.callout.warn{border-color:var(--rose)}
+.callout h3{margin-top:0}
+.chk{list-style:none;padding:0}
+.chk li{padding-left:28px;position:relative;margin:8px 0}
+.chk li::before{content:"";position:absolute;left:2px;top:5px;width:14px;height:14px;border:2px solid var(--accent);border-radius:3px}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px}
+.flow span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.flow i{color:var(--dim);font-style:normal}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+</style>
+<article class="doc">
+<div class="eyebrow">Fiche méthodologique · ÉIS du plan d'urbanisme de Mont-Tremblant</div>
+<h1>Le bassin de main-d'œuvre de Mont-Tremblant</h1>
+<div class="meta">
+  <span><b>Outil :</b> Le bassin de main-d'œuvre de Mont-Tremblant (prototype)</span>
+  <span><b>Production :</b> Direction de santé publique, Santé Québec Laurentides</span>
+  <span><b>Version :</b> septembre 2026</span>
+</div>
+
+<div class="summary">
+  <p><b>En bref.</b> L'outil cartographie les déplacements domicile-travail entre Mont-Tremblant et les autres municipalités, à partir des tableaux de navettage des recensements de 2016 et de 2021. Il répond à deux questions : où habitent les personnes qui travaillent à Mont-Tremblant, et quelle distance parcourent-elles ?</p>
+  <p>Il chiffre ainsi un effet concret du manque de logements accessibles à la main-d'œuvre, qui est l'enjeu 2 de l'ÉIS : des milliers de trajets quotidiens, presque tous en automobile.</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#objet">Objet et usages</a></li>
+  <li><a href="#sources">Sources de données</a></li>
+  <li><a href="#traitement">Chaîne de traitement</a></li>
+  <li><a href="#resultats">Résultats</a></li>
+  <li><a href="#indicateurs">Indicateurs de l'outil</a></li>
+  <li><a href="#limites">Limites et précautions</a></li>
+</ol>
+
+<h2 id="objet"><span class="n">1</span>Objet et usages</h2>
+<p>Quand les travailleurs ne peuvent pas se loger près de leur emploi, ils doivent faire de longs trajets. Le navettage en automobile a des effets connus sur la santé : temps de transport qui empiète sur le repos et la vie familiale, stress, sédentarité, exposition au risque routier, dépenses de transport et émissions. Il pèse aussi sur la congestion de la route 117, un enjeu déjà relevé par l'ÉIS.</p>
+<p>L'outil sert à :</p>
+<ul>
+  <li>mesurer la part des emplois de Mont-Tremblant occupés par des personnes qui habitent ailleurs ;</li>
+  <li>repérer les municipalités qui fournissent la main-d'œuvre et la distance qui les sépare de Mont-Tremblant ;</li>
+  <li>estimer le kilométrage quotidien que ces déplacements représentent ;</li>
+  <li>suivre l'évolution entre 2016 et 2021, dans les deux sens.</li>
+</ul>
+<p>Il complète l'outil des besoins en logement et celui du parc qui échappe aux résidents. Ces deux outils montrent le manque de logements disponibles ; celui-ci montre une de ses conséquences.</p>
+
+<h2 id="sources"><span class="n">2</span>Sources de données</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Source</th><th class="l">Contenu utilisé</th><th class="l">Rôle dans l'outil</th></tr></thead>
+  <tbody>
+    <tr><td class="l"><b>Recensement de 2021</b>, tableau 98-10-0459-01 (Statistique Canada)</td><td class="l">Flux entre le lieu de résidence et le lieu de travail, par subdivision de recensement. Deux extractions ont été faites : avec Mont-Tremblant comme lieu de travail (47 origines), puis avec Mont-Tremblant comme lieu de résidence (22 destinations).</td><td class="l">Flux de 2021 dans les deux sens.</td></tr>
+    <tr><td class="l"><b>Recensement de 2016</b>, tableau 98-400-X2016325</td><td class="l">Même contenu pour 2016, en format SDMX. On a gardé les séries dont le lieu de résidence ou le lieu de travail est Mont-Tremblant (code 2478102), pour les deux sexes réunis.</td><td class="l">Flux de 2016, qui servent de référence d'avant la pandémie.</td></tr>
+    <tr><td class="l"><b>Recensement de 2021</b>, tableau 98-10-0503-01</td><td class="l">Mode principal de transport et durée du trajet des personnes qui travaillent à Mont-Tremblant.</td><td class="l">Part de l'automobile et durées.</td></tr>
+    <tr><td class="l"><b>Limites municipales</b> (SDA, MRNF), reprises du Diagnostic habitation Laurentides</td><td class="l">Polygones et population de 2021 des municipalités de la région.</td><td class="l">Position des municipalités, carte et taux pour 1 000 habitants.</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Les tableaux portent sur la population active occupée de 15 ans et plus qui vit dans un ménage privé et a un lieu habituel de travail (échantillon de 25 %). Les noms et codes des municipalités de 2021 proviennent des métadonnées du tableau 98-10-0459-01. Les codes de 2016 y ont tous trouvé une correspondance.</p>
+
+<h2 id="traitement"><span class="n">3</span>Chaîne de traitement</h2>
+<div class="flow"><span>Extraction des flux</span><i>→</i><span>Codes municipaux</span><i>→</i><span>Position des municipalités</span><i>→</i><span>Distances</span><i>→</i><span>Indicateurs</span></div>
+
+<div class="step"><div class="k">1</div><div>
+  <h3>Extraire et harmoniser les flux</h3>
+  <p>Pour 2021, on lit les deux fichiers CSV. Chaque ligne est associée au code de sa municipalité (7 chiffres) grâce aux métadonnées du tableau. Pour 2016, on parcourt le fichier SDMX et on garde les séries qui touchent Mont-Tremblant. Les deux années sont réunies par code municipal. Au total, 52 municipalités ont un flux avec Mont-Tremblant en 2016 ou en 2021.</p>
+  <p class="note">Saint-Faustin–Lac-Carré a pris le nom de Mont-Blanc après le recensement de 2021. On l'a rattachée par son nom actuel au polygone correspondant, et l'outil affiche les deux noms.</p>
+</div></div>
+
+<div class="step"><div class="k">2</div><div>
+  <h3>Positionner les municipalités</h3>
+  <ul>
+    <li><b>Municipalités des Laurentides (38).</b> On prend le centre géométrique du polygone municipal. Si ce centre tombe hors du territoire, on prend plutôt un point garanti à l'intérieur.</li>
+    <li><b>Mont-Tremblant, comme lieu de travail.</b> On prend le centre du secteur Saint-Jovite, qui regroupe l'essentiel des emplois.</li>
+    <li><b>Municipalités hors de la région (14).</b> Ce sont Montréal, Laval, Terrebonne, Gatineau, Ottawa, Saint-Donat, Sainte-Julienne, Saint-Hyacinthe, Lac-Beauport, Val-d'Or et quatre municipalités de l'Outaouais. On les place à un point approximatif de leur centre, et l'outil le signale.</li>
+  </ul>
+</div></div>
+
+<div class="step"><div class="k">3</div><div>
+  <h3>Calculer les distances</h3>
+  <p>La distance entre chaque municipalité et Mont-Tremblant est calculée à vol d'oiseau, avec la formule de haversine. Elle est plus courte que la distance par la route : dans les Laurentides, les trajets suivent la 117 et le réseau des vallées. Les kilomètres calculés sont donc un minimum.</p>
+  <div class="formula">d = 2R · arcsin( √( sin²(Δφ/2) + cos φ₁ · cos φ₂ · sin²(Δλ/2) ) ),   R = 6 371 km</div>
+</div></div>
+
+<div class="step"><div class="k">4</div><div>
+  <h3>Calculer les indicateurs</h3>
+  <div class="formula">part non résidente  = navetteurs venant d'ailleurs / total des emplois ayant un lieu habituel
+distance moyenne    = Σ (flux × distance) / Σ flux              (flux de 100 km ou moins)
+km par jour         = 2 × Σ (flux × distance)                   (aller-retour, flux de 100 km ou moins)
+taux d'attraction   = flux / population 2021 × 1 000</div>
+  <p><b>Seuil de 100 km.</b> Au-delà de cette distance, on ne peut pas supposer un aller-retour quotidien. Le recensement note lui-même que certaines personnes gardent un lieu de séjour près de leur travail et rentrent chez elles la fin de semaine. Ces flux, soit 130 personnes en 2021, restent affichés, mais ils ne sont pas comptés dans la distance moyenne ni dans les kilomètres par jour.</p>
+</div></div>
+
+<h2 id="resultats"><span class="n">4</span>Résultats</h2>
+<h3>Vue d'ensemble</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Personnes qui travaillent à Mont-Tremblant</th><th>2016</th><th>2021</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Emplois ayant un lieu habituel de travail (somme des flux)</td><td>6 090</td><td>5 360</td></tr>
+    <tr><td class="l">Occupés par des résidents de Mont-Tremblant</td><td>2 690</td><td>2 365</td></tr>
+    <tr><td class="l">Occupés par des navetteurs venant d'ailleurs</td><td>3 400</td><td>2 995</td></tr>
+    <tr><td class="l">Part non résidente</td><td class="hi">56 %</td><td class="hi">56 %</td></tr>
+    <tr><td class="l">Distance moyenne à vol d'oiseau (100 km ou moins)</td><td>21,9 km</td><td>22,7 km</td></tr>
+    <tr><td class="l">Navetteurs habitant à plus de 30 km</td><td>695</td><td>645</td></tr>
+    <tr><td class="l">Km par jour de travail, aller-retour, au minimum</td><td>145 000</td><td>130 000</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Distance entre le domicile et Mont-Tremblant</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Distance à vol d'oiseau</th><th>2016</th><th>2021</th><th>Part 2021</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Moins de 15 km</td><td>1 325</td><td>1 030</td><td>34 %</td></tr>
+    <tr><td class="l">15 à 30 km</td><td>1 280</td><td>1 190</td><td>40 %</td></tr>
+    <tr><td class="l">30 à 50 km</td><td>495</td><td>395</td><td>13 %</td></tr>
+    <tr><td class="l">50 à 100 km</td><td>200</td><td>250</td><td>8 %</td></tr>
+    <tr><td class="l">Plus de 100 km</td><td>100</td><td>130</td><td>4 %</td></tr>
+    <tr class="tot"><td class="l">Total des navetteurs</td><td>3 400</td><td>2 995</td><td>100 %</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Principales municipalités d'origine</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Municipalité</th><th>Distance</th><th>2016</th><th>2021</th><th>Écart</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Saint-Faustin–Lac-Carré (Mont-Blanc)</td><td>10 km</td><td>705</td><td>535</td><td>−170</td></tr>
+    <tr><td class="l">Lac-Supérieur</td><td>23 km</td><td>325</td><td>325</td><td>0</td></tr>
+    <tr><td class="l">Labelle</td><td>20 km</td><td>270</td><td>300</td><td>+30</td></tr>
+    <tr><td class="l">La Conception</td><td>13 km</td><td>300</td><td>205</td><td>−95</td></tr>
+    <tr><td class="l">Amherst</td><td>17 km</td><td>160</td><td>200</td><td>+40</td></tr>
+    <tr><td class="l">Brébeuf</td><td>8 km</td><td>220</td><td>195</td><td>−25</td></tr>
+    <tr><td class="l">Sainte-Agathe-des-Monts</td><td>23 km</td><td>245</td><td>170</td><td>−75</td></tr>
+    <tr><td class="l">Val-David</td><td>31 km</td><td>100</td><td>95</td><td>−5</td></tr>
+    <tr><td class="l">Rivière-Rouge</td><td>52 km</td><td>85</td><td>90</td><td>+5</td></tr>
+    <tr><td class="l">Huberdeau</td><td>14 km</td><td>100</td><td>85</td><td>−15</td></tr>
+  </tbody>
+</table></div>
+<p><b>Ce qu'il faut retenir.</b></p>
+<ul>
+  <li><b>La main-d'œuvre de Mont-Tremblant vient d'abord de la MRC des Laurentides :</b> 2 370 des 2 995 navetteurs de 2021, soit 79 %. Les municipalités voisines fonctionnent comme les quartiers résidentiels de Mont-Tremblant.</li>
+  <li><b>Les déplacements se font presque tous en automobile.</b> En 2021, 91 % des personnes qui travaillent à Mont-Tremblant s'y rendent en automobile et 80 % conduisent seules. Le transport en commun ne compte que 110 trajets, et 23 % des travailleurs roulent 30 minutes ou plus.</li>
+  <li><b>Dans l'autre sens, la part de résidents qui travaillent hors de la ville augmente,</b> de 19 % en 2016 à 25 % en 2021. Les principales destinations sont Sainte-Agathe-des-Monts, Saint-Faustin–Lac-Carré et Montréal.</li>
+</ul>
+
+<h2 id="indicateurs"><span class="n">5</span>Indicateurs de l'outil</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Élément</th><th class="l">Définition</th></tr></thead>
+  <tbody>
+    <tr><td class="l">Arcs</td><td class="l">Un arc par municipalité, de l'origine vers le lieu de travail. L'épaisseur varie selon la racine carrée du nombre de navetteurs. En mode « Écart », les arcs orange montrent une hausse de 2016 à 2021 et les arcs bleus une baisse.</td></tr>
+    <tr><td class="l">Remplissage des municipalités</td><td class="l">Nombre de navetteurs, ou navetteurs pour 1 000 habitants (population de 2021). Le taux pour 1 000 habitants montre à quel point une municipalité dépend des emplois de Mont-Tremblant.</td></tr>
+    <tr><td class="l">Sens</td><td class="l">« Vers Mont-Tremblant » montre où habitent les personnes qui y travaillent. « Depuis Mont-Tremblant » montre où travaillent les résidents qui quittent la ville.</td></tr>
+    <tr><td class="l">Flux minimal affiché</td><td class="l">Seuil de 10 à 100 navetteurs, appliqué à l'année la plus forte des deux.</td></tr>
+    <tr><td class="l">Mode et durée</td><td class="l">Pour chaque mode de transport, nombre de travailleurs et répartition selon la durée du trajet (tableau 98-10-0503-01, toutes provenances confondues).</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="limites"><span class="n">6</span>Limites et précautions</h2>
+<ul>
+  <li><b>Le recensement de 2021 est atypique.</b> Il a eu lieu en mai 2021, en pleine pandémie, pendant l'entre-saison touristique et avec beaucoup de télétravail. La baisse de 2016 à 2021 (de 3 400 à 2 995 navetteurs) reflète probablement ce contexte plus qu'une tendance.</li>
+  <li><b>Les emplois saisonniers sont mal captés.</b> Le recensement a lieu en mai, alors que le pic d'emploi touristique de Mont-Tremblant est en hiver. Les travailleurs temporaires logés par l'employeur ne sont pas distingués.</li>
+  <li><b>Une partie des travailleurs n'est pas comptée.</b> Les personnes sans lieu habituel de travail (construction, entretien, services à domicile) et celles qui travaillent à domicile sont exclues des tableaux.</li>
+  <li><b>Les chiffres sont arrondis.</b> Statistique Canada arrondit les flux de façon aléatoire à un multiple de 5. Les flux de 10 ou 15 personnes sont donc imprécis, et les totaux peuvent différer légèrement d'un tableau à l'autre : 5 360 selon les flux, contre 5 475 dans le tableau des modes.</li>
+  <li><b>Les distances sont sous-estimées.</b> Elles sont calculées à vol d'oiseau, entre les centres des municipalités. Pour les grands territoires comme Lac-Supérieur ou La Minerve, le centre peut être éloigné des secteurs habités.</li>
+  <li><b>La position des municipalités hors de la région est approximative.</b> Cela ne touche que de petits flux.</li>
+  <li><b>Les flux ne sont pas croisés avec le mode de transport.</b> On ne peut donc pas savoir, par exemple, combien des navetteurs de Labelle se déplacent en automobile. La part de l'automobile porte sur l'ensemble des personnes qui travaillent à Mont-Tremblant.</li>
+</ul>
+
+<footer>
+  Direction de santé publique, Santé Québec Laurentides · Évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant · Suite C.A.R.T.O.S.<br>
+  Sources : Statistique Canada, Recensement de la population de 2021, tableaux 98-10-0459-01 et 98-10-0503-01 · Recensement de 2016, tableau 98-400-X2016325 · MRNF, Système sur le découpage administratif (SDA). Outil d'aide à la décision, non réglementaire.
+</footer>
+</article>
