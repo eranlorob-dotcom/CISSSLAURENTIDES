@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Extracteur de POI · Québec | CISSS des Laurentides</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== CHARTE CISSS-DSP (references/identite.md) ===== */
+:root{
+  --navy:#140C74;--teal:#21AEAD;--blue:#0482D3;--white:#FFFFFF;
+  --teal-d:#178f8e;--teal-l:#5fd0cf;--blue-d:#0366a6;--blue-l:#6aa6e8;--indigo:#5b54c0;
+  --bg:#070620;--bg2:#0b0930;--panel:#11103e;--panel2:#181a52;
+  --line:#2a2870;--line2:#1d1b50;
+  --ink:#eef0fb;--ink2:#c4c8ea;--muted:#8b8fc4;
+  --accent:var(--teal);--accent2:var(--blue);
+  --fs:1rem;
+
+  /* Palette catégorielle (CAT de la charte) : une base par groupe de services */
+  --c-food:#21AEAD; --c-sante:#0482D3; --c-aines:#5b54c0; --c-jeunes:#6aa6e8;
+  --c-refuge:#0b6e6c; --c-frais:#5fd0cf; --c-commu:#9aa0d0; --c-circ:#140C74;
+  --c-transport:#3a44a8;
+
+  /* États de triangulation des sources */
+  --c-osm:#c9a227; --c-match:#8ec63f;
+  /* Signalement territorial */
+  --c-terr:#21AEAD; --c-alert:#fca5a5; --c-alert-bg:#280818; --c-alert-line:#6a1428;
+  /* Réseaux et espaces (géométries OSM) */
+  --c-velo:#0482D3; --c-parc:#178f8e; --c-boise:#5b54c0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Source Sans 3",system-ui,sans-serif;font-size:var(--fs);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+.mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+a{color:var(--teal)}
+input,select,button{font-family:inherit}
+
+/* ===== SHELL ===== */
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+header.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 20px;
+  background:linear-gradient(100deg,var(--bg2) 0%,#161354 60%,#1c2a8a 100%);
+  border-bottom:1px solid var(--line);z-index:1200}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{width:38px;height:38px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;
+  background:radial-gradient(circle at 32% 28%,var(--teal),var(--navy) 75%);
+  box-shadow:0 0 0 1px #21aead33,inset 0 0 12px #00000040}
+.mark svg{width:20px;height:20px}
+.title h1{font-size:1.18rem;font-weight:700;line-height:1.1}
+.title h1 span{color:var(--teal)}
+.title p{font-size:.76rem;color:var(--ink2);font-weight:400;margin-top:1px}
+.spacer{flex:1 1 auto}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink2);
+  border-radius:8px;padding:7px 13px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;min-height:32px}
+.btn:hover:not(:disabled){border-color:var(--teal);color:var(--ink)}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn-prim{background:var(--teal);color:#070620;border-color:var(--teal-d);font-weight:700}
+.btn-prim:hover:not(:disabled){background:var(--teal-l);border-color:var(--teal-l);color:#070620}
+.btn-stop{background:var(--c-alert-bg);border-color:var(--c-alert-line);color:var(--c-alert)}
+.seg{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;border:0;color:var(--ink2);cursor:pointer;padding:0 12px;height:32px;
+  font:inherit;font-size:.8rem;font-weight:600}
+.seg button:hover{background:#ffffff14;color:var(--ink)}
+.seg button.on{background:var(--teal);color:#070620}
+.fontctl{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.fontctl button{background:transparent;border:0;color:var(--ink2);cursor:pointer;
+  width:32px;height:32px;font:inherit;font-weight:700;font-size:.78rem}
+.fontctl button:hover{background:#ffffff14;color:var(--ink)}
+
+/* ===== MAIN GRID ===== */
+.main{position:relative;display:grid;grid-template-columns:376px 1fr;min-height:0;
+  transition:grid-template-columns .3s ease}
+.main.collapsed{grid-template-columns:0 1fr}
+.panel{width:376px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;
+  padding:0 0 28px;scrollbar-width:thin;scrollbar-color:var(--line) transparent;
+  transition:transform .3s ease}
+.panel::-webkit-scrollbar{width:6px}
+.panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+.main.collapsed .panel{transform:translateX(-100%)}
+#map{position:relative;height:100%;width:100%;background:var(--bg);outline:none}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.leaflet-control-attribution{background:#070620cc!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--teal)!important}
+
+/* ===== TOGGLE PANNEAU ===== */
+#panel-toggle{position:absolute;top:50%;left:376px;transform:translateY(-50%);z-index:700;
+  width:22px;height:44px;background:var(--panel);border:1px solid var(--line);border-left:none;
+  border-radius:0 8px 8px 0;color:var(--muted);cursor:pointer;font-size:.8rem;
+  transition:left .3s ease}
+#panel-toggle:hover{color:var(--ink);border-color:var(--teal)}
+#panel-toggle.shifted{left:0;border-left:1px solid var(--line);border-radius:8px}
+@media(max-width:800px){
+  .main{grid-template-columns:1fr}
+  .main.collapsed{grid-template-columns:1fr}
+  .panel{position:absolute;inset:auto 0 0 0;width:auto;height:58vh;
+    border-right:none;border-top:2px solid var(--line);z-index:800;transform:none}
+  .main.collapsed .panel{transform:translateY(100%)}
+  #panel-toggle{display:none}
+  #legend{bottom:auto;top:14px;max-height:40vh;overflow-y:auto}
+  #methodo{bottom:auto;top:14px;left:auto;right:14px;transform:none}
+  #methodo-content{bottom:auto;top:38px;left:auto;right:0;transform:none}
+}
+
+/* ===== SECTIONS PANNEAU ===== */
+.section{border-bottom:1px solid var(--line2);padding:14px 16px}
+.section:last-of-type{border-bottom:none}
+.sec-head{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--teal);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.sec-body{display:flex;flex-direction:column;gap:9px}
+
+/* FORMULAIRE */
+.field{display:flex;flex-direction:column;gap:3px}
+.field label{font-size:.78rem;color:var(--ink2);font-weight:600}
+.field input[type=text],.field input[type=password],.field input[type=number],.field select{
+  background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+  border-radius:7px;padding:7px 10px;font:inherit;font-size:.86rem;transition:border-color .15s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--teal)}
+.field input[type=range]{padding:2px 0;border:none;background:transparent;
+  accent-color:var(--teal);cursor:pointer;width:100%}
+.input-wrap{display:flex}
+.input-wrap input{flex:1;border-radius:7px 0 0 7px!important}
+.btn-icon{background:var(--panel2);border:1px solid var(--line);border-left:none;
+  color:var(--ink2);padding:0 10px;border-radius:0 7px 7px 0;cursor:pointer;
+  font-size:.9rem;flex:0 0 auto;transition:color .15s}
+.btn-icon:hover{color:var(--ink)}
+.hint{font-size:.73rem;color:var(--muted);line-height:1.55}
+.lien-list{display:flex;flex-direction:column;gap:5px;font-size:.76rem}
+.lien-list a{display:flex;align-items:baseline;gap:6px;color:var(--ink2);text-decoration:none;
+  padding:5px 8px;background:var(--panel2);border-radius:6px;border:1px solid var(--line2)}
+.lien-list a:hover{border-color:var(--teal);color:var(--ink)}
+.lien-list .poids{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted)}
+.hint strong{color:var(--ink2)}
+.btn-tiny{font-size:.7rem;padding:3px 8px;border-radius:5px;background:transparent;
+  border:1px solid var(--line);color:var(--muted);cursor:pointer}
+.btn-tiny:hover{color:var(--ink);border-color:var(--teal)}
+.btn-tiny.ml{margin-left:auto}
+.check-label{display:flex;align-items:center;gap:8px;font-size:.83rem;cursor:pointer;user-select:none;color:var(--ink2)}
+.check-label input{accent-color:var(--teal);width:15px;height:15px;flex:0 0 auto;cursor:pointer}
+
+/* DROP ZONE */
+.drop{border:1.5px dashed var(--line);border-radius:10px;padding:16px 12px;text-align:center;
+  cursor:pointer;transition:all .15s;background:var(--panel2)}
+.drop:hover,.drop.over{border-color:var(--teal);background:#21aead10}
+.drop-t{font-size:.84rem;font-weight:600;color:var(--ink2)}
+.drop-s{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.5}
+
+/* INFO GRILLE */
+.grid-info{font-size:.78rem;color:var(--ink2);padding:8px 11px;
+  background:var(--panel2);border-radius:7px;line-height:1.65}
+.grid-info .mn{font-family:"JetBrains Mono",monospace;color:var(--teal)}
+.terr-card{background:var(--panel2);border-radius:8px;padding:9px 11px;font-size:.78rem;
+  color:var(--ink2);line-height:1.6;border-left:2px solid var(--c-terr)}
+.terr-card b{color:var(--ink)}
+.terr-card .mn{font-family:"JetBrains Mono",monospace;color:var(--teal)}
+
+/* CATÉGORIES */
+.cat-item{display:flex;align-items:center;gap:9px;padding:5px 8px;
+  border-radius:7px;cursor:pointer;transition:background .12s}
+.cat-item:hover{background:var(--panel2)}
+.cat-item input{accent-color:var(--teal);width:15px;height:15px;flex:0 0 auto;cursor:pointer}
+.cat-item span.lbl{font-size:.83rem}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.cat-group-head{font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--muted);padding:11px 8px 3px;display:flex;align-items:center;gap:6px;
+  border-top:1px solid var(--line2);margin-top:2px}
+.cat-group-head:first-child{border-top:none;margin-top:0;padding-top:4px}
+.kw-tag{font-size:.62rem;background:var(--panel);border:1px solid var(--line2);
+  color:var(--muted);border-radius:4px;padding:1px 5px;margin-left:auto;
+  white-space:nowrap;letter-spacing:.02em}
+
+/* PROGRESSION */
+.progress-wrap{background:var(--panel2);border-radius:5px;height:7px;overflow:hidden}
+.progress-bar{background:linear-gradient(90deg,var(--blue),var(--teal));height:100%;
+  border-radius:5px;transition:width .4s ease;width:0%}
+.progress-text{font-size:.79rem;color:var(--ink2)}
+.progress-count{font-size:.73rem;color:var(--muted);font-family:"JetBrains Mono",monospace}
+.error-msg{background:var(--c-alert-bg);border:1px solid var(--c-alert-line);color:var(--c-alert);
+  border-radius:7px;padding:9px 12px;font-size:.79rem;line-height:1.5;white-space:pre-line}
+
+/* RÉSULTATS */
+.result-hero{display:flex;align-items:baseline;gap:8px}
+.result-big{font-family:"JetBrains Mono",monospace;font-size:2.6rem;
+  font-weight:700;color:var(--teal);line-height:1}
+.result-sub{font-size:.8rem;color:var(--ink2)}
+.cat-stat{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.cat-stat-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.cat-stat-name{font-size:.77rem;color:var(--ink2);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-stat-bar-w{width:56px;height:4px;background:var(--line2);
+  border-radius:2px;overflow:hidden;flex:0 0 auto}
+.cat-stat-bar-f{height:100%;border-radius:2px}
+.cat-stat-n{font-family:"JetBrains Mono",monospace;font-size:.72rem;
+  color:var(--muted);min-width:36px;text-align:right}
+.grp-stat-head{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.08em;margin:9px 0 4px}
+
+/* TRIANGULATION OSM */
+.triag-grid{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.triag-row{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--ink2)}
+.triag-dot{width:10px;height:10px;flex:0 0 auto}
+.triag-lbl{flex:1}
+.triag-n{font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--teal)}
+.triag-note{font-size:.73rem;color:var(--muted);line-height:1.5;
+  border-top:1px solid var(--line2);padding-top:8px;margin-top:4px}
+
+/* SIGNATURE */
+.sig{font-size:.7rem;color:var(--muted);text-align:center;
+  padding:16px 16px 0;border-top:1px solid var(--line2);margin-top:4px}
+
+/* ===== LÉGENDE ===== */
+#legend{position:absolute;bottom:20px;left:20px;z-index:600;display:none;
+  background:color-mix(in srgb,var(--panel) 95%,transparent);
+  backdrop-filter:blur(10px);border:1px solid var(--line);
+  border-radius:11px;padding:12px 14px;min-width:196px;max-height:52vh;overflow-y:auto}
+.legend-title{font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--muted);margin-bottom:8px}
+.legend-item{display:flex;align-items:center;gap:7px;margin-bottom:5px;
+  font-size:.76rem;color:var(--ink2)}
+.legend-item:last-child{margin-bottom:0}
+.legend-sw{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.legend-ct{flex:1}
+.legend-n{font-family:"JetBrains Mono",monospace;font-size:.68rem;
+  color:var(--muted);margin-left:auto}
+
+/* ===== MÉTHODO ===== */
+#methodo{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:600}
+#methodo-btn{background:color-mix(in srgb,var(--panel) 88%,transparent);
+  backdrop-filter:blur(8px);border:1px solid var(--line);color:var(--ink2);
+  padding:7px 14px;border-radius:999px;font:inherit;font-size:.76rem;cursor:pointer;min-height:32px}
+#methodo-btn:hover{color:var(--ink);border-color:var(--teal)}
+#methodo-content{display:none;position:absolute;bottom:40px;left:50%;
+  transform:translateX(-50%);width:min(560px,90vw);max-height:70vh;overflow-y:auto;background:var(--panel);
+  border:1px solid var(--line);border-radius:13px;padding:16px 18px;
+  font-size:.8rem;line-height:1.65;color:var(--ink2);box-shadow:0 12px 40px #0009}
+#methodo-content.show{display:block}
+#methodo-content h4{color:var(--ink);font-size:.92rem;margin-bottom:7px}
+#methodo-content p{margin-bottom:7px}
+.formula{background:var(--panel2);padding:7px 11px;border-radius:7px;margin:7px 0;
+  font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--teal)}
+.src-meta{margin-top:12px;font-size:.7rem;color:var(--muted);line-height:1.5;
+  border-top:1px solid var(--line2);padding-top:10px}
+
+/* ===== TOOLTIP LEAFLET ===== */
+.muni-tooltip{background:var(--panel2)!important;border:1px solid var(--line)!important;
+  color:var(--ink)!important;border-radius:8px!important;padding:8px 12px!important;
+  font-family:"Source Sans 3",sans-serif!important;font-size:.78rem!important;
+  box-shadow:0 6px 20px #0008!important;pointer-events:none}
+.tt-nom{font-weight:700;font-size:.9rem;margin-bottom:2px}
+.tt-adr{color:var(--muted);font-size:.72rem}
+.tt-val{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:1rem;margin-top:5px}
+.tt-cat{font-size:.7rem;margin-top:3px}
+.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{border-color:transparent!important}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== EN-TÊTE ===== -->
+<header class="top">
+  <div class="brand">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+    </div>
+    <div class="title">
+      <h1>Extracteur de <span>services de proximité</span></h1>
+      <p>Québec · polygone GeoJSON · Google Places + OpenStreetMap</p>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="tools">
+    <button class="btn btn-prim" id="btn-extract" onclick="startExtraction()" disabled>⬇ Extraire (Google)</button>
+    <button class="btn btn-stop" id="btn-stop" onclick="stopExtraction()" style="display:none">⏹ Arrêter</button>
+    <button class="btn" id="btn-osm" onclick="runOsmQuery()" disabled>🌐 Enrichir OSM</button>
+    <button class="btn" id="btn-export" onclick="exportGeoJSON()" disabled>📥 GeoJSON</button>
+    <button class="btn" id="btn-csv" onclick="exportCSV()" disabled>📄 CSV</button>
+    <div class="seg" id="seg-bm">
+      <button data-bm="carte" onclick="setBasemap('carte')" title="Fond topographique du gouvernement du Québec">Carte</button>
+      <button data-bm="photos" onclick="setBasemap('photos')" title="Imagerie du gouvernement du Québec">Photos</button>
+    </div>
+    <div class="fontctl">
+      <button onclick="setFont(-1)" title="Réduire la police">A−</button>
+      <button onclick="setFont(1)" title="Agrandir la police">A+</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== CORPS ===== -->
+<div class="main" id="main">
+
+  <!-- PANNEAU LATÉRAL -->
+  <aside class="panel" id="panel">
+
+    <!-- 1. Territoire -->
+    <div class="section">
+      <div class="sec-head">📐 Territoire d'analyse</div>
+      <div class="sec-body">
+        <div class="drop" id="drop" onclick="document.getElementById('file-geojson').click()">
+          <div class="drop-t">Déposer un polygone GeoJSON</div>
+          <div class="drop-s">MRC, municipalité, aire de diffusion, bassin de desserte…<br>
+            Formats : <span class="mono">.geojson</span> / <span class="mono">.json</span> · projection <span class="mono">WGS84 (EPSG:4326)</span></div>
+        </div>
+        <input type="file" id="file-geojson" accept=".geojson,.json,application/geo+json,application/json" style="display:none" onchange="onFilePicked(this.files[0])">
+        <div class="field" id="feat-wrap" style="display:none">
+          <label>Entité à retenir</label>
+          <select id="feat-sel" onchange="onFeatureChoice()"></select>
+        </div>
+        <div class="terr-card" id="terr-card" style="display:none"></div>
+        <div class="error-msg" id="terr-error" style="display:none"></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn-tiny" onclick="zoomTerritoire()">🔎 Cadrer</button>
+          <button class="btn-tiny" onclick="useMapExtent()">🗺️ Utiliser l'étendue visible</button>
+          <button class="btn-tiny" onclick="clearTerritoire()">✖ Retirer</button>
+        </div>
+        <div class="field">
+          <label>Marge autour du polygone : <span id="marge-disp" class="mono">0 km</span></label>
+          <input type="range" id="marge-km" min="0" max="15" step="1" value="0" oninput="onParamChange()">
+        </div>
+        <p class="hint">La marge conserve les services situés juste à l'extérieur des limites (desserte transfrontalière entre MRC).</p>
+      </div>
+    </div>
+
+    <!-- 2. Clé API -->
+    <div class="section">
+      <div class="sec-head">🔑 Clé API Google Places</div>
+      <div class="sec-body">
+        <div class="field">
+          <label>Clé API (Places API New)</label>
+          <div class="input-wrap">
+            <input type="password" id="api-key" placeholder="AIzaSy…" autocomplete="off" spellcheck="false">
+            <button class="btn-icon" onclick="toggleApiKey()" title="Afficher ou masquer">👁</button>
+          </div>
+        </div>
+        <p class="hint">Activer <strong>Places API (New)</strong> dans Google Cloud Console. Pour un usage local ou sur GitHub Pages, ne pas restreindre la clé par référent HTTP.
+          <a href="https://console.cloud.google.com/apis/library/places.googleapis.com" target="_blank" rel="noopener">Configurer →</a></p>
+        <p class="hint">L'enrichissement OpenStreetMap fonctionne <strong>sans clé</strong> : il est possible de n'utiliser que cette source.</p>
+        <div class="error-msg" id="api-error" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- 3. Paramètres -->
+    <div class="section">
+      <div class="sec-head">⚙️ Paramètres de balayage</div>
+      <div class="sec-body">
+        <div class="field">
+          <label>Rayon des cellules « Nearby » : <span id="radius-disp" class="mono">15 km</span></label>
+          <input type="range" id="radius-km" min="3" max="50" step="1" value="15" oninput="onParamChange()">
+        </div>
+        <div class="field">
+          <label>Tuiles de recherche par mots-clés : <span id="tile-disp" class="mono">30 km</span></label>
+          <input type="range" id="tile-km" min="10" max="80" step="5" value="30" oninput="onParamChange()">
+        </div>
+        <div class="grid-info" id="grid-info">Charger un polygone pour estimer le balayage.</div>
+        <label class="check-label">
+          <input type="checkbox" id="show-grid" onchange="toggleGridViz(this.checked)">
+          Visualiser la grille de balayage
+        </label>
+        <label class="check-label">
+          <input type="checkbox" id="clip-poly" checked onchange="onClipChange()">
+          Ne conserver que les POI dans le polygone (+ marge)
+        </label>
+        <div class="field">
+          <label>Serveur Overpass</label>
+          <select id="ovp-endpoint"></select>
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn-tiny" onclick="testerOverpass()">🔌 Tester les serveurs</button>
+          <button class="btn-tiny" onclick="document.getElementById('ovp-diag').style.display='none'">✖ Masquer</button>
+        </div>
+        <div class="grid-info" id="ovp-diag" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- 4. Catégories -->
+    <div class="section">
+      <div class="sec-head">🏷️ Services de proximité
+        <button class="btn-tiny ml" onclick="toggleAllCats(true)">Tout</button>
+        <button class="btn-tiny" onclick="toggleAllCats(false)">Aucun</button>
+      </div>
+      <div class="sec-body" id="cat-list"></div>
+    </div>
+
+    <!-- 5. Réseaux et espaces verts (géométries OSM) -->
+    <div class="section">
+      <div class="sec-head">🚲 Réseaux et espaces verts</div>
+      <div class="sec-body" id="geo-list"></div>
+      <div class="sec-body" style="margin-top:9px">
+        <button class="btn" id="btn-geom" onclick="runGeomQuery()" disabled style="width:100%">⬇ Télécharger les géométries (OSM)</button>
+        <div class="progress-wrap" id="geo-prog-wrap" style="display:none"><div class="progress-bar" id="geo-prog-bar"></div></div>
+        <div class="progress-text" id="geo-prog-text"></div>
+        <div id="geo-stats"></div>
+        <label class="check-label" id="geo-toggle-wrap" style="display:none">
+          <input type="checkbox" id="geo-show" checked onchange="drawGeoms()">
+          Afficher les tracés et polygones
+        </label>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn-tiny" id="btn-exp-velo" onclick="exportGeom('velo')" disabled>🚲 GeoJSON lignes</button>
+          <button class="btn-tiny" id="btn-exp-espaces" onclick="exportGeom('espaces')" disabled>🌳 GeoJSON polygones</button>
+        </div>
+        <div class="field" style="margin-top:6px">
+          <label>Pistes cyclables en points, pas d\'échantillonnage : <span id="pas-disp" class="mono">100 m</span></label>
+          <input type="range" id="pas-velo" min="25" max="500" step="25" value="100" oninput="majPas()">
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn-tiny" id="btn-pts-velo" onclick="genererPointsVelo()" disabled>📍 Générer les points</button>
+          <button class="btn-tiny" id="btn-exp-pts" onclick="exportPointsVelo()" disabled>⬇ GeoJSON points</button>
+        </div>
+        <label class="check-label" id="pts-toggle-wrap" style="display:none">
+          <input type="checkbox" id="pts-show" checked onchange="drawPointsVelo()">
+          Afficher les points cyclables
+        </label>
+        <p class="hint">Les points sont semés le long des tracés à intervalle régulier, extrémités comprises : utile pour une
+          analyse de distance au réseau cyclable, une matrice origine-destination ou un échantillonnage de terrain.</p>
+        <p class="hint">Les pistes cyclables sortent en <strong>lignes</strong>, les parcs et espaces verts en <strong>polygones</strong>, dans deux fichiers distincts (QGIS ne mélange pas les types de géométrie dans une même couche).</p>
+      </div>
+    </div>
+
+    <!-- 5b. Extraction hors ligne -->
+    <div class="section">
+      <div class="sec-head">📦 Extraction hors ligne (fichier provincial)</div>
+      <div class="sec-body">
+        <p class="hint">Pour un portrait provincial ou un territoire trop vaste pour Overpass, la voie robuste est l'extrait
+          Québec complet de Geofabrik, découpé localement sur votre polygone. L'outil prépare les fichiers d'entrée.</p>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn-tiny" id="btn-poly" onclick="exportPoly()" disabled>⬇ Polygone .poly</button>
+          <button class="btn-tiny" id="btn-script" onclick="exportScript()" disabled>⬇ Script osmium</button>
+          <button class="btn-tiny" id="btn-copie-script" onclick="copieScript()" disabled>📋 Copier le script</button>
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn-tiny" id="btn-turbo" onclick="ouvrirTurbo()" disabled>🌐 overpass turbo</button>
+          <button class="btn-tiny" id="btn-oql" onclick="exportOQL()" disabled>⬇ Requête .overpassql</button>
+        </div>
+        <div class="lien-list">
+          <a href="https://download.geofabrik.de/north-america/canada/quebec-latest.osm.pbf" target="_blank" rel="noopener">quebec-latest.osm.pbf <span class="poids">~1,2 Go</span></a>
+          <a href="https://download.geofabrik.de/north-america/canada/quebec-latest-free.gpkg.zip" target="_blank" rel="noopener">quebec-latest-free.gpkg.zip <span class="poids">~2,2 Go</span></a>
+          <a href="https://download.geofabrik.de/north-america/canada/quebec.html" target="_blank" rel="noopener">Page Geofabrik Québec <span class="poids">index</span></a>
+          <a href="https://extract.bbbike.org/" target="_blank" rel="noopener">BBBike extract (découpage à distance) <span class="poids">courriel</span></a>
+        </div>
+        <p class="hint">Le <strong>.poly</strong> reprend votre territoire au format attendu par <span class="mono">osmium extract</span>.
+          Le script reprend les catégories cochées et se termine par une conversion GeoPackage lisible dans QGIS.
+          BBBike fait le découpage sur son serveur et retourne un lien par courriel : utile si le poste ne peut pas traiter 1 Go.</p>
+        <div id="oql-copie" class="error-msg" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- 6. Progression -->
+    <div class="section" id="sec-progress" style="display:none">
+      <div class="sec-head">⏳ Extraction en cours</div>
+      <div class="sec-body">
+        <div class="progress-wrap"><div class="progress-bar" id="prog-bar"></div></div>
+        <div class="progress-text" id="prog-text">Initialisation…</div>
+        <div class="progress-count">
+          <span id="cnt-req">0</span>/<span id="cnt-tot">0</span> requêtes ·
+          <span id="cnt-poi">0</span> POI uniques
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Résultats -->
+    <div class="section" id="sec-results" style="display:none">
+      <div class="sec-head">📊 Résultats</div>
+      <div class="sec-body">
+        <div class="result-hero">
+          <span class="result-big mono" id="res-total">0</span>
+          <span class="result-sub">POI uniques<br>retenus</span>
+        </div>
+        <div id="cat-stats"></div>
+        <div class="field">
+          <label>Filtrer par groupe de services</label>
+          <select id="filter-grp" onchange="buildFilterSel();applyFilter()">
+            <option value="">Tous les groupes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Filtrer par catégorie</label>
+          <select id="filter-cat" onchange="applyFilter()">
+            <option value="">Toutes les catégories</option>
+          </select>
+        </div>
+        <label class="check-label">
+          <input type="checkbox" id="filter-closed" checked onchange="applyFilter()">
+          Masquer les établissements fermés
+        </label>
+      </div>
+    </div>
+
+    <!-- 7. OSM -->
+    <div class="section" id="sec-osm" style="display:none">
+      <div class="sec-head">🌐 Triangulation OpenStreetMap</div>
+      <div class="sec-body">
+        <div class="progress-wrap" id="osm-prog-wrap" style="display:none"><div class="progress-bar" id="osm-prog-bar"></div></div>
+        <div class="progress-text" id="osm-prog-text"></div>
+        <div id="osm-stats"></div>
+        <label class="check-label" id="osm-toggle-wrap" style="display:none">
+          <input type="checkbox" id="osm-show" checked onchange="toggleOsmLayer(this.checked)">
+          Afficher les POI OSM sur la carte
+        </label>
+      </div>
+    </div>
+
+    <div class="sig">CISSS des Laurentides — Direction de santé publique</div>
+  </aside>
+
+  <!-- CARTE -->
+  <div id="map"></div>
+
+  <button id="panel-toggle" onclick="togglePanel()">◀</button>
+
+  <!-- Légende -->
+  <div id="legend">
+    <div class="legend-title">Services extraits</div>
+    <div id="legend-items"></div>
+  </div>
+
+  <!-- Méthodo -->
+  <div id="methodo">
+    <button id="methodo-btn" onclick="toggleMethodo()">ⓘ Méthodologie</button>
+    <div id="methodo-content">
+      <h4>Méthode d'extraction des services de proximité</h4>
+      <p><strong>1. Territoire.</strong> L'utilisateur dépose un polygone GeoJSON (Polygon ou MultiPolygon, EPSG:4326).
+      Toutes les requêtes sont bornées par l'enveloppe de ce polygone, et les résultats sont testés point-dans-polygone
+      (algorithme du rayon, trous pris en charge), avec une marge optionnelle en kilomètres.</p>
+      <p><strong>2. Google Places API (New).</strong> Deux mécanismes complémentaires :
+      <em>Nearby Search</em> sur une grille de cercles couvrant le polygone (catégories qui correspondent à un type Google),
+      et <em>Text Search</em> sur des tuiles rectangulaires (catégories nommées par mots-clés québécois : CLSC, CHSLD, CPE,
+      maison des jeunes, résidence pour aînés, organisme communautaire…). Déduplication par <code>place.id</code>.</p>
+      <div class="formula">
+        pas_lat = rayon × 1,4 / 111 · pas_lng = rayon × 1,4 / (111 · cos φ)
+      </div>
+      <p><strong>3. OpenStreetMap (Overpass).</strong> Requêtes par tuiles sur les étiquettes correspondantes
+      (<code>amenity</code>, <code>shop</code>, <code>leisure</code>, <code>healthcare</code>, <code>social_facility</code>,
+      <code>office</code>). Les résultats OSM sont appariés aux résultats Google par distance (seuil 120 m) : un POI
+      confirmé par les deux sources est jugé plus fiable, un POI exclusif à une source appelle une validation terrain.</p>
+      <p><strong>Limites.</strong> Nearby Search plafonne à 20 résultats par requête et Text Search à 60 (3 pages) par tuile :
+      en milieu dense, réduire le rayon et la taille des tuiles. Les catégories par mots-clés dépendent de la dénomination
+      des établissements dans Google et ratent les organismes non répertoriés. Les répertoires officiels
+      (registre des RPA, liste des CPE du ministère de la Famille, répertoire des établissements du MSSS) demeurent la
+      référence pour un portrait officiel : cet outil sert au repérage rapide et à la triangulation.</p>
+      <p><strong>4. Réseaux et espaces verts.</strong> Les pistes cyclables (<code>highway=cycleway</code>, voies avec
+      <code>cycleway=lane|track</code>, relations <code>route=bicycle</code>) sont extraites en <em>lignes</em>, les parcs,
+      jardins, terrains de jeux et aires protégées (<code>leisure</code>, <code>landuse</code>, <code>natural</code>,
+      <code>boundary</code>) en <em>polygones</em>, avec assemblage des relations multipolygones. Longueurs et superficies
+      sont calculées sur les géométries retenues. Les deux jeux s'exportent dans des fichiers GeoJSON distincts.</p>
+      <p><strong>Fonds de carte.</strong> Service tuilé du gouvernement du Québec (IGO / ministère de la Sécurité publique) :
+      couche « carte_gouv_qc_public » pour la carte topographique, couche « orthos » pour l'imagerie. L'usage du service
+      d'imagerie est réservé au personnel des ministères et organismes du gouvernement du Québec, pour des fins
+      professionnelles, dans des sites gouvernementaux : vérifier l'admissibilité avant toute diffusion publique de l'outil.</p>
+      <p><strong>4b. Transport collectif et vélo.</strong> Les arrêts d'autobus, terminus, stationnements incitatifs,
+      supports à vélos, bornes de libre-service et stations de réparation sont extraits comme points
+      (<code>highway=bus_stop</code>, <code>public_transport</code> avec <code>bus=yes</code>, <code>amenity=bus_station</code>,
+      <code>bicycle_parking</code>, <code>bicycle_rental</code>, <code>bicycle_repair_station</code>). Les pistes cyclables
+      peuvent en plus être converties en points semés à intervalle régulier le long des tracés, extrémités comprises, pour les
+      analyses de distance au réseau. Pour un inventaire exhaustif des arrêts d'autobus, le flux GTFS de l'autorité de
+      transport reste la source de référence : OSM et Google n'en couvrent qu'une partie.</p>
+      <p><strong>5. Extraction hors ligne.</strong> Overpass est conçu pour des requêtes ciblées, pas pour vider une province :
+      au-delà de quelques MRC, la voie fiable est l'extrait Québec de Geofabrik (fichier .osm.pbf d'environ 1,2 Go, ODbL,
+      reconstruit chaque jour), découpé localement. L'outil exporte le territoire au format <span class="mono">.poly</span> et
+      produit le script <span class="mono">osmium extract</span> + <span class="mono">osmium tags-filter</span> +
+      <span class="mono">ogr2ogr</span> correspondant aux catégories cochées. La même requête peut aussi s'ouvrir dans
+      overpass turbo, ce qui contourne un pare-feu qui bloque l'appel direct à l'API.</p>
+      <p><strong>Réseau et serveurs Overpass.</strong> L'outil interroge l'instance choisie en GET, ce qui évite le contrôle
+      préalable CORS que le serveur principal refuse parfois (HTTP 406), et retombe sur POST au besoin. En mode automatique, il
+      bascule sur un miroir quand une instance ne répond pas, avec jusqu'à trois tentatives par tuile en cas de saturation
+      (HTTP 429 ou 504). Le bouton « Tester les serveurs » lance une requête minuscule sur chaque instance et affiche le
+      résultat : si aucune n'est joignable, le blocage vient du réseau et non de l'outil, et la voie overpass turbo ou
+      l'extraction hors ligne prend le relais.</p>
+      <p class="src-meta">Sources : Google Places API (New) · OpenStreetMap contributeurs (Overpass API) ·
+      fonds de carte du gouvernement du Québec (IGO / MSP) ·
+      CISSS des Laurentides — Direction de santé publique · Version de l'outil : 2026-09-11 · Données extraites en direct</p>
+    </div>
+  </div>
+
+</div><!-- end main -->
+</div><!-- end app -->
+
+<script>
+/* ===========================================================
+   1. CONFIGURATION : GROUPES ET CATÉGORIES
+   =========================================================== */
+const GROUPS = [
+  {id:'food',  label:'🥦 Commerces d\'alimentation', css:'--c-food'},
+  {id:'sante', label:'🏥 Établissements de santé',   css:'--c-sante'},
+  {id:'aines', label:'👵 Aînés : résidences et lieux fréquentés', css:'--c-aines'},
+  {id:'jeunes',label:'🎒 Écoles, CPE et maisons des jeunes', css:'--c-jeunes'},
+  {id:'refuge',label:'❄️ Refuges climatiques potentiels', css:'--c-refuge'},
+  {id:'frais', label:'💧 Lieux de rafraîchissement', css:'--c-frais'},
+  {id:'commu', label:'🤝 Organismes communautaires', css:'--c-commu'},
+  {id:'transport',label:'🚌 Transport collectif et vélo', css:'--c-transport'},
+  {id:'circ',  label:'♻️ Économie circulaire', css:'--c-circ'}
+];
+
+/* type  -> Nearby Search (grille de cercles)
+   query -> Text Search (tuiles rectangulaires, mots-clés québécois)
+   Une catégorie peut avoir les deux : le mot-clé sert alors de repli
+   si le type n'est pas reconnu par l'API. */
+const CATEGORIES = [
+  // ── Alimentation ──────────────────────────────────────────────────────
+  {id:'supermarket',      g:'food', label:'Supermarchés',        type:'supermarket',       emoji:'🛒', on:true },
+  {id:'grocery_store',    g:'food', label:'Épiceries',           type:'grocery_store',     emoji:'🏪', on:true },
+  {id:'convenience_store',g:'food', label:'Dépanneurs',          type:'convenience_store', emoji:'⛽', on:true },
+  {id:'bakery',           g:'food', label:'Boulangeries',        type:'bakery',            emoji:'🥖', on:false},
+  {id:'butcher',          g:'food', label:'Boucheries / poissonneries', type:'butcher_shop', query:'boucherie poissonnerie', emoji:'🥩', on:false},
+  {id:'kw_marche',        g:'food', label:'Marchés publics et fermiers', query:'marché public marché fermier kiosque à la ferme', emoji:'🥕', on:false},
+  {id:'restaurant',       g:'food', label:'Restaurants',         type:'restaurant',        emoji:'🍽️', on:false},
+  {id:'meal_takeaway',    g:'food', label:'Prêt-à-emporter',     type:'meal_takeaway',     emoji:'🥡', on:false},
+  {id:'liquor_store',     g:'food', label:'Alcool / SAQ',        type:'liquor_store',      emoji:'🍷', on:false},
+
+  // ── Santé ─────────────────────────────────────────────────────────────
+  {id:'hospital',         g:'sante',label:'Hôpitaux',            type:'hospital', query:'hôpital centre hospitalier', emoji:'🏥', on:true },
+  {id:'kw_clsc',          g:'sante',label:'CLSC',                query:'CLSC centre local de services communautaires', emoji:'🩺', on:true },
+  {id:'kw_chsld',         g:'sante',label:'CHSLD',               query:'CHSLD centre d\'hébergement et de soins de longue durée', emoji:'🛏️', on:true },
+  {id:'kw_gmf',           g:'sante',label:'GMF et cliniques médicales', query:'GMF groupe de médecine familiale clinique médicale', emoji:'👨‍⚕️', on:false},
+  {id:'pharmacy',         g:'sante',label:'Pharmacies',          type:'pharmacy',          emoji:'💊', on:true },
+  {id:'dental_clinic',    g:'sante',label:'Cliniques dentaires', type:'dental_clinic', query:'clinique dentaire dentiste', emoji:'🦷', on:false},
+
+  // ── Aînés ─────────────────────────────────────────────────────────────
+  {id:'kw_rpa',           g:'aines',label:'Résidences pour aînés (RPA)', query:'résidence pour aînés résidence privée pour personnes âgées', emoji:'🏘️', on:true },
+  {id:'kw_ri',            g:'aines',label:'Ressources intermédiaires',   query:'ressource intermédiaire hébergement personnes âgées', emoji:'🏠', on:false},
+  {id:'kw_fadoq',         g:'aines',label:'Clubs de l\'âge d\'or / FADOQ', query:'FADOQ club de l\'âge d\'or club des aînés', emoji:'♟️', on:true },
+  {id:'kw_centre_aines',  g:'aines',label:'Centres et loisirs pour aînés', query:'centre communautaire pour aînés loisirs des aînés', emoji:'🫖', on:false},
+
+  // ── Jeunes ────────────────────────────────────────────────────────────
+  {id:'school',           g:'jeunes',label:'Écoles (tous ordres)', type:'school',          emoji:'🏫', on:true },
+  {id:'primary_school',   g:'jeunes',label:'Écoles primaires',     type:'primary_school',  emoji:'✏️', on:false},
+  {id:'secondary_school', g:'jeunes',label:'Écoles secondaires',   type:'secondary_school',emoji:'📐', on:false},
+  {id:'kw_cpe',           g:'jeunes',label:'CPE et garderies',     query:'CPE centre de la petite enfance garderie éducative', emoji:'🧸', on:true },
+  {id:'kw_mdj',           g:'jeunes',label:'Maisons des jeunes',   query:'maison des jeunes', emoji:'🛹', on:true },
+  {id:'kw_cegep',         g:'jeunes',label:'Cégeps et centres de formation', query:'cégep centre de formation professionnelle', emoji:'🎓', on:false},
+
+  // ── Refuges climatiques ───────────────────────────────────────────────
+  {id:'library',          g:'refuge',label:'Bibliothèques',        type:'library', query:'bibliothèque municipale', emoji:'📚', on:true },
+  {id:'kw_centre_comm',   g:'refuge',label:'Centres communautaires', query:'centre communautaire', emoji:'🏛️', on:true },
+  {id:'kw_loisirs',       g:'refuge',label:'Centres de loisirs et sportifs', query:'centre de loisirs centre sportif aréna', emoji:'🏟️', on:false},
+  {id:'shopping_mall',    g:'refuge',label:'Centres commerciaux', type:'shopping_mall', query:'centre commercial galeries', emoji:'🏬', on:false},
+  {id:'kw_culte',         g:'refuge',label:'Lieux de culte',      query:'église lieu de culte paroisse', emoji:'⛪', on:false},
+
+  // ── Rafraîchissement ──────────────────────────────────────────────────
+  {id:'kw_piscine',       g:'frais',label:'Piscines publiques',   query:'piscine municipale piscine publique', emoji:'🏊', on:true },
+  {id:'swimming_pool',    g:'frais',label:'Piscines (type Google)', type:'swimming_pool', query:'piscine', emoji:'🩱', on:false},
+  {id:'kw_jeux_eau',      g:'frais',label:'Jeux d\'eau et pataugeoires', query:'jeux d\'eau pataugeoire', emoji:'⛲', on:true },
+  {id:'kw_plage',         g:'frais',label:'Plages publiques',     query:'plage publique accès au lac', emoji:'🏖️', on:true },
+  {id:'park',             g:'frais',label:'Parcs (ombre et fraîcheur)', type:'park',       emoji:'🌳', on:false},
+
+  // ── Organismes communautaires ─────────────────────────────────────────
+  {id:'kw_org_comm',      g:'commu',label:'Organismes communautaires', query:'organisme communautaire', emoji:'🤝', on:true },
+  {id:'kw_banque_alim',   g:'commu',label:'Banques et dépannage alimentaire', query:'banque alimentaire dépannage alimentaire', emoji:'🥫', on:true },
+  {id:'kw_cab',           g:'commu',label:'Centres d\'action bénévole', query:'centre d\'action bénévole', emoji:'🙋', on:true },
+  {id:'kw_cuisine',       g:'commu',label:'Cuisines collectives / soupe populaire', query:'cuisine collective soupe populaire', emoji:'🍲', on:false},
+  {id:'kw_famille',       g:'commu',label:'Maisons de la famille',  query:'maison de la famille organisme famille', emoji:'👪', on:false},
+  {id:'kw_itinerance',    g:'commu',label:'Hébergement d\'urgence / itinérance', query:'refuge hébergement d\'urgence itinérance', emoji:'🛟', on:false},
+
+  // ── Transport collectif et vélo (points) ──────────────────────────────
+  {id:'bus_stop',        g:'transport',label:'Arrêts d\'autobus',        type:'bus_stop', query:'arrêt d\'autobus', emoji:'🚏', on:true },
+  {id:'bus_station',     g:'transport',label:'Terminus et gares d\'autobus', type:'bus_station', query:'terminus d\'autobus gare d\'autocars', emoji:'🚌', on:true },
+  {id:'park_and_ride',   g:'transport',label:'Stationnements incitatifs', type:'park_and_ride', query:'stationnement incitatif', emoji:'🅿️', on:false},
+  {id:'velo_stationnement',g:'transport',label:'Supports à vélos (OSM)',   emoji:'🚲', on:true },
+  {id:'velo_libre_service',g:'transport',label:'Vélos en libre-service (OSM)', emoji:'🔄', on:false},
+  {id:'velo_reparation', g:'transport',label:'Stations de réparation de vélos (OSM)', emoji:'🔧', on:false},
+
+  // ── Économie circulaire ───────────────────────────────────────────────
+  {id:'kw_friperie',      g:'circ', label:'Friperies',            query:'friperie fripe', emoji:'👗', on:false},
+  {id:'kw_ressourcerie',  g:'circ', label:'Ressourceries / écocentres', query:'ressourcerie écocentre', emoji:'♻️', on:false},
+  {id:'kw_vrac',          g:'circ', label:'Épiceries en vrac',    query:'épicerie en vrac', emoji:'🌿', on:false}
+];
+
+/* Étiquettes OSM par groupe (préfixe nwr = node + way + relation) */
+const OSM_TAGS = {
+  food:[
+    '["shop"~"^(supermarket|grocery|convenience|bakery|greengrocer|butcher|seafood|deli|farm|health_food)$"]',
+    '["amenity"="marketplace"]'
+  ],
+  sante:[
+    '["amenity"~"^(hospital|clinic|doctors|pharmacy)$"]',
+    '["healthcare"~"^(hospital|clinic|centre|doctor|pharmacy)$"]'
+  ],
+  aines:[
+    '["social_facility"~"^(nursing_home|assisted_living|group_home)$"]',
+    '["amenity"="social_centre"]'
+  ],
+  jeunes:[
+    '["amenity"~"^(school|kindergarten|childcare|college|university|youth_centre)$"]'
+  ],
+  refuge:[
+    '["amenity"~"^(library|community_centre|social_centre)$"]',
+    '["shop"="mall"]',
+    '["leisure"="sports_centre"]'
+  ],
+  frais:[
+    '["leisure"~"^(swimming_pool|water_park|beach_resort|splash_pad|park)$"]["access"!~"private"]',
+    '["amenity"~"^(fountain|public_bath)$"]',
+    '["natural"="beach"]'
+  ],
+  commu:[
+    '["office"~"^(ngo|charity|association)$"]',
+    '["amenity"~"^(social_facility|food_bank)$"]'
+  ],
+  transport:[
+    '["highway"="bus_stop"]',
+    '["public_transport"~"^(platform|station)$"]["bus"="yes"]',
+    '["amenity"~"^(bus_station|bicycle_parking|bicycle_rental|bicycle_repair_station)$"]',
+    '["amenity"="parking"]["park_ride"~"^(yes|bus|train)$"]'
+  ],
+  circ:[
+    '["shop"~"^(second_hand|charity|variety_store)$"]',
+    '["amenity"="recycling"]["recycling_type"="centre"]',
+    '["craft"="repair"]'
+  ]
+};
+
+/* Réseaux et espaces verts : géométries OSM (lignes et polygones) */
+const GEOM_SETS=[
+  {id:'velo', label:'Pistes cyclables et voies partagées', kind:'line', css:'--c-velo', on:true, sel:[
+    'way["highway"="cycleway"]',
+    'way["bicycle"="designated"]["highway"~"^(path|footway|track|pedestrian)$"]',
+    'way["highway"]["cycleway"~"^(lane|track|opposite_lane|opposite_track|share_busway)$"]',
+    'way["highway"]["cycleway:both"~"^(lane|track)$"]',
+    'way["highway"]["cycleway:right"~"^(lane|track)$"]',
+    'way["highway"]["cycleway:left"~"^(lane|track)$"]',
+    'relation["route"="bicycle"]'
+  ]},
+  {id:'parc', label:'Parcs et espaces verts publics', kind:'poly', css:'--c-parc', on:true, sel:[
+    'way["leisure"~"^(park|garden|dog_park|playground|recreation_ground|nature_reserve)$"]',
+    'relation["leisure"~"^(park|garden|recreation_ground|nature_reserve)$"]',
+    'way["landuse"~"^(village_green|recreation_ground)$"]',
+    'relation["landuse"~"^(village_green|recreation_ground)$"]'
+  ]},
+  {id:'boise', label:'Boisés et aires protégées', kind:'poly', css:'--c-boise', on:false, sel:[
+    'way["natural"="wood"]','relation["natural"="wood"]',
+    'way["landuse"="forest"]','relation["landuse"="forest"]',
+    'way["boundary"~"^(protected_area|national_park)$"]',
+    'relation["boundary"~"^(protected_area|national_park)$"]'
+  ]}
+];
+function classeGeom(t){
+  if(t.highway==='cycleway'||t.route==='bicycle'||t.bicycle==='designated'||t.cycleway
+     ||t['cycleway:both']||t['cycleway:left']||t['cycleway:right']) return 'velo';
+  if(t.natural==='wood'||t.landuse==='forest'||t.boundary==='protected_area'||t.boundary==='national_park') return 'boise';
+  return 'parc';
+}
+
+/* Correspondance étiquette OSM -> catégorie interne */
+function osmTagToCat(t){
+  const s=t.shop, a=t.amenity, l=t.leisure, h=t.healthcare, sf=t.social_facility, o=t.office, n=t.natural, c=t.craft;
+  if(t.highway==='bus_stop'||(t.public_transport&&t.bus==='yes')) return 'bus_stop';
+  if(a==='bus_station') return 'bus_station';
+  if(a==='parking'&&t.park_ride) return 'park_and_ride';
+  if(a==='bicycle_parking') return 'velo_stationnement';
+  if(a==='bicycle_rental') return 'velo_libre_service';
+  if(a==='bicycle_repair_station') return 'velo_reparation';
+  if(s==='supermarket') return 'supermarket';
+  if(s==='grocery'||s==='greengrocer'||s==='health_food'||s==='farm') return 'grocery_store';
+  if(s==='convenience') return 'convenience_store';
+  if(s==='bakery') return 'bakery';
+  if(s==='butcher'||s==='seafood'||s==='deli') return 'butcher';
+  if(a==='marketplace') return 'kw_marche';
+  if(a==='hospital'||h==='hospital') return 'hospital';
+  if(a==='clinic'||a==='doctors'||h==='clinic'||h==='centre'||h==='doctor') return 'kw_gmf';
+  if(a==='pharmacy'||h==='pharmacy') return 'pharmacy';
+  if(sf==='nursing_home') return 'kw_chsld';
+  if(sf==='assisted_living'||sf==='group_home') return 'kw_rpa';
+  if(a==='social_centre') return 'kw_centre_aines';
+  if(a==='school') return 'school';
+  if(a==='kindergarten'||a==='childcare') return 'kw_cpe';
+  if(a==='youth_centre') return 'kw_mdj';
+  if(a==='college'||a==='university') return 'kw_cegep';
+  if(a==='library') return 'library';
+  if(a==='community_centre') return 'kw_centre_comm';
+  if(l==='sports_centre') return 'kw_loisirs';
+  if(s==='mall') return 'shopping_mall';
+  if(l==='swimming_pool'||l==='water_park'||l==='splash_pad') return 'kw_piscine';
+  if(a==='fountain'||a==='public_bath') return 'kw_jeux_eau';
+  if(n==='beach'||l==='beach_resort') return 'kw_plage';
+  if(l==='park') return 'park';
+  if(a==='food_bank') return 'kw_banque_alim';
+  if(a==='social_facility') return 'kw_org_comm';
+  if(o==='ngo'||o==='charity'||o==='association') return 'kw_org_comm';
+  if(s==='second_hand'||s==='charity'||s==='variety_store') return 'kw_friperie';
+  if(a==='recycling') return 'kw_ressourcerie';
+  if(c==='repair') return 'kw_ressourcerie';
+  return 'osm_autre';
+}
+
+/* ===========================================================
+   2. ÉTAT GLOBAL
+   =========================================================== */
+let TERR = null;          // {parts:[{rings:[[ [lng,lat],… ]]}], bbox:[w,s,e,n], nom:'', nFeat:n}
+let RAW_GJ = null;        // GeoJSON brut déposé
+let allItems = [];        // {feature, catId, grp, dedans}
+let seenIds  = new Set();
+let osmItems = [];        // {osmId, lat, lng, name, catId, grp, adresse, tags, dedans}
+let geomItems = {};       // setId -> [Feature] (LineString / MultiLineString / Polygon)
+let veloPoints = [];      // points semés le long des pistes cyclables
+let matchedGoogleIds = new Set();
+let matchedOsmIds    = new Set();
+let stopFlag=false, totalReqs=0, doneReqs=0;
+const COLORS = {};        // catId -> couleur
+const GCOLOR = {};        // groupId -> couleur de base
+
+/* ===========================================================
+   3. OUTILS : couleurs, formats, géométrie
+   =========================================================== */
+function cssv(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function hexRgb(h){ return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; }
+function toHex(v){ return ('0'+Math.round(Math.max(0,Math.min(255,v))).toString(16)).slice(-2); }
+function mixWhite(hex,t){ const p=hexRgb(hex);
+  return '#'+p.map(v=>toHex(v+(255-v)*t)).join(''); }
+function fmt(n,d){ return n==null?'n.d.':Number(n).toLocaleString('fr-CA',
+  {minimumFractionDigits:d||0,maximumFractionDigits:d||0}); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371000, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+// Point dans un anneau (lancer de rayon), coordonnées [lng,lat]
+function inRing(lng,lat,ring){
+  let inside=false;
+  for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+    const xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
+    if(((yi>lat)!==(yj>lat)) && (lng < (xj-xi)*(lat-yi)/((yj-yi)||1e-12)+xi)) inside=!inside;
+  }
+  return inside;
+}
+function inPart(lng,lat,part){
+  if(lng<part.bbox[0]||lng>part.bbox[2]||lat<part.bbox[1]||lat>part.bbox[3]) return false;
+  if(!inRing(lng,lat,part.rings[0])) return false;
+  for(let k=1;k<part.rings.length;k++) if(inRing(lng,lat,part.rings[k])) return false;
+  return true;
+}
+function inTerritoire(lng,lat){
+  if(!TERR) return true;
+  for(const p of TERR.parts) if(inPart(lng,lat,p)) return true;
+  return false;
+}
+// Distance point-segment en km (projection équirectangulaire locale)
+function segDistKm(lng,lat,a,b){
+  const k=Math.cos(lat*Math.PI/180), KX=111.32*k, KY=110.57;
+  const px=(a[0]-lng)*KX, py=(a[1]-lat)*KY, qx=(b[0]-lng)*KX, qy=(b[1]-lat)*KY;
+  const dx=qx-px, dy=qy-py, l2=dx*dx+dy*dy;
+  let t = l2? -((px*dx+py*dy)/l2) : 0;
+  t=Math.max(0,Math.min(1,t));
+  const cx=px+t*dx, cy=py+t*dy;
+  return Math.sqrt(cx*cx+cy*cy);
+}
+function distTerritoireKm(lng,lat){
+  if(!TERR) return 0;
+  if(inTerritoire(lng,lat)) return 0;
+  let best=Infinity;
+  for(const p of TERR.parts){
+    for(const ring of p.simpl){
+      for(let i=0;i<ring.length-1;i++){
+        const d=segDistKm(lng,lat,ring[i],ring[i+1]);
+        if(d<best) best=d;
+        if(best<0.01) return best;
+      }
+    }
+  }
+  return best;
+}
+function dansTerritoireAvecMarge(lng,lat){
+  const m=+document.getElementById('marge-km').value;
+  if(inTerritoire(lng,lat)) return true;
+  return m>0 && distTerritoireKm(lng,lat)<=m;
+}
+// Douglas-Peucker (degrés) pour alléger les tests de distance
+function simplify(ring,tol){
+  if(ring.length<=4) return ring.slice();
+  const keep=new Array(ring.length).fill(false);
+  keep[0]=keep[ring.length-1]=true;
+  const stack=[[0,ring.length-1]];
+  while(stack.length){
+    const [i,j]=stack.pop();
+    let maxD=-1,idx=-1;
+    for(let k=i+1;k<j;k++){
+      const d=pointSegDeg(ring[k],ring[i],ring[j]);
+      if(d>maxD){maxD=d;idx=k;}
+    }
+    if(maxD>tol && idx>0){ keep[idx]=true; stack.push([i,idx],[idx,j]); }
+  }
+  return ring.filter((_,i)=>keep[i]);
+}
+function pointSegDeg(p,a,b){
+  const dx=b[0]-a[0], dy=b[1]-a[1], l2=dx*dx+dy*dy;
+  let t = l2 ? ((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l2 : 0;
+  t=Math.max(0,Math.min(1,t));
+  const cx=a[0]+t*dx, cy=a[1]+t*dy;
+  return Math.hypot(p[0]-cx,p[1]-cy);
+}
+function ringArea(ring,midLat){
+  let s=0;
+  for(let i=0,j=ring.length-1;i<ring.length;j=i++)
+    s += (ring[j][0]*ring[i][1]-ring[i][0]*ring[j][1]);
+  const KX=111.32*Math.cos(midLat*Math.PI/180), KY=110.57;
+  return Math.abs(s/2)*KX*KY;
+}
+
+/* ===========================================================
+   4. CARTE
+   =========================================================== */
+const map = L.map('map',{zoomControl:true,maxZoom:19}).setView([47.9,-71.6], window.innerWidth<860?5:6);
+
+/* Fonds de carte du gouvernement du Québec (service tuilé IGO / MSP) */
+const BASEMAPS={
+  carte:{url:'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
+    attr:'Fond de carte : © Gouvernement du Québec (IGO / MSP) · CISSS des Laurentides'},
+  photos:{url:'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/orthos@EPSG_3857/{z}/{x}/{-y}.png',
+    attr:'Imagerie : © Gouvernement du Québec (orthophotographies) · CISSS des Laurentides'}
+};
+let baseKey='carte', baseLayer=null;
+function setBasemap(k){
+  if(!BASEMAPS[k]) return;
+  baseKey=k;
+  if(baseLayer) map.removeLayer(baseLayer);
+  baseLayer=L.tileLayer(BASEMAPS[k].url,{attribution:BASEMAPS[k].attr,maxZoom:19,minZoom:4});
+  baseLayer.addTo(map); baseLayer.setZIndex(0);
+  document.querySelectorAll('#seg-bm button').forEach(b=>b.classList.toggle('on',b.dataset.bm===k));
+  redessine();
+}
+// Contour des symboles selon la clarté du fond
+function traitPOI(){ return baseKey==='photos' ? 'rgba(255,255,255,.9)' : 'rgba(7,6,32,.6)'; }
+function redessine(){ if(allItems.length||osmItems.length) applyFilter(); drawGeoms(); drawPointsVelo(); }
+
+const terrLayer = L.layerGroup().addTo(map);
+const gridLayer = L.layerGroup().addTo(map);
+const geomLayer = L.layerGroup().addTo(map);
+const ptsLayer  = L.layerGroup().addTo(map);
+const poiLayer  = L.layerGroup().addTo(map);
+const osmLayer  = L.layerGroup().addTo(map);
+const matchRing = L.layerGroup().addTo(map);
+
+function padBounds(){
+  const large = window.innerWidth>800 && !document.getElementById('main').classList.contains('collapsed');
+  return large ? {paddingTopLeft:[396,40],paddingBottomRight:[40,40]}
+               : {paddingTopLeft:[30,30],paddingBottomRight:[30,30]};
+}
+
+/* ===========================================================
+   5. TERRITOIRE : chargement du polygone
+   =========================================================== */
+const drop=document.getElementById('drop');
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{ const f=e.dataTransfer.files[0]; if(f) onFilePicked(f); });
+
+function terrError(msg){
+  const e=document.getElementById('terr-error');
+  if(!msg){ e.style.display='none'; return; }
+  e.textContent=msg; e.style.display='';
+}
+
+function onFilePicked(file){
+  if(!file) return;
+  terrError('');
+  const rd=new FileReader();
+  rd.onload=()=>{
+    let gj;
+    try{ gj=JSON.parse(rd.result); }
+    catch(err){ terrError('Fichier illisible : le contenu n\'est pas du JSON valide.'); return; }
+    loadGeoJSON(gj, file.name);
+  };
+  rd.onerror=()=>terrError('Impossible de lire le fichier.');
+  rd.readAsText(file,'utf-8');
+}
+
+function loadGeoJSON(gj,nom){
+  const feats = gj.type==='FeatureCollection' ? (gj.features||[])
+              : gj.type==='Feature' ? [gj]
+              : [{type:'Feature',properties:{},geometry:gj}];
+  const polys = feats.filter(f=>f && f.geometry &&
+    (f.geometry.type==='Polygon'||f.geometry.type==='MultiPolygon'));
+  if(!polys.length){ terrError('Aucun polygone trouvé. L\'outil accepte des géométries Polygon ou MultiPolygon.'); return; }
+
+  // Contrôle de projection
+  const c0 = firstCoord(polys[0].geometry);
+  if(Math.abs(c0[0])>180 || Math.abs(c0[1])>90){
+    terrError('Coordonnées hors des bornes géographiques (' + fmt(c0[0],0) + ', ' + fmt(c0[1],0) + ').\n'
+      +'Le fichier est probablement projeté (MTM, Lambert, Web Mercator). Reprojeter en WGS84 (EPSG:4326) dans QGIS avant de le déposer.');
+    return;
+  }
+
+  RAW_GJ = {feats:polys, nom:nom||'polygone'};
+  const sel=document.getElementById('feat-sel');
+  sel.innerHTML='';
+  sel.add(new Option('Toutes les entités ('+polys.length+')','__all__'));
+  polys.forEach((f,i)=> sel.add(new Option(featName(f,i), String(i))));
+  document.getElementById('feat-wrap').style.display = polys.length>1 ? '' : 'none';
+  sel.value='__all__';
+  onFeatureChoice();
+}
+
+function firstCoord(geom){
+  let c=geom.coordinates;
+  while(Array.isArray(c) && Array.isArray(c[0])) c=c[0];
+  return c;
+}
+const NAME_KEYS=['MUS_NM_MUN','MRS_NM_MRC','NOM','Nom','nom','NAME','name','NOM_MUN','MUNICIPALITE','NOM_MRC','NOM_TERR','TERRITOIRE','SIGLE'];
+function featName(f,i){
+  const p=f.properties||{};
+  for(const k of NAME_KEYS) if(p[k]) return String(p[k]);
+  for(const k in p) if(typeof p[k]==='string' && p[k].length<60) return p[k];
+  return 'Entité '+(i+1);
+}
+
+function onFeatureChoice(){
+  if(!RAW_GJ) return;
+  const v=document.getElementById('feat-sel').value;
+  const feats = v==='__all__' ? RAW_GJ.feats : [RAW_GJ.feats[+v]];
+  const nom = v==='__all__'
+    ? (RAW_GJ.feats.length>1 ? RAW_GJ.nom.replace(/\.(geo)?json$/i,'') + ' · ' + RAW_GJ.feats.length + ' entités'
+                             : featName(RAW_GJ.feats[0],0))
+    : featName(RAW_GJ.feats[+v], +v);
+  buildTerritoire(feats,nom);
+}
+
+function buildTerritoire(feats,nom){
+  const parts=[];
+  feats.forEach(f=>{
+    const g=f.geometry;
+    const polyList = g.type==='Polygon' ? [g.coordinates] : g.coordinates;
+    polyList.forEach(rings=>{
+      const clean = rings.map(r=>r.map(c=>[+c[0],+c[1]])).filter(r=>r.length>3);
+      if(!clean.length) return;
+      let w=180,s=90,e=-180,n=-90;
+      clean[0].forEach(c=>{ w=Math.min(w,c[0]); e=Math.max(e,c[0]); s=Math.min(s,c[1]); n=Math.max(n,c[1]); });
+      parts.push({rings:clean, bbox:[w,s,e,n], simpl:clean.map(r=>closeRing(simplify(r,0.002)))});
+    });
+  });
+  if(!parts.length){ terrError('Polygone vide ou invalide.'); return; }
+
+  let w=180,s=90,e=-180,n=-90;
+  parts.forEach(p=>{ w=Math.min(w,p.bbox[0]); s=Math.min(s,p.bbox[1]); e=Math.max(e,p.bbox[2]); n=Math.max(n,p.bbox[3]); });
+  const midLat=(s+n)/2;
+  let aire=0;
+  parts.forEach(p=>{ aire += ringArea(p.rings[0],midLat);
+    for(let k=1;k<p.rings.length;k++) aire -= ringArea(p.rings[k],midLat); });
+
+  TERR={parts, bbox:[w,s,e,n], nom:nom||'territoire', aire, nParts:parts.length,
+        nVert:parts.reduce((a,p)=>a+p.rings.reduce((b,r)=>b+r.length,0),0)};
+  terrError('');
+  drawTerritoire();
+  showTerrCard();
+  zoomTerritoire();
+  onParamChange();
+  document.getElementById('btn-osm').disabled=false;
+  document.getElementById('btn-extract').disabled=false;
+  document.getElementById('btn-geom').disabled=false;
+  majBoutonsHorsLigne();
+}
+function closeRing(r){
+  if(r.length && (r[0][0]!==r[r.length-1][0]||r[0][1]!==r[r.length-1][1])) return r.concat([r[0]]);
+  return r;
+}
+
+function drawTerritoire(){
+  terrLayer.clearLayers();
+  if(!TERR) return;
+  const col=cssv('--c-terr');
+  TERR.parts.forEach(p=>{
+    L.polygon(p.rings.map(r=>r.map(c=>[c[1],c[0]])),
+      {color:col,weight:1.8,opacity:.9,fillColor:col,fillOpacity:.06,interactive:false}).addTo(terrLayer);
+  });
+  const m=+document.getElementById('marge-km').value;
+  if(m>0){
+    TERR.parts.forEach(p=>{
+      L.polygon(p.simpl.map(r=>r.map(c=>[c[1],c[0]])),
+        {color:col,weight:1,opacity:.35,dashArray:'4 4',fill:false,interactive:false}).addTo(terrLayer);
+    });
+  }
+}
+
+function showTerrCard(){
+  const c=document.getElementById('terr-card');
+  if(!TERR){ c.style.display='none'; return; }
+  const b=TERR.bbox;
+  c.style.display='';
+  c.innerHTML = '<b>'+esc(TERR.nom)+'</b><br>'
+    +'Superficie approx. <span class="mn">'+fmt(TERR.aire,0)+'</span> km² · '
+    +'<span class="mn">'+fmt(TERR.nParts)+'</span> polygone(s) · '
+    +'<span class="mn">'+fmt(TERR.nVert)+'</span> sommets<br>'
+    +'Enveloppe <span class="mn">'+fmt(b[1],2)+', '+fmt(b[0],2)+'</span> → <span class="mn">'+fmt(b[3],2)+', '+fmt(b[2],2)+'</span>';
+}
+
+function zoomTerritoire(){
+  if(!TERR) return;
+  map.fitBounds(L.latLngBounds([[TERR.bbox[1],TERR.bbox[0]],[TERR.bbox[3],TERR.bbox[2]]]), padBounds());
+}
+
+function useMapExtent(){
+  const b=map.getBounds();
+  const ring=[[b.getWest(),b.getSouth()],[b.getEast(),b.getSouth()],
+              [b.getEast(),b.getNorth()],[b.getWest(),b.getNorth()],[b.getWest(),b.getSouth()]];
+  RAW_GJ=null;
+  document.getElementById('feat-wrap').style.display='none';
+  buildTerritoire([{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[ring]}}],'Étendue cartographique');
+}
+
+function clearTerritoire(){
+  TERR=null; RAW_GJ=null;
+  terrLayer.clearLayers(); gridLayer.clearLayers();
+  document.getElementById('terr-card').style.display='none';
+  document.getElementById('feat-wrap').style.display='none';
+  document.getElementById('btn-extract').disabled=true;
+  document.getElementById('btn-osm').disabled=true;
+  document.getElementById('btn-geom').disabled=true;
+  geomLayer.clearLayers(); ptsLayer.clearLayers(); veloPoints=[];
+  majBoutonsHorsLigne();
+  document.getElementById('grid-info').textContent='Charger un polygone pour estimer le balayage.';
+}
+
+/* ===========================================================
+   6. GRILLES DE BALAYAGE
+   =========================================================== */
+function generateGrid(rKm){
+  if(!TERR) return [];
+  const m=+document.getElementById('marge-km').value;
+  const b=TERR.bbox, midLat=(b[1]+b[3])/2;
+  const dLat=(rKm*1.4)/111;
+  const dLng=(rKm*1.4)/(111*Math.cos(midLat*Math.PI/180));
+  const padLat=(rKm+m)/111, padLng=(rKm+m)/(111*Math.cos(midLat*Math.PI/180));
+  const pts=[];
+  for(let lat=b[1]-padLat+dLat/2; lat<b[3]+padLat; lat+=dLat){
+    for(let lng=b[0]-padLng+dLng/2; lng<b[2]+padLng; lng+=dLng){
+      if(inTerritoire(lng,lat) || distTerritoireKm(lng,lat)<=rKm+m) pts.push([lat,lng]);
+      if(pts.length>4000) return pts;
+    }
+  }
+  return pts;
+}
+
+function generateTiles(sizeKm){
+  if(!TERR) return [];
+  const m=+document.getElementById('marge-km').value;
+  const b=TERR.bbox, midLat=(b[1]+b[3])/2;
+  const dLat=sizeKm/111, dLng=sizeKm/(111*Math.cos(midLat*Math.PI/180));
+  const padLat=m/111, padLng=m/(111*Math.cos(midLat*Math.PI/180));
+  const tiles=[];
+  for(let lat=b[1]-padLat; lat<b[3]+padLat; lat+=dLat){
+    for(let lng=b[0]-padLng; lng<b[2]+padLng; lng+=dLng){
+      const t={s:lat,w:lng,n:Math.min(lat+dLat,b[3]+padLat),e:Math.min(lng+dLng,b[2]+padLng)};
+      if(tileTouche(t,m)) tiles.push(t);
+      if(tiles.length>600) return tiles;
+    }
+  }
+  return tiles;
+}
+function tileTouche(t,m){
+  const cs=[[t.w,t.s],[t.e,t.s],[t.w,t.n],[t.e,t.n],[(t.w+t.e)/2,(t.s+t.n)/2]];
+  for(const c of cs) if(inTerritoire(c[0],c[1])) return true;
+  for(const p of TERR.parts){
+    if(p.bbox[0]<=t.e && p.bbox[2]>=t.w && p.bbox[1]<=t.n && p.bbox[3]>=t.s){
+      for(const c of cs) if(distTerritoireKm(c[0],c[1])<=Math.max(m,10)) return true;
+    }
+  }
+  return false;
+}
+
+function selectedCats(){ return CATEGORIES.filter(c=>document.getElementById('cat-'+c.id)?.checked); }
+function selectedGroups(){ return [...new Set(selectedCats().map(c=>c.g))]; }
+
+let tParam=null;
+function onParamChange(){
+  document.getElementById('radius-disp').textContent=document.getElementById('radius-km').value+' km';
+  document.getElementById('tile-disp').textContent=document.getElementById('tile-km').value+' km';
+  document.getElementById('marge-disp').textContent=document.getElementById('marge-km').value+' km';
+  clearTimeout(tParam);
+  tParam=setTimeout(()=>{
+    drawTerritoire();
+    updateEstimate();
+    if(document.getElementById('show-grid').checked) toggleGridViz(true);
+  },180);
+}
+
+function updateEstimate(){
+  const info=document.getElementById('grid-info');
+  if(!TERR){ info.textContent='Charger un polygone pour estimer le balayage.'; return; }
+  const r=+document.getElementById('radius-km').value;
+  const tk=+document.getElementById('tile-km').value;
+  const cats=selectedCats();
+  const nType=cats.filter(c=>c.type).length;
+  const nKw=cats.filter(c=>!c.type && c.query).length;
+  const grid=generateGrid(r);
+  const tiles=nKw?generateTiles(tk):[];
+  const reqN=grid.length*nType, reqT=tiles.length*nKw*3;
+  const tot=reqN+reqT, sec=Math.round(tot*0.45);
+  const ovpT=generateTiles(55).length;
+  info.innerHTML='<span class="mn">'+fmt(grid.length)+'</span> cellules × <span class="mn">'+fmt(nType)+'</span> type(s) = <span class="mn">'+fmt(reqN)+'</span> req. Nearby<br>'
+   +'<span class="mn">'+fmt(tiles.length)+'</span> tuiles × <span class="mn">'+fmt(nKw)+'</span> mot(s)-clé × ≤3 pages = <span class="mn">'+fmt(reqT)+'</span> req. Text<br>'
+   +'→ total <span class="mn">~'+fmt(tot)+'</span> requêtes Google · durée <span class="mn">~'+(sec<90?sec+' s':Math.ceil(sec/60)+' min')+'</span><br>'
+   +'Overpass : <span class="mn">'+fmt(ovpT)+'</span> tuile(s)'
+   +(tot>3000?'<br><span style="color:var(--c-alert)">Volume élevé : augmenter le rayon ou réduire les catégories.</span>':'');
+}
+
+function toggleGridViz(show){
+  gridLayer.clearLayers();
+  if(!show||!TERR) return;
+  const r=+document.getElementById('radius-km').value;
+  const col=cssv('--teal');
+  generateGrid(r).forEach(([lat,lng])=>{
+    L.circle([lat,lng],{radius:r*1000,color:col,weight:.7,opacity:.3,fillColor:col,fillOpacity:.03,interactive:false}).addTo(gridLayer);
+    L.circleMarker([lat,lng],{radius:2.5,color:col,fillColor:col,fillOpacity:.85,weight:0,interactive:false}).addTo(gridLayer);
+  });
+}
+
+/* ===========================================================
+   7. GOOGLE PLACES API (NEW)
+   =========================================================== */
+const FIELDS='places.id,places.displayName,places.formattedAddress,places.types,places.location,'
+ +'places.nationalPhoneNumber,places.websiteUri,places.rating,places.primaryType,places.businessStatus';
+
+async function searchNearby(key,lat,lng,rM,type){
+  const resp=await fetch('https://places.googleapis.com/v1/places:searchNearby',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':FIELDS},
+    body:JSON.stringify({includedTypes:[type],maxResultCount:20,languageCode:'fr',regionCode:'CA',
+      locationRestriction:{circle:{center:{latitude:lat,longitude:lng},radius:rM}}})
+  });
+  if(!resp.ok){ const e=await resp.json().catch(()=>({}));
+    throw new Error((e.error&&e.error.message)||('HTTP '+resp.status)); }
+  return (await resp.json()).places||[];
+}
+
+async function searchText(key,q,tile){
+  const out=[]; let token=null;
+  for(let page=0;page<3;page++){
+    const body={textQuery:q,maxResultCount:20,languageCode:'fr',regionCode:'CA',
+      locationRestriction:{rectangle:{low:{latitude:tile.s,longitude:tile.w},
+                                      high:{latitude:tile.n,longitude:tile.e}}}};
+    if(token) body.pageToken=token;
+    const resp=await fetch('https://places.googleapis.com/v1/places:searchText',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':FIELDS+',nextPageToken'},
+      body:JSON.stringify(body)
+    });
+    if(!resp.ok){ const e=await resp.json().catch(()=>({}));
+      throw new Error((e.error&&e.error.message)||('HTTP '+resp.status)); }
+    const data=await resp.json();
+    out.push(...(data.places||[]));
+    token=data.nextPageToken;
+    if(!token) break;
+    await sleep(420);
+  }
+  return out;
+}
+
+function toFeature(pl,cat){
+  return {type:'Feature',
+    geometry:{type:'Point',coordinates:[pl.location.longitude,pl.location.latitude]},
+    properties:{
+      id:pl.id, nom:(pl.displayName&&pl.displayName.text)||'', adresse:pl.formattedAddress||'',
+      groupe:cat.g, categorie:cat.id, categorie_nom:cat.label,
+      types:(pl.types||[]).join(', '), type_principal:pl.primaryType||cat.type||cat.id,
+      statut:pl.businessStatus||'OPERATIONAL', note:pl.rating==null?null:pl.rating,
+      telephone:pl.nationalPhoneNumber||'', site_web:pl.websiteUri||'', source:'google'
+    }};
+}
+
+async function startExtraction(){
+  if(!TERR){ showErr('Charger d\'abord un polygone de territoire.'); return; }
+  const key=document.getElementById('api-key').value.trim();
+  if(!key){ showErr('Entrer la clé API Google Places (New).'); return; }
+  hideErr();
+  const cats=selectedCats();
+  if(!cats.length){ showErr('Sélectionner au moins une catégorie de services.'); return; }
+
+  const r=+document.getElementById('radius-km').value;
+  const tk=+document.getElementById('tile-km').value;
+  const grid=generateGrid(r);
+  const typeCats=cats.filter(c=>c.type);
+  const kwCats=cats.filter(c=>!c.type&&c.query);
+  const tiles=kwCats.length?generateTiles(tk):[];
+
+  totalReqs=grid.length*typeCats.length+tiles.length*kwCats.length*3;
+  doneReqs=0; stopFlag=false;
+
+  document.getElementById('btn-extract').style.display='none';
+  document.getElementById('btn-stop').style.display='';
+  document.getElementById('sec-progress').style.display='';
+  document.getElementById('sec-results').style.display='none';
+  document.getElementById('cnt-tot').textContent=fmt(totalReqs);
+  poiLayer.clearLayers(); allItems=[]; seenIds.clear();
+
+  const retard=[];  // catégories dont le type Google est refusé -> repli mots-clés
+
+  function ajoute(places,cat){
+    for(const pl of places){
+      if(!pl.location||seenIds.has(pl.id)) continue;
+      seenIds.add(pl.id);
+      const f=toFeature(pl,cat);
+      const dedans=dansTerritoireAvecMarge(pl.location.longitude,pl.location.latitude);
+      f.properties.dans_territoire=dedans;
+      allItems.push({feature:f,catId:cat.id,grp:cat.g,dedans});
+    }
+  }
+  function tick(){
+    document.getElementById('cnt-req').textContent=fmt(doneReqs);
+    document.getElementById('cnt-poi').textContent=fmt(seenIds.size);
+  }
+
+  try{
+    // A. Nearby Search sur la grille
+    for(const cat of typeCats){
+      if(stopFlag) break;
+      let typeRefuse=false;
+      for(let i=0;i<grid.length;i++){
+        if(stopFlag||typeRefuse) break;
+        const [lat,lng]=grid[i];
+        updateProgress(doneReqs/Math.max(totalReqs,1), cat.emoji+' '+cat.label+' · cellule '+(i+1)+'/'+grid.length);
+        try{
+          ajoute(await searchNearby(key,lat,lng,r*1000,cat.type),cat);
+        }catch(err){
+          const msg=err.message||'';
+          if(/included type|INVALID_ARGUMENT|Invalid.*type/i.test(msg)){
+            typeRefuse=true;
+            if(cat.query) retard.push(cat);
+            console.warn('[POI] type Google refusé : '+cat.type+' → repli mots-clés');
+            break;
+          }
+          if(/403|PERMISSION_DENIED|REQUEST_DENIED|API_KEY_INVALID|401/i.test(msg)){
+            showErr('Erreur API : '+msg+'\nVérifier la clé et l\'activation de Places API (New).');
+            stopFlag=true; break;
+          }
+          console.warn('[POI] '+cat.type+' @'+lat.toFixed(2)+','+lng.toFixed(2)+' : '+msg);
+        }
+        doneReqs++; tick(); await sleep(320);
+      }
+    }
+
+    // B. Text Search sur les tuiles (+ replis)
+    const kwAll=kwCats.concat(retard);
+    if(kwAll.length && !tiles.length && !stopFlag) tiles.push(...generateTiles(tk));
+    for(const cat of kwAll){
+      if(stopFlag) break;
+      for(let i=0;i<tiles.length;i++){
+        if(stopFlag) break;
+        updateProgress(doneReqs/Math.max(totalReqs,1),'🔍 '+cat.label+' · tuile '+(i+1)+'/'+tiles.length);
+        try{
+          ajoute(await searchText(key,cat.query,tiles[i]),cat);
+        }catch(err){
+          const msg=err.message||'';
+          if(/403|PERMISSION_DENIED|REQUEST_DENIED|API_KEY_INVALID|401/i.test(msg)){
+            showErr('Erreur API : '+msg); stopFlag=true; break;
+          }
+          console.warn('[POI] « '+cat.query+' » : '+msg);
+        }
+        doneReqs+=3; tick(); await sleep(320);
+      }
+    }
+  }finally{ finishExtraction(); }
+}
+
+function stopExtraction(){ stopFlag=true; }
+
+function finishExtraction(){
+  document.getElementById('btn-extract').style.display='';
+  document.getElementById('btn-stop').style.display='none';
+  document.getElementById('sec-progress').style.display='none';
+  if(!allItems.length){ updateExportBtn(); return; }
+  document.getElementById('sec-results').style.display='';
+  document.getElementById('legend').style.display='';
+  buildGroupSel(); buildFilterSel(); applyFilter(); updateStats(); buildLegend();
+  if(osmItems.length) rematchOsm();
+  updateExportBtn();
+  const pts=visibles().map(it=>{const c=it.feature.geometry.coordinates;return [c[1],c[0]];});
+  if(pts.length) map.fitBounds(L.latLngBounds(pts),padBounds());
+}
+
+/* ===========================================================
+   8. OPENSTREETMAP : OVERPASS PAR TUILES
+   =========================================================== */
+function overpassQuery(tile,groups){
+  const BX=tile.s.toFixed(5)+','+tile.w.toFixed(5)+','+tile.n.toFixed(5)+','+tile.e.toFixed(5);
+  const parts=[];
+  groups.forEach(g=>(OSM_TAGS[g]||[]).forEach(sel=>parts.push('  nwr'+sel+'('+BX+');')));
+  return '[out:json][timeout:90];\n(\n'+parts.join('\n')+'\n);\nout center;';
+}
+
+async function runOsmQuery(){
+  if(!TERR){ showErr('Charger d\'abord un polygone de territoire.'); return; }
+  const groups=selectedGroups();
+  if(!groups.length){ showErr('Sélectionner au moins une catégorie de services.'); return; }
+  hideErr();
+  const tiles=generateTiles(55);
+  const sec=document.getElementById('sec-osm');
+  sec.style.display=''; document.getElementById('legend').style.display='';
+  document.getElementById('osm-prog-wrap').style.display='';
+  document.getElementById('btn-osm').disabled=true;
+  document.getElementById('osm-stats').innerHTML='';
+  document.getElementById('osm-toggle-wrap').style.display='none';
+  osmLayer.clearLayers(); matchRing.clearLayers();
+  osmItems=[]; matchedGoogleIds.clear(); matchedOsmIds.clear();
+
+  const vus=new Set();
+  let erreurs=0, arret=false;
+  derniereErreurOvp='';
+  for(let i=0;i<tiles.length;i++){
+    document.getElementById('osm-prog-text').textContent='Overpass, tuile '+(i+1)+'/'+tiles.length+'…';
+    document.getElementById('osm-prog-bar').style.width=Math.round(i/tiles.length*100)+'%';
+    const q=overpassQuery(tiles[i],groups);
+    try{
+      const data=await avecReprises(q, i+1, tiles.length);
+      for(const el of (data.elements||[])){
+        const lat=el.lat!=null?el.lat:(el.center&&el.center.lat);
+        const lon=el.lon!=null?el.lon:(el.center&&el.center.lon);
+        if(lat==null||lon==null) continue;
+        const uid=el.type+'/'+el.id;
+        if(vus.has(uid)) continue;
+        vus.add(uid);
+        const t=el.tags||{};
+        const catId=osmTagToCat(t);
+        const cat=CATEGORIES.find(c=>c.id===catId);
+        osmItems.push({osmId:uid,lat,lng:lon,
+          name:t.name||t['name:fr']||(cat?cat.label:'Sans nom'),
+          catId, grp:cat?cat.g:'autre',
+          adresse:[t['addr:housenumber'],t['addr:street'],t['addr:city']].filter(Boolean).join(' '),
+          tags:t, dedans:dansTerritoireAvecMarge(lon,lat)});
+      }
+    }catch(err){
+      erreurs++;
+      derniereErreurOvp=derniereErreurOvp||err.message;
+      console.warn('[OSM] tuile '+(i+1)+' : '+err.message);
+      if(erreurs>=3 && !osmItems.length){ arret=true; break; }
+    }
+    await sleep(1100);
+  }
+  document.getElementById('osm-prog-bar').style.width='100%';
+  document.getElementById('osm-prog-wrap').style.display='none';
+  document.getElementById('btn-osm').disabled=false;
+
+  if(!osmItems.length){
+    document.getElementById('osm-prog-text').innerHTML = erreurs
+      ? '<span style="color:var(--c-alert)">Échec : '+esc(derniereErreurOvp)+'</span><br>'+esc(conseilOverpass())
+      : 'Aucun POI OSM trouvé pour les catégories sélectionnées.';
+    updateExportBtn(); return;
+  }
+  document.getElementById('osm-prog-text').textContent=fmt(osmItems.length)+' POI récupérés d\'OSM'
+    +(erreurs?' ('+erreurs+' tuile(s) en erreur)':'');
+  document.getElementById('sec-results').style.display='';
+  rematchOsm();
+  buildGroupSel(); buildFilterSel(); updateStats();
+  document.getElementById('legend').style.display='';
+  updateExportBtn();
+  if(!allItems.length){
+    const pts=osmVisibles().map(i=>[i.lat,i.lng]);
+    if(pts.length) map.fitBounds(L.latLngBounds(pts),padBounds());
+  }
+}
+
+function rematchOsm(){
+  osmLayer.clearLayers(); matchRing.clearLayers();
+  doMatching();
+  osmVisibles().forEach(addOsmMarker);
+  updateOsmStats();
+  buildLegend();
+}
+
+function doMatching(){
+  const SEUIL=120;
+  matchedGoogleIds.clear(); matchedOsmIds.clear(); matchRing.clearLayers();
+  const col=cssv('--c-match');
+  for(const o of osmItems){
+    for(const it of allItems){
+      const c=it.feature.geometry.coordinates;
+      if(Math.abs(c[1]-o.lat)>0.003||Math.abs(c[0]-o.lng)>0.005) continue;
+      if(haversine(o.lat,o.lng,c[1],c[0])<=SEUIL){
+        matchedGoogleIds.add(it.feature.properties.id);
+        matchedOsmIds.add(o.osmId);
+        L.circleMarker([c[1],c[0]],{radius:10,fill:false,weight:2,color:col,opacity:.75,interactive:false}).addTo(matchRing);
+      }
+    }
+  }
+}
+
+function addOsmMarker(item){
+  const matched=matchedOsmIds.has(item.osmId);
+  const col=matched?cssv('--c-match'):(COLORS[item.catId]||cssv('--c-osm'));
+  const icon=L.divIcon({className:'',
+    html:'<div style="width:9px;height:9px;background:'+col+';transform:rotate(45deg);border:1.2px solid '+traitPOI()+'"></div>',
+    iconSize:[11,11],iconAnchor:[5,5]});
+  const cat=CATEGORIES.find(c=>c.id===item.catId);
+  const m=L.marker([item.lat,item.lng],{icon});
+  m.bindTooltip('<div class="tt-nom">'+esc(item.name)+'</div>'
+    +(item.adresse?'<div class="tt-adr">'+esc(item.adresse)+'</div>':'')
+    +'<div class="tt-cat" style="color:'+col+'">◆ OSM · '+esc(cat?cat.label:'Autre')
+    +(matched?' · ✓ confirmé Google':' · exclusif OSM')+'</div>',
+    {className:'muni-tooltip',sticky:true,direction:'top',offset:[0,-6]});
+  m.addTo(osmLayer);
+}
+
+function updateOsmStats(){
+  const vis=osmVisibles();
+  const osmOnly=vis.filter(i=>!matchedOsmIds.has(i.osmId)).length;
+  const both=matchedOsmIds.size;
+  const gOnly=visibles().length-matchedGoogleIds.size;
+  const hasG=allItems.length>0;
+  document.getElementById('osm-stats').innerHTML='<div class="triag-grid">'
+    +(hasG?'<div class="triag-row"><div class="triag-dot" style="background:'+cssv('--teal')+';border-radius:50%"></div>'
+      +'<span class="triag-lbl">Google seulement</span><span class="triag-n">'+fmt(Math.max(gOnly,0))+'</span></div>':'')
+    +'<div class="triag-row"><div class="triag-dot" style="background:'+cssv('--c-osm')+';transform:rotate(45deg)"></div>'
+      +'<span class="triag-lbl">OSM seulement ◆</span><span class="triag-n">'+fmt(osmOnly)+'</span></div>'
+    +(hasG?'<div class="triag-row"><div class="triag-dot" style="background:'+cssv('--c-match')+';border-radius:50%"></div>'
+      +'<span class="triag-lbl">Confirmés (deux sources)</span><span class="triag-n">'+fmt(both)+'</span></div>':'')
+    +'</div><p class="triag-note">Un POI présent dans une seule source appelle une validation terrain ou une vérification au répertoire officiel.</p>';
+  document.getElementById('osm-toggle-wrap').style.display='';
+}
+
+function toggleOsmLayer(show){
+  if(show){ osmLayer.addTo(map); matchRing.addTo(map); }
+  else{ map.removeLayer(osmLayer); map.removeLayer(matchRing); }
+}
+
+
+
+/* ===========================================================
+   8a. CLIENT OVERPASS : GET puis POST, bascule de miroir, diagnostic
+   =========================================================== */
+const OVP_ENDPOINTS=[
+  {url:'https://overpass-api.de/api/interpreter',        nom:'overpass-api.de (principal)'},
+  {url:'https://overpass.kumi.systems/api/interpreter',  nom:'kumi.systems (miroir)'},
+  {url:'https://overpass.private.coffee/api/interpreter',nom:'private.coffee (miroir)'},
+  {url:'https://api.openstreetmap.fr/oapi/interpreter',  nom:'openstreetmap.fr (miroir)'}
+];
+let dernierServeurOk=null, derniereErreurOvp='';
+
+// Message lisible à partir d'une réponse d'erreur Overpass (HTML ou texte)
+function messageOverpass(txt,statut){
+  const m=/<p><strong[^>]*>Error<\/strong>:\s*([^<]+)</i.exec(txt||'');
+  if(m) return 'HTTP '+statut+' : '+m[1].trim().slice(0,220);
+  const r=/"remark"\s*:\s*"([^"]+)"/.exec(txt||'');
+  if(r) return 'HTTP '+statut+' : '+r[1].slice(0,220);
+  if(statut===400) return 'HTTP 400 : requête refusée (syntaxe).';
+  if(statut===406) return 'HTTP 406 : le serveur refuse les requêtes venant d\'un navigateur (filtre anti-robot).';
+  if(statut===429) return 'HTTP 429 : trop de requêtes, serveur saturé.';
+  if(statut===504) return 'HTTP 504 : délai dépassé, tuile trop lourde.';
+  return 'HTTP '+statut;
+}
+
+// Un essai sur une instance : GET (requête simple, sans contrôle préalable CORS) puis POST
+async function essaiOverpass(q,url){
+  const cible=url+'?data='+encodeURIComponent(q);
+  let resp=null, reseau=null;
+  if(cible.length<7500){
+    try{ resp=await fetch(cible,{method:'GET'}); }
+    catch(e){ reseau=e.message||'échec réseau'; }
+  }
+  if(!resp || !resp.ok){
+    try{
+      resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:'data='+encodeURIComponent(q)});
+    }catch(e){
+      throw new Error(reseau||e.message||'échec réseau');
+    }
+  }
+  if(!resp.ok) throw new Error(messageOverpass(await resp.text().catch(()=>''),resp.status));
+  const brut=await resp.text();
+  let data;
+  try{ data=JSON.parse(brut); }
+  catch(e){ throw new Error('Réponse illisible : '+brut.slice(0,160)); }
+  if(data.remark && /error|exceed|timed out|memory/i.test(data.remark))
+    throw new Error('Overpass : '+data.remark.slice(0,220));
+  return data;
+}
+
+// Essai sur l'instance choisie, puis sur les miroirs
+async function interrogerOverpass(q){
+  const choisi=document.getElementById('ovp-endpoint').value;
+  const ordre = choisi==='auto'
+    ? (dernierServeurOk ? [dernierServeurOk].concat(OVP_ENDPOINTS.map(e=>e.url).filter(u=>u!==dernierServeurOk))
+                        : OVP_ENDPOINTS.map(e=>e.url))
+    : [choisi];
+  let derniere=null;
+  for(const url of ordre){
+    try{
+      const data=await essaiOverpass(q,url);
+      dernierServeurOk=url;
+      return data;
+    }catch(e){
+      derniere=e;
+      const msg=(OVP_ENDPOINTS.find(x=>x.url===url)||{nom:url}).nom+' : '+e.message;
+      // Garder le message le plus explicite plutôt que celui du dernier miroir
+      if(!derniereErreurOvp || msg.length>derniereErreurOvp.length) derniereErreurOvp=msg;
+      if(/échec réseau|Failed to fetch|NetworkError|Load failed/i.test(e.message) && ordre.length>1) continue;
+      if(ordre.length>1) continue;
+    }
+  }
+  throw derniere||new Error('Aucun serveur Overpass joignable.');
+}
+
+// Jusqu'à trois tentatives par tuile, avec attente croissante sur serveur saturé
+async function avecReprises(q, iTuile, nTuiles){
+  let derniere=null;
+  for(let essai=1; essai<=3; essai++){
+    try{ return await interrogerOverpass(q); }
+    catch(e){
+      derniere=e;
+      if(!/429|504|saturé|timed out|exceed/i.test(e.message)) throw e;
+      const attente=2500*essai;
+      const zone=document.getElementById('osm-prog-text');
+      if(zone) zone.textContent='Serveur saturé, nouvelle tentative dans '+(attente/1000)+' s (tuile '+iTuile+'/'+nTuiles+')…';
+      await sleep(attente);
+    }
+  }
+  throw derniere;
+}
+
+function conseilOverpass(){
+  if(/échec réseau|Failed to fetch|NetworkError|Load failed/i.test(derniereErreurOvp))
+    return 'La requête n\'atteint pas le serveur : pare-feu ou filtrage du réseau institutionnel. '
+      +'Tester depuis un poste hors réseau, ou passer par overpass turbo (section Extraction hors ligne).';
+  if(/406/.test(derniereErreurOvp))
+    return 'Le serveur principal refuse les requêtes de navigateur. Choisir un miroir dans la liste.';
+  if(/504|429|exceed|timed out|memory/i.test(derniereErreurOvp))
+    return 'Serveur saturé ou tuile trop lourde : réduire le nombre de catégories, ou réessayer plus tard.';
+  if(/400/.test(derniereErreurOvp))
+    return 'Requête refusée par le serveur : signaler le message ci-dessus.';
+  return 'Essayer un autre serveur dans la liste, ou la voie overpass turbo.';
+}
+
+async function testerOverpass(){
+  const boite=document.getElementById('ovp-diag');
+  boite.style.display='';
+  boite.innerHTML='Test en cours…';
+  const q='[out:json][timeout:10];node(45.5000,-73.6000,45.5020,-73.5980);out 1;';
+  const lignes=[];
+  for(const e of OVP_ENDPOINTS){
+    const t0=performance.now();
+    let etat;
+    try{
+      await essaiOverpass(q,e.url);
+      etat='<span style="color:var(--teal)">joignable</span> <span class="mn">'+Math.round(performance.now()-t0)+' ms</span>';
+    }catch(err){
+      etat='<span style="color:var(--c-alert)">'+esc(err.message.slice(0,90))+'</span>';
+    }
+    lignes.push('<div style="margin-bottom:3px">'+esc(e.nom)+' : '+etat+'</div>');
+    boite.innerHTML=lignes.join('');
+  }
+  boite.innerHTML=lignes.join('')
+    +'<div style="margin-top:6px;color:var(--muted)">Si aucun serveur n\'est joignable, le blocage vient du réseau, pas de l\'outil.</div>';
+}
+
+/* ===========================================================
+   8b. RÉSEAUX ET ESPACES VERTS : GÉOMÉTRIES OSM
+   =========================================================== */
+function eqPt(a,b){ return Math.abs(a[0]-b[0])<1e-9 && Math.abs(a[1]-b[1])<1e-9; }
+function ferme(r){ return r.length>3 && eqPt(r[0],r[r.length-1]); }
+
+// Chaînage des segments d'une relation en anneaux
+function chaine(segs){
+  const rings=[], pool=segs.filter(s=>s&&s.length>1).map(s=>s.slice());
+  while(pool.length){
+    let cur=pool.shift(), avance=true;
+    while(avance && !ferme(cur)){
+      avance=false;
+      for(let i=0;i<pool.length;i++){
+        const sg=pool[i];
+        if(eqPt(cur[cur.length-1],sg[0])){ cur=cur.concat(sg.slice(1)); }
+        else if(eqPt(cur[cur.length-1],sg[sg.length-1])){ cur=cur.concat(sg.slice().reverse().slice(1)); }
+        else if(eqPt(cur[0],sg[sg.length-1])){ cur=sg.slice(0,-1).concat(cur); }
+        else if(eqPt(cur[0],sg[0])){ cur=sg.slice().reverse().slice(0,-1).concat(cur); }
+        else continue;
+        pool.splice(i,1); avance=true; break;
+      }
+    }
+    if(cur.length>3) rings.push(ferme(cur)?cur:cur.concat([cur[0]]));
+  }
+  return rings;
+}
+function longueurM(co){
+  let d=0;
+  for(let i=1;i<co.length;i++) d+=haversine(co[i-1][1],co[i-1][0],co[i][1],co[i][0]);
+  return d;
+}
+function aireM2(ring){
+  let lat=0; ring.forEach(c=>lat+=c[1]); lat/=ring.length;
+  return ringArea(ring,lat)*1e6;   // ringArea rend des km²
+}
+function echantillonDedans(co){
+  const pas=Math.max(1,Math.floor(co.length/60));
+  for(let i=0;i<co.length;i+=pas) if(dansTerritoireAvecMarge(co[i][0],co[i][1])) return true;
+  return dansTerritoireAvecMarge(co[0][0],co[0][1]);
+}
+function nomOsm(t,setId){
+  return t.name||t['name:fr']||t.ref||(setId==='velo'?'Voie cyclable sans nom':'Espace vert sans nom');
+}
+function propsGeom(el,setId,t){
+  return {id:el.type+'/'+el.id, nom:nomOsm(t,setId), ensemble:setId,
+    type_osm:[t.highway,t.leisure,t.landuse,t.natural,t.boundary,t.route].filter(Boolean).join('/'),
+    revetement:t.surface||'', eclairage:t.lit||'', acces:t.access||'', operateur:t.operator||'',
+    etiquettes:Object.entries(t).map(([k,v])=>k+'='+v).join(', '), source:'osm'};
+}
+
+function elementVersFeature(el,setId,kind){
+  const t=el.tags||{};
+  if(el.type==='way'&&el.geometry&&el.geometry.length>1){
+    const co=el.geometry.map(g=>[g.lon,g.lat]);
+    const p=propsGeom(el,setId,t);
+    if(kind==='poly'&&ferme(co)){
+      p.superficie_ha=Math.round(aireM2(co)/10000*100)/100;
+      p.dans_territoire=echantillonDedans(co);
+      return {type:'Feature',geometry:{type:'Polygon',coordinates:[co]},properties:p};
+    }
+    p.longueur_m=Math.round(longueurM(co));
+    p.dans_territoire=echantillonDedans(co);
+    return {type:'Feature',geometry:{type:'LineString',coordinates:co},properties:p};
+  }
+  if(el.type==='relation'&&el.members){
+    const geoms=el.members.filter(m=>m.geometry&&m.geometry.length>1)
+      .map(m=>({role:m.role||'outer',co:m.geometry.map(g=>[g.lon,g.lat])}));
+    if(!geoms.length) return null;
+    const p=propsGeom(el,setId,t);
+    if(kind==='line'){
+      const lines=geoms.map(m=>m.co);
+      p.longueur_m=Math.round(lines.reduce((a,c)=>a+longueurM(c),0));
+      p.dans_territoire=lines.some(echantillonDedans);
+      return {type:'Feature',geometry:{type:'MultiLineString',coordinates:lines},properties:p};
+    }
+    const outers=chaine(geoms.filter(m=>m.role!=='inner').map(m=>m.co));
+    const inners=chaine(geoms.filter(m=>m.role==='inner').map(m=>m.co));
+    if(!outers.length) return null;
+    const polys=outers.map(o=>[o].concat(inners.filter(h=>inRing(h[0][0],h[0][1],o))));
+    p.superficie_ha=Math.round(outers.reduce((a,o)=>a+aireM2(o),0)/10000*100)/100;
+    p.dans_territoire=outers.some(echantillonDedans);
+    return {type:'Feature',
+      geometry: polys.length>1?{type:'MultiPolygon',coordinates:polys}:{type:'Polygon',coordinates:polys[0]},
+      properties:p};
+  }
+  return null;
+}
+
+async function runGeomQuery(){
+  if(!TERR){ showErr('Charger d\'abord un polygone de territoire.'); return; }
+  const sets=GEOM_SETS.filter(s=>document.getElementById('geo-'+s.id).checked);
+  if(!sets.length){ showErr('Sélectionner au moins un réseau ou un type d\'espace.'); return; }
+  hideErr();
+  const tiles=generateTiles(35);
+  const btn=document.getElementById('btn-geom'); btn.disabled=true;
+  document.getElementById('geo-prog-wrap').style.display='';
+  document.getElementById('geo-stats').innerHTML='';
+  geomLayer.clearLayers();
+  sets.forEach(s=>geomItems[s.id]=[]);
+
+  const vus=new Set(); let erreurs=0;
+  derniereErreurOvp='';
+  for(let i=0;i<tiles.length;i++){
+    document.getElementById('geo-prog-text').textContent='Overpass, tuile '+(i+1)+'/'+tiles.length+'…';
+    document.getElementById('geo-prog-bar').style.width=Math.round(i/tiles.length*100)+'%';
+    const t=tiles[i];
+    const BX=t.s.toFixed(5)+','+t.w.toFixed(5)+','+t.n.toFixed(5)+','+t.e.toFixed(5);
+    const parts=[];
+    sets.forEach(st=>st.sel.forEach(sel=>parts.push('  '+sel+'('+BX+');')));
+    const q='[out:json][timeout:120];\n(\n'+parts.join('\n')+'\n);\nout geom;';
+    try{
+      const data=await avecReprises(q, i+1, tiles.length);
+      for(const el of (data.elements||[])){
+        const uid=el.type+'/'+el.id;
+        if(vus.has(uid)) continue;
+        vus.add(uid);
+        const setId=classeGeom(el.tags||{});
+        const st=sets.find(x=>x.id===setId);
+        if(!st) continue;
+        const f=elementVersFeature(el,setId,st.kind);
+        if(f) geomItems[setId].push(f);
+      }
+    }catch(err){
+      erreurs++;
+      derniereErreurOvp=derniereErreurOvp||err.message;
+      console.warn('[GEOM] tuile '+(i+1)+' : '+err.message);
+      if(erreurs>=3 && !Object.values(geomItems).some(v=>v.length)) break;
+    }
+    await sleep(1100);
+  }
+  document.getElementById('geo-prog-bar').style.width='100%';
+  document.getElementById('geo-prog-wrap').style.display='none';
+  btn.disabled=false;
+  const n=Object.values(geomItems).reduce((a,v)=>a+v.length,0);
+  document.getElementById('geo-prog-text').textContent = n
+    ? fmt(n)+' géométries récupérées'+(erreurs?' ('+erreurs+' tuile(s) en erreur)':'')
+    : (erreurs?'Échec : '+derniereErreurOvp+' · '+conseilOverpass()
+             :'Aucune géométrie trouvée sur ce territoire.');
+  drawGeoms(); updateGeomStats(); buildLegend();
+}
+
+function drawGeoms(){
+  geomLayer.clearLayers();
+  const aff=document.getElementById('geo-show');
+  if(aff && !aff.checked) return;
+  GEOM_SETS.forEach(st=>{
+    const col=cssv(st.css);
+    (geomItems[st.id]||[]).forEach(f=>{
+      if(clip() && !f.properties.dans_territoire) return;
+      const p=f.properties;
+      const info='<div class="tt-nom">'+esc(p.nom)+'</div>'
+        +'<div class="tt-adr">'+esc(st.label)+(p.type_osm?' · '+esc(p.type_osm):'')+'</div>'
+        +'<div class="tt-val" style="color:'+col+'">'
+        +(p.longueur_m!=null?fmt(p.longueur_m/1000,2)+' km':fmt(p.superficie_ha,2)+' ha')+'</div>';
+      const opts = st.kind==='line'
+        ? {color:col,weight:3,opacity:.9}
+        : {color:col,weight:1.2,opacity:.9,fillColor:col,fillOpacity:baseKey==='photos'?.22:.32};
+      const lay = st.kind==='line' ? L.geoJSON(f,{style:()=>opts}) : L.geoJSON(f,{style:()=>opts});
+      lay.bindTooltip(info,{className:'muni-tooltip',sticky:true,direction:'top'});
+      lay.addTo(geomLayer);
+    });
+  });
+}
+
+function geomRetenus(setId){
+  return (geomItems[setId]||[]).filter(f=>!clip()||f.properties.dans_territoire);
+}
+
+function updateGeomStats(){
+  let html='<div class="triag-grid">';
+  let total=0;
+  GEOM_SETS.forEach(st=>{
+    const fs=geomRetenus(st.id);
+    if(!fs.length) return;
+    total+=fs.length;
+    const mesure = st.kind==='line'
+      ? fmt(fs.reduce((a,f)=>a+(f.properties.longueur_m||0),0)/1000,1)+' km'
+      : fmt(fs.reduce((a,f)=>a+(f.properties.superficie_ha||0),0),0)+' ha';
+    html+='<div class="triag-row"><div class="triag-dot" style="background:'+cssv(st.css)
+      +(st.kind==='line'?';height:3px':';border-radius:2px')+'"></div>'
+      +'<span class="triag-lbl">'+esc(st.label)+' <span class="mono" style="color:var(--muted)">('+fmt(fs.length)+')</span></span>'
+      +'<span class="triag-n">'+mesure+'</span></div>';
+  });
+  html+='</div>';
+  html+='<p class="triag-note">Longueurs et superficies calculées sur les géométries OSM retenues : ordres de grandeur pour le diagnostic, non des mesures officielles.</p>';
+  document.getElementById('geo-stats').innerHTML = total?html:'';
+  document.getElementById('geo-toggle-wrap').style.display = total?'':'none';
+  document.getElementById('btn-exp-velo').disabled = geomRetenus('velo').length===0;
+  document.getElementById('btn-exp-espaces').disabled = geomRetenus('parc').length+geomRetenus('boise').length===0;
+  document.getElementById('btn-pts-velo').disabled = (geomItems.velo||[]).length===0;
+  const nPts=pointsRetenus().length;
+  if(nPts){
+    document.getElementById('geo-stats').innerHTML += '<div class="triag-row" style="margin-top:4px">'
+      +'<div class="triag-dot" style="background:'+cssv('--c-velo')+';border-radius:50%"></div>'
+      +'<span class="triag-lbl">Points semés sur le réseau cyclable</span>'
+      +'<span class="triag-n">'+fmt(nPts)+'</span></div>';
+  }
+}
+
+function exportGeom(quoi){
+  const ids = quoi==='velo' ? ['velo'] : ['parc','boise'];
+  const feats=[]; ids.forEach(id=>feats.push(...geomRetenus(id)));
+  if(!feats.length) return;
+  const out={type:'FeatureCollection',
+    metadata:{
+      titre:(quoi==='velo'?'Réseau cyclable (lignes) : ':'Parcs et espaces verts (polygones) : ')+(TERR?TERR.nom:'territoire'),
+      sources:'OpenStreetMap contributeurs (Overpass API)',
+      organisme:'CISSS des Laurentides — Direction de santé publique',
+      territoire:TERR?TERR.nom:'n.d.',
+      marge_km:+document.getElementById('marge-km').value,
+      restreint_au_polygone:clip(),
+      nombre_geometries:feats.length,
+      longueur_totale_km: quoi==='velo' ? Math.round(feats.reduce((a,f)=>a+(f.properties.longueur_m||0),0)/100)/10 : null,
+      superficie_totale_ha: quoi==='velo' ? null : Math.round(feats.reduce((a,f)=>a+(f.properties.superficie_ha||0),0)),
+      crs:'WGS84 (EPSG:4326)',
+      date_extraction:new Date().toISOString()
+    },
+    features:feats};
+  telecharge(JSON.stringify(out,null,2),
+    nomFichier().replace('poi_', quoi==='velo'?'cyclable_':'espaces_verts_')+'.geojson','application/geo+json');
+}
+
+
+/* ===========================================================
+   8c. PISTES CYCLABLES EN POINTS (échantillonnage le long des tracés)
+   =========================================================== */
+function majPas(){
+  document.getElementById('pas-disp').textContent=document.getElementById('pas-velo').value+' m';
+}
+function interp(a,b,t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t]; }
+
+function genererPointsVelo(){
+  const pas=+document.getElementById('pas-velo').value;
+  const lignes=(geomItems.velo||[]);
+  veloPoints=[];
+  let idx=0;
+  lignes.forEach(f=>{
+    const p=f.properties;
+    const brins = f.geometry.type==='MultiLineString' ? f.geometry.coordinates : [f.geometry.coordinates];
+    brins.forEach((co,ib)=>{
+      if(co.length<2) return;
+      let cumul=0, reste=0;
+      const pousse=(c,d,extremite)=>{
+        idx++;
+        veloPoints.push({type:'Feature',geometry:{type:'Point',coordinates:[+c[0].toFixed(6),+c[1].toFixed(6)]},
+          properties:{id:'pt/'+idx, nom:p.nom, tronçon:p.id, brin:ib+1,
+            type_osm:p.type_osm, revetement:p.revetement, eclairage:p.eclairage,
+            distance_m:Math.round(d), pas_m:pas, extremite:!!extremite,
+            dans_territoire:dansTerritoireAvecMarge(c[0],c[1]), source:'osm'}});
+      };
+      pousse(co[0],0,true);
+      for(let i=1;i<co.length;i++){
+        const a=co[i-1], b=co[i];
+        let seg=haversine(a[1],a[0],b[1],b[0]);
+        if(seg<=0) continue;
+        let t0=0;
+        while(reste+seg*(1-t0) >= pas){
+          const besoin=pas-reste;
+          const t=t0+besoin/seg;
+          cumul+=pas;
+          pousse(interp(a,b,t),cumul,false);
+          t0=t; reste=0;
+        }
+        reste+=seg*(1-t0);
+      }
+      // Extrémité finale, sauf si elle colle au dernier point semé
+      if(reste > pas*0.25 || cumul===0) pousse(co[co.length-1], cumul+reste, true);
+    });
+  });
+  drawPointsVelo();
+  updateGeomStats();
+}
+
+function pointsRetenus(){ return veloPoints.filter(f=>!clip()||f.properties.dans_territoire); }
+
+function drawPointsVelo(){
+  ptsLayer.clearLayers();
+  const aff=document.getElementById('pts-show');
+  document.getElementById('pts-toggle-wrap').style.display = veloPoints.length?'':'none';
+  document.getElementById('btn-exp-pts').disabled = pointsRetenus().length===0;
+  if(!veloPoints.length || (aff && !aff.checked)) return;
+  const col=cssv('--c-velo');
+  pointsRetenus().forEach(f=>{
+    const c=f.geometry.coordinates, p=f.properties;
+    L.circleMarker([c[1],c[0]],{radius:p.extremite?4:3,fillColor:col,fillOpacity:.95,
+      weight:1,color:traitPOI(),opacity:.8})
+     .bindTooltip('<div class="tt-nom">'+esc(p.nom)+'</div>'
+       +'<div class="tt-adr">'+(p.extremite?'Extrémité de tronçon':'Point à '+fmt(p.distance_m)+' m de l\'origine')+'</div>',
+       {className:'muni-tooltip',sticky:true,direction:'top',offset:[0,-4]})
+     .addTo(ptsLayer);
+  });
+}
+
+function exportPointsVelo(){
+  const feats=pointsRetenus();
+  if(!feats.length) return;
+  const out={type:'FeatureCollection',
+    metadata:{
+      titre:'Réseau cyclable en points : '+(TERR?TERR.nom:'territoire'),
+      sources:'OpenStreetMap contributeurs (Overpass API), échantillonnage le long des tracés',
+      organisme:'CISSS des Laurentides — Direction de santé publique',
+      territoire:TERR?TERR.nom:'n.d.',
+      pas_echantillonnage_m:+document.getElementById('pas-velo').value,
+      nombre_points:feats.length,
+      nombre_troncons:(geomItems.velo||[]).length,
+      restreint_au_polygone:clip(),
+      crs:'WGS84 (EPSG:4326)',
+      date_extraction:new Date().toISOString()
+    }, features:feats};
+  telecharge(JSON.stringify(out,null,2), nomFichier().replace('poi_','points_cyclables_')+'.geojson','application/geo+json');
+}
+
+/* ===========================================================
+   9. AFFICHAGE, FILTRES, LÉGENDE
+   =========================================================== */
+function clip(){ return document.getElementById('clip-poly').checked; }
+function onClipChange(){ buildGroupSel(); buildFilterSel(); applyFilter(); drawGeoms(); updateGeomStats(); buildLegend(); }
+function visibles(){
+  const g=document.getElementById('filter-grp').value;
+  const c=document.getElementById('filter-cat').value;
+  const hideCl=document.getElementById('filter-closed').checked;
+  return allItems.filter(it=>
+    (!clip()||it.dedans) && (!g||it.grp===g) && (!c||it.catId===c)
+    && (!hideCl||it.feature.properties.statut!=='CLOSED_PERMANENTLY'));
+}
+function osmVisibles(){
+  const g=document.getElementById('filter-grp').value;
+  const c=document.getElementById('filter-cat').value;
+  return osmItems.filter(i=>(!clip()||i.dedans)&&(!g||i.grp===g)&&(!c||i.catId===c));
+}
+
+function addMarker(it){
+  const [lng,lat]=it.feature.geometry.coordinates;
+  const p=it.feature.properties;
+  const cat=CATEGORIES.find(c=>c.id===it.catId);
+  const col=COLORS[it.catId]||cssv('--muted');
+  const m=L.circleMarker([lat,lng],{radius:6,fillColor:col,fillOpacity:.9,
+    weight:1.2,color:traitPOI(),opacity:.9});
+  m.bindTooltip('<div class="tt-nom">'+esc(p.nom)+'</div>'
+    +'<div class="tt-adr">'+esc(p.adresse)+'</div>'
+    +(p.note!=null?'<div class="tt-val" style="color:'+col+'">'+fmt(p.note,1)+' ★</div>':'')
+    +'<div class="tt-cat" style="color:'+col+'">'+(cat?cat.emoji+' '+esc(cat.label):'')
+    +(p.statut==='CLOSED_PERMANENTLY'?' <em>(fermé)</em>':'')+'</div>',
+    {className:'muni-tooltip',sticky:true,direction:'top',offset:[0,-6]});
+  m.addTo(poiLayer);
+}
+
+function applyFilter(){
+  poiLayer.clearLayers();
+  visibles().forEach(addMarker);
+  if(osmItems.length){ osmLayer.clearLayers(); osmVisibles().forEach(addOsmMarker); }
+  updateStats();
+}
+
+// Bases de comptage : Google retenu + OSM exclusif (les appariés sont déjà comptés côté Google)
+function baseGoogle(){ return allItems.filter(i=>!clip()||i.dedans); }
+function baseOsm(){ return osmItems.filter(i=>(!clip()||i.dedans)&&!matchedOsmIds.has(i.osmId)); }
+function nCat(id){ return baseGoogle().filter(i=>i.catId===id).length+baseOsm().filter(i=>i.catId===id).length; }
+function nGrp(id){ return baseGoogle().filter(i=>i.grp===id).length+baseOsm().filter(i=>i.grp===id).length; }
+
+function buildGroupSel(){
+  const sel=document.getElementById('filter-grp');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Tous les groupes</option>';
+  GROUPS.forEach(g=>{ const n=nGrp(g.id); if(n) sel.add(new Option(g.label+' ('+fmt(n)+')',g.id)); });
+  sel.value=cur;
+}
+function buildFilterSel(){
+  const sel=document.getElementById('filter-cat');
+  const grp=document.getElementById('filter-grp').value;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Toutes les catégories</option>';
+  CATEGORIES.forEach(cat=>{
+    if(grp&&cat.g!==grp) return;
+    const n=nCat(cat.id);
+    if(n) sel.add(new Option(cat.emoji+' '+cat.label+' ('+fmt(n)+')',cat.id));
+  });
+  if([...sel.options].some(o=>o.value===cur)) sel.value=cur;
+}
+
+function updateStats(){
+  const nVis=visibles().length+osmVisibles().filter(i=>!matchedOsmIds.has(i.osmId)).length;
+  document.getElementById('res-total').textContent=fmt(nVis);
+  let html='';
+  GROUPS.forEach(g=>{
+    const cats=CATEGORIES.filter(c=>c.g===g.id&&nCat(c.id)>0);
+    if(!cats.length) return;
+    html+='<div class="grp-stat-head">'+g.label+' · '+fmt(nGrp(g.id))+'</div>';
+    const maxN=Math.max(...cats.map(c=>nCat(c.id)),1);
+    cats.forEach(cat=>{
+      const n=nCat(cat.id);
+      html+='<div class="cat-stat"><div class="cat-stat-dot" style="background:'+COLORS[cat.id]+'"></div>'
+        +'<span class="cat-stat-name">'+cat.emoji+' '+esc(cat.label)+'</span>'
+        +'<div class="cat-stat-bar-w"><div class="cat-stat-bar-f" style="width:'+Math.round(n/maxN*100)+'%;background:'+COLORS[cat.id]+'"></div></div>'
+        +'<span class="cat-stat-n">'+fmt(n)+'</span></div>';
+    });
+  });
+  document.getElementById('cat-stats').innerHTML=html||'<p class="hint">Aucun POI retenu avec les filtres actuels.</p>';
+}
+
+function buildLegend(){
+  let html='';
+  GROUPS.forEach(g=>{
+    const cats=CATEGORIES.filter(c=>c.g===g.id&&nCat(c.id)>0);
+    if(!cats.length) return;
+    html+='<div class="legend-title" style="margin-top:8px">'+g.label+'</div>';
+    cats.forEach(cat=>{
+      const n=nCat(cat.id);
+      html+='<div class="legend-item"><div class="legend-sw" style="background:'+COLORS[cat.id]+'"></div>'
+        +'<span class="legend-ct">'+esc(cat.label)+'</span><span class="legend-n">'+fmt(n)+'</span></div>';
+    });
+  });
+  const geoms=GEOM_SETS.filter(st=>geomRetenus(st.id).length);
+  if(geoms.length){
+    html+='<div class="legend-title" style="margin-top:10px;border-top:1px solid var(--line2);padding-top:8px">Réseaux et espaces</div>';
+    geoms.forEach(st=>{
+      const fs=geomRetenus(st.id);
+      const mes = st.kind==='line' ? fmt(fs.reduce((a,f)=>a+(f.properties.longueur_m||0),0)/1000,0)+' km'
+                                   : fmt(fs.reduce((a,f)=>a+(f.properties.superficie_ha||0),0),0)+' ha';
+      html+='<div class="legend-item"><div class="legend-sw" style="background:'+cssv(st.css)
+        +(st.kind==='line'?';height:3px;border-radius:2px':';border-radius:2px')+'"></div>'
+        +'<span class="legend-ct">'+esc(st.label)+'</span><span class="legend-n">'+mes+'</span></div>';
+    });
+  }
+  if(osmItems.length){
+    html+='<div class="legend-title" style="margin-top:10px;border-top:1px solid var(--line2);padding-top:8px">Sources</div>'
+      +'<div class="legend-item"><div class="legend-sw" style="background:'+cssv('--c-match')+'"></div>'
+      +'<span class="legend-ct">Confirmé Google + OSM</span><span class="legend-n">'+fmt(matchedOsmIds.size)+'</span></div>'
+      +'<div class="legend-item"><div class="legend-sw" style="background:'+cssv('--c-osm')+';transform:rotate(45deg);border-radius:1px"></div>'
+      +'<span class="legend-ct">◆ OSM seulement</span><span class="legend-n">'+fmt(osmItems.length-matchedOsmIds.size)+'</span></div>';
+  }
+  document.getElementById('legend-items').innerHTML=html||'<p class="hint">Aucune donnée.</p>';
+  if(html) document.getElementById('legend').style.display='';
+}
+
+/* ===========================================================
+   10. EXPORTS
+   =========================================================== */
+function updateExportBtn(){
+  const has=allItems.length>0||osmItems.length>0;
+  document.getElementById('btn-export').disabled=!has;
+  document.getElementById('btn-csv').disabled=!has;
+}
+
+function collecte(){
+  const gFeatures=visibles().map(it=>{
+    const f={...it.feature,properties:{...it.feature.properties}};
+    f.properties.source=matchedGoogleIds.has(f.properties.id)?'google+osm':'google';
+    return f;
+  });
+  const osmOnly=osmVisibles().filter(i=>!matchedOsmIds.has(i.osmId)).map(i=>{
+    const cat=CATEGORIES.find(c=>c.id===i.catId);
+    return {type:'Feature',geometry:{type:'Point',coordinates:[i.lng,i.lat]},
+      properties:{id:'osm/'+i.osmId,nom:i.name,adresse:i.adresse,
+        groupe:i.grp,categorie:i.catId,categorie_nom:cat?cat.label:'Autre (OSM)',
+        types:Object.entries(i.tags).map(([k,v])=>k+'='+v).join(', '),
+        type_principal:i.catId,statut:'OPERATIONAL',note:null,
+        telephone:i.tags.phone||i.tags['contact:phone']||'',site_web:i.tags.website||'',
+        dans_territoire:i.dedans,source:'osm'}};
+  });
+  return gFeatures.concat(osmOnly);
+}
+
+function nomFichier(){
+  const t=(TERR&&TERR.nom?TERR.nom:'territoire').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,40);
+  return 'poi_'+t+'_'+new Date().toISOString().slice(0,10);
+}
+
+function exportGeoJSON(){
+  const feats=collecte();
+  const cats=[...new Set(feats.map(f=>f.properties.categorie))];
+  const out={type:'FeatureCollection',
+    metadata:{
+      titre:'Services de proximité : '+(TERR?TERR.nom:'territoire'),
+      sources:(allItems.length?'Google Places API (New)':'')+(allItems.length&&osmItems.length?' + ':'')+(osmItems.length?'OpenStreetMap (Overpass)':''),
+      organisme:'CISSS des Laurentides — Direction de santé publique',
+      territoire:TERR?TERR.nom:'n.d.',
+      superficie_km2:TERR?Math.round(TERR.aire):null,
+      marge_km:+document.getElementById('marge-km').value,
+      restreint_au_polygone:clip(),
+      rayon_cellule_km:+document.getElementById('radius-km').value,
+      tuile_motscles_km:+document.getElementById('tile-km').value,
+      categories:cats.map(id=>{const c=CATEGORIES.find(x=>x.id===id);return c?c.label:id;}),
+      total_poi:feats.length,
+      dont_confirmes_2_sources:matchedGoogleIds.size,
+      dont_osm_seulement:feats.filter(f=>f.properties.source==='osm').length,
+      crs:'WGS84 (EPSG:4326)',
+      date_extraction:new Date().toISOString()
+    },
+    features:feats};
+  telecharge(JSON.stringify(out,null,2),nomFichier()+'.geojson','application/geo+json');
+}
+
+function exportCSV(){
+  const feats=collecte();
+  const cols=['id','nom','adresse','groupe','categorie','categorie_nom','type_principal','types',
+              'statut','note','telephone','site_web','source','dans_territoire','longitude','latitude'];
+  const lignes=[cols.join(';')];
+  feats.forEach(f=>{
+    const p=f.properties, c=f.geometry.coordinates;
+    const vals=cols.map(k=>{
+      let v = k==='longitude'?c[0] : k==='latitude'?c[1] : p[k];
+      if(v==null) v='';
+      if(typeof v==='number') v=String(v).replace('.',',');
+      v=String(v).replace(/"/g,'""');
+      return /[;"\n]/.test(v)?'"'+v+'"':v;
+    });
+    lignes.push(vals.join(';'));
+  });
+  telecharge('\ufeff'+lignes.join('\r\n'),nomFichier()+'.csv','text/csv;charset=utf-8');
+}
+
+function telecharge(txt,nom,mime){
+  const blob=new Blob([txt],{type:mime});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=nom; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+}
+
+
+/* ===========================================================
+   10b. EXTRACTION HORS LIGNE : .poly, script osmium, overpass turbo
+   =========================================================== */
+// Territoire au format .poly (osmium extract / osmconvert)
+function polyTexte(){
+  const L=[nomFichier().replace('poi_','')];
+  let i=0;
+  TERR.parts.forEach(p=>p.rings.forEach((r,k)=>{
+    i++;
+    L.push((k===0?'':'!')+i);
+    r.forEach(c=>L.push('   '+c[0].toFixed(7)+'   '+c[1].toFixed(7)));
+    L.push('END');
+  }));
+  L.push('END');
+  return L.join('\n')+'\n';
+}
+function exportPoly(){
+  if(!TERR) return;
+  // Même nom que celui référencé dans le script osmium
+  telecharge(polyTexte(), nomFichier().replace('poi_','')+'.poly','text/plain;charset=utf-8');
+}
+
+// Sélecteurs Overpass -> expressions osmium tags-filter (clé=valeurs)
+function premierFiltre(sel){
+  let m=/\["([^"]+)"="([^"]+)"\]/.exec(sel);
+  if(m) return [m[1],[m[2]]];
+  m=/\["([^"]+)"~"\^\(([^)]+)\)\$"\]/.exec(sel);
+  if(m) return [m[1], m[2].split('|')];
+  m=/\["([^"]+)"~"([^"]+)"\]/.exec(sel);
+  if(m) return [m[1], m[2].split('|')];
+  m=/\["([^"]+)"\]/.exec(sel);
+  if(m) return [m[1],[]];
+  return null;
+}
+function filtresOsmium(){
+  const par={};
+  selectedGroups().forEach(g=>(OSM_TAGS[g]||[]).forEach(sel=>{
+    const f=premierFiltre(sel); if(!f) return;
+    par[f[0]]=par[f[0]]||new Set(); f[1].forEach(v=>par[f[0]].add(v));
+  }));
+  GEOM_SETS.filter(st=>document.getElementById('geo-'+st.id)?.checked)
+    .forEach(st=>st.sel.forEach(sel=>{
+      const f=premierFiltre(sel); if(!f) return;
+      par[f[0]]=par[f[0]]||new Set(); f[1].forEach(v=>par[f[0]].add(v));
+    }));
+  return Object.keys(par).sort().map(k=>{
+    const v=[...par[k]];
+    return 'nwr/'+k+(v.length?'='+v.join(','):'');
+  });
+}
+
+function scriptTexte(){
+  const base=nomFichier().replace('poi_','');
+  const filtres=filtresOsmium();
+  const cats=selectedCats().map(c=>c.label);
+  const geos=GEOM_SETS.filter(st=>document.getElementById('geo-'+st.id)?.checked).map(st=>st.label);
+  return [
+'#!/usr/bin/env bash',
+'# Extraction OSM locale : '+(TERR?TERR.nom:'territoire'),
+'# Généré par l\'extracteur de services de proximité (CISSS des Laurentides, DSP), '+new Date().toISOString().slice(0,10),
+'# Catégories : '+(cats.join(', ')||'aucune'),
+'# Réseaux et espaces : '+(geos.join(', ')||'aucun'),
+'# Prérequis : osmium-tool et GDAL (conda install -c conda-forge osmium-tool gdal)',
+'set -e',
+'',
+'# 1. Extrait provincial Geofabrik (~1,2 Go, données ODbL, mise à jour quotidienne)',
+'wget -c https://download.geofabrik.de/north-america/canada/quebec-latest.osm.pbf',
+'',
+'# 2. Découpage sur le territoire (fichier .poly exporté par l\'outil)',
+'osmium extract -p '+base+'.poly quebec-latest.osm.pbf -o '+base+'.osm.pbf --overwrite',
+'',
+'# 3. Filtrage des objets utiles',
+'osmium tags-filter '+base+'.osm.pbf \\',
+...filtres.map((f,i)=>'  '+f+' \\'),
+'  -o '+base+'_services.osm.pbf --overwrite',
+'',
+'# 4. Conversion pour QGIS : un GeoPackage multicouche',
+'ogr2ogr -f GPKG '+base+'_services.gpkg '+base+'_services.osm.pbf \\',
+'  points lines multipolygons other_relations',
+'',
+'# Variante GeoJSON, une couche à la fois :',
+'# ogr2ogr -f GeoJSON '+base+'_points.geojson '+base+'_services.osm.pbf points',
+'# ogr2ogr -f GeoJSON '+base+'_lignes.geojson '+base+'_services.osm.pbf lines',
+'# ogr2ogr -f GeoJSON '+base+'_polygones.geojson '+base+'_services.osm.pbf multipolygons',
+'',
+'# Note : le filtre reprend la clé principale de chaque catégorie cochée.',
+'# Il est volontairement large; le tri fin se fait ensuite dans QGIS sur les attributs.',
+''].join('\n');
+}
+function exportScript(){
+  if(!TERR) return;
+  telecharge(scriptTexte(), nomFichier().replace('poi_','extraction_')+'.sh','text/x-shellscript;charset=utf-8');
+}
+function copieScript(){ copieTexte(scriptTexte(),'Script osmium copié dans le presse-papiers.'); }
+
+// Requête Overpass complète sur l'enveloppe du territoire
+function requeteComplete(){
+  const b=TERR.bbox, m=+document.getElementById('marge-km').value;
+  const padLat=m/111, padLng=m/(111*Math.cos((b[1]+b[3])/2*Math.PI/180));
+  const BX=(b[1]-padLat).toFixed(5)+','+(b[0]-padLng).toFixed(5)+','
+          +(b[3]+padLat).toFixed(5)+','+(b[2]+padLng).toFixed(5);
+  const parts=[];
+  selectedGroups().forEach(g=>(OSM_TAGS[g]||[]).forEach(sel=>parts.push('  nwr'+sel+'('+BX+');')));
+  GEOM_SETS.filter(st=>document.getElementById('geo-'+st.id)?.checked)
+    .forEach(st=>st.sel.forEach(sel=>parts.push('  '+sel+'('+BX+');')));
+  return '/* '+(TERR?TERR.nom:'territoire')+' : services de proximité, réseaux et espaces verts\n'
+    +'   Généré par l\'extracteur de POI, CISSS des Laurentides (DSP).\n'
+    +'   Exporter ensuite en GeoJSON depuis overpass turbo. */\n'
+    +'[out:json][timeout:180];\n(\n'+parts.join('\n')+'\n);\nout geom;';
+}
+function exportOQL(){
+  if(!TERR) return;
+  telecharge(requeteComplete(), nomFichier().replace('poi_','requete_')+'.overpassql','text/plain;charset=utf-8');
+}
+function ouvrirTurbo(){
+  if(!TERR) return;
+  const url='https://overpass-turbo.eu/?Q='+encodeURIComponent(requeteComplete())+'&R';
+  if(url.length>7500){
+    copieTexte(requeteComplete(),'Requête trop longue pour l\'adresse : elle est copiée, la coller dans overpass turbo.');
+    window.open('https://overpass-turbo.eu/','_blank','noopener');
+    return;
+  }
+  window.open(url,'_blank','noopener');
+}
+
+function copieTexte(txt,msg){
+  const boite=document.getElementById('oql-copie');
+  const fini=ok=>{ boite.style.display=''; boite.textContent = ok?msg:'Copie impossible : le fichier a été téléchargé à la place.';
+    setTimeout(()=>boite.style.display='none',6000); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>fini(true)).catch(()=>{telecharge(txt,'presse-papiers.txt','text/plain');fini(false);});
+  }else{ telecharge(txt,'presse-papiers.txt','text/plain'); fini(false); }
+}
+function majBoutonsHorsLigne(){
+  ['btn-poly','btn-script','btn-copie-script','btn-turbo','btn-oql']
+    .forEach(id=>{ const b=document.getElementById(id); if(b) b.disabled=!TERR; });
+}
+
+/* ===========================================================
+   11. UI
+   =========================================================== */
+function updateProgress(ratio,text){
+  document.getElementById('prog-bar').style.width=Math.round(Math.min(1,ratio)*100)+'%';
+  document.getElementById('prog-text').textContent=text;
+}
+function showErr(msg){ const e=document.getElementById('api-error'); e.textContent=msg; e.style.display=''; }
+function hideErr(){ document.getElementById('api-error').style.display='none'; }
+function toggleApiKey(){ const i=document.getElementById('api-key'); i.type=i.type==='password'?'text':'password'; }
+function toggleAllCats(on){
+  CATEGORIES.forEach(c=>{const cb=document.getElementById('cat-'+c.id); if(cb) cb.checked=on;});
+  updateEstimate();
+}
+function toggleGroupCats(gid,on){
+  CATEGORIES.filter(c=>c.g===gid).forEach(c=>{const cb=document.getElementById('cat-'+c.id); if(cb) cb.checked=on;});
+  updateEstimate();
+}
+let panelOpen=true;
+function togglePanel(){
+  panelOpen=!panelOpen;
+  document.getElementById('main').classList.toggle('collapsed',!panelOpen);
+  const t=document.getElementById('panel-toggle');
+  t.classList.toggle('shifted',!panelOpen);
+  t.textContent=panelOpen?'◀':'▶';
+  setTimeout(()=>map.invalidateSize(),320);
+}
+function toggleMethodo(){ document.getElementById('methodo-content').classList.toggle('show'); }
+let fs=1;
+function setFont(d){ fs=Math.max(.85,Math.min(1.3,fs+d*.08));
+  document.documentElement.style.setProperty('--fs',fs+'rem'); }
+
+/* ===========================================================
+   12. INITIALISATION
+   =========================================================== */
+(function init(){
+  // Couleurs : une base par groupe (palette CAT), dégradée par catégorie
+  GROUPS.forEach(g=>{
+    const base=cssv(g.css); GCOLOR[g.id]=base;
+    const cats=CATEGORIES.filter(c=>c.g===g.id);
+    cats.forEach((c,i)=>{ COLORS[c.id]=mixWhite(base, 0.08 + (cats.length>1 ? 0.5*i/(cats.length-1) : 0)); });
+  });
+
+  document.getElementById('cat-list').innerHTML=GROUPS.map(g=>{
+    const cats=CATEGORIES.filter(c=>c.g===g.id);
+    return '<div class="cat-group-head">'+g.label
+      +'<button class="btn-tiny ml" onclick="toggleGroupCats(\''+g.id+'\',true)">＋</button>'
+      +'<button class="btn-tiny" onclick="toggleGroupCats(\''+g.id+'\',false)">−</button></div>'
+      +cats.map(c=>'<label class="cat-item">'
+        +'<input type="checkbox" id="cat-'+c.id+'"'+(c.on?' checked':'')+' onchange="updateEstimate()">'
+        +'<div class="cat-dot" style="background:'+COLORS[c.id]+'"></div>'
+        +'<span class="lbl">'+c.emoji+' '+esc(c.label)+'</span>'
+        +(!c.type&&c.query?'<span class="kw-tag">texte</span>':'')
+        +(!c.type&&!c.query?'<span class="kw-tag">OSM</span>':'')
+        +'</label>').join('');
+  }).join('');
+
+  document.getElementById('geo-list').innerHTML=GEOM_SETS.map(st=>
+    '<label class="cat-item">'
+    +'<input type="checkbox" id="geo-'+st.id+'"'+(st.on?' checked':'')+'>'
+    +'<div class="cat-dot" style="background:'+cssv(st.css)+(st.kind==='line'?';height:3px;border-radius:2px':';border-radius:2px')+'"></div>'
+    +'<span class="lbl">'+esc(st.label)+'</span>'
+    +'<span class="kw-tag">'+(st.kind==='line'?'lignes':'polygones')+'</span>'
+    +'</label>').join('');
+
+  const selOvp=document.getElementById('ovp-endpoint');
+  selOvp.add(new Option('Automatique (bascule entre les miroirs)','auto'));
+  OVP_ENDPOINTS.forEach(e=>selOvp.add(new Option(e.nom,e.url)));
+  selOvp.value='auto';
+
+  majPas();
+  setBasemap('carte');
+  onParamChange();
+  window.addEventListener('resize',()=>map.invalidateSize());
+})();
+</script>
+</body>
+</html>
