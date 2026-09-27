@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr-CA">
-<head>
-<meta charset="utf-8">
+<!-- saved from url=(0087)https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/cartes_strategies.html -->
+<html lang="fr-CA"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Atelier des cartes ÉIS Mont-Tremblant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap">
 <style>
 :root{
   --ground:#F4F6FA; --surface:#FFFFFF; --ink:#1F1F2E; --muted:#5b5f7e; --line:#dcdfee;
@@ -101,7 +101,7 @@ button.b:disabled{opacity:.5;cursor:default}
   <header class="top">
     <p class="eyebrow">ÉIS · Plan d'urbanisme de Mont-Tremblant</p>
     <h1>Atelier des cartes stratégies</h1>
-    <p class="lede">Chaque personne responsable complète la carte d'appel de sa stratégie : <b>l'accroche, trois chiffres sourcés et le paragraphe d'analyse</b>. Les stratégies 4 et 8 sont remplies à titre d'exemples; les autres sont vides, à vous de les écrire. Votre brouillon reste dans ce navigateur. Quand la carte est prête, cliquez sur <b>Envoyer par courriel</b> ou <b>Télécharger ma fiche</b> et transmettez le fichier.</p>
+    <p class="lede">Chaque personne responsable complète la carte d'appel de sa stratégie : <b>l'accroche, trois chiffres sourcés et le paragraphe d'analyse</b>. Seule la stratégie 8 est remplie, à titre d'exemple; les autres cartes sont vides, c'est à vous de les écrire. Votre brouillon reste dans ce navigateur. Quand la carte est prête, cliquez sur <b>Envoyer par courriel</b> ou <b>Télécharger ma fiche</b> et transmettez le fichier.</p>
     <p class="conn" id="conn">Brouillon enregistré dans ce navigateur.</p>
   </header>
 
@@ -131,20 +131,20 @@ button.b:disabled{opacity:.5;cursor:default}
           <label for="accroche">Accroche</label>
           <p class="hint">Une ou deux phrases, 25 mots au plus. Un constat, pas une recommandation.</p>
           <textarea id="accroche" data-k="accroche" rows="2"></textarea>
-          <span class="count" id="c-accroche"></span>
+          <span class="count" id="c-accroche">0 / 25 mots</span>
         </div>
         <div class="row">
           <label for="para">Paragraphe d'analyse</label>
           <p class="hint">Environ 60 à 80 mots : ce que fait le plan, ce qu'il peut produire, ce qu'il ne dit pas.</p>
           <textarea id="para" data-k="para" rows="6"></textarea>
-          <span class="count" id="c-para"></span>
+          <span class="count" id="c-para">0 mots (cible 60 à 80)</span>
         </div>
       </fieldset>
 
       <fieldset>
         <legend>Trois chiffres</legend>
         <p class="hint">Remplacez <span style="font-family:var(--mono)">[ n ]</span> par la valeur. La source ne s'affiche pas sur la carte, elle sert à la validation.</p>
-        <div class="tilegrid" id="tiles"></div>
+        <div class="tilegrid" id="tiles"><div class="tile"><h3>Chiffre 1</h3><div class="row"><label for="v1">Valeur</label><input id="v1" class="num" data-k="v1"></div><div class="row"><label for="l1">Libellé</label><textarea id="l1" data-k="l1" rows="2"></textarea></div><div class="row"><label for="s1">Source et année</label><input id="s1" data-k="s1" placeholder="ex. Recensement 2021, SC"></div></div><div class="tile"><h3>Chiffre 2</h3><div class="row"><label for="v2">Valeur</label><input id="v2" class="num" data-k="v2"></div><div class="row"><label for="l2">Libellé</label><textarea id="l2" data-k="l2" rows="2"></textarea></div><div class="row"><label for="s2">Source et année</label><input id="s2" data-k="s2" placeholder="ex. Recensement 2021, SC"></div></div><div class="tile"><h3>Chiffre 3</h3><div class="row"><label for="v3">Valeur</label><input id="v3" class="num" data-k="v3"></div><div class="row"><label for="l3">Libellé</label><textarea id="l3" data-k="l3" rows="2"></textarea></div><div class="row"><label for="s3">Source et année</label><input id="s3" data-k="s3" placeholder="ex. Recensement 2021, SC"></div></div></div>
       </fieldset>
 
       <fieldset>
@@ -170,13 +170,13 @@ button.b:disabled{opacity:.5;cursor:default}
           <button type="button" class="b primary" id="mail">Envoyer par courriel</button>
           <button type="button" class="b" id="save">Télécharger ma fiche (.json)</button>
           <button type="button" class="b" id="imp">Importer une fiche</button>
-          <input type="file" id="file" accept=".json,application/json" hidden>
+          <input type="file" id="file" accept=".json,application/json" hidden="">
         </div>
       </fieldset>
     </form>
 
     <aside class="preview" aria-label="Aperçu">
-      <p class="exnote" id="exnote" hidden>Cette carte est fournie à titre d'exemple. Servez-vous-en comme repère pour écrire la vôtre.</p>
+      <p class="exnote" id="exnote" hidden="">Cette carte est fournie à titre d'exemple. Servez-vous-en comme repère pour écrire la vôtre.</p>
       <div class="head"><p>Aperçu de la carte</p>
         <div class="btns">
           <button type="button" class="b primary" id="copy">Copier le code HTML</button>
@@ -185,14 +185,14 @@ button.b:disabled{opacity:.5;cursor:default}
       </div>
       <div class="stage" id="stage"></div>
       <ul class="checks" id="checks"></ul>
-      <div class="codebox" id="codebox" hidden>
+      <div class="codebox" id="codebox" hidden="">
         <label for="code">Code à coller dans le bloc HTML de Hub (sélectionné, faites Ctrl+C)</label>
-        <textarea id="code" readonly></textarea>
+        <textarea id="code" readonly=""></textarea>
       </div>
     </aside>
   </div>
 </div>
-<div class="toast" id="toast" role="status" hidden></div>
+<div class="toast" id="toast" role="status" hidden=""></div>
 
 <script>
 (function(){
@@ -210,9 +210,9 @@ var T=[
  {n:3,titre:"Mobilité",accroche:"",
   tiles:[["",""],["",""],["",""]],
   para:""},
- {n:4,angle:true,exemple:true,titre:"Alimentation durable",accroche:"Aucune stratégie du plan ne porte sur l'alimentation. C'est précisément pour cela que l'ÉIS en fait une.",
-  tiles:[["[ n ]","% de la population à moins de 800 m d'un commerce d'alimentation"],["[ n ]","commerces offrant une gamme complète d'aliments frais"],["[ n ]","% des ménages des Laurentides en situation d'insécurité alimentaire"]],
-  para:"Cette fiche ne commente pas une stratégie du plan : elle documente son absence. L'alimentation n'apparaît qu'en creux, à travers l'affectation commerciale et la protection du territoire agricole. Or les outils d'urbanisme agissent directement sur l'accès : localisation des commerces, place des marchés publics et de l'agriculture urbaine, encadrement de l'offre de restauration rapide autour des écoles. Le plan garde ici un levier inutilisé."},
+ {n:4,angle:true,titre:"Alimentation durable",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
  {n:5,titre:"Centre-ville",accroche:"",
   tiles:[["",""],["",""],["",""]],
   para:""},
@@ -236,6 +236,28 @@ function base(t){
     nreco:t.nreco||"[ n ]",nchaine:t.nchaine||"[ n ]",nmin:t.nmin||"[ n ]",page:t.page||"",resp:"",statut:t.statut||"todo",notes:""};
 }
 var state={}, remote={}; T.forEach(function(t){state[t.n]=base(t);});
+/* Textes préremplis des versions précédentes : retirés des brouillons restaurés */
+var ANCIENS=[
+ "La forêt, l’eau et la montagne sont le capital de la ville. Ce sont aussi, pour la santé, une infrastructure de première ligne.",
+ "La forêt, l'eau et la montagne sont le capital de la ville. Ce sont aussi, pour la santé, une infrastructure de première ligne.",
+ "Le plan protège l’actif naturel à l’échelle du territoire, là où la pression de développement est la plus visible. La protection se joue toutefois surtout dans les secteurs peu habités. La végétation des quartiers construits, la canopée des stationnements commerciaux et l’accès de proximité à un espace vert entretenu restent peu traités, alors que ce sont eux qui agissent sur la chaleur, l’activité physique et la santé mentale au quotidien.",
+ "Le plan protège l'actif naturel à l'échelle du territoire, là où la pression de développement est la plus visible. La protection se joue toutefois surtout dans les secteurs peu habités. La végétation des quartiers construits, la canopée des stationnements commerciaux et l'accès de proximité à un espace vert entretenu restent peu traités, alors que ce sont eux qui agissent sur la chaleur, l'activité physique et la santé mentale au quotidien.",
+ "% du territoire en affectation de conservation",
+ "milieux humides et hydriques recensés sur le territoire",
+ "% de la population à moins de 800 m d’un espace vert public",
+ "% de la population à moins de 800 m d'un espace vert public",
+ "Aucune stratégie du plan ne porte sur l'alimentation. C'est précisément pour cela que l'ÉIS en fait une.",
+ "% de la population à moins de 800 m d'un commerce d'alimentation",
+ "commerces offrant une gamme complète d'aliments frais",
+ "% des ménages des Laurentides en situation d'insécurité alimentaire",
+ "Cette fiche ne commente pas une stratégie du plan : elle documente son absence. L'alimentation n'apparaît qu'en creux, à travers l'affectation commerciale et la protection du territoire agricole. Or les outils d'urbanisme agissent directement sur l'accès : localisation des commerces, place des marchés publics et de l'agriculture urbaine, encadrement de l'offre de restauration rapide autour des écoles. Le plan garde ici un levier inutilisé."
+];
+function nettoyer(n,d){
+  if(n==8) return d;
+  ["accroche","para","l1","l2","l3"].forEach(function(k){ if(ANCIENS.indexOf(String(d[k]||"").trim())>=0) d[k]=""; });
+  ["v1","v2","v3"].forEach(function(k){ if(/^\s*\[\s*n\s*\]\s*$/i.test(String(d[k]||""))) d[k]=""; });
+  return d;
+}
 var cur=1, savedAt={}, KEY="eis-mt-cartes-v1";
 var $=function(id){return document.getElementById(id);};
 
@@ -421,7 +443,7 @@ $("mail").onclick=function(){
 try{
   var saved=JSON.parse(localStorage.getItem(KEY)||"null");
   if(saved&&saved.state){
-    Object.keys(saved.state).forEach(function(n){ if(state[n]) state[n]=Object.assign(base(T[n-1]),saved.state[n]); });
+    Object.keys(saved.state).forEach(function(n){ if(state[n]) state[n]=nettoyer(n,Object.assign(base(T[n-1]),saved.state[n])); });
     savedAt=saved.savedAt||{}; if(state[saved.cur]) cur=saved.cur;
   }
 }catch(e){}
@@ -429,5 +451,6 @@ var q=parseInt(new URLSearchParams(location.search).get("s"),10); if(state[q]) c
 buildTiles(); fillForm(); renderAll();
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
