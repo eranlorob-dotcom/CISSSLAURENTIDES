@@ -1,0 +1,255 @@
+<title>Fiche méthode accès aux rives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f8f8;--paper:#ffffff;--ink:#132428;--dim:#566b6f;--line:#d6e1e2;--soft:#eaf2f2;
+  --accent:#17766b;--accent-soft:#dff1ee;--amber:#8a6400;--amber-soft:#fbf1d2;--rose:#a3405a;
+  --s-village:#1f9e8e;--s-jovite:#c9a100;--s-tremblant:#4f7fe0;--s-hors:#9a62c7;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+    --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+    --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+  --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;
+  --s-village:#3fc7b4;--s-jovite:#f2d24b;--s-tremblant:#7fa8ff;--s-hors:#c79be8;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 56px}
+.doc{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(18px,5vw,56px) 48px}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;text-wrap:balance;line-height:1.2}
+h1{font-size:clamp(26px,4vw,34px);margin:6px 0 10px}
+h2{font-size:22px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;color:var(--accent);font-weight:500}
+h3{font-size:17px;margin:26px 0 6px}
+p,li{max-width:68ch}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:0 0 12px}
+li{margin:3px 0}
+.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.meta b{color:var(--ink);font-weight:600}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+.summary p{margin:0 0 8px}.summary p:last-child{margin:0}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:20px;margin-top:14px}
+.toc a{color:var(--accent);text-decoration:none}.toc a:hover{text-decoration:underline}
+@media (max-width:620px){.toc{columns:1}}
+.num{font-variant-numeric:tabular-nums}
+code,.f{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.formula{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;background:var(--soft);border-radius:8px;padding:12px 16px;margin:8px 0 14px;overflow-x:auto;white-space:pre;line-height:1.7}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px 14px;margin:22px 0 0}
+.step .k{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:14px;margin-top:2px}
+.step h3{margin:2px 0 6px}
+.ex{border-left:3px solid var(--amber);background:var(--amber-soft);padding:8px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin:6px 0 10px}
+.ex b{color:var(--amber)}
+.tbl{overflow-x:auto;margin:10px 0 16px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);font-weight:700;background:var(--soft)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--soft)}
+td .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+td.hi{color:var(--amber);font-weight:700}
+.note{font-size:13.5px;color:var(--dim)}
+.callout{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.callout.warn{border-color:var(--rose)}
+.callout h3{margin-top:0}
+.chk{list-style:none;padding:0}
+.chk li{padding-left:28px;position:relative;margin:8px 0}
+.chk li::before{content:"";position:absolute;left:2px;top:5px;width:14px;height:14px;border:2px solid var(--accent);border-radius:3px}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px}
+.flow span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.flow i{color:var(--dim);font-style:normal}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+</style>
+<article class="doc">
+<div class="eyebrow">Fiche méthodologique · ÉIS du plan d'urbanisme de Mont-Tremblant</div>
+<h1>Qui a accès aux rives de Mont-Tremblant ?</h1>
+<div class="meta">
+  <span><b>Outil :</b> Qui a accès aux rives de Mont-Tremblant ? (prototype)</span>
+  <span><b>Production :</b> Direction de santé publique, Santé Québec Laurentides</span>
+  <span><b>Version :</b> septembre 2026</span>
+</div>
+
+<div class="summary">
+  <p><b>En bref.</b> L'outil classe chaque tronçon de rive des lacs et des cours d'eau de Mont-Tremblant selon le type de propriétaire du lot riverain (la Ville, un autre organisme public ou un propriétaire privé) et selon l'usage de ce lot (bâti ou non). Il repère aussi les lots municipaux qui touchent l'eau, et il mesure la distance entre la population et les plages accessibles aux résidents.</p>
+  <p>Il sert à rendre visible ce que le plan d'urbanisme reconnaît sans le cartographier : l'accès à l'eau est concentré en quelques sites, loin des résidents qui ont le moins de moyens.</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#objet">Objet et usages</a></li>
+  <li><a href="#sources">Sources de données</a></li>
+  <li><a href="#traitement">Chaîne de traitement</a></li>
+  <li><a href="#resultats">Résultats</a></li>
+  <li><a href="#lecture">Règles de lecture automatique</a></li>
+  <li><a href="#limites">Limites et précautions</a></li>
+</ol>
+
+<h2 id="objet"><span class="n">1</span>Objet et usages</h2>
+<p>L'accès aux espaces bleus favorise l'activité physique, la détente et la socialisation. En période de chaleur, il offre aussi un lieu où se rafraîchir. Quand les rives sont surtout privées, ces bienfaits profitent d'abord aux propriétaires riverains, et les ménages qui ont le moins de moyens en sont exclus.</p>
+<p>Le plan d'urbanisme prévoit d'assurer l'accès public aux lacs (objectif 7.2). L'ÉIS recommande pour sa part de garantir un accès universel, inclusif et gratuit aux cours d'eau (R-8.8), et d'intégrer l'accessibilité universelle aux accès aux plans d'eau (R-2.2). L'outil permet de répondre à quatre questions :</p>
+<ul>
+  <li>Quelle part des rives est publique, et laquelle est privée ?</li>
+  <li>Quels lacs n'ont aucune rive publique ?</li>
+  <li>Où la Ville possède-t-elle déjà des lots riverains qui pourraient accueillir un accès ?</li>
+  <li>Quelle part de la population, et dans quels secteurs, habite loin d'une plage où elle peut se baigner ?</li>
+</ul>
+<p>L'indicateur de distance à un accès public à l'eau peut aussi servir au suivi de la mesure 3.1.1 de la Stratégie nationale de prévention en santé, sur l'accès aux espaces verts et bleus de proximité.</p>
+
+<h2 id="sources"><span class="n">2</span>Sources de données</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Source</th><th class="l">Contenu utilisé</th><th class="l">Rôle dans l'outil</th></tr></thead>
+  <tbody>
+    <tr><td class="l"><b>Rôle d'évaluation foncière 2025</b> (MAMH), Mont-Tremblant</td><td class="l">Contour des lots, numéro de lot, usage prédominant, code d'utilisation et nombre de logements</td><td class="l">Lots riverains, usage bâti ou non bâti, pression bâtie autour des lacs</td></tr>
+    <tr><td class="l"><b>Relations entre lots et propriétaires</b> (DO07)</td><td class="l">Numéro de lot et nom du propriétaire. Le registre couvre 7 494 des 11 511 lots distincts de Mont-Tremblant, soit 65 %.</td><td class="l">Type de propriétaire : Ville, autre organisme public ou privé</td></tr>
+    <tr><td class="l"><b>GRHQ</b> (MRNF), bassin 04AP</td><td class="l">Lacs (type 21) et cours d'eau représentés en surface (type 10)</td><td class="l">Tracé des rives</td></tr>
+    <tr><td class="l"><b>Google Places</b>, extraction de septembre 2026</td><td class="l">Plages, piscines publiques et jeux d'eau</td><td class="l">Lieux de baignade</td></tr>
+    <tr><td class="l"><b>Sources publiques de la Ville</b>, 2026</td><td class="l">Conditions d'accès et tarifs des plages</td><td class="l">Régime d'accès de chaque plage</td></tr>
+    <tr><td class="l"><b>OpenStreetMap</b>, extraction de septembre 2026</td><td class="l">Réseau cyclable</td><td class="l">Couche de contexte</td></tr>
+    <tr><td class="l"><b>Environics Analytics DemoStats 2025</b>, par îlot</td><td class="l">Population estimée en 2025</td><td class="l">Pondération de l'indicateur de distance</td></tr>
+    <tr><td class="l"><b>Plan d'urbanisme</b>, tableau 2</td><td class="l">Vulnérabilité des lacs à l'eutrophisation</td><td class="l">Croisement avec la pression bâtie</td></tr>
+  </tbody>
+</table></div>
+<p class="note"><b>Protection des renseignements personnels.</b> Le registre des propriétaires contient des noms de particuliers. On en tire seulement une catégorie (Ville, autre organisme public ou privé), puis on écarte les noms. Aucun nom n'est conservé dans les données de l'outil, et aucune propriété n'est désignée individuellement. Les résultats sont présentés par tronçon de rive, par lac et par secteur.</p>
+
+<h2 id="traitement"><span class="n">3</span>Chaîne de traitement</h2>
+<div class="flow"><span>Type de propriétaire</span><i>→</i><span>Tronçons de rive</span><i>→</i><span>Lot riverain</span><i>→</i><span>Catégorie</span><i>→</i><span>Indicateurs par lac</span><i>→</i><span>Distance aux plages</span></div>
+
+<div class="step"><div class="k">1</div><div>
+  <h3>Classer les propriétaires</h3>
+  <p>Chaque nom de propriétaire est comparé à une liste de motifs, sans tenir compte des accents ni des majuscules.</p>
+  <div class="tbl"><table>
+    <thead><tr><th class="l">Catégorie</th><th class="l">Motifs reconnus</th><th>Lots</th></tr></thead>
+    <tbody class="num">
+      <tr><td class="l">Ville de Mont-Tremblant</td><td class="l">« Ville de Mont-Tremblant »</td><td>399</td></tr>
+      <tr><td class="l">Autre organisme public</td><td class="l">Gouvernement, ministre, procureur général, Sépaq, Hydro-Québec, commission ou centre de services scolaire, municipalité, MRC, Curateur public</td><td>101</td></tr>
+      <tr><td class="l">Privé</td><td class="l">Tous les autres (particuliers, entreprises, fiducies, organismes privés)</td><td>6 994</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Si un lot a plusieurs propriétaires et que l'un d'eux est public, le lot est classé public.</p>
+</div></div>
+
+<div class="step"><div class="k">2</div><div>
+  <h3>Tracer et découper les rives</h3>
+  <p>On retient les lacs de plus de 4 ha (29 lacs) et les cours d'eau représentés en surface (5 plans d'eau, dont la rivière du Diable), dans les limites de la ville. Le contour de chaque plan d'eau est découpé en tronçons de 10 m.</p>
+</div></div>
+
+<div class="step"><div class="k">3</div><div>
+  <h3>Rattacher chaque tronçon au lot riverain</h3>
+  <p>Chaque tronçon prend la catégorie du lot du rôle le plus proche, à 25 m ou moins. Cette tolérance compense l'écart entre les contours de la GRHQ et ceux du cadastre.</p>
+  <div class="tbl"><table>
+    <thead><tr><th class="l">Catégorie du tronçon</th><th class="l">Règle</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Ville de Mont-Tremblant</td><td class="l">Lot appartenant à la Ville</td></tr>
+      <tr><td class="l">Autre propriétaire public</td><td class="l">Lot appartenant à un autre organisme public</td></tr>
+      <tr><td class="l">Privé, bâti</td><td class="l">Lot privé dont l'usage est résidentiel, d'hébergement, commercial, de service ou institutionnel, ou qui compte au moins un logement</td></tr>
+      <tr><td class="l">Privé, non bâti</td><td class="l">Lot privé en terrain vague, forestier, agricole ou d'infrastructure</td></tr>
+      <tr><td class="l">Propriétaire non trouvé, bâti ou non bâti</td><td class="l">Lot absent du registre des propriétaires, classé selon son usage</td></tr>
+      <tr><td class="l">Sans lot au rôle</td><td class="l">Aucun lot à 25 m ou moins. Il s'agit probablement de terres publiques ou d'un secteur non cadastré.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Sur la carte, les tronçons consécutifs de même catégorie sont regroupés en une seule ligne.</p>
+</div></div>
+
+<div class="step"><div class="k">4</div><div>
+  <h3>Calculer les indicateurs par plan d'eau</h3>
+  <ul>
+    <li><b>Longueur de rive par catégorie :</b> nombre de tronçons × 10 m.</li>
+    <li><b>Lots municipaux riverains :</b> lots de la Ville situés à 25 m ou moins de l'eau. On en compte 38 distincts, surtout des emprises de rues (14), des parcs (11) et des terrains vagues (8).</li>
+    <li><b>Pression bâtie :</b> nombre de logements au rôle sur les lots dont le centre se trouve à moins de 300 m de la rive.</li>
+    <li><b>Vulnérabilité :</b> niveau inscrit au tableau 2 du plan (rapport technique sur la capacité des lacs, 2023).</li>
+  </ul>
+</div></div>
+
+<div class="step"><div class="k">5</div><div>
+  <h3>Classer les plages selon leur régime d'accès</h3>
+  <div class="tbl"><table>
+    <thead><tr><th class="l">Plage</th><th class="l">Régime retenu</th><th class="l">Conditions (sources publiques, 2026)</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Plage du lac Mercier</td><td class="l">Réservée aux résidents</td><td class="l">Accès aux titulaires de la carte Accès ou Expérience Mont-Tremblant</td></tr>
+      <tr><td class="l">Plage du lac Tremblant (Club Plage et Tennis)</td><td class="l">Payante, avec tarif pour les résidents</td><td class="l">21,74 $ par adulte, 4,35 $ avec la carte Accès, gratuite après 16 h 30 avec la carte Accès. Acquise par la Ville en 2026 et exploitée par la Station.</td></tr>
+      <tr><td class="l">Parc Plage (Station Mont Tremblant)</td><td class="l">Plage de la station touristique</td><td class="l">Conditions d'accès à confirmer. Cette plage n'est pas comptée comme accessible aux résidents.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">La piscine du complexe aquatique et les jeux d'eau sont affichés comme lieux de rafraîchissement, mais ils ne sont pas comptés comme des accès à un plan d'eau.</p>
+</div></div>
+
+<div class="step"><div class="k">6</div><div>
+  <h3>Mesurer la distance entre la population et les plages</h3>
+  <p>Pour chaque îlot, on calcule la distance à vol d'oiseau entre un point situé à l'intérieur de l'îlot et la plus proche des deux plages accessibles aux résidents. Chaque îlot est ensuite pondéré par sa population estimée en 2025.</p>
+  <div class="formula">moins de 1,2 km   ≈ 15 minutes à pied
+1,2 à 4 km        ≈ 15 minutes à vélo
+4 à 8 km          ≈ 30 minutes à vélo
+plus de 8 km      automobile ou transport collectif en pratique</div>
+</div></div>
+
+<h2 id="resultats"><span class="n">4</span>Résultats</h2>
+<h3>Le littoral selon le propriétaire et l'usage</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Catégorie</th><th>Lacs (km)</th><th>Part</th><th>Cours d'eau (km)</th><th>Part</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Ville de Mont-Tremblant</td><td>1,9</td><td>2 %</td><td>2,3</td><td>3 %</td></tr>
+    <tr><td class="l">Autre propriétaire public</td><td>5,3</td><td>6 %</td><td>3,3</td><td>4 %</td></tr>
+    <tr><td class="l">Privé, bâti</td><td>31,3</td><td class="hi">36 %</td><td>12,9</td><td>16 %</td></tr>
+    <tr><td class="l">Privé, non bâti</td><td>22,9</td><td>26 %</td><td>17,8</td><td>22 %</td></tr>
+    <tr><td class="l">Propriétaire non trouvé, bâti</td><td>10,7</td><td>12 %</td><td>19,3</td><td>24 %</td></tr>
+    <tr><td class="l">Propriétaire non trouvé, non bâti</td><td>13,9</td><td>16 %</td><td>24,2</td><td>30 %</td></tr>
+    <tr><td class="l">Sans lot au rôle</td><td>0,6</td><td>1 %</td><td>1,0</td><td>1 %</td></tr>
+    <tr class="tot"><td class="l">Total</td><td>86,6</td><td>100 %</td><td>80,8</td><td>100 %</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Distance entre la population et une plage accessible aux résidents</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Secteur</th><th>Population 2025</th><th>Moins de 1,2 km</th><th>1,2 à 4 km</th><th>4 à 8 km</th><th>Plus de 8 km</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Village</td><td>863</td><td>17 %</td><td>83 %</td><td>0 %</td><td>0 %</td></tr>
+    <tr><td class="l">Saint-Jovite</td><td>8 127</td><td>0 %</td><td>0 %</td><td>31 %</td><td class="hi">69 %</td></tr>
+    <tr><td class="l">Tremblant</td><td>525</td><td>33 %</td><td>65 %</td><td>2 %</td><td>0 %</td></tr>
+    <tr><td class="l">Hors périmètre urbain</td><td>2 488</td><td>0 %</td><td>31 %</td><td>23 %</td><td>46 %</td></tr>
+    <tr class="tot"><td class="l">Mont-Tremblant</td><td>12 003</td><td>3 %</td><td>15 %</td><td>26 %</td><td>56 %</td></tr>
+  </tbody>
+</table></div>
+
+<p><b>Ce qu'il faut retenir.</b></p>
+<ul>
+  <li><b>8 % des rives de lacs appartiennent à un organisme public, dont 2 % à la Ville.</b> La plus grande partie des rives publiques se trouve aux lacs Forget et Fortier, en terres publiques. Plusieurs lacs habités, comme Duhamel, Dufour, Maskinongé et Gélinas, n'ont aucune rive publique.</li>
+  <li><b>Les deux plages accessibles aux résidents sont au nord de la ville,</b> au Village et au lac Tremblant. Aucun résident de Saint-Jovite n'habite à moins de 4 km de l'une ou de l'autre, et 69 % habitent à plus de 8 km. C'est le secteur aux revenus les plus faibles et celui qui compte le plus de ménages locataires (49 %).</li>
+  <li><b>La Ville possède déjà 38 lots riverains,</b> surtout des emprises de rues et des parcs. Ce sont les premiers endroits où aménager des accès simples (halte, descente, quai), sans avoir à acheter de terrain. Les rives privées non bâties (26 % des rives de lacs) sont les seules où un accès peut encore être négocié ou acquis avant la construction.</li>
+  <li><b>Cinq lacs jugés vulnérables ou très vulnérables à l'eutrophisation</b> (Maskinongé, Moore, Dufour, Gélinas et Beauvallon) ont plus de 80 logements à moins de 300 m de leur rive. La conformité des installations septiques y est un enjeu (R-1.2).</li>
+</ul>
+
+<h2 id="lecture"><span class="n">5</span>Règles de lecture automatique</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Condition</th><th class="l">Message affiché dans la fiche du plan d'eau</th></tr></thead>
+  <tbody>
+    <tr><td class="l">Moins de 5 % de rive publique et aucune plage recensée</td><td class="l">Plan d'eau réservé en pratique aux riverains</td></tr>
+    <tr><td class="l">Lac vulnérable ou très vulnérable et plus de 50 logements à moins de 300 m</td><td class="l">Enjeu de conformité des installations septiques (R-1.2)</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="limites"><span class="n">6</span>Limites et précautions</h2>
+<ul>
+  <li><b>Une partie des propriétaires n'est pas connue.</b> Le registre ne couvre que 65 % des lots. Pour 28 % des rives de lacs et 54 % des rives de cours d'eau, le lot riverain n'y figure pas. L'outil les présente comme une catégorie à part plutôt que de les supposer privés. Certains appartiennent probablement à des organismes publics, par exemple le long du parc linéaire au lac Mercier.</li>
+  <li><b>Le registre peut dater.</b> Il peut précéder des transactions récentes, comme l'acquisition de la plage du lac Tremblant par la Ville en 2026.</li>
+  <li><b>Propriété publique ne veut pas dire accès.</b> Un lot public riverain peut être boisé, escarpé, clôturé ou sans stationnement. À l'inverse, une plage privée peut être ouverte au public.</li>
+  <li><b>L'inventaire des accès est incomplet.</b> Il ne compte que trois plages. Les descentes à bateaux, les quais, les haltes et les accès à la rivière du Diable ne sont pas encore recensés. Une extraction OpenStreetMap ciblée ou les données de la Ville permettraient de les ajouter.</li>
+  <li><b>Les conditions d'accès et les tarifs sont à valider.</b> Ils proviennent de sources publiques de 2026 et peuvent changer d'une saison à l'autre.</li>
+  <li><b>Les distances sont sous-estimées.</b> Elles sont calculées à vol d'oiseau, et les trajets réels sont plus longs, notamment à cause du relief et de la route 117.</li>
+  <li><b>Les petits plans d'eau et les cours d'eau linéaires sont exclus.</b> Les lacs de moins de 4 ha et les cours d'eau représentés par des lignes ne sont pas analysés.</li>
+  <li><b>La tolérance de 25 m peut causer des erreurs.</b> Là où une rue longe la rive, un tronçon peut être rattaché à l'emprise de la rue plutôt qu'au lot situé derrière.</li>
+</ul>
+
+<footer>
+  Direction de santé publique, Santé Québec Laurentides · Évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant · Suite C.A.R.T.O.S.<br>
+  Sources : MAMH, rôle d'évaluation foncière 2025 et relations entre lots et propriétaires · MRNF, GRHQ · Google Places et OpenStreetMap (septembre 2026) · Environics Analytics, DemoStats 2025 (via Esri) · Ville de Mont-Tremblant, plan d'urbanisme (tableau 2) et information publique sur les plages (2026). Outil d'aide à la décision, non réglementaire.
+</footer>
+</article>
