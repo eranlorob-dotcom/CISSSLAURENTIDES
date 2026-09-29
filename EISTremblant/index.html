@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Outils cartographiques · ÉIS Mont-Tremblant · Santé Québec Laurentides</title>
+<meta name="description" content="Répertoire des applications cartographiques interactives produites pour l'évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Marque (charte CISSS-DSP) */
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+
+  /* Thème sombre marine (défaut) */
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+
+  --accent:var(--teal); --accent2:var(--blue);
+  --fs:1rem;
+}
+body.theme-light{
+  --bg:#ffffff; --bg2:#f4f6fc; --panel:#ffffff; --panel2:#eef1fb;
+  --line:#d8def0; --line2:#e6eaf7;
+  --ink:#14143a; --ink2:#3a3f6e; --muted:#7a80a8;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:var(--fs)}
+body{
+  font-family:'Source Sans 3',system-ui,sans-serif;
+  background:var(--bg); color:var(--ink);
+  line-height:1.5; min-height:100vh;
+  background-image:radial-gradient(ellipse 90% 50% at 85% -10%, rgba(33,174,173,.14), transparent 60%),
+                   radial-gradient(ellipse 70% 40% at 0% 0%, rgba(4,130,211,.12), transparent 60%);
+  background-attachment:fixed;
+}
+body.theme-light{background-image:none}
+a{color:inherit}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- En-tête institutionnel ---------- */
+header.top{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,var(--bg2),transparent);
+}
+.top-inner{max-width:1240px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;flex:1;min-width:260px}
+.brand-mark{
+  width:40px;height:40px;border-radius:10px;flex:none;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  display:grid;place-items:center;color:var(--white);font-weight:900;font-size:1.05rem;letter-spacing:.02em
+}
+.brand-txt small{display:block;color:var(--muted);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+.brand-txt strong{font-weight:700;font-size:1rem}
+.tools{display:flex;gap:6px;align-items:center}
+.btn{
+  min-width:36px;height:36px;padding:0 12px;border-radius:8px;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink2);
+  font:inherit;font-size:.9rem;font-weight:600;cursor:pointer
+}
+.btn:hover{border-color:var(--accent);color:var(--ink)}
+.btn:focus-visible,.card a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- Bandeau ---------- */
+.hero{max-width:1240px;margin:0 auto;padding:44px 24px 24px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--teal-l);background:rgba(33,174,173,.12);border:1px solid rgba(33,174,173,.35);
+  padding:4px 10px;border-radius:999px
+}
+body.theme-light .badge{color:var(--teal-d)}
+.hero h1{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:900;line-height:1.1;margin:14px 0 10px;letter-spacing:-.01em}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--ink2);max-width:780px;font-size:1.08rem}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:26px}
+.stat .n{font-family:'JetBrains Mono',monospace;font-size:1.9rem;font-weight:500;color:var(--ink)}
+.stat .l{font-size:.85rem;color:var(--muted)}
+
+/* ---------- Filtres ---------- */
+.filters{max-width:1240px;margin:0 auto;padding:10px 24px 8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search{
+  flex:1;min-width:220px;height:40px;padding:0 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit
+}
+.search::placeholder{color:var(--muted)}
+.chip{
+  height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--ink2);font:inherit;font-size:.9rem;font-weight:600;cursor:pointer
+}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--white)}
+
+/* ---------- Sections et cartes ---------- */
+main{max-width:1240px;margin:0 auto;padding:12px 24px 48px}
+.group{margin-top:30px}
+.group h2{
+  font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:10px;margin-bottom:14px
+}
+.group h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.card{
+  position:relative;display:flex;flex-direction:column;gap:12px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;
+  transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease
+}
+.card:hover{transform:translateY(-2px);border-color:var(--c,var(--accent));box-shadow:0 10px 30px rgba(0,0,0,.25)}
+body.theme-light .card:hover{box-shadow:0 10px 30px rgba(20,12,116,.10)}
+.card::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:3px;border-radius:0 3px 3px 0;background:var(--c,var(--accent))}
+.card-head{display:flex;gap:14px;align-items:flex-start}
+.ico{
+  width:42px;height:42px;flex:none;border-radius:10px;display:grid;place-items:center;
+  background:var(--panel2);border:1px solid var(--line);color:var(--c,var(--accent));font-weight:900;font-size:1.1rem
+}
+.card h3{font-size:1.14rem;font-weight:700;line-height:1.25}
+.card h3 a{text-decoration:none}
+.card h3 a::after{content:"";position:absolute;inset:0;border-radius:14px}
+.card .q{font-size:.86rem;color:var(--muted);margin-top:2px}
+.card p.desc{color:var(--ink2);font-size:.96rem}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.76rem;color:var(--ink2);background:var(--panel2);border:1px solid var(--line2);padding:2px 8px;border-radius:6px}
+.actions{display:flex;gap:10px;align-items:center;margin-top:auto;padding-top:4px}
+.open{
+  position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:8px;
+  background:var(--c,var(--accent));color:var(--white);text-decoration:none;font-weight:700;font-size:.9rem
+}
+.sec{position:relative;z-index:1;font-size:.88rem;color:var(--ink2);text-decoration:underline;text-underline-offset:3px}
+.sec:hover{color:var(--ink)}
+.file{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+.empty{display:none;color:var(--muted);padding:30px 0;text-align:center}
+
+/* ---------- Pied ---------- */
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
+.foot{max-width:1240px;margin:0 auto;padding:20px 24px 28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.foot a{color:var(--ink2)}
+
+@media (max-width:800px){
+  .top-inner,.hero,.filters,main,.foot{padding-left:16px;padding-right:16px}
+  .hero{padding-top:28px}
+  .grid{grid-template-columns:1fr}
+  .file{display:none}
+}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">C</div>
+      <div class="brand-txt">
+        <small>CISSS des Laurentides · Direction de santé publique</small>
+        <strong>C.A.R.T.O.S. · ÉIS Mont-Tremblant</strong>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="btn" id="fsDown" title="Réduire la taille du texte" aria-label="Réduire la taille du texte">A−</button>
+      <button class="btn" id="fsUp" title="Agrandir la taille du texte" aria-label="Agrandir la taille du texte">A+</button>
+      <button class="btn" id="theme" title="Basculer thème clair ou sombre" aria-label="Basculer thème clair ou sombre">◐</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="badge">Prototypes · aide à la décision</span>
+  <h1>Outils cartographiques de l'ÉIS <span>Mont-Tremblant</span></h1>
+  <p>Applications interactives produites pour l'évaluation d'impact sur la santé du plan d'urbanisme de la Ville de Mont-Tremblant. Chaque outil documente un enjeu que les cartes du plan ne couvrent pas et précise sa méthode, ses limites et ses sources.</p>
+  <div class="stats">
+    <div class="stat"><div class="n" id="nApps">0</div><div class="l">applications</div></div>
+    <div class="stat"><div class="n" id="nThemes">0</div><div class="l">thèmes</div></div>
+  </div>
+</section>
+
+<div class="filters">
+  <input class="search" id="q" type="search" placeholder="Rechercher un outil, une donnée, une source…" aria-label="Rechercher un outil">
+  <div id="chips" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+</div>
+
+<main id="main"></main>
+<p class="empty" id="empty">Aucun outil ne correspond à la recherche.</p>
+
+<footer>
+  <div class="foot">
+    <span>CISSS des Laurentides · Direction de santé publique · Outils d'aide à la décision, non réglementaires</span>
+    <span>Mise à jour <span class="mono">2026-09-29</span></span>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   Répertoire des applications. Pour ajouter un outil, ajouter
+   un objet ci-dessous (les liens sont relatifs au dossier).
+   ============================================================ */
+var THEMES = {
+  pop:  { label:'Population et territoire', color:'var(--blue)'   },
+  hab:  { label:'Habitation',               color:'var(--indigo)' },
+  env:  { label:'Environnements favorables',color:'var(--teal)'   }
+};
+
+var APPS = [
+  { theme:'pop', ico:'S', file:'cartos_secteurs_mont_tremblant.html',
+    title:'Portrait des secteurs',
+    q:'Qui habite chaque secteur de la ville?',
+    desc:"Profil sociodémographique de Saint-Jovite, du Village, de Tremblant et du hors périmètre urbain : âge, logement, conditions socioéconomiques et déplacements.",
+    tags:['Recensement 2021','Îlots de diffusion','SDA'] },
+
+  { theme:'pop', ico:'N', file:'navettage_mont_tremblant.html', methode:'fiche_metho_navettage.html',
+    title:'Bassin de main-d\u2019œuvre et navettage',
+    q:'D\u2019où viennent les personnes qui travaillent à Mont-Tremblant?',
+    desc:"Flux domicile-travail vers et depuis Mont-Tremblant, comparaison 2016 et 2021, distances parcourues, mode et durée du trajet.",
+    tags:['Recensements 2016 et 2021','Flux par municipalité'] },
+
+  { theme:'hab', ico:'H', file:'logement_mont_tremblant.html',
+    title:'Besoins en logement par secteur',
+    q:'Combien de logements faudra-t-il, et où?',
+    desc:"Simulation des logements requis selon les scénarios de ménages de l\u2019ISQ, l\u2019horizon et le taux d\u2019inoccupation visé, avec répartition entre secteurs et croissance dirigée vers les périmètres urbains.",
+    tags:['ISQ 2025','Environics 2025','Scénarios'] },
+
+  { theme:'hab', ico:'T', file:'parc_non_permanent_tremblant.html',
+    title:'Le parc qui échappe aux résidents',
+    q:'Quelle part du parc de logements n\u2019est pas occupée par des ménages?',
+    desc:"Logements non occupés par des ménages et résidences de tourisme par îlot, confrontés aux règles du plan d\u2019urbanisme (centre-ville et village, secteurs riverains, proximité des golfs).",
+    tags:['Rôle 2025','Registre SIT Québec 2026','Îlots de diffusion'] },
+
+  { theme:'env', ico:'P', file:'mont_tremblant_parcs_defavorisation.html',
+    title:'Parcs, espaces verts et défavorisation',
+    q:'Les logements sont-ils à distance de marche d\u2019un parc?',
+    desc:"Part des logements desservis par un parc selon un seuil de 300 à 1 000 m, croisée avec l\u2019indice de défavorisation matérielle et sociale par aire de diffusion.",
+    tags:['Rôle 2026','Défavorisation 2021 (RSS)','Aires de diffusion'] },
+
+  { theme:'env', ico:'3', file:'regle_3_30_300_tremblant.html',
+    title:'La règle 3-30-300',
+    q:'Arbres, canopée et parcs autour de chaque logement',
+    desc:"Atteinte des critères 3 arbres, 30 % de canopée et parc à 300 m dans les périmètres d\u2019urbanisation, par îlot et selon le revenu des ménages.",
+    tags:['Canopée Meta et WRI 1 m','Rôle 2025','Quintiles de revenu'] },
+
+  { theme:'env', ico:'R', file:'acces_rives_tremblant.html', methode:'fiche_methodo_rives',
+    title:'Accès aux rives',
+    q:'Qui a accès aux rives de Mont-Tremblant?',
+    desc:"Propriété et usage du littoral lac par lac, plages accessibles aux résidents et part de la population à distance de marche ou de vélo d\u2019une plage.",
+    tags:['Rôle 2025','GRHQ','DemoStats 2025'] },
+
+  { theme:'env', ico:'A', file:'cartos_environnement_alimentaire_mont-tremblant.html',
+    title:'Environnement alimentaire',
+    q:'Où se trouvent les commerces d\u2019alimentation?',
+    desc:"Répartition des commerces d\u2019alimentation par type d\u2019offre, indice mRFEI par secteur et proximité des milieux fréquentés par les jeunes.",
+    tags:['Google Places 2026','Validation terrain','mRFEI'] }
+];
+
+/* ---------- Rendu ---------- */
+var activeTheme = 'all';
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+function render(){
+  var q = document.getElementById('q').value.trim().toLowerCase();
+  var main = document.getElementById('main'); main.innerHTML = '';
+  var shown = 0;
+  Object.keys(THEMES).forEach(function(k){
+    if(activeTheme!=='all' && activeTheme!==k) return;
+    var items = APPS.filter(function(a){
+      if(a.theme!==k) return false;
+      if(!q) return true;
+      return [a.title,a.q,a.desc,a.file,a.tags.join(' ')].join(' ').toLowerCase().indexOf(q) > -1;
+    });
+    if(!items.length) return;
+    shown += items.length;
+    var sec = document.createElement('section'); sec.className='group';
+    sec.innerHTML = '<h2>'+esc(THEMES[k].label)+'</h2>';
+    var grid = document.createElement('div'); grid.className='grid';
+    items.forEach(function(a){
+      var el = document.createElement('article'); el.className='card';
+      el.style.setProperty('--c', THEMES[k].color);
+      el.innerHTML =
+        '<div class="card-head"><div class="ico" aria-hidden="true">'+esc(a.ico)+'</div>'+
+        '<div><h3><a href="'+esc(a.file)+'">'+esc(a.title)+'</a></h3><div class="q">'+esc(a.q)+'</div></div></div>'+
+        '<p class="desc">'+esc(a.desc)+'</p>'+
+        '<div class="meta">'+a.tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('')+'</div>'+
+        '<div class="actions"><a class="open" href="'+esc(a.file)+'">Ouvrir l\u2019outil →</a>'+
+        (a.methode ? '<a class="sec" href="'+esc(a.methode)+'">Fiche méthodologique</a>' : '')+
+        '<span class="file" title="'+esc(a.file)+'">'+esc(a.file)+'</span></div>';
+      grid.appendChild(el);
+    });
+    sec.appendChild(grid); main.appendChild(sec);
+  });
+  document.getElementById('empty').style.display = shown ? 'none' : 'block';
+}
+
+function buildChips(){
+  var box = document.getElementById('chips');
+  var opts = [['all','Tous']].concat(Object.keys(THEMES).map(function(k){return [k,THEMES[k].label];}));
+  opts.forEach(function(o){
+    var b = document.createElement('button'); b.className='chip'; b.textContent=o[1];
+    b.setAttribute('aria-pressed', o[0]===activeTheme ? 'true':'false');
+    b.onclick = function(){
+      activeTheme = o[0];
+      box.querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed','false');});
+      b.setAttribute('aria-pressed','true'); render();
+    };
+    box.appendChild(b);
+  });
+}
+
+document.getElementById('nApps').textContent = APPS.length.toLocaleString('fr-CA');
+document.getElementById('nThemes').textContent = Object.keys(THEMES).length.toLocaleString('fr-CA');
+document.getElementById('q').addEventListener('input', render);
+
+/* Taille de police (accessibilité) */
+var fs = 1;
+function setFs(v){ fs = Math.max(.85, Math.min(1.3, v)); document.documentElement.style.setProperty('--fs', fs+'rem'); }
+document.getElementById('fsDown').onclick = function(){ setFs(fs-.075); };
+document.getElementById('fsUp').onclick   = function(){ setFs(fs+.075); };
+
+/* Thème clair / sombre */
+document.getElementById('theme').onclick = function(){ document.body.classList.toggle('theme-light'); };
+
+buildChips(); render();
+</script>
+</body>
+</html>
