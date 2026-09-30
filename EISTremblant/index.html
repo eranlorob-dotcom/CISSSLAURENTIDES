@@ -187,7 +187,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
 <footer>
   <div class="foot">
     <span>CISSS des Laurentides · Direction de santé publique · Outils d'aide à la décision, non réglementaires</span>
-    <span>Mise à jour <span class="mono">2026-09-29</span></span>
+    <span>Mise à jour <span class="mono">2026-09-30</span></span>
   </div>
 </footer>
 
@@ -245,11 +245,23 @@ var APPS = [
     desc:"Propriété et usage du littoral lac par lac, plages accessibles aux résidents et part de la population à distance de marche ou de vélo d\u2019une plage.",
     tags:['Rôle 2025','GRHQ','DemoStats 2025'] },
 
-  { theme:'env', ico:'A', file:'cartos_environnement_alimentaire_mont-tremblant.html',
+  { theme:'env', ico:'A', file:'cartos_environnement_alimentaire_mont-tremblant.html', methode:'fiche_methodo_env_alimentaire.html',
     title:'Environnement alimentaire',
     q:'Où se trouvent les commerces d\u2019alimentation?',
     desc:"Répartition des commerces d\u2019alimentation par type d\u2019offre, indice mRFEI par secteur et proximité des milieux fréquentés par les jeunes.",
-    tags:['Google Places 2026','Validation terrain','mRFEI'] }
+    tags:['Google Places 2026','Validation terrain','mRFEI'] },
+
+  { theme:'env', ico:'M', file:'Milieux_de_vie_complets_Mont-Tremblant.html',
+    title:'Milieux de vie complets',
+    q:'Les services du quotidien sont-ils à distance de marche des logements?',
+    desc:"Score d\u2019accessibilité aux services et équipements depuis chaque immeuble résidentiel, pondéré par logement, pour la ville et pour chaque périmètre d\u2019urbanisation (Saint-Jovite, Village, Base Sud, Versant Soleil, Camp Nord).",
+    tags:['Vivre en Ville 2026','Rôle 2026','OpenStreetMap','Densité résidentielle'] },
+
+  { theme:'env', ico:'°', file:'ilots_chaleur_mont_tremblant.html',
+    title:'Îlots de chaleur',
+    q:'Quels logements et lieux sensibles sont plus chauds que le bâti régional?',
+    desc:"Part des logements dont la surface dépasse la référence régionale de chaleur, croisée avec la défavorisation, les lieux sensibles et les refuges, par îlot, aire de diffusion, secteur et périmètre d\u2019urbanisation.",
+    tags:['Landsat 8 et 9','Rôle 2025','Défavorisation (déciles)'] }
 ];
 
 /* ---------- Rendu ---------- */
