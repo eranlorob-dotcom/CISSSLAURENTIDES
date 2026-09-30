@@ -1,0 +1,250 @@
+<title>Fiche méthode environnement alimentaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f8f8;--paper:#ffffff;--ink:#132428;--dim:#566b6f;--line:#d6e1e2;--soft:#eaf2f2;
+  --accent:#17766b;--accent-soft:#dff1ee;--amber:#8a6400;--amber-soft:#fbf1d2;--rose:#a3405a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+    --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+  --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 56px}
+.doc{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(18px,5vw,56px) 48px}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;text-wrap:balance;line-height:1.2}
+h1{font-size:clamp(26px,4vw,34px);margin:6px 0 10px}
+h2{font-size:22px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;color:var(--accent);font-weight:500}
+h3{font-size:17px;margin:26px 0 6px}
+p,li{max-width:68ch}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:0 0 12px}
+li{margin:3px 0}
+.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.meta b{color:var(--ink);font-weight:600}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+.summary p{margin:0 0 8px}.summary p:last-child{margin:0}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:20px;margin-top:14px}
+.toc a{color:var(--accent);text-decoration:none}.toc a:hover{text-decoration:underline}
+@media (max-width:620px){.toc{columns:1}}
+.num{font-variant-numeric:tabular-nums}
+code,.f{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.formula{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;background:var(--soft);border-radius:8px;padding:12px 16px;margin:8px 0 14px;overflow-x:auto;white-space:pre;line-height:1.7}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px 14px;margin:22px 0 0}
+.step .k{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:14px;margin-top:2px}
+.step h3{margin:2px 0 6px}
+.ex{border-left:3px solid var(--amber);background:var(--amber-soft);padding:8px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin:6px 0 10px}
+.ex b{color:var(--amber)}
+.tbl{overflow-x:auto;margin:10px 0 16px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);font-weight:700;background:var(--soft)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--soft)}
+td .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+td.hi{color:var(--amber);font-weight:700}
+.note{font-size:13.5px;color:var(--dim)}
+.callout{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.callout.warn{border-color:var(--rose)}
+.callout h3{margin-top:0}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px}
+.flow span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.flow i{color:var(--dim);font-style:normal}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+</style>
+<article class="doc">
+<div class="eyebrow">Fiche méthodologique · ÉIS du plan d'urbanisme de Mont-Tremblant</div>
+<h1>L'environnement alimentaire de Mont-Tremblant</h1>
+<div class="meta">
+  <span><b>Outil :</b> Environnement alimentaire — Mont-Tremblant</span>
+  <span><b>Production :</b> Direction de santé publique, Santé Québec Laurentides</span>
+  <span><b>Version :</b> 30 septembre 2026</span>
+</div>
+
+<div class="summary">
+  <p><b>En bref.</b> L'outil recense les 120 commerces d'alimentation de Mont-Tremblant, les classe en six types selon ce qu'ils permettent d'acheter, puis applique le protocole de repérage des déserts et des marais alimentaires de Robitaille et Paquette (2020) aux 17 aires de diffusion de la ville, croisé avec l'indice de défavorisation.</p>
+  <p>Aucun désert ni marais alimentaire n'est repéré au sens du protocole. Le constat se déplace ailleurs : l'offre favorable est concentrée dans le noyau de Saint-Jovite, le corridor de la route 117 est dominé par le dépannage et la restauration rapide, et 12 % de la population habite au-delà de la distance de marche d'un commerce d'approvisionnement.</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#objet">Objet et usages</a></li>
+  <li><a href="#sources">Sources de données</a></li>
+  <li><a href="#typologie">Typologie de l'offre</a></li>
+  <li><a href="#traitement">Chaîne de traitement</a></li>
+  <li><a href="#resultats">Résultats</a></li>
+  <li><a href="#limites">Limites et précautions</a></li>
+</ol>
+
+<h2 id="objet"><span class="n">1</span>Objet et usages</h2>
+<p>Le modèle logique de l'ÉIS désigne l'accès à une alimentation saine comme un angle mort du plan d'urbanisme. Les objectifs 4.2.1 et 6.4.1 encadrent les usages commerciaux sous l'angle de la concurrence entre les pôles, et non sous celui de la qualité de l'offre alimentaire. La pression pour la restauration rapide aux entrées de ville est pourtant un risque documenté pour les habitudes alimentaires.</p>
+<p>L'outil répond à quatre questions :</p>
+<ul>
+  <li>Où sont les commerces d'alimentation, et que permettent-ils d'acheter ?</li>
+  <li>Quels secteurs offrent surtout du dépannage et de la restauration rapide ?</li>
+  <li>Qui habite au-delà d'une distance de marche d'un commerce d'approvisionnement ?</li>
+  <li>Ces contraintes se superposent-elles à la défavorisation matérielle et sociale ?</li>
+</ul>
+
+<h2 id="sources"><span class="n">2</span>Sources de données</h2>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Source</th><th class="l">Contenu utilisé</th><th class="l">Rôle dans l'outil</th></tr></thead>
+  <tbody>
+    <tr><td class="l"><b>Google Places API (New)</b>, extraction du 22 septembre 2026</td><td class="l">Commerces d'alimentation et de restauration : nom, adresse, catégories, étiquettes de type, appréciation. Grille de cellules de 3 km, recherches par mots-clés sur 10 km.</td><td class="l">Recensement de base</td></tr>
+    <tr><td class="l"><b>Google Places API (New)</b>, extraction du 14 septembre 2026</td><td class="l">Boulangeries, catégorie absente de la seconde extraction</td><td class="l">Complément, 4 commerces</td></tr>
+    <tr><td class="l"><b>Validation terrain</b>, 21 et 30 septembre 2026</td><td class="l">Mode de service, vaisselle, salle à manger, menus et photos des 88 établissements de restauration ; 6 commerces absents de Google</td><td class="l">Classement définitif restaurant ou restauration rapide, ajouts et retraits</td></tr>
+    <tr><td class="l"><b>Rôle d'évaluation foncière 2026</b> (MAMH), Mont-Tremblant</td><td class="l">6 216 unités d'évaluation résidentielles, 8 111 logements</td><td class="l">Points d'origine du calcul de distance</td></tr>
+    <tr><td class="l"><b>Périmètres d'urbanisation</b>, Ville de Mont-Tremblant</td><td class="l">5 polygones</td><td class="l">Partage entre milieu urbain (seuil de 1 km) et milieu rural (seuil de 16 km)</td></tr>
+    <tr><td class="l"><b>Indice de défavorisation matérielle et sociale</b> (INSPQ), recensement de 2021</td><td class="l">17 aires de diffusion de Mont-Tremblant : population, <code>QuintMatRTS</code>, <code>QuintSocRTS</code>, <code>QuartMatRTS</code>, <code>QuartSocRTS</code></td><td class="l">Critère de défavorisation et couches de fond</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="typologie"><span class="n">3</span>Typologie de l'offre</h2>
+<p>Chaque commerce est classé selon ce qu'un ménage peut y acheter, et non selon l'enseigne. La catégorie principale attribuée par Google ne suffit pas : elle range Tim Hortons parmi les boulangeries et Couche-Tard parmi les épiceries. Le classement combine donc la catégorie, les étiquettes de type et une validation terrain.</p>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Type</th><th class="l">Contenu</th><th>Commerces</th><th class="l">Rôle dans les indices</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Supermarchés et épiceries complètes</td><td class="l">Assortiment complet, incluant un magasin à rayons avec section alimentaire</td><td>8</td><td class="l">Favorable</td></tr>
+    <tr><td class="l">Commerces d'aliments frais et spécialisés</td><td class="l">Épiceries de quartier, fruiteries et vrac, boucheries, poissonnerie, boulangeries, marché public</td><td>20</td><td class="l">Favorable</td></tr>
+    <tr><td class="l">Dépanneurs et stations-service</td><td class="l">Dépannage, y compris les enseignes que Google classe en épicerie</td><td>11</td><td class="l">Moins favorable</td></tr>
+    <tr><td class="l">Restauration rapide et prêt-à-emporter</td><td class="l">Voir la définition ci-dessous</td><td>25</td><td class="l">Moins favorable</td></tr>
+    <tr><td class="l">Restaurants avec service</td><td class="l">Service aux tables</td><td>56</td><td class="l">Contexte, exclu des indices</td></tr>
+    <tr class="tot"><td class="l">Total</td><td class="l"></td><td>120</td><td class="l"></td></tr>
+  </tbody>
+</table></div>
+<div class="ex"><b>Définition retenue de la restauration rapide.</b> Établissement de restauration dont les aliments sont servis majoritairement dans des contenants, emballages ou assiettes jetables lorsqu'ils sont consommés sur place, et où il n'y a aucun service aux tables.</div>
+<p>Les 88 établissements de restauration ont été classés un à un, puis validés : 81 le sont sur photos, menus et mode de service. Quelques décisions méritent d'être signalées, parce qu'elles vont à l'encontre de la catégorie de Google.</p>
+<ul>
+  <li><b>Vers la restauration rapide :</b> Benny&amp;Co. et Amir (commande et paiement au comptoir, menu standardisé), les cafétérias de ski du Grand Manitou, de La Fourchette du Diable et du Refuge du Trappeur (libre-service, vaisselle jetable), les cafés de chaîne.</li>
+  <li><b>Vers les restaurants :</b> St-Hubert, La Maison du Spaghetti, Toujours Mikes, la Pizzéria NO.900, la Sandwicherie Café + Bistro, Côté bouffe et Ba-Traiteur (vraie vaisselle, salle à manger, service aux tables).</li>
+  <li><b>Retirés :</b> la Cabane à sucre de la Montagne et un comptoir de desserts (hors alimentation courante), un doublon de microbrasserie et un McDonald's fermé définitivement.</li>
+</ul>
+
+<h2 id="traitement"><span class="n">4</span>Chaîne de traitement</h2>
+<div class="flow"><span>Extraction Google</span><i>→</i><span>Typologie</span><i>→</i><span>Validation terrain</span><i>→</i><span>Distance par logement</span><i>→</i><span>Agrégation par aire de diffusion</span><i>→</i><span>Croisement avec la défavorisation</span></div>
+
+<div class="step"><div class="k">1</div><div>
+  <h3>Recenser sans saturer la requête</h3>
+  <p>La première extraction, en cellules de 12 km, manquait 14 établissements sur la seule rue de Saint-Jovite. En cause, la limite de 20 résultats par requête de l'API : une recherche « restaurant » sur un territoire de 245 km² est saturée bien avant d'avoir tout couvert. L'extraction en cellules de 3 km les a récupérés. Six commerces demeuraient absents et ont été ajoutés à la main, avec une position interpolée selon le numéro civique, entre deux adresses voisines de la base.</p>
+</div></div>
+
+<div class="step"><div class="k">2</div><div>
+  <h3>Mesurer la distance à partir de chaque logement</h3>
+  <p>Pour chacune des 6 216 unités d'évaluation résidentielles, on mesure la distance au commerce d'approvisionnement favorable le plus proche, c'est-à-dire un supermarché, une épicerie ou un commerce d'aliments frais. Le seuil dépend du milieu : 1 km à l'intérieur des périmètres d'urbanisation, 16 km à l'extérieur.</p>
+  <div class="formula">distance = distance à vol d'oiseau × 1,3</div>
+  <p class="note">Le facteur de 1,3 approche un trajet sur le réseau routier. L'article calcule des distances réticulaires, ce que l'environnement de calcul ne permettait pas.</p>
+</div></div>
+
+<div class="step"><div class="k">3</div><div>
+  <h3>Agréger par aire de diffusion</h3>
+  <p>Chaque unité résidentielle est rattachée à son aire de diffusion. La distance de l'aire est la moyenne des distances de ses logements, pondérée par leur nombre. Une aire est traitée comme urbaine lorsque plus de la moitié de ses logements se trouvent dans un périmètre d'urbanisation. On calcule aussi la part des logements situés au-delà du seuil, qui montre les écarts internes que la moyenne efface.</p>
+</div></div>
+
+<div class="step"><div class="k">4</div><div>
+  <h3>Calculer les indices</h3>
+  <div class="formula">RFEI  = (restauration rapide + dépanneurs) / (supermarchés + épiceries + aliments frais)
+mRFEI = favorables / (favorables + moins favorables) × 100</div>
+  <p>Le RFEI est calculé sur les commerces situés à l'intérieur du seuil de chaque logement, puis moyenné par aire. Le mRFEI sert de lecture d'ensemble à l'échelle de la ville et des secteurs.</p>
+</div></div>
+
+<div class="step"><div class="k">5</div><div>
+  <h3>Appliquer les critères du protocole</h3>
+  <div class="tbl"><table>
+    <thead><tr><th class="l">Notion</th><th class="l">Critère retenu</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Désert alimentaire</td><td class="l">Aire de diffusion du cinquième quintile de défavorisation matérielle <b>et</b> distance moyenne supérieure à 1 km en milieu urbain ou à 16 km en milieu rural</td></tr>
+      <tr><td class="l">Marais alimentaire</td><td class="l">Indice RFEI moyen d'au moins 5,0</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Le quintile est celui du territoire du réseau de santé (<code>QuintMatRTS</code>). Le résultat est le même avec le quintile provincial ou régional : aucune aire ne remplit les deux conditions.</p>
+</div></div>
+
+<div class="step"><div class="k">6</div><div>
+  <h3>Afficher la défavorisation</h3>
+  <p>Trois couches de fond sont offertes : la matrice de défavorisation matérielle et sociale par quartile (regroupement 3, à huit classes A1 à A8, pour l'échelle locale), le quintile matériel seul et le quintile social seul. Les couleurs sont celles du ministère de la Santé et des Services sociaux.</p>
+</div></div>
+
+<h3>Couches de l'outil</h3>
+<p>Trois couches s'ajoutent aux commerces : les <b>logements</b> du rôle 2026, colorés selon leur distance au commerce favorable et selon le seuil qui leur est applicable ; les <b>périmètres d'urbanisation</b>, qui servent de partage entre le seuil de 1 km et celui de 16 km ; et la <b>défavorisation</b>, en trois variantes. La couche des logements montre les écarts internes qu'une moyenne par aire de diffusion efface : 1 223 logements, soit 15 % du parc, sont au-delà du seuil, tous situés dans un périmètre d'urbanisation.</p>
+
+<h2 id="resultats"><span class="n">5</span>Résultats</h2>
+<h3>Composition de l'offre par secteur</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Secteur</th><th>Commerces</th><th>Favorables</th><th>Moins favorables</th><th>mRFEI</th><th>RFEI</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">Noyau de Saint-Jovite</td><td>42</td><td>16</td><td>7</td><td>70 %</td><td>0,44</td></tr>
+    <tr><td class="l">Secteur Village</td><td>11</td><td>3</td><td>1</td><td>75 %</td><td>0,33</td></tr>
+    <tr><td class="l">Secteur de la Montagne</td><td>24</td><td>2</td><td>3</td><td>40 %</td><td>1,50</td></tr>
+    <tr><td class="l">Corridor de la route 117</td><td>24</td><td>4</td><td>14</td><td class="hi">22 %</td><td class="hi">3,50</td></tr>
+    <tr><td class="l">Reste du territoire</td><td>19</td><td>3</td><td>11</td><td class="hi">21 %</td><td class="hi">3,67</td></tr>
+    <tr class="tot"><td class="l">Mont-Tremblant</td><td>120</td><td>28</td><td>36</td><td>44 %</td><td>1,29</td></tr>
+  </tbody>
+</table></div>
+<p class="note">Les 56 restaurants avec service ne sont pas comptés dans les colonnes « favorables » et « moins favorables ». Les points de vente d'alcool ne font pas partie du recensement. Les secteurs sont approximés par rattachement au pôle le plus proche.</p>
+
+<h3>Les 17 aires de diffusion</h3>
+<div class="tbl"><table>
+  <thead><tr><th class="l">Aire</th><th>Pop. 2021</th><th class="l">Milieu</th><th>Mat.</th><th>Soc.</th><th class="l">Classe</th><th>Distance moy.</th><th>Logements au-delà</th><th>RFEI</th></tr></thead>
+  <tbody class="num">
+    <tr><td class="l">24780125</td><td>569</td><td class="l">hors périmètre</td><td>—</td><td>—</td><td class="l">—</td><td>2 995</td><td>3 %</td><td>1,29</td></tr>
+    <tr><td class="l">24780103</td><td>611</td><td class="l">hors périmètre</td><td>Q1</td><td>Q1</td><td class="l">A1</td><td>2 834</td><td>13 %</td><td>1,28</td></tr>
+    <tr><td class="l">24780100</td><td>819</td><td class="l">hors périmètre</td><td>Q2</td><td>Q4</td><td class="l">A2</td><td>2 688</td><td>5 %</td><td>1,27</td></tr>
+    <tr><td class="l">24780165</td><td>580</td><td class="l">hors périmètre</td><td>Q1</td><td>Q2</td><td class="l">A2</td><td>2 485</td><td>11 %</td><td>1,29</td></tr>
+    <tr><td class="l">24780177</td><td>574</td><td class="l">hors périmètre</td><td>Q4</td><td>Q4</td><td class="l">A5</td><td>2 209</td><td>40 %</td><td>1,28</td></tr>
+    <tr><td class="l">24780178</td><td>343</td><td class="l">hors périmètre</td><td>Q3</td><td>Q3</td><td class="l">A4</td><td>1 961</td><td>27 %</td><td>1,29</td></tr>
+    <tr><td class="l">24780116</td><td>714</td><td class="l">hors périmètre</td><td>Q3</td><td>Q2</td><td class="l">A4</td><td>1 793</td><td>6 %</td><td>1,26</td></tr>
+    <tr><td class="l">24780122</td><td>769</td><td class="l">urbain</td><td>Q4</td><td>Q4</td><td class="l">A4</td><td>1 591</td><td>15 %</td><td>1,41</td></tr>
+    <tr><td class="l">24780101</td><td>830</td><td class="l">urbain</td><td>Q1</td><td>Q5</td><td class="l">A3</td><td>1 362</td><td>36 %</td><td>1,17</td></tr>
+    <tr><td class="l">24780102</td><td>418</td><td class="l">urbain</td><td>Q1</td><td>Q2</td><td class="l">A2</td><td>1 276</td><td>17 %</td><td>1,18</td></tr>
+    <tr><td class="l">24780117</td><td>594</td><td class="l">urbain</td><td>—</td><td>—</td><td class="l">—</td><td>763</td><td>30 %</td><td>1,17</td></tr>
+    <tr><td class="l">24780121</td><td>1 202</td><td class="l">urbain</td><td>Q4</td><td>Q5</td><td class="l">A5</td><td>723</td><td>8 %</td><td>0,88</td></tr>
+    <tr><td class="l">24780123</td><td>492</td><td class="l">urbain</td><td>Q5</td><td>Q4</td><td class="l">A7</td><td>515</td><td>0 %</td><td>1,77</td></tr>
+    <tr><td class="l">24780119</td><td>987</td><td class="l">urbain</td><td>Q3</td><td>Q4</td><td class="l">A4</td><td>460</td><td>1 %</td><td>0,49</td></tr>
+    <tr><td class="l">24780124</td><td>459</td><td class="l">urbain</td><td>Q5</td><td>Q5</td><td class="l">A8</td><td>308</td><td>0 %</td><td>0,34</td></tr>
+    <tr><td class="l">24780118</td><td>496</td><td class="l">urbain</td><td>Q5</td><td>Q5</td><td class="l">A8</td><td>274</td><td>0 %</td><td>0,35</td></tr>
+    <tr><td class="l">24780120</td><td>535</td><td class="l">urbain</td><td>Q4</td><td>Q4</td><td class="l">A8</td><td>236</td><td>0 %</td><td>0,25</td></tr>
+  </tbody>
+</table></div>
+
+<p><b>Ce qu'il faut retenir.</b></p>
+<ul>
+  <li><b>Aucun désert alimentaire.</b> Les trois aires du cinquième quintile de défavorisation matérielle (1 447 personnes) sont toutes dans le noyau de Saint-Jovite, à 274 m, 308 m et 515 m en moyenne d'un commerce d'approvisionnement. La défavorisation et l'éloignement ne se superposent pas à Mont-Tremblant : ils s'opposent.</li>
+  <li><b>Aucun marais alimentaire au sens du protocole,</b> mais le corridor de la route 117 (RFEI de 3,50) et le reste du territoire (3,67) s'en approchent. Ce sont les deux secteurs où l'offre est faite surtout de dépanneurs de station-service et de comptoirs de restauration rapide.</li>
+  <li><b>Le seuil rural de 16 km ne mord pas ici.</b> La distance moyenne la plus élevée est de 3,0 km. Hors périmètre urbain, aucune aire ne peut être un désert au sens du protocole, alors même que l'accès y dépend entièrement de l'automobile.</li>
+  <li><b>1 342 personnes, soit 12 % de la population, habitent au-delà du seuil de marche de leur milieu.</b> La contrainte est réelle, mais dispersée à l'intérieur des aires plutôt que concentrée dans un secteur défavorisé. Quatre aires dépassent 25 % de logements au-delà du seuil.</li>
+  <li><b>Neuf des dix-sept établissements scolaires, services de garde et lieux d'activités jeunesse</b> comptent au moins un dépanneur ou un comptoir de restauration rapide à moins de 500 m.</li>
+</ul>
+
+<div class="callout warn">
+  <h3>Lecture prudente pour l'ÉIS</h3>
+  <p>L'absence de désert et de marais n'est pas un signe que l'environnement alimentaire est sain. Elle indique que les seuils du protocole, conçus pour comparer des territoires à l'échelle du Québec, ne discriminent pas dans une petite ville dont toute la population réside à moins de 3 km d'une épicerie. Les indicateurs à suivre ici sont la composition de l'offre par secteur, la part des logements au-delà du seuil de marche et la pression de la restauration rapide aux entrées de ville.</p>
+</div>
+
+<h2 id="limites"><span class="n">6</span>Limites et précautions</h2>
+<ul>
+  <li><b>Les distances sont approchées.</b> Elles sont calculées à vol d'oiseau puis multipliées par 1,3. Les trajets réels sont plus longs là où le relief, la route 117 ou un réseau piétonnier discontinu imposent des détours. Un calcul sur le réseau routier reste à faire.</li>
+  <li><b>Le recensement des commerces dépend de Google.</b> La couverture des petits commerces et des points de vente saisonniers y est inégale. La validation terrain a porté sur la rue de Saint-Jovite et sur les établissements de restauration ; le Village, la Montagne et le reste du territoire n'ont pas été validés sur le terrain.</li>
+  <li><b>L'indice porte sur le nombre de commerces</b> et non sur la surface de vente, l'assortiment réel, les prix ou la qualité nutritionnelle de l'offre.</li>
+  <li><b>La population touristique n'est pas prise en compte.</b> Les distances sont calculées à partir des logements du rôle, résidences de tourisme comprises, mais la fréquentation saisonnière module fortement la demande et l'offre, en particulier dans le secteur de la Montagne.</li>
+  <li><b>Deux aires de diffusion n'ont pas d'indice de défavorisation</b> (valeur 0), faute de données suffisantes au recensement.</li>
+  <li><b>Les six commerces ajoutés à la main ont une position interpolée</b> selon le numéro civique, avec une précision estimée de 20 à 50 m.</li>
+  <li><b>Les secteurs de lecture sont approximés</b> par rattachement au pôle le plus proche et non par les limites officielles du plan d'urbanisme.</li>
+</ul>
+
+<footer>
+  Direction de santé publique, Santé Québec Laurentides · Évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant · Suite C.A.R.T.O.S.<br>
+  Méthode : Robitaille, É. et Paquette, M.-C. (2020). Development of a Method to Locate Deserts and Food Swamps Following the Experience of a Region in Quebec, Canada. <i>International Journal of Environmental Research and Public Health</i>, 17(10), 3359.<br>
+  Sources : Google Places API (New), septembre 2026 · validation terrain, septembre 2026 · MAMH, rôle d'évaluation foncière 2026 · Ville de Mont-Tremblant, périmètres d'urbanisation · INSPQ, indice de défavorisation matérielle et sociale, recensement de 2021. Outil d'aide à la décision, non réglementaire.
+</footer>
+</article>
