@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
+<!-- saved from url=(0072)https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/formation/index.html -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inscription — Formation Cartographie interactive et géoweb</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./Inscription — Formation Cartographie interactive et géoweb_files/css2" rel="stylesheet">
 <style>
   :root{
     --marine-deep:#072a3d;
@@ -170,29 +170,29 @@
       <h1>Cartographie interactive et géoweb</h1>
       <p class="lede">Formation 4 h 30 pour professionnels de santé publique : QGIS, Leaflet.js, l'IA comme appui à l'apprentissage, et publication via GitHub Pages.</p>
       <div class="chips">
-        <span class="chip"><b>Date</b> 8 juillet 2026</span>
+        <span class="chip"><b>Dates proposées</b> 4 ou 11 novembre 2026</span>
         <span class="chip"><b>Format</b> à distance, par Teams</span>
         <span class="chip"><b>Durée</b> 4 h 30 (avec pause)</span>
       </div>
     </header>
 
-    <form id="reg" novalidate>
+    <form id="reg" novalidate="">
 
       <fieldset>
         <legend><span class="n">1</span> Coordonnées</legend>
         <div class="row">
           <div class="field">
             <label class="lab" for="prenom">Prénom <span class="req">*</span></label>
-            <input type="text" id="prenom" name="prenom" autocomplete="given-name" required>
+            <input type="text" id="prenom" name="prenom" autocomplete="given-name" required="">
           </div>
           <div class="field">
             <label class="lab" for="nom">Nom <span class="req">*</span></label>
-            <input type="text" id="nom" name="nom" autocomplete="family-name" required>
+            <input type="text" id="nom" name="nom" autocomplete="family-name" required="">
           </div>
         </div>
         <div class="field">
           <label class="lab" for="courriel">Courriel professionnel <span class="req">*</span></label>
-          <input type="email" id="courriel" name="courriel" autocomplete="email" required>
+          <input type="email" id="courriel" name="courriel" autocomplete="email" required="">
           <span class="hint">La confirmation d'inscription sera envoyée à cette adresse.</span>
         </div>
       </fieldset>
@@ -201,7 +201,7 @@
         <legend><span class="n">2</span> Profil professionnel</legend>
         <div class="field">
           <label class="lab" for="organisation">Organisation ou établissement <span class="req">*</span></label>
-          <input type="text" id="organisation" name="organisation" autocomplete="organization" required>
+          <input type="text" id="organisation" name="organisation" autocomplete="organization" required="">
         </div>
         <div class="row">
           <div class="field">
@@ -216,19 +216,19 @@
       </fieldset>
 
       <fieldset>
-        <legend><span class="n">3</span> Cohorte souhaitée</legend>
-        <div class="opts" role="radiogroup" aria-label="Cohorte souhaitée">
+        <legend><span class="n">3</span> Date souhaitée <span class="req">*</span></legend>
+        <div class="opts" role="radiogroup" aria-label="Date souhaitée">
           <label class="opt">
-            <input type="radio" name="cohorte" value="8 juillet 2026 (Teams)" checked>
-            <span><span class="ot">8 juillet 2026 — par Teams</span><span class="od">Cohorte principale annoncée à la communauté de pratique.</span></span>
+            <input type="radio" name="cohorte" value="Mercredi 4 novembre 2026 (Teams)" required="">
+            <span><span class="ot">Mercredi 4 novembre 2026, par Teams</span><span class="od">Première date proposée.</span></span>
           </label>
           <label class="opt">
-            <input type="radio" name="cohorte" value="Automne 2026">
-            <span><span class="ot">Automne 2026</span><span class="od">Cohorte ultérieure ; les dates seront communiquées.</span></span>
+            <input type="radio" name="cohorte" value="Mercredi 11 novembre 2026 (Teams)">
+            <span><span class="ot">Mercredi 11 novembre 2026, par Teams</span><span class="od">Deuxième date proposée.</span></span>
           </label>
           <label class="opt">
-            <input type="radio" name="cohorte" value="Indifférent">
-            <span><span class="ot">Indifférent</span><span class="od">Inscrivez-moi à la prochaine cohorte disponible.</span></span>
+            <input type="radio" name="cohorte" value="L'une ou l'autre">
+            <span><span class="ot">L'une ou l'autre</span><span class="od">Les deux dates me conviennent.</span></span>
           </label>
         </div>
       </fieldset>
@@ -239,7 +239,7 @@
           <label class="lab" for="niveau">Niveau d'expérience avec les SIG / données spatiales</label>
           <select id="niveau" name="niveau">
             <option value="Aucune">Aucune expérience</option>
-            <option value="Notions de base" selected>Notions de base</option>
+            <option value="Notions de base" selected="">Notions de base</option>
             <option value="Intermédiaire">Intermédiaire</option>
             <option value="Avancée">Avancée</option>
           </select>
@@ -272,7 +272,7 @@
       <fieldset>
         <legend><span class="n">6</span> Consentement</legend>
         <label class="consent">
-          <input type="checkbox" id="consent" name="consent" required>
+          <input type="checkbox" id="consent" name="consent" required="">
           <span>J'autorise la collecte des renseignements ci-dessus aux seules fins de la gestion de mon inscription et de l'organisation de la formation. <span class="req">*</span></span>
         </label>
       </fieldset>
@@ -364,5 +364,6 @@
     }
   });
 </script>
-</body>
-</html>
+
+
+</body></html>
