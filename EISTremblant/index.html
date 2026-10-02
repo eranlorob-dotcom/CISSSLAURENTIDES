@@ -128,7 +128,8 @@ body.theme-light .card:hover{box-shadow:0 10px 30px rgba(20,12,116,.10)}
   position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:8px;
   background:var(--c,var(--accent));color:var(--white);text-decoration:none;font-weight:700;font-size:.9rem
 }
-.sec{position:relative;z-index:1;font-size:.88rem;color:var(--ink2);text-decoration:underline;text-underline-offset:3px}
+.open{white-space:nowrap;flex:none}
+.sec{white-space:nowrap;position:relative;z-index:1;font-size:.88rem;color:var(--ink2);text-decoration:underline;text-underline-offset:3px}
 .sec:hover{color:var(--ink)}
 .file{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
 .empty{display:none;color:var(--muted);padding:30px 0;text-align:center}
@@ -187,7 +188,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
 <footer>
   <div class="foot">
     <span>CISSS des Laurentides · Direction de santé publique · Outils d'aide à la décision, non réglementaires</span>
-    <span>Mise à jour <span class="mono">2026-09-30</span></span>
+    <span>Mise à jour <span class="mono">2026-10-02</span></span>
   </div>
 </footer>
 
@@ -199,6 +200,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
 var THEMES = {
   pop:  { label:'Population et territoire', color:'var(--blue)'   },
   hab:  { label:'Habitation',               color:'var(--indigo)' },
+  forme:{ label:'Densité et forme urbaine', color:'var(--blue-d)' },
   env:  { label:'Environnements favorables',color:'var(--teal)'   }
 };
 
@@ -227,6 +229,18 @@ var APPS = [
     desc:"Logements non occupés par des ménages et résidences de tourisme par îlot, confrontés aux règles du plan d\u2019urbanisme (centre-ville et village, secteurs riverains, proximité des golfs).",
     tags:['Rôle 2025','Registre SIT Québec 2026','Îlots de diffusion'] },
 
+  { theme:'forme', ico:'D', file:'consolidation_pu_tremblant%20(1).html', methode:'fiche_metodo_densite.html',
+    title:'Densifier sans nuire',
+    q:'Où loger les nouveaux ménages sans agrandir les périmètres d\u2019urbanisation?',
+    desc:"Terrains vacants, stationnements et terrains sous-utilisés des PU, leur favorabilité pour la santé (épicerie, école, parc, chaleur) et le nombre de logements possibles face au besoin de 2041.",
+    tags:['Rôle 2025','ISQ 2041','Défavorisation RTS'] },
+
+  { theme:'forme', ico:'M', file:'forme_urbaine_tremblant.html', methode:'fiche_methodo_potentiel.html',
+    title:'Forme urbaine et marchabilité',
+    q:'La forme de la ville permet-elle de marcher?',
+    desc:"Densité d\u2019intersections, culs-de-sac, taille des îlots, pente des rues et détours, avec le temps de marche jusqu\u2019au cœur de chaque secteur, sur terrain plat et avec la pente.",
+    tags:['OpenStreetMap','LiDAR (pentes)','Rôle 2025'] },
+
   { theme:'env', ico:'P', file:'mont_tremblant_parcs_defavorisation.html',
     title:'Parcs, espaces verts et défavorisation',
     q:'Les logements sont-ils à distance de marche d\u2019un parc?',
@@ -245,7 +259,7 @@ var APPS = [
     desc:"Propriété et usage du littoral lac par lac, plages accessibles aux résidents et part de la population à distance de marche ou de vélo d\u2019une plage.",
     tags:['Rôle 2025','GRHQ','DemoStats 2025'] },
 
-  { theme:'env', ico:'A', file:'cartos_environnement_alimentaire_mont-tremblant.html', methode:'fiche_methodo_env_alimentaire.html',
+  { theme:'env', ico:'A', file:'https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/cartos_environnement_alimentaire_mont-tremblant.html', methode:'fiche_methodo_env_alimentaire.html',
     title:'Environnement alimentaire',
     q:'Où se trouvent les commerces d\u2019alimentation?',
     desc:"Répartition des commerces d\u2019alimentation par type d\u2019offre, indice mRFEI par secteur et proximité des milieux fréquentés par les jeunes.",
@@ -294,7 +308,7 @@ function render(){
         '<div class="meta">'+a.tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('')+'</div>'+
         '<div class="actions"><a class="open" href="'+esc(a.file)+'">Ouvrir l\u2019outil →</a>'+
         (a.methode ? '<a class="sec" href="'+esc(a.methode)+'">Fiche méthodologique</a>' : '')+
-        '<span class="file" title="'+esc(a.file)+'">'+esc(a.file)+'</span></div>';
+        '<span class="file" title="'+esc(a.file)+'">'+esc(a.file.split("/").pop())+'</span></div>';
       grid.appendChild(el);
     });
     sec.appendChild(grid); main.appendChild(sec);
