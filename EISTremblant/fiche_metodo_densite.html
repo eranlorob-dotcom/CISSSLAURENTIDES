@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiche méthode densifier sans nuire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f8f8;--paper:#ffffff;--ink:#132428;--dim:#566b6f;--line:#d6e1e2;--soft:#eaf2f2;
+  --accent:#17766b;--accent-soft:#dff1ee;--amber:#8a6400;--amber-soft:#fbf1d2;--rose:#a3405a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+    --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+  --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 56px}
+.doc{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(18px,5vw,56px) 48px}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;text-wrap:balance;line-height:1.2}
+h1{font-size:clamp(26px,4vw,34px);margin:6px 0 10px}
+h2{font-size:22px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;color:var(--accent);font-weight:500}
+h3{font-size:17px;margin:26px 0 6px}
+p,li{max-width:68ch}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:0 0 12px}
+li{margin:3px 0}
+.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.meta b{color:var(--ink);font-weight:600}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+.summary p{margin:0 0 8px}.summary p:last-child{margin:0}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:20px;margin-top:14px}
+.toc a{color:var(--accent);text-decoration:none}.toc a:hover{text-decoration:underline}
+@media (max-width:620px){.toc{columns:1}}
+.num{font-variant-numeric:tabular-nums}
+code,.f{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.formula{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;background:var(--soft);border-radius:8px;padding:12px 16px;margin:8px 0 14px;overflow-x:auto;white-space:pre;line-height:1.7}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px 14px;margin:22px 0 0}
+.step .k{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:14px;margin-top:2px}
+.step h3{margin:2px 0 6px}
+.ex{border-left:3px solid var(--amber);background:var(--amber-soft);padding:8px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin:6px 0 10px}
+.ex b{color:var(--amber)}
+.tbl{overflow-x:auto;margin:10px 0 16px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);font-weight:700;background:var(--soft)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--soft)}
+td .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+td.hi{color:var(--amber);font-weight:700}
+.note{font-size:13.5px;color:var(--dim)}
+.callout{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.callout.warn{border-color:var(--rose)}
+.callout h3{margin-top:0}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px}
+.flow span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.flow i{color:var(--dim);font-style:normal}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.tbl.wide table{font-size:12.5px;min-width:0}.tbl.wide th,.tbl.wide td{padding:7px 6px}.tbl.wide th{font-size:10px;letter-spacing:.3px}
+</style>
+</head>
+<body>
+<article class="doc">
+<div class="eyebrow">Fiche méthodologique · ÉIS du plan d'urbanisme de Mont-Tremblant</div>
+<h1>Où densifier sans nuire à la santé : données et méthode</h1>
+<div class="meta">
+  <span><b>Outil :</b> <a href="consolidation_pu_tremblant.html">Densifier sans nuire, Mont-Tremblant</a></span>
+  <span><b>Paquet :</b> donnees_consolidation_pu_tremblant.zip</span>
+  <span><b>Mise à jour :</b> 1<sup>er</sup> octobre 2026</span>
+</div>
+<div class="summary">
+  <p><b>À 25 log/ha, les sites favorables des PU pourraient accueillir environ 1 050 logements</b>, soit plus que le besoin résiduel de 807 logements d'ici 2041 (scénario de référence de l'ISQ).</p>
+  <p>Seulement 26 % de la superficie disponible est favorable à la santé. Le critère le plus limitant est l'école ou le CPE à 800 m.</p>
+</div>
+<ol class="toc">
+  <li><a href="#objet">Objet</a></li><li><a href="#resultats">Résultats clés</a></li><li><a href="#paquet">Composantes du paquet</a></li>
+  <li><a href="#methode">Méthode</a></li><li><a href="#limites">Limites et précautions</a></li>
+</ol>
+
+<h2 id="objet"><span class="n">1</span>Objet</h2>
+<p>L'outil répond à une question : combien de logements les trois périmètres d'urbanisation (PU) de Mont-Tremblant peuvent-ils accueillir sur des terrains déjà disponibles, et lesquels de ces terrains sont favorables à la santé?</p>
+<p>Il prépare l'inventaire que le plan d'urbanisme prévoit au moyen 2.2.1 (terrains vacants ou sous-valorisés) et documente les recommandations R2.8 (seuils minimaux de densité) et R2.10 (pas d'agrandissement des PU avant d'occuper les terrains vacants).</p>
+<p>Le paquet contient trois niveaux de données :</p>
+<ul>
+  <li><b>Les sites</b>, au lot : chaque terrain vacant, stationnement ou terrain sous-utilisé retenu, avec ses critères. Usage interne seulement.</li>
+  <li><b>Les îlots</b>, agrégés : les indicateurs affichés par l'outil, sans terrain identifiable.</li>
+  <li><b>Les couches de contexte</b> : PU, défavorisation, parcs, services, zone 2.3.4, besoins en logement.</li>
+</ul>
+
+<h2 id="resultats"><span class="n">2</span>Résultats clés</h2>
+<p>Densité visée de 25 log/ha, scénario de référence, sans les 29 sites riverains (30 ha).</p>
+<div class="tbl wide"><table><thead><tr><th class="l">Périmètre</th><th>Sites</th><th>Superficie (ha)</th><th>Part favorable</th><th>Logements possibles</th><th>dont favorables</th><th>Logements actuels</th><th>Densité actuelle (log/ha)</th><th>Densité après (log/ha)</th></tr></thead><tbody><tr><td class="l">Saint-Jovite</td><td class=num>259</td><td class=num>103,2</td><td class=num>28 %</td><td class=num>2 578</td><td class=num>728</td><td class=num>3 994</td><td class=num>12,2</td><td class=num>15,2</td></tr><tr><td class="l">Village</td><td class=num>105</td><td class=num>42,0</td><td class=num>27 %</td><td class=num>1 036</td><td class=num>273</td><td class=num>774</td><td class=num>8,6</td><td class=num>13,7</td></tr><tr><td class="l">Tremblant</td><td class=num>58</td><td class=num>16,3</td><td class=num>13 %</td><td class=num>406</td><td class=num>54</td><td class=num>977</td><td class=num>11,4</td><td class=num>13,5</td></tr><tr class="tot"><td class="l">Ensemble des PU</td><td class=num>422</td><td class=num>161,4</td><td class=num>26 %</td><td class=num>4 019</td><td class=num>1 054</td><td class=num>5 745</td><td class=num>11,4</td><td class=num>14,7</td></tr></tbody></table></div>
+<p>Le besoin résiduel varie de 305 logements (scénario faible) à 1 315 (scénario fort). Les sites favorables couvrent donc de 80 % à 345 % du besoin. Le parc à 300 m n'est rempli que pour 44 % de la superficie, et l'école ou le CPE à 800 m pour 25 %.</p>
+
+<h2 id="paquet"><span class="n">3</span>Composantes du paquet</h2>
+<p>Le paquet compte 14 fichiers, tous en WGS84 (EPSG:4326). Les CSV utilisent le point-virgule comme séparateur et l'encodage UTF-8.</p>
+<div class="tbl"><table><thead><tr><th class="l">Fichier</th><th class="l">Contenu</th><th class="l">Unité</th><th class="l">Nombre</th></tr></thead><tbody><tr><td class="l"><code>sites_consolidation_lots.csv</code> et <code>.geojson</code></td><td class="l">Terrains vacants, stationnements et terrains sous-utilisés des PU, avec leurs critères</td><td class="l">Lot (point du rôle)</td><td class="l">439 sites, dont 29 riverains</td></tr><tr><td class="l"><code>ilots_consolidation.csv</code> et <code>.geojson</code></td><td class="l">Indicateurs de l'outil par îlot, à 25 log/ha, sites riverains exclus</td><td class="l">Îlot, partie dans un PU</td><td class="l">126 îlots</td></tr><tr><td class="l"><code>synthese_par_perimetre.csv</code></td><td class="l">Totaux du tableau des résultats clés</td><td class="l">PU</td><td class="l">3 PU + ensemble</td></tr><tr><td class="l"><code>besoins_logement_2041.csv</code></td><td class="l">Ménages 2021, 2025 et 2041 et besoin résiduel par scénario</td><td class="l">Ville</td><td class="l">3 scénarios</td></tr><tr><td class="l"><code>perimetres_urbanisation.geojson</code></td><td class="l">Limites officielles des PU de Saint-Jovite, du Village et de Tremblant</td><td class="l">Polygone</td><td class="l">3</td></tr><tr><td class="l"><code>defavorisation_ad.geojson</code></td><td class="l">Indice de défavorisation 2021, quintiles et quartiles RTS, classe combinée ComRTS</td><td class="l">Aire de diffusion</td><td class="l">17</td></tr><tr><td class="l"><code>parcs_0_5ha.geojson</code></td><td class="l">Parcs publics de 0,5 ha et plus (parcs de proximité et grands espaces naturels)</td><td class="l">Polygone</td><td class="l">48</td></tr><tr><td class="l"><code>services_epiceries_ecoles_cpe.geojson</code></td><td class="l">Épiceries complètes, commerces d'aliments frais, écoles, CPE et garderies</td><td class="l">Point</td><td class="l">41</td></tr><tr><td class="l"><code>zone_2_3_4.geojson</code></td><td class="l">Centre-ville et village, où le plan veut prohiber la location à court terme</td><td class="l">Polygone</td><td class="l">1</td></tr><tr><td class="l"><code>ilots_chaleur_ecart.png</code> et <code>_bounds.json</code></td><td class="l">Écart de température de surface au bâti régional, image déjà symbolisée et ses coins</td><td class="l">Pixel d'environ 150 m</td><td class="l">1 image</td></tr><tr><td class="l"><code>consolidation_pu_tremblant.html</code></td><td class="l">L'outil interactif, autonome</td><td class="l">–</td><td class="l">–</td></tr></tbody></table></div>
+<h3>Champs des sites (<code>sites_consolidation_lots</code>)</h3>
+<div class="tbl"><table><thead><tr><th class="l">Champ</th><th class="l">Description</th></tr></thead><tbody><tr><td class="l"><code>id_provinc</code>, <code>matricule</code></td><td class="l">Identifiant provincial et matricule de l'unité d'évaluation</td></tr><tr><td class="l"><code>perimetre</code>, <code>ilot</code></td><td class="l">PU et îlot de diffusion où se trouve le site</td></tr><tr><td class="l"><code>type</code></td><td class="l">vacant, stationnement ou sous-utilise</td></tr><tr><td class="l"><code>cubf</code></td><td class="l">Code d'utilisation prédominant du rôle</td></tr><tr><td class="l"><code>superficie_m2</code></td><td class="l">Superficie du terrain au rôle</td></tr><tr><td class="l"><code>valeur_terrain</code>, <code>valeur_batiment</code>, <code>ratio_bat_terrain</code></td><td class="l">Valeurs au rôle 2025 et rapport bâtiment sur terrain</td></tr><tr><td class="l"><code>logements</code>, <code>annee_construction</code></td><td class="l">Logements existants et année du bâtiment principal</td></tr><tr><td class="l"><code>d_epicerie_m</code>, <code>d_ecole_cpe_m</code>, <code>d_parc_m</code></td><td class="l">Distance à vol d'oiseau au service le plus proche</td></tr><tr><td class="l"><code>ecart_chaleur_c</code></td><td class="l">Écart médian au bâti régional des immeubles voisins (°C)</td></tr><tr><td class="l"><code>d_eau_m</code>, <code>riverain</code></td><td class="l">Distance au plan d'eau le plus proche et indicateur riverain (1 = oui)</td></tr><tr><td class="l"><code>epicerie_1km</code>, <code>ecole_cpe_800m</code>, <code>parc_300m</code>, <code>hors_ilot_chaleur</code></td><td class="l">Critères santé remplis (1 = oui)</td></tr><tr><td class="l"><code>zone_234</code></td><td class="l">Site dans le centre-ville ou le village (1 = oui)</td></tr><tr><td class="l"><code>criteres_sante</code>, <code>favorabilite</code></td><td class="l">Nombre de critères (0 à 4) et classe : favorable, intermédiaire ou peu favorable</td></tr><tr><td class="l"><code>grand_terrain_2ha</code></td><td class="l">Terrain de plus de 2 ha, à vérifier (1 = oui)</td></tr><tr><td class="l"><code>lon</code>, <code>lat</code></td><td class="l">Coordonnées du point du rôle</td></tr></tbody></table></div>
+<h3>Champs des îlots (<code>ilots_consolidation</code>)</h3>
+<div class="tbl"><table><thead><tr><th class="l">Champ</th><th class="l">Description</th></tr></thead><tbody><tr><td class="l"><code>ilot</code>, <code>aire_diffusion</code>, <code>perimetre</code></td><td class="l">Identifiants et PU</td></tr><tr><td class="l"><code>superficie_ilot_pu_ha</code></td><td class="l">Superficie de la partie de l'îlot dans le PU</td></tr><tr><td class="l"><code>population_2025</code>, <code>menages_2025</code>, <code>revenu_median</code>, <code>pct_locataires</code></td><td class="l">Estimations Environics 2025</td></tr><tr><td class="l"><code>logements_residentiels</code>, <code>terrain_residentiel_ha</code></td><td class="l">Logements et superficie des terrains résidentiels au rôle</td></tr><tr><td class="l"><code>sites</code>, <code>sites_ha</code>, <code>sites_ha_riverains_exclus</code></td><td class="l">Nombre et superficie des sites retenus, et superficie riveraine exclue</td></tr><tr><td class="l"><code>ha_favorable</code>, <code>ha_intermediaire</code>, <code>ha_peu_favorable</code></td><td class="l">Superficie des sites selon leur favorabilité</td></tr><tr><td class="l"><code>ha_epicerie</code>, <code>ha_ecole_cpe</code>, <code>ha_parc</code>, <code>ha_hors_chaleur</code>, <code>ha_zone_234</code></td><td class="l">Superficie des sites qui remplissent chaque critère</td></tr><tr><td class="l"><code>ha_vacant</code>, <code>ha_stationnement</code>, <code>ha_sous_utilise</code></td><td class="l">Superficie par type de site</td></tr><tr><td class="l"><code>logements_possibles_25</code>, <code>logements_possibles_25_favorables</code></td><td class="l">Logements possibles à 25 log/ha, tous sites et sites favorables</td></tr><tr><td class="l"><code>densite_actuelle_log_ha</code>, <code>densite_apres_25</code></td><td class="l">Densité résidentielle nette avant et après construction des sites</td></tr><tr><td class="l"><code>ComRTS_classe</code>, <code>ComRTS</code>, <code>QuintMatRTS</code>, <code>QuintSocRTS</code></td><td class="l">Défavorisation de l'aire de diffusion</td></tr></tbody></table></div>
+
+<h2 id="methode"><span class="n">4</span>Méthode</h2>
+<p>Toutes les étapes partent du rôle d'évaluation 2025 joint aux points des unités d'évaluation.</p>
+<div class="flow"><span>Rôle 2025</span><i>→</i><span>Unités des PU</span><i>→</i><span>Sites</span><i>→</i><span>Critères santé</span><i>→</i><span>Sites riverains</span><i>→</i><span>Potentiel et besoin</span></div>
+<div class="step"><div class="k">1</div><div><h3>Retenir les unités des PU</h3><p>Seules les unités situées dans les trois PU du schéma de la MRC des Laurentides sont gardées.</p></div></div>
+<div class="step"><div class="k">2</div><div><h3>Classer les sites</h3><ul>
+  <li><b>Terrain vacant</b> : code 9100, au moins 300 m².</li>
+  <li><b>Stationnement de surface</b> : code 46xx, sauf les garages (4622), avec des bâtiments valant moins de la moitié du terrain.</li>
+  <li><b>Terrain sous-utilisé</b> : usage résidentiel, commercial ou de services (hors services publics, éducation, culte et cimetières), au moins 1 500 m², moins de 8 log/ha, bâtiments valant moins de la moitié du terrain, copropriétés exclues.</li></ul></div></div>
+<div class="step"><div class="k">3</div><div><h3>Mesurer les critères santé</h3><p>À vol d'oiseau depuis le point de chaque site :</p><ul>
+  <li>épicerie complète ou commerce d'aliments frais à 1 km ou moins;</li>
+  <li>école ou CPE à 800 m ou moins;</li>
+  <li>parc public de 0,5 ha ou plus à 300 m ou moins;</li>
+  <li>voisinage hors îlot de chaleur : médiane des immeubles résidentiels à 200 m (sinon 500 m) à moins de 2 °C au-dessus du bâti régional.</li></ul>
+  <p>Un site est favorable avec 3 ou 4 critères, intermédiaire avec 2 et peu favorable avec 0 ou 1. La zone 2.3.4 est montrée à part, comme critère de tourisme durable.</p></div></div>
+<div class="step"><div class="k">4</div><div><h3>Repérer les sites riverains</h3><p>Un site est riverain s'il se trouve dans un plan d'eau, ou à moins de 15 m plus le rayon équivalent du terrain d'un lac ou d'un cours d'eau surfacique de la GRHQ. Ces sites sont exclus par défaut.</p></div></div>
+<div class="step"><div class="k">5</div><div><h3>Calculer le potentiel et le besoin</h3>
+<div class="formula">Logements possibles = superficie × densité visée − logements existants
+Densité actuelle    = logements résidentiels ÷ superficie de leurs terrains
+Besoin résiduel     = (ménages ISQ 2041 − ménages Environics 2025) ÷ 0,97</div>
+<p class="note">Le facteur 0,97 correspond à un taux d'inoccupation visé de 3 %.</p></div></div>
+<p style="margin-top:18px">Dans l'outil, la densité visée (15, 25 ou 40 log/ha), le scénario, les types de sites, les sites riverains et le seuil de critères se modifient. Les fichiers d'îlots et la synthèse par PU utilisent les réglages par défaut : 25 log/ha, scénario de référence, sites riverains exclus.</p>
+
+<h2 id="limites"><span class="n">5</span>Limites et précautions</h2>
+<p>Les 4 019 logements possibles sont un plafond théorique, pas une capacité réelle.</p>
+<ul>
+  <li><b>Superficie brute.</b> Les rues à créer, les pentes fortes, les milieux humides, les zones inondables et les boisés à protéger ne sont pas retirés. Onze terrains de plus de 2 ha sont signalés pour vérification.</li>
+  <li><b>Code 9100.</b> Il regroupe des terrains constructibles et des résidus de lotissement.</li>
+  <li><b>Distances à vol d'oiseau.</b> Elles surestiment l'accessibilité à pied, surtout avec le relief et la route 117. Le transport collectif n'est pas évalué.</li>
+  <li><b>Seuils à valider.</b> Le seuil de sous-utilisation (bâtiment à moins de 50 % du terrain) et la règle riveraine sont des choix de l'analyse, à discuter avec la Ville.</li>
+  <li><b>Limites d'îlots.</b> Les îlots viennent de l'outil 3-30-300. Leurs limites diffèrent légèrement de celles des PU officiels : les logements actuels par PU peuvent varier de quelques dizaines selon la source.</li>
+  <li><b>Millésimes.</b> Le rôle peut précéder des constructions récentes. Les ménages et revenus sont des estimations modélisées (Environics).</li>
+</ul>
+<div class="callout warn"><h3>Confidentialité</h3><p>Les fichiers <code>sites_consolidation_lots</code> désignent des terrains privés par matricule et les qualifient de « sous-utilisés ». Ils sont réservés à l'équipe et ne doivent pas être publiés. L'outil web et les fichiers d'îlots n'affichent aucun terrain individuellement.</p></div>
+
+<footer>
+  Direction de santé publique, Santé Québec Laurentides · Évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant · Suite C.A.R.T.O.S.<br>
+  Sources : MAMH, rôle d'évaluation foncière 2025 (attributs et points des unités d'évaluation) · MRC des Laurentides, périmètres d'urbanisation et grandes affectations · ISQ, projections de ménages privés, scénarios 2025 · Environics Analytics, DemoStats 2025 (via Esri) · INSPQ, indice de défavorisation matérielle et sociale 2021, quintiles et quartiles RTS · Google Places, commerces d'alimentation (septembre 2026) · rôle d'évaluation 2026, parcs et espaces verts · Landsat 8 et 9, température de surface (outil Îlots de chaleur des Laurentides) · MRNF, GRHQ · Statistique Canada, îlots et aires de diffusion 2021 · Ville de Mont-Tremblant, plan d'urbanisme (moyens 2.2.1 et 2.3.4). Outil d'aide à la décision, non réglementaire.
+</footer>
+</article>
+</body>
+</html>
