@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiche méthode forme urbaine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f8f8;--paper:#ffffff;--ink:#132428;--dim:#566b6f;--line:#d6e1e2;--soft:#eaf2f2;
+  --accent:#17766b;--accent-soft:#dff1ee;--amber:#8a6400;--amber-soft:#fbf1d2;--rose:#a3405a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+    --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0c191c;--paper:#12262b;--ink:#e6efef;--dim:#9fb6b8;--line:#244249;--soft:#173238;
+  --accent:#3fc7b4;--accent-soft:#143a38;--amber:#f2d24b;--amber-soft:#33301a;--rose:#e07a90;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 56px}
+.doc{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:40px clamp(18px,5vw,56px) 48px}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;text-wrap:balance;line-height:1.2}
+h1{font-size:clamp(26px,4vw,34px);margin:6px 0 10px}
+h2{font-size:22px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;color:var(--accent);font-weight:500}
+h3{font-size:17px;margin:26px 0 6px}
+p,li{max-width:68ch}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:0 0 12px}
+li{margin:3px 0}
+.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.meta b{color:var(--ink);font-weight:600}
+.summary{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+.summary p{margin:0 0 8px}.summary p:last-child{margin:0}
+.toc{columns:2;column-gap:28px;font-size:14px;padding-left:20px;margin-top:14px}
+.toc a{color:var(--accent);text-decoration:none}.toc a:hover{text-decoration:underline}
+@media (max-width:620px){.toc{columns:1}}
+.num{font-variant-numeric:tabular-nums}
+code,.f{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.formula{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;background:var(--soft);border-radius:8px;padding:12px 16px;margin:8px 0 14px;overflow-x:auto;white-space:pre;line-height:1.7}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px 14px;margin:22px 0 0}
+.step .k{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:14px;margin-top:2px}
+.step h3{margin:2px 0 6px}
+.ex{border-left:3px solid var(--amber);background:var(--amber-soft);padding:8px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin:6px 0 10px}
+.ex b{color:var(--amber)}
+.tbl{overflow-x:auto;margin:10px 0 16px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);font-weight:700;background:var(--soft)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:none}
+tr.tot td{font-weight:700;background:var(--soft)}
+td .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+td.hi{color:var(--amber);font-weight:700}
+.note{font-size:13.5px;color:var(--dim)}
+.callout{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.callout.warn{border-color:var(--rose)}
+.callout h3{margin-top:0}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px}
+.flow span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.flow i{color:var(--dim);font-style:normal}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.tbl.wide table{font-size:12.5px;min-width:0}.tbl.wide th,.tbl.wide td{padding:7px 6px}.tbl.wide th{font-size:10px;letter-spacing:.3px}
+</style>
+</head>
+<body>
+<article class="doc">
+<div class="eyebrow">Fiche méthodologique · ÉIS du plan d'urbanisme de Mont-Tremblant</div>
+<h1>La forme de la ville permet-elle de marcher?</h1>
+<div class="meta">
+  <span><b>Outil :</b> <a href="forme_urbaine_tremblant.html">Forme urbaine et marchabilité, Mont-Tremblant</a></span>
+  <span><b>Territoire :</b> 3 périmètres d'urbanisation, 16,1 km², 5 219 logements</span>
+  <span><b>Mise à jour :</b> 2 octobre 2026</span>
+</div>
+<div class="summary">
+  <p><b>Un logement sur quatre (25 %) des périmètres d'urbanisation est à 10 minutes de marche du cœur de son secteur.</b> À vol d'oiseau, ce serait 35 %.</p>
+  <p>La trame des rues retranche 9 points et la pente 2 points de plus. Le Village perd le plus à cause de sa trame (culs-de-sac, détours) et Tremblant à cause de la pente.</p>
+</div>
+<ol class="toc">
+  <li><a href="#question">Question et portée</a></li><li><a href="#donnees">Données</a></li><li><a href="#etapes">Étapes de calcul</a></li>
+  <li><a href="#indicateurs">Indicateurs</a></li><li><a href="#resultats">Résultats</a></li><li><a href="#lecture">Lecture et usages</a></li><li><a href="#limites">Limites et précautions</a></li>
+</ol>
+
+<h2 id="question"><span class="n">1</span>Question et portée</h2>
+<p>L'outil mesure si la forme physique de la ville permet de se déplacer à pied : finesse de la trame de rues, culs-de-sac, taille des îlots, pente des rues et longueur réelle des trajets. Il complète l'outil Milieux de vie complets, qui mesure la présence des services : un service proche à vol d'oiseau n'est pas accessible si la trame impose un long détour ou une côte raide.</p>
+<p>Le relief compte particulièrement à Mont-Tremblant. Une pente de plus de 8 % rend la marche difficile pour bien des aînés, des parents avec poussette et des personnes à mobilité réduite, surtout en hiver.</p>
+<p>L'analyse porte sur les trois périmètres d'urbanisation (PU) du schéma de la MRC des Laurentides : Saint-Jovite, le Village et Tremblant (trois parties). Les résultats sont donnés par îlot de diffusion et par PU.</p>
+
+<h2 id="donnees"><span class="n">2</span>Données</h2>
+<div class="tbl"><table><thead><tr><th class="l">Donnée</th><th class="l">Utilisation</th><th class="l">Source</th></tr></thead><tbody><tr><td class="l">Réseau de rues et de sentiers</td><td class="l">3 808 voies exportées sur les PU et une zone de 300 m autour</td><td class="l">OpenStreetMap (ODbL), export Overpass, octobre 2026</td></tr><tr><td class="l">Pente du terrain</td><td class="l">Raster de 2 m en %, feuillets 31J02NE et 31J02SE</td><td class="l">MRNF, produits dérivés du LiDAR aérien</td></tr><tr><td class="l">Immeubles résidentiels</td><td class="l">3 667 immeubles et 5 219 logements situés dans les PU</td><td class="l">MAMH, rôle d'évaluation foncière 2025</td></tr><tr><td class="l">Périmètres d'urbanisation</td><td class="l">Limites officielles des trois PU</td><td class="l">MRC des Laurentides, schéma d'aménagement</td></tr><tr><td class="l">Îlots de diffusion</td><td class="l">126 îlots, partie comprise dans un PU, dont 105 habités</td><td class="l">Statistique Canada, 2021</td></tr><tr><td class="l">Défavorisation</td><td class="l">Quintiles et quartiles RTS, classe combinée ComRTS, par aire de diffusion</td><td class="l">INSPQ, indice 2021</td></tr><tr><td class="l">Population et revenu</td><td class="l">Population, revenu médian et part de locataires par îlot</td><td class="l">Environics Analytics, DemoStats 2025</td></tr></tbody></table></div>
+
+<h2 id="etapes"><span class="n">3</span>Étapes de calcul</h2>
+<div class="flow"><span>OSM</span><i>→</i><span>Réseaux rue et piéton</span><i>→</i><span>Intersections, culs-de-sac, îlots</span><i>→</i><span>Pente par tronçon</span><i>→</i><span>Temps de marche</span><i>→</i><span>Indicateurs par îlot</span></div>
+
+<div class="step"><div class="k">1</div><div><h3>Construire deux réseaux</h3>
+<p>Les voies d'OpenStreetMap sont découpées à chaque nœud partagé pour former un graphe topologique.</p>
+<ul>
+ <li><b>Réseau de rues</b> : routes principales à locales, rues résidentielles publiques ou privées, ruelles. Les entrées privées, allées de stationnement et voies de service sont exclues. Il sert aux intersections, aux culs-de-sac et aux îlots.</li>
+ <li><b>Réseau piéton</b> : rues, trottoirs, passages piétons, sentiers, pistes cyclables, escaliers et chemins accessibles. La route 117 (voie rapide) et les voies interdites aux piétons sont exclues. Il sert aux trajets et à la pente.</li>
+</ul></div></div>
+
+<div class="step"><div class="k">2</div><div><h3>Repérer intersections, culs-de-sac et îlots</h3>
+<ul>
+ <li>Une <b>intersection</b> est un nœud du réseau de rues relié à trois branches ou plus. Les nœuds à moins de 15 m les uns des autres sont regroupés, pour ne compter qu'une fois un carrefour à chaussées séparées ou un rond-point.</li>
+ <li>Un <b>cul-de-sac</b> est un nœud relié à une seule branche.</li>
+ <li>Les <b>îlots délimités par les rues</b> sont les polygones fermés par le réseau de rues, découpés aux PU. Ceux de moins de 0,1 ha (terre-pleins, îlots de circulation) sont retirés.</li>
+</ul>
+<p class="note">Dans les PU : 457 intersections, 172 culs-de-sac et 157 îlots délimités par les rues.</p></div></div>
+
+<div class="step"><div class="k">3</div><div><h3>Mesurer la pente de chaque tronçon</h3>
+<p>Le réseau piéton est découpé en tronçons de 50 m au plus (17 273 tronçons). La pente du raster LiDAR est lue tous les 2 m le long de chaque tronçon et la médiane est retenue, ce qui atténue l'effet des talus en bordure. Les ponts sont exclus, car le raster y donne la pente du sol sous l'ouvrage. La pente est connue pour 98,6 % des tronçons.</p></div></div>
+
+<div class="step"><div class="k">4</div><div><h3>Calculer le temps de marche</h3>
+<p>La vitesse de marche suit la fonction de Tobler. Comme le raster donne la pente sans son sens, le temps d'un tronçon est la moyenne du temps à la montée et du temps à la descente.</p>
+<div class="formula">vitesse (km/h)   = 6 × exp(−3,5 × |pente + 0,05|)
+temps du tronçon = longueur × ½ × (1 ÷ vitesse(+pente) + 1 ÷ vitesse(−pente))</div>
+<p class="note">Sur le plat, la vitesse est d'environ 5 km/h : 10 minutes correspondent à environ 840 m, d'où le seuil de 800 m à vol d'oiseau, et 15 minutes à 1,2 km.</p></div></div>
+
+<div class="step"><div class="k">5</div><div><h3>Relier chaque logement au cœur de son secteur</h3>
+<p>Chaque immeuble résidentiel est rattaché au nœud le plus proche du réseau piéton. Le plus court chemin est calculé jusqu'au cœur de son PU, deux fois : sur terrain plat et avec la pente.</p>
+<div class="tbl"><table><thead><tr><th class="l">PU</th><th class="l">Cœur du secteur retenu</th></tr></thead><tbody><tr><td class="l">Saint-Jovite</td><td class="l">Rue de Saint-Jovite, noyau commercial</td></tr><tr><td class="l">Village</td><td class="l">Cœur du Village</td></tr><tr><td class="l">Tremblant</td><td class="l">Place Saint-Bernard, village piétonnier</td></tr></tbody></table></div>
+<p>L'indice de détour est calculé pour les immeubles situés à plus de 200 m du cœur, pour éviter les rapports instables sur de très courtes distances.</p></div></div>
+
+<div class="step"><div class="k">6</div><div><h3>Agréger par îlot et par PU</h3>
+<p>Les mesures de trame sont calculées dans un <b>voisinage de marche de 500 m</b> autour de chaque immeuble résidentiel, puis pondérées par le nombre de logements. On décrit ainsi l'environnement que vivent les résidents, et non la forme d'un îlot pris isolément, souvent très petit ou très grand en milieu peu dense. Les îlots sans logement utilisent un point intérieur.</p>
+<p>L'<b>indice de marchabilité morphologique</b> est la moyenne des rangs centiles, parmi les 105 îlots habités, de cinq mesures, multipliée par 100 :</p>
+<ul>
+ <li>densité d'intersections;</li>
+ <li>part de culs-de-sac (rang inversé);</li>
+ <li>taille des îlots (rang inversé);</li>
+ <li>rues à plus de 8 % (rang inversé);</li>
+ <li>indice de détour (rang inversé).</li>
+</ul>
+<p class="note">L'indice est relatif : 100 désigne la forme la plus favorable à la marche à Mont-Tremblant, pas un seuil de qualité. Il compare les îlots entre eux, pas avec d'autres villes.</p></div></div>
+
+<h2 id="indicateurs"><span class="n">4</span>Indicateurs</h2>
+<div class="tbl"><table><thead><tr><th class="l">Indicateur</th><th class="l">Définition</th><th class="l">Unité</th><th class="l">Sens favorable à la marche</th></tr></thead><tbody><tr><td class="l">Densité d'intersections</td><td class="l">Intersections de 3 branches et plus du réseau de rues dans un rayon de 500 m</td><td class="l">par km²</td><td class="l">Plus élevé</td></tr><tr><td class="l">Densité de nœuds avec sentiers</td><td class="l">Même mesure sur le réseau piéton complet (trottoirs, sentiers, passages)</td><td class="l">par km²</td><td class="l">Plus élevé</td></tr><tr><td class="l">Part de culs-de-sac</td><td class="l">Culs-de-sac ÷ (intersections + culs-de-sac), rayon de 500 m</td><td class="l">%</td><td class="l">Plus faible</td></tr><tr><td class="l">Taille des îlots</td><td class="l">Médiane des îlots délimités par les rues dans un rayon de 500 m</td><td class="l">ha</td><td class="l">Plus faible</td></tr><tr><td class="l">Rues à plus de 8 %</td><td class="l">Part de la longueur des rues dont la pente dépasse 8 %, rayon de 500 m</td><td class="l">%</td><td class="l">Plus faible</td></tr><tr><td class="l">Pente moyenne des rues</td><td class="l">Pente moyenne pondérée par la longueur, rayon de 500 m</td><td class="l">%</td><td class="l">Plus faible</td></tr><tr><td class="l">Indice de détour</td><td class="l">Distance sur le réseau piéton ÷ distance à vol d'oiseau jusqu'au cœur du secteur</td><td class="l">rapport</td><td class="l">Proche de 1</td></tr><tr><td class="l">Temps de marche</td><td class="l">Temps jusqu'au cœur du secteur, sur terrain plat et avec la pente</td><td class="l">minutes</td><td class="l">Plus faible</td></tr><tr><td class="l">Logements à distance de marche</td><td class="l">Part des logements à 10 ou 15 min du cœur du secteur</td><td class="l">%</td><td class="l">Plus élevé</td></tr><tr><td class="l">Indice de marchabilité morphologique</td><td class="l">Moyenne des rangs centiles de cinq mesures (voir étape 6)</td><td class="l">0 à 100</td><td class="l">Plus élevé</td></tr><tr><td class="l">Compacité du PU</td><td class="l">Indice de Polsby-Popper : 4π × superficie ÷ périmètre²</td><td class="l">0 à 1</td><td class="l">Plus élevé</td></tr></tbody></table></div>
+
+<h2 id="resultats"><span class="n">5</span>Résultats</h2>
+<p>Valeurs pondérées par les logements, voisinage de 500 m, marche de 10 minutes vers le cœur du secteur.</p>
+<div class="tbl wide"><table><thead><tr><th class="l">Périmètre</th><th>Logements</th><th>Intersections /km²</th><th>Culs-de-sac</th><th>Îlot médian (ha)</th><th>Rues &gt; 8 %</th><th>Détour</th><th>Temps moyen (min)</th><th>À 10 min</th><th>Compacité</th><th>Indice</th></tr></thead><tbody><tr><td class="l">Saint-Jovite</td><td class="num">3 782</td><td class="num">35</td><td class="num">28 %</td><td class="num">3,4</td><td class="num">7 %</td><td class="num">1,43</td><td class="num">22</td><td class="num">23 %</td><td class="num">0,19</td><td class="num">52</td></tr><tr><td class="l">Village</td><td class="num">490</td><td class="num">18</td><td class="num">39 %</td><td class="num">4,3</td><td class="num">33 %</td><td class="num">1,90</td><td class="num">15</td><td class="num">43 %</td><td class="num">0,16</td><td class="num">24</td></tr><tr><td class="l">Tremblant</td><td class="num">947</td><td class="num">21</td><td class="num">24 %</td><td class="num">8,2</td><td class="num">29 %</td><td class="num">1,50</td><td class="num">18</td><td class="num">24 %</td><td class="num">0,10</td><td class="num">34</td></tr><tr class="tot"><td class="l">Ensemble des PU</td><td class="num">5 219</td><td class="num">31</td><td class="num">29 %</td><td class="num">4,2</td><td class="num">13 %</td><td class="num">1,48</td><td class="num">21</td><td class="num">25 %</td><td class="num">–</td><td class="num">46</td></tr></tbody></table></div>
+<h3>Ce que la trame et la pente retranchent</h3>
+<p>Part des logements à 10 minutes de marche du cœur de leur secteur. Les écarts sont arrondis au point de pourcentage.</p>
+<div class="tbl"><table><thead><tr><th class="l">Périmètre</th><th>À vol d'oiseau</th><th>Réseau, terrain plat</th><th>Réseau, avec la pente</th><th>Perte due à la trame</th><th>Perte due à la pente</th></tr></thead><tbody><tr><td class="l">Saint-Jovite</td><td class="num">29 %</td><td class="num">24 %</td><td class="num">23 %</td><td class="num">5 points</td><td class="num">1 point</td></tr><tr><td class="l">Village</td><td class="num">67 %</td><td class="num">44 %</td><td class="num">43 %</td><td class="num">23 points</td><td class="num">1 point</td></tr><tr><td class="l">Tremblant</td><td class="num">44 %</td><td class="num">27 %</td><td class="num">24 %</td><td class="num">17 points</td><td class="num">3 points</td></tr><tr class="tot"><td class="l">Ensemble des PU</td><td class="num">35 %</td><td class="num">26 %</td><td class="num">25 %</td><td class="num">9 points</td><td class="num">2 points</td></tr></tbody></table></div>
+<ul>
+ <li><b>Saint-Jovite</b> a la trame la plus fine (35 intersections par km²) et un centre-ville plutôt plat. Le PU est toutefois étendu : le trajet moyen est de 22 minutes.</li>
+ <li><b>Le Village</b> a la trame la moins favorable : 39 % de culs-de-sac, 33 % de rues à plus de 8 % et un trajet 1,9 fois plus long qu'à vol d'oiseau. Sa petite taille compense en partie.</li>
+ <li><b>Tremblant</b> est le PU où la pente coûte le plus : le temps moyen passe de 15 à 18 minutes. C'est aussi le moins compact (trois parties, Polsby-Popper de 0,10). Les sentiers y triplent presque la densité de nœuds (66 par km² au lieu de 21).</li>
+</ul>
+
+<h2 id="lecture"><span class="n">6</span>Lecture et usages pour l'ÉIS</h2>
+<div class="callout"><h3>Repères de lecture</h3><ul>
+ <li>Une densité d'intersections de plus de 50 par km² est généralement associée à une trame favorable à la marche. Les PU de Mont-Tremblant en sont loin, sauf au cœur de Saint-Jovite.</li>
+ <li>Une pente de plus de 5 % est déjà exigeante pour les personnes à mobilité réduite. Au-delà de 8 %, elle devient un obstacle, en particulier en hiver.</li>
+ <li>Un indice de détour de plus de 1,5 signale une trame en boucles et en culs-de-sac qui allonge les trajets.</li>
+</ul></div>
+<ul>
+ <li><b>Liens piétons.</b> Relier des culs-de-sac par des sentiers raccourcit les trajets sans ouvrir de rues. L'outil repère les secteurs où l'écart entre vol d'oiseau et réseau est le plus grand.</li>
+ <li><b>Localisation de la densification.</b> Densifier là où la trame est fine et la pente faible maximise le nombre de résidents qui peuvent se passer de l'auto. À lire avec l'outil Densifier sans nuire.</li>
+ <li><b>Accessibilité universelle.</b> Les rues à plus de 8 % près des résidences pour aînés, des écoles et des services méritent un traitement particulier : entretien hivernal prioritaire, mains courantes, bancs, trajets de rechange.</li>
+ <li><b>Équité.</b> Croiser l'indice avec la défavorisation (ComRTS, QuintMatRTS, QuintSocRTS) repère les ménages qui dépendent le plus de la marche et habitent une trame peu favorable.</li>
+</ul>
+
+<h2 id="limites"><span class="n">7</span>Limites et précautions</h2>
+<ul>
+ <li><b>Pente du terrain, pas de la chaussée.</b> Le LiDAR décrit le sol : les remblais, déblais et dévers peuvent faire différer la pente lue de celle du trottoir. La médiane sur chaque tronçon réduit cet effet sans l'éliminer.</li>
+ <li><b>Pente sans direction.</b> Le temps de marche fait la moyenne de la montée et de la descente. Un trajet surtout en montée est donc sous-estimé.</li>
+ <li><b>Qualité du réseau OpenStreetMap.</b> Des sentiers informels peuvent manquer, et certaines voies privées de la station peuvent être fermées au public. Les trottoirs ne sont pas tous cartographiés.</li>
+ <li><b>Conditions non évaluées.</b> La sécurité des traversées, l'éclairage, la largeur et l'entretien des trottoirs, la vitesse automobile et l'hiver ne sont pas mesurés.</li>
+ <li><b>Un seul cœur par secteur.</b> Les trajets sont mesurés vers un point central par PU, pas vers chaque service. L'accès aux services relève de l'outil Milieux de vie complets.</li>
+ <li><b>Indice relatif.</b> L'indice de marchabilité morphologique compare les îlots de Mont-Tremblant entre eux et dépend des cinq mesures retenues et de leur poids égal.</li>
+ <li><b>Logements du rôle.</b> Ils incluent les résidences de tourisme et les résidences secondaires, sans distinguer la population permanente.</li>
+</ul>
+
+<footer>
+  Direction de santé publique, Santé Québec Laurentides · Évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant · Suite C.A.R.T.O.S.<br>
+  Méthode : Tobler, W. (1993). <i>Three presentations on geographical analysis and modeling</i>. NCGIA, Technical Report 93-1 (fonction de vitesse de marche).<br>
+  Sources : OpenStreetMap et ses contributeurs (ODbL), octobre 2026 · MRNF, produits dérivés du LiDAR aérien, pentes (feuillets 31J02NE et 31J02SE) · MAMH, rôle d'évaluation foncière 2025 · MRC des Laurentides, périmètres d'urbanisation · Statistique Canada, îlots de diffusion 2021 · INSPQ, indice de défavorisation matérielle et sociale 2021 · Environics Analytics, DemoStats 2025. Outil d'aide à la décision, non réglementaire.
+</footer>
+</article>
+</body>
+</html>
