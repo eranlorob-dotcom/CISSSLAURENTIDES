@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -172,7 +173,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
   <h1>Outils cartographiques de l'ÉIS <span>Mont-Tremblant</span></h1>
   <p>Applications interactives produites pour l'évaluation d'impact sur la santé du plan d'urbanisme de la Ville de Mont-Tremblant. Chaque outil documente un enjeu que les cartes du plan ne couvrent pas et précise sa méthode, ses limites et ses sources.</p>
   <div class="stats">
-    <div class="stat"><div class="n" id="nApps">0</div><div class="l">applications</div></div>
+    <div class="stat"><div class="n" id="nApps">15</div><div class="l">applications</div></div>
     <div class="stat"><div class="n" id="nThemes">0</div><div class="l">thèmes</div></div>
   </div>
 </section>
@@ -188,7 +189,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
 <footer>
   <div class="foot">
     <span>CISSS des Laurentides · Direction de santé publique · Outils d'aide à la décision, non réglementaires</span>
-    <span>Mise à jour <span class="mono">2026-10-02</span></span>
+    <span>Mise à jour <span class="mono">2026-10-13</span></span>
   </div>
 </footer>
 
@@ -217,13 +218,25 @@ var APPS = [
     desc:"Flux domicile-travail vers et depuis Mont-Tremblant, comparaison 2016 et 2021, distances parcourues, mode et durée du trajet.",
     tags:['Recensements 2016 et 2021','Flux par municipalité'] },
 
-  { theme:'hab', ico:'H', file:'logement_mont_tremblant.html',
+  { theme:'pop', ico:'B', file:'arrets_marche_mont_tremblant.html',
+    title:'Marcher jusqu\u2019à l\u2019arrêt',
+    q:'Qui peut se rendre à pied à un arrêt de transport collectif?',
+    desc:"Aire de marche réelle autour de chaque arrêt de BUS Mont-Tremblant et de L\u2019Inter, avec la pente, comparée au cercle théorique : résidents desservis selon la durée de marche, profil de défavorisation et nombre de passages par jour.",
+    tags:['GTFS TCMT et TACL 2026','OpenStreetMap et LiDAR','Défavorisation RTS'] },
+
+  { theme:'pop', ico:'P', file:'population_pointe_tremblant.html',
+    title:'Population de pointe et capacité d\u2019accueil',
+    q:'Qui est vraiment là en haute saison?',
+    desc:"Résidents, villégiateurs, touristes et travailleurs présents en haute saison, par îlot et selon trois scénarios saisonniers, comparés aux épiceries, aux parcs et aux sentiers qui les desservent.",
+    tags:['Rôle 2025','DemoStats 2025 (jour et nuit)','Îlots de diffusion'] },
+
+  { theme:'hab', ico:'H', file:'logement_mont_tremblant.html', methode:'fiches_besoins_logements.html',
     title:'Besoins en logement par secteur',
     q:'Combien de logements faudra-t-il, et où?',
     desc:"Simulation des logements requis selon les scénarios de ménages de l\u2019ISQ, l\u2019horizon et le taux d\u2019inoccupation visé, avec répartition entre secteurs et croissance dirigée vers les périmètres urbains.",
     tags:['ISQ 2025','Environics 2025','Scénarios'] },
 
-  { theme:'hab', ico:'T', file:'parc_non_permanent_tremblant.html',
+  { theme:'hab', ico:'T', file:'parc_non_permanent_tremblant.html', methode:'fiches_residences_touristes.html',
     title:'Le parc qui échappe aux résidents',
     q:'Quelle part du parc de logements n\u2019est pas occupée par des ménages?',
     desc:"Logements non occupés par des ménages et résidences de tourisme par îlot, confrontés aux règles du plan d\u2019urbanisme (centre-ville et village, secteurs riverains, proximité des golfs).",
