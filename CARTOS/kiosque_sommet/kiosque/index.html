@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiosque SQVMM · Sommet des Laurentides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bleu:#170A72; --menthe:#90F1E9; --sarcelle:#08A0A0; --azur:#0080D7; --blanc:#FFFFFF;
+  --menthe-pale:#C7F8F4; --azur-pale:#CCECFF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bleu);overflow:hidden;color:#fff;
+  font-family:"Inclusive Sans","Segoe UI",sans-serif}
+body.nocursor, body.nocursor *{cursor:none!important}
+
+.scene{position:fixed;inset:0;opacity:0;pointer-events:none;transition:opacity .9s ease}
+.scene.on{opacity:1;pointer-events:auto}
+iframe.scene{border:0;width:100%;height:100%;background:#0f2226}
+
+/* Diapos : scène fixe 1920 × 1080 mise à l'échelle */
+.slide{display:flex;align-items:center;justify-content:center;background:var(--bleu)}
+.stage{width:1920px;height:1080px;flex:none;position:relative;transform-origin:center center;overflow:hidden}
+
+.logo{position:absolute;left:46px;top:30px;width:470px;height:218px}
+.h1{font-family:"Neulis Sans","Segoe UI","Inclusive Sans",sans-serif;font-weight:700;letter-spacing:-.5px}
+.pill{display:inline-block;font-weight:700;font-size:30px;padding:10px 28px;border-radius:40px;margin:0 14px 14px 0}
+.pill.a{background:var(--menthe);color:var(--bleu)}
+.pill.b{border:3px solid var(--menthe);padding:7px 25px;color:#fff}
+.qr{background:#fff;border-radius:22px;padding:22px;width:236px;height:236px}
+.qr img{width:192px;height:192px;display:block}
+.qrcap{color:var(--menthe);font-weight:700;font-size:24px;text-align:center;margin-top:12px;width:236px}
+
+/* Diapo 1 : offre de service */
+#s-offre .left{position:absolute;left:110px;top:250px;width:780px}
+#s-offre .left .h1{font-size:76px;line-height:1.05;margin:0 0 26px}
+#s-offre .bar{width:180px;height:10px;border-radius:5px;background:var(--menthe);margin-bottom:26px}
+#s-offre .mission{font-size:30px;line-height:1.4;margin:12px 0 0}
+#s-offre .pill{font-size:25px;padding:8px 22px;margin:0 10px 10px 0}
+#s-offre .pill.b{padding:5px 19px}
+#s-offre .qr{width:200px;height:200px;padding:20px}
+#s-offre .qr img{width:160px;height:160px}
+#s-offre .qrbox{position:absolute;left:110px;bottom:60px;display:flex;align-items:center;gap:26px}
+#s-offre .qrbox .qrcap{width:auto;text-align:left;font-size:28px;margin:0}
+#s-offre .right{position:absolute;right:70px;top:70px;bottom:70px;width:900px;background:#fff;border-radius:36px;
+  color:var(--bleu);padding:54px 56px}
+#s-offre .right h2{font-family:"Neulis Sans","Segoe UI","Inclusive Sans",sans-serif;font-size:52px;margin:0 0 34px}
+.svc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 36px}
+.svc>div{display:flex;gap:20px;align-items:flex-start}
+.svc svg{flex:0 0 74px;width:74px;height:74px}
+.svc b{display:block;font-family:"Neulis Sans","Segoe UI","Inclusive Sans",sans-serif;font-size:29px;line-height:1.1;margin:4px 0 8px}
+.svc span{font-size:22px;line-height:1.35}
+.svc>div{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.on .svc>div{opacity:1;transform:none}
+.on .svc>div:nth-child(1){transition-delay:.6s}.on .svc>div:nth-child(2){transition-delay:1.1s}
+.on .svc>div:nth-child(3){transition-delay:1.6s}.on .svc>div:nth-child(4){transition-delay:2.1s}
+.on .svc>div:nth-child(5){transition-delay:2.6s}.on .svc>div:nth-child(6){transition-delay:3.1s}
+
+/* Diapo intertitre */
+.inter .box{position:absolute;left:110px;right:110px;top:300px}
+.inter .k{font-size:30px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--menthe);margin-bottom:24px}
+.inter .h1{font-size:96px;line-height:1.05;margin:0 0 30px}
+.inter p{font-size:36px;line-height:1.4;max-width:1400px;margin:0 0 40px}
+.chips span{display:inline-block;background:#fff;color:var(--bleu);font-weight:600;font-size:28px;padding:12px 30px;border-radius:40px;margin:0 16px 16px 0}
+
+/* Diapo recherche */
+#s-recherche .card{position:absolute;left:110px;top:270px;width:1700px;background:var(--azur);border-radius:36px;padding:56px 64px;display:flex;gap:50px}
+#s-recherche .card svg{flex:0 0 130px;width:130px;height:130px}
+#s-recherche .k{font-size:30px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+#s-recherche .h1{font-size:64px;line-height:1.08;margin:14px 0 18px}
+#s-recherche p{font-size:30px;line-height:1.4;margin:0 0 20px}
+#s-recherche .fund{font-size:26px;font-weight:600;border-top:3px solid rgba(255,255,255,.5);padding-top:18px}
+#s-recherche .foot{position:absolute;left:110px;right:110px;bottom:64px;display:flex;align-items:flex-end;justify-content:space-between}
+#s-recherche .cta .h1{font-size:56px;margin:0 0 6px}
+#s-recherche .cta .m{font-size:38px;font-weight:700;color:var(--menthe);margin-bottom:22px}
+#s-recherche .cta .dsp{font-size:30px;font-weight:600}
+#s-recherche .rt{display:flex;align-items:flex-end;gap:44px}
+#s-recherche .cares{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:20px;font-weight:600}
+#s-recherche .cares div{background:#fff;border-radius:18px;padding:26px 30px}
+#s-recherche .cares img{width:190px;display:block}
+
+/* Étiquette vidéo */
+#vlabel{position:fixed;left:28px;bottom:26px;z-index:5;background:rgba(23,10,114,.92);border-radius:16px;padding:14px 22px;
+  font-size:20px;opacity:0;transition:opacity .6s;pointer-events:none}
+#vlabel b{display:block;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--menthe);margin-bottom:4px}
+#vlabel.on{opacity:1}
+#yt{position:fixed;inset:0;width:100%;height:100%}
+
+/* Barre de progression des scènes */
+#dots{position:fixed;right:22px;top:18px;z-index:6;display:flex;gap:8px;opacity:.85}
+#dots i{width:10px;height:10px;border-radius:5px;background:rgba(255,255,255,.35);transition:all .4s}
+#dots i.on{background:var(--menthe);width:28px}
+#hint{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;background:#fff;color:var(--bleu);
+  border-radius:24px;padding:34px 44px;font-size:24px;line-height:1.5;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+#hint b{font-size:32px;display:block;margin-bottom:10px}
+#hint kbd{background:var(--menthe-pale);border-radius:6px;padding:2px 8px;font-family:inherit;font-weight:700}
+#paused{position:fixed;left:50%;top:22px;transform:translateX(-50%);z-index:7;background:#FFCF00;color:var(--bleu);
+  font-weight:700;border-radius:20px;padding:8px 20px;font-size:18px;display:none}
+</style>
+</head>
+<body>
+
+<!-- 1. Offre de service -->
+<section class="scene slide" id="s-offre" aria-label="Offre de service de l'équipe SQVMM">
+ <div class="stage">
+  <img class="logo" src="assets/logo-sq-inverse.svg" alt="Logo de Santé Québec, composé du nom « Santé Québec » et d’un symbole graphique.">
+  <div class="left">
+   <div class="h1" style="font-size:66px;line-height:1.05;margin:0 0 24px">Santé et qualité de vie en milieu municipal</div>
+   <div class="bar"></div>
+   <span class="pill a">Équipe SQVMM</span><span class="pill b">Équipe santé environnementale</span>
+   <p class="mission">Nous mobilisons, soutenons et accompagnons les municipalités et les MRC pour créer des milieux de vie favorables à la santé.</p>
+  </div>
+  <div class="qrbox">
+   <div class="qr"><img src="assets/qr-site-dsp.svg" alt="Code QR menant au site de la santé publique des Laurentides"></div>
+   <div class="qrcap">Balayez pour<br>en savoir plus</div>
+  </div>
+  <div class="right">
+   <h2>Notre offre de service</h2>
+   <div class="svc">
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="#170A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7.5" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15.5 4.8a2.6 2.6 0 0 1 0 5.2"/><path d="M17.5 14.3c2.2.5 3.5 2.4 3.5 4.7"/><circle cx="21" cy="19.6" r="1.875" fill="#0080D7" stroke="#FFFFFF" stroke-width="0.75"/></svg>
+     <div><b>Liaison et mobilisation</b><span>Réunir les acteurs municipaux et intersectoriels autour de projets favorables à la santé.</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="#170A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h7.5l4.5 4.5V21h-12z"/><path d="M14 3v4.5h4.5"/><path d="M9.5 12.5h6"/><path d="M9.5 16.5h4"/><circle cx="16.4" cy="16.5" r="1.875" fill="#0080D7" stroke="#FFFFFF" stroke-width="0.75"/></svg>
+     <div><b>Politiques municipales</b><span>MADA, familiales, alimentaires, mobilité durable, logement, développement social.</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="#170A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-6.5"/><path d="M12 14.5c-3.3 0-6-2.2-6-5.5S8.7 3 12 3s6 2.7 6 6-2.7 5.5-6 5.5z"/><path d="M3.5 21h13"/><circle cx="19.6" cy="21" r="1.875" fill="#0080D7" stroke="#FFFFFF" stroke-width="0.75"/></svg>
+     <div><b>Aménagement et espaces publics</b><span>Parcs, verdissement, îlots de chaleur et transport actif.</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="#170A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3l3.7 3.7"/><path d="M7 10.5h2l1-2 1.5 4 1-2h1.5"/><circle cx="20.6" cy="20.6" r="1.875" fill="#0080D7" stroke="#FFFFFF" stroke-width="0.75"/></svg>
+     <div><b>Évaluation d'impact sur la santé</b><span>Anticiper les effets d'un plan ou d'un projet sur la santé et l'équité.</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="#170A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5l6-3 6 3 6-3V17"/><path d="M21 17l-6 3-6-3-6 3V6.5"/><path d="M9 3.5V17"/><path d="M15 6.5V20"/><circle cx="21" cy="20.3" r="1.875" fill="#0080D7" stroke="#FFFFFF" stroke-width="0.75"/></svg>
+     <div><b>Schémas d'aménagement</b><span>Analyse de conformité aux OGAT du point de vue de la santé publique.</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="#170A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-8"/><path d="M10 20V5"/><path d="M15 20v-6"/><path d="M3 20h14"/><circle cx="20" cy="20" r="1.875" fill="#0080D7" stroke="#FFFFFF" stroke-width="0.75"/></svg>
+     <div><b>Données et portraits territoriaux</b><span>Portraits de santé, cartographie et outils d'aide à la décision.</span></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- Intertitre vidéo -->
+<section class="scene slide inter" id="s-video-titre" aria-label="Vidéo">
+ <div class="stage">
+  <img class="logo" src="assets/logo-sq-inverse.svg" alt="Logo de Santé Québec, composé du nom « Santé Québec » et d’un symbole graphique.">
+  <div class="box">
+   <div class="k">Vidéo</div>
+   <div class="h1">Des environnements favorables à la santé</div>
+   <p>Comment l’aménagement de nos milieux de vie influence la santé et la qualité de vie de la population.</p>
+  </div>
+ </div>
+</section>
+
+<!-- Vidéo YouTube -->
+<section class="scene" id="s-video" aria-label="Vidéo des environnements favorables"><div id="yt"></div></section>
+
+<!-- Intertitre cartes -->
+<section class="scene slide inter" id="s-cartes" aria-label="Outils cartographiques">
+ <div class="stage">
+  <img class="logo" src="assets/logo-sq-inverse.svg" alt="Logo de Santé Québec, composé du nom « Santé Québec » et d’un symbole graphique.">
+  <div class="box">
+   <div class="k">En développement · Cartographie interactive</div>
+   <div class="h1">Des données pour orienter l’aménagement</div>
+   <p>Trois outils conçus pour l’évaluation d’impact sur la santé du plan d’urbanisme de Mont-Tremblant.</p>
+   <div class="chips"><span>Forme urbaine et marche</span><span>Marcher jusqu’à l’arrêt</span><span>Milieux de vie complets</span></div>
+  </div>
+ </div>
+</section>
+
+<!-- Cartes (préchargées) -->
+<iframe class="scene" id="m-forme" title="Carte : forme urbaine de Mont-Tremblant" src="cartes/forme_urbaine_tremblant.html"></iframe>
+<iframe class="scene" id="m-arrets" title="Carte : marcher jusqu'à l'arrêt à Mont-Tremblant" src="cartes/arrets_marche_mont_tremblant.html"></iframe>
+<iframe class="scene" id="m-mvc" title="Carte : milieux de vie complets à Mont-Tremblant" src="cartes/Milieux_de_vie_complets_Mont-Tremblant.html"></iframe>
+
+<!-- Volet recherche + contact -->
+<section class="scene slide" id="s-recherche" aria-label="Volet recherche et contact">
+ <div class="stage">
+  <img class="logo" src="assets/logo-sq-inverse.svg" alt="Logo de Santé Québec, composé du nom « Santé Québec » et d’un symbole graphique.">
+  <div class="card">
+   <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6"/><path d="M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7.5 14h7"/><circle cx="17.2" cy="14" r="1.875" fill="#90F1E9" stroke="#0080D7" stroke-width="0.75"/></svg>
+   <div>
+    <div class="k">Volet recherche</div>
+    <div class="h1">Accompagner les organismes municipaux</div>
+    <p>Un projet de la Direction de la recherche et de l'enseignement sur l'accompagnement des organismes municipaux dans le développement et la création d'environnements favorables à la santé.</p>
+    <div class="fund">Financé par le Réseau Communautés rurales et éloignées en santé (CARES)</div>
+   </div>
+  </div>
+  <div class="foot">
+   <div class="cta">
+    <div class="h1">Un projet dans votre milieu?</div>
+    <div class="m">Parlons-en.</div>
+    <div class="dsp">Direction de santé publique des Laurentides</div>
+   </div>
+   <div class="rt">
+    <div><div class="qr"><img src="assets/qr-site-dsp.svg" alt="Code QR menant au site de la santé publique des Laurentides"></div><div class="qrcap">Balayez pour en savoir plus</div></div>
+    <div class="cares">Avec le soutien de<div><img src="assets/logo-cares.png" alt="Logo du CARES"></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<div id="vlabel"><b>Vidéo</b>Environnements favorables à la santé</div>
+<div id="dots" aria-hidden="true"></div>
+<div id="paused">Pause · un visiteur explore la carte</div>
+<div id="hint"><b>Kiosque SQVMM</b>Cliquez n’importe où pour démarrer en plein écran.<br>
+<kbd>→</kbd> scène suivante · <kbd>←</kbd> précédente · <kbd>Espace</kbd> pause · <kbd>M</kbd> son de la vidéo · <kbd>F</kbd> plein écran</div>
+
+<script>
+/* ====== Réglages ====== */
+var CONFIG = {
+  youtubeId: '7l8yllIcCoA',   // vidéo des environnements favorables
+  videoMuted: true,           // le son peut être activé avec la touche M
+  videoMaxMs: 15 * 60000,     // sécurité si la fin de la vidéo n'est pas détectée
+  mapMaxMs: 3 * 60000         // durée maximale d'une carte (hors interaction d'un visiteur)
+};
+var SCENES = [
+  { id: 's-offre',       type: 'slide', ms: 24000 },
+  { id: 's-video-titre', type: 'slide', ms: 5000 },
+  { id: 's-video',       type: 'video' },
+  { id: 's-cartes',      type: 'slide', ms: 8000 },
+  { id: 'm-forme',       type: 'map' },
+  { id: 'm-arrets',      type: 'map' },
+  { id: 'm-mvc',         type: 'map' },
+  { id: 's-recherche',   type: 'slide', ms: 16000 }
+];
+
+/* ====== Moteur ====== */
+var cur = -1, timer = null, paused = false, userHold = false, started = false, ready = {}, ytPlayer = null, ytOk = false;
+
+function fit(){
+  var s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  document.querySelectorAll('.stage').forEach(function(el){ el.style.transform = 'scale(' + s + ')'; });
+}
+addEventListener('resize', fit); fit();
+
+var dots = document.getElementById('dots');
+SCENES.forEach(function(){ dots.appendChild(document.createElement('i')); });
+
+function el(i){ return document.getElementById(SCENES[i].id); }
+function frame(i){ var e = el(i); return e && e.tagName === 'IFRAME' ? e.contentWindow : null; }
+function send(i, type){ var w = frame(i); if (w) w.postMessage({ kiosque: true, type: type }, '*'); }
+
+function arm(ms){ clearTimeout(timer); timer = setTimeout(next, ms); }
+
+function show(i){
+  var prev = cur;
+  if (prev >= 0){
+    el(prev).classList.remove('on');
+    if (SCENES[prev].type === 'map') send(prev, 'stop');
+    if (SCENES[prev].type === 'video') stopVideo();
+  }
+  cur = (i + SCENES.length) % SCENES.length;
+  var sc = SCENES[cur];
+  userHold = false; document.getElementById('paused').style.display = 'none';
+  el(cur).classList.add('on');
+  dots.querySelectorAll('i').forEach(function(d, k){ d.classList.toggle('on', k === cur); });
+  if (sc.id === 's-video-titre' && !ytOk){ el(cur).classList.remove('on'); cur = cur; return show(cur + 1); }
+  if (sc.type === 'slide') arm(sc.ms);
+  if (sc.type === 'map'){ send(cur, 'start'); arm(CONFIG.mapMaxMs); }
+  if (sc.type === 'video'){ if (!playVideo()) { arm(400); } else arm(CONFIG.videoMaxMs); }
+}
+function next(){ if (!paused) show(cur + 1); else arm(2000); }
+
+window.addEventListener('message', function(e){
+  var d = e.data || {};
+  if (!d.kiosque) return;
+  var idx = SCENES.findIndex(function(s){ var f = frame(SCENES.indexOf(s)); return f && f === e.source; });
+  if (d.type === 'ready' && idx >= 0) ready[SCENES[idx].id] = true;
+  if (idx !== cur) return;
+  if (d.type === 'done' && !userHold) arm(1200);
+  if (d.type === 'user'){ userHold = true; clearTimeout(timer); document.getElementById('paused').style.display = 'block'; }
+  if (d.type === 'resume'){ userHold = false; document.getElementById('paused').style.display = 'none'; arm(1500); }
+});
+
+/* ====== Vidéo YouTube ====== */
+function onYouTubeIframeAPIReady(){
+  ytPlayer = new YT.Player('yt', {
+    videoId: CONFIG.youtubeId,
+    playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, cc_load_policy: 1, hl: 'fr', cc_lang_pref: 'fr' },
+    events: {
+      onReady: function(){ ytOk = true; if (CONFIG.videoMuted) ytPlayer.mute(); },
+      onStateChange: function(ev){ if (ev.data === YT.PlayerState.ENDED && SCENES[cur].type === 'video') arm(800); },
+      onError: function(){ ytOk = false; if (SCENES[cur] && SCENES[cur].type === 'video') arm(400); }
+    }
+  });
+}
+function playVideo(){
+  if (!ytOk || !ytPlayer) return false;
+  try { ytPlayer.seekTo(0, true); ytPlayer.playVideo(); } catch (e) { return false; }
+  document.getElementById('vlabel').classList.add('on');
+  setTimeout(function(){ document.getElementById('vlabel').classList.remove('on'); }, 8000);
+  return true;
+}
+function stopVideo(){ try { ytPlayer && ytPlayer.pauseVideo(); } catch (e) {} document.getElementById('vlabel').classList.remove('on'); }
+(function(){ var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s); })();
+
+/* ====== Commandes ====== */
+function begin(){
+  if (started) return;
+  started = true;
+  document.getElementById('hint').style.display = 'none';
+  try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); } catch (e) {}
+  show(0);
+}
+document.getElementById('hint').addEventListener('click', begin);
+addEventListener('keydown', function(e){
+  if (!started){ begin(); return; }
+  if (e.key === 'ArrowRight') show(cur + 1);
+  else if (e.key === 'ArrowLeft') show(cur - 1);
+  else if (e.key === ' '){ paused = !paused; e.preventDefault(); document.getElementById('paused').textContent = 'Pause'; document.getElementById('paused').style.display = paused ? 'block' : 'none'; if (!paused) arm(1000); }
+  else if (e.key === 'm' || e.key === 'M'){ try { ytPlayer.isMuted() ? ytPlayer.unMute() : ytPlayer.mute(); } catch (x) {} }
+  else if (e.key === 'f' || e.key === 'F'){ try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); } catch (x) {} }
+});
+/* Démarrage automatique après 20 s si personne ne clique */
+setTimeout(begin, 20000);
+/* Curseur masqué après 3 s d'inactivité */
+var ct; addEventListener('mousemove', function(){ document.body.classList.remove('nocursor'); clearTimeout(ct); ct = setTimeout(function(){ document.body.classList.add('nocursor'); }, 3000); });
+</script>
+</body>
+</html>

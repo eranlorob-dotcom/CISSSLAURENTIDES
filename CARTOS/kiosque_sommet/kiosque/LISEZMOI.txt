@@ -1,0 +1,35 @@
+KIOSQUE SQVMM · Sommet des Laurentides (26 octobre 2026)
+=========================================================
+
+Contenu
+- index.html : la diffusion en boucle (offre de service, vidéo, 3 cartes animées, volet recherche).
+- cartes/ : copies des trois outils de Mont-Tremblant, avec une visite automatique ajoutée à la fin.
+  Les originaux du dépôt ne sont pas modifiés.
+- assets/ : logo Santé Québec, logo CARES, code QR du site de la santé publique.
+
+Mise en ligne (recommandée)
+1. Copier le dossier « kiosque » à la racine du dépôt CISSSLAURENTIDES sur GitHub.
+2. Ouvrir https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/kiosque/ dans Chrome ou Edge.
+3. Cliquer une fois dans la page : elle passe en plein écran et démarre.
+   (Sans clic, elle démarre seule après 20 secondes, mais sans plein écran.)
+
+Commandes au clavier
+- Flèche droite / gauche : scène suivante / précédente
+- Espace : pause
+- M : activer ou couper le son de la vidéo (coupé par défaut)
+- F : plein écran
+
+Interaction des visiteurs
+- Si quelqu'un touche ou fait défiler une carte, la visite s'arrête et la boucle attend.
+- Après 45 secondes sans interaction, la diffusion reprend d'elle-même.
+
+Connexion Internet requise
+- Fonds de carte, bibliothèques cartographiques, vidéo YouTube et polices viennent d'Internet.
+- La carte « Milieux de vie complets » interroge OpenStreetMap en direct (moins d'une minute).
+  Si la requête échoue, la visite affiche la couche de densité et passe à la suite.
+- Si YouTube n'est pas joignable, la vidéo est sautée automatiquement.
+- Prévoir un partage de connexion cellulaire en secours si le Wi-Fi du Sommet est instable.
+
+Tester une seule carte animée
+- Ajouter ?kiosque à l'adresse, par exemple :
+  .../kiosque/cartes/forme_urbaine_tremblant.html?kiosque
