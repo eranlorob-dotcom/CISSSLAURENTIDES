@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hospitalisations respiratoires, Laurentides</title>
+<!-- GAE703 · Séance 7 · Activité 3 « Trouver l'erreur ».
+     Carte volontairement erronée, données fictives. Corrigé dans le doc Wooclap de la séance 7. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1d2433; background: #f6f7f9; }
+  #carte { position: absolute; inset: 0; }
+  .panneau { background: #fff; border: 1px solid #d9dde4; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.12); padding: 12px 14px; }
+  #entete { position: absolute; top: 12px; left: 56px; z-index: 1000; max-width: min(430px, calc(100% - 72px)); }
+  #entete h1 { font-size: 1.1rem; margin: 0 0 4px; line-height: 1.25; }
+  #entete p { margin: 2px 0; font-size: .82rem; color: #5a6475; }
+  .legende { font-size: .8rem; line-height: 1.4; min-width: 170px; }
+  .legende h2 { font-size: .85rem; margin: 0 0 6px; }
+  .legende .ligne { display: flex; align-items: center; gap: 8px; }
+  .legende .case { width: 18px; height: 14px; border: 1px solid rgba(0,0,0,.25); }
+  .legende .point { width: 10px; height: 10px; border-radius: 50%; background: #111; margin: 0 4px; }
+  .legende .methode { margin-top: 6px; color: #5a6475; }
+  #pied { position: absolute; left: 12px; bottom: 10px; z-index: 1000; font-size: .72rem; color: #5a6475; background: rgba(255,255,255,.85); padding: 3px 8px; border-radius: 4px; }
+  .leaflet-popup-content td { padding: 1px 8px 1px 0; }
+  .leaflet-popup-content td:last-child { font-weight: 600; text-align: right; }
+  @media (max-width: 600px) { #entete { left: 12px; top: 64px; max-width: calc(100% - 24px); } }
+</style>
+</head>
+<body>
+<div id="carte"></div>
+<div id="entete" class="panneau">
+  <h1>Taux d'hospitalisation pour maladies respiratoires, Laurentides, 2023</h1>
+  <p>Source : Statistique Canada, Recensement de la population 2021.</p>
+  <p>Projection : NAD83 / Québec Lambert (EPSG:32198).</p>
+</div>
+<div id="pied">Exercice GAE703, séance 7 : données fictives</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const secteurs = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"NOM":"Secteur A","POP":128400,"N_HOSP":410,"TAUX":3.2},"geometry":{"type":"Polygon","coordinates":[[[-74.1177,45.55],[-73.9883,45.5515],[-73.7807,45.5426],[-73.65,45.55],[-73.6443,45.6951],[-73.6764,45.8568],[-73.65,46.0167],[-73.7764,45.9947],[-73.9496,45.9752],[-74.0998,45.9678],[-74.123,45.8177],[-74.0826,45.6849],[-74.1177,45.55]]]}},{"type":"Feature","properties":{"NOM":"Secteur B","POP":21300,"N_HOSP":40,"TAUX":1.9},"geometry":{"type":"Polygon","coordinates":[[[-74.4619,45.8898],[-74.3636,45.9178],[-74.2081,45.926],[-74.0998,45.9678],[-74.0362,46.1131],[-74.0102,46.2197],[-73.9694,46.3608],[-74.1283,46.3529],[-74.3302,46.3406],[-74.5237,46.3394],[-74.519,46.1756],[-74.4961,46.0202],[-74.4619,45.8898]]]}},{"type":"Feature","properties":{"NOM":"Secteur C","POP":9800,"N_HOSP":27,"TAUX":2.8},"geometry":{"type":"Polygon","coordinates":[[[-75.25,46.3011],[-75.1217,46.2977],[-75.001,46.2974],[-74.8742,46.2881],[-74.8936,46.4412],[-74.8749,46.616],[-74.8487,46.75],[-74.9987,46.7693],[-75.1382,46.7606],[-75.25,46.75],[-75.2314,46.5911],[-75.2557,46.4383],[-75.25,46.3011]]]}},{"type":"Feature","properties":{"NOM":"Secteur D","POP":64200,"N_HOSP":205,"TAUX":3.2},"geometry":{"type":"Polygon","coordinates":[[[-74.5333,45.55],[-74.4237,45.5335],[-74.2588,45.5445],[-74.1177,45.55],[-74.0826,45.6849],[-74.123,45.8177],[-74.0998,45.9678],[-74.2081,45.926],[-74.3636,45.9178],[-74.4619,45.8898],[-74.4944,45.7721],[-74.4931,45.6459],[-74.5333,45.55]]]}},{"type":"Feature","properties":{"NOM":"Secteur E","POP":17600,"N_HOSP":41,"TAUX":2.3},"geometry":{"type":"Polygon","coordinates":[[[-74.927,45.955],[-74.7585,45.9416],[-74.6291,45.8939],[-74.4619,45.8898],[-74.4961,46.0202],[-74.519,46.1756],[-74.5237,46.3394],[-74.6515,46.3168],[-74.7415,46.3078],[-74.8742,46.2881],[-74.9149,46.1607],[-74.8904,46.0516],[-74.927,45.955]]]}},{"type":"Feature","properties":{"NOM":"Secteur F","POP":850,"N_HOSP":4,"TAUX":4.7},"geometry":{"type":"Polygon","coordinates":[[[-75.25,45.55],[-75.1015,45.5687],[-74.9649,45.5343],[-74.8228,45.55],[-74.8375,45.6665],[-74.9191,45.8083],[-74.927,45.955],[-75.0082,45.9387],[-75.1702,45.926],[-75.25,45.9253],[-75.2282,45.8136],[-75.2715,45.6741],[-75.25,45.55]]]}},{"type":"Feature","properties":{"NOM":"Secteur G","POP":33900,"N_HOSP":96,"TAUX":2.8},"geometry":{"type":"Polygon","coordinates":[[[-74.0998,45.9678],[-73.9496,45.9752],[-73.7764,45.9947],[-73.65,46.0167],[-73.6402,46.0954],[-73.6434,46.1905],[-73.65,46.2865],[-73.7846,46.3094],[-73.853,46.3461],[-73.9694,46.3608],[-74.0102,46.2197],[-74.0362,46.1131],[-74.0998,45.9678]]]}},{"type":"Feature","properties":{"NOM":"Secteur H","POP":12400,"N_HOSP":25,"TAUX":2.0},"geometry":{"type":"Polygon","coordinates":[[[-74.8742,46.2881],[-74.7415,46.3078],[-74.6515,46.3168],[-74.5237,46.3394],[-74.4829,46.4721],[-74.4409,46.6104],[-74.3912,46.75],[-74.5494,46.7643],[-74.6801,46.7486],[-74.8487,46.75],[-74.8749,46.616],[-74.8936,46.4412],[-74.8742,46.2881]]]}},{"type":"Feature","properties":{"NOM":"Secteur I","POP":26800,"N_HOSP":43,"TAUX":1.6},"geometry":{"type":"Polygon","coordinates":[[[-74.8228,45.55],[-74.7247,45.5323],[-74.6579,45.543],[-74.5333,45.55],[-74.4931,45.6459],[-74.4944,45.7721],[-74.4619,45.8898],[-74.6291,45.8939],[-74.7585,45.9416],[-74.927,45.955],[-74.9191,45.8083],[-74.8375,45.6665],[-74.8228,45.55]]]}},{"type":"Feature","properties":{"NOM":"Secteur J","POP":7300,"N_HOSP":20,"TAUX":2.7},"geometry":{"type":"Polygon","coordinates":[[[-73.9694,46.3608],[-73.853,46.3461],[-73.7846,46.3094],[-73.65,46.2865],[-73.656,46.427],[-73.6623,46.5912],[-73.65,46.75],[-73.8143,46.747],[-73.9197,46.7691],[-74.0686,46.75],[-74.0199,46.619],[-73.9911,46.4943],[-73.9694,46.3608]]]}},{"type":"Feature","properties":{"NOM":"Secteur K","POP":41500,"N_HOSP":118,"TAUX":2.8},"geometry":{"type":"Polygon","coordinates":[[[-75.25,45.9253],[-75.1702,45.926],[-75.0082,45.9387],[-74.927,45.955],[-74.8904,46.0516],[-74.9149,46.1607],[-74.8742,46.2881],[-75.001,46.2974],[-75.1217,46.2977],[-75.25,46.3011],[-75.2643,46.1708],[-75.2618,46.0455],[-75.25,45.9253]]]}},{"type":"Feature","properties":{"NOM":"Secteur L","POP":15200,"N_HOSP":38,"TAUX":2.5},"geometry":{"type":"Polygon","coordinates":[[[-74.5237,46.3394],[-74.3302,46.3406],[-74.1283,46.3529],[-73.9694,46.3608],[-73.9911,46.4943],[-74.0199,46.619],[-74.0686,46.75],[-74.1682,46.7639],[-74.2584,46.7476],[-74.3912,46.75],[-74.4409,46.6104],[-74.4829,46.4721],[-74.5237,46.3394]]]}}]};
+
+// Points de service CLSC
+const clsc = { type: "FeatureCollection", features: [
+  { type: "Feature", properties: { nom: "Point de service 1" }, geometry: { type: "Point", coordinates: [45.78, -74.00] } },
+  { type: "Feature", properties: { nom: "Point de service 2" }, geometry: { type: "Point", coordinates: [46.05, -74.28] } },
+  { type: "Feature", properties: { nom: "Point de service 3" }, geometry: { type: "Point", coordinates: [46.37, -74.70] } },
+  { type: "Feature", properties: { nom: "Point de service 4" }, geometry: { type: "Point", coordinates: [45.62, -74.55] } }
+]};
+
+const carte = L.map("carte", { attributionControl: false }).setView([46.15, -74.45], 8);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(carte);
+
+const CHAMP = "N_HOSP";
+const COULEURS = ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff"];
+const valeurs = secteurs.features.map(f => f.properties[CHAMP]);
+const min = Math.min(...valeurs);
+const max = Math.max(...valeurs.slice(1));
+const pas = (max - min) / 5;
+const bornes = [0, 1, 2, 3, 4, 5].map(i => min + pas * i);
+
+function classe(v) {
+  for (let i = 0; i < 5; i++) if (v <= bornes[i + 1]) return i;
+  return -1;
+}
+
+L.geoJSON(secteurs, {
+  style: f => {
+    const i = classe(f.properties[CHAMP]);
+    return { fillColor: i < 0 ? "#bdbdbd" : COULEURS[i], fillOpacity: .7, color: "#555", weight: 1 };
+  },
+  onEachFeature: (f, couche) => {
+    const p = f.properties;
+    couche.bindPopup(`<strong>${p.NOM}</strong><table>
+      <tr><td>Population</td><td>${p.POP.toLocaleString("fr-CA")}</td></tr>
+      <tr><td>Hospitalisations</td><td>${p.N_HOSP.toLocaleString("fr-CA")}</td></tr>
+      <tr><td>Taux pour 1 000</td><td>${p.TAUX.toLocaleString("fr-CA", { minimumFractionDigits: 1 })}</td></tr></table>`);
+  }
+}).addTo(carte);
+
+L.geoJSON(clsc, {
+  pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 6, color: "#fff", weight: 1.5, fillColor: "#111", fillOpacity: 1 }),
+  onEachFeature: (f, c) => c.bindPopup(f.properties.nom)
+}).addTo(carte);
+
+const legende = L.control({ position: "bottomright" });
+legende.onAdd = () => {
+  const d = L.DomUtil.create("div", "panneau legende");
+  let h = "<h2>Taux d'hospitalisation</h2>";
+  for (let i = 0; i < 5; i++) {
+    h += `<div class="ligne"><span class="case" style="background:${COULEURS[i]}"></span>${Math.round(bornes[i])} à ${Math.round(bornes[i + 1])}</div>`;
+  }
+  h += `<div class="ligne"><span class="case" style="background:#bdbdbd"></span>Donnée non disponible</div>`;
+  h += `<div class="ligne"><span class="point"></span>Points de service CLSC</div>`;
+  h += `<div class="methode">Classes : quantiles</div>`;
+  d.innerHTML = h;
+  return d;
+};
+legende.addTo(carte);
+</script>
+</body>
+</html>
