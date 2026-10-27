@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- saved from url=(0087)https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/cartes_strategies.html -->
 <html lang="fr-CA"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -79,10 +80,14 @@ input.num{font-family:var(--mono)}
 .preview .head p{margin:0;font-weight:800;color:var(--navy)}
 .stage{background:#0a0927;border-radius:6px;padding:1rem;overflow:hidden}
 .btns{display:flex;flex-wrap:wrap;gap:.5rem}
-button.b{font:inherit;font-weight:700;font-size:.88rem;border-radius:4px;padding:.45rem .85rem;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
-button.b.primary{background:#178f8e;border-color:#178f8e;color:#fff}
-button.b:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-button.b:disabled{opacity:.5;cursor:default}
+.b{font:inherit;font-weight:700;font-size:.88rem;line-height:1.5;border-radius:4px;padding:.45rem .85rem;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;display:inline-block}
+.b.primary{background:#178f8e;border-color:#178f8e;color:#fff}
+.b:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.b:disabled{opacity:.5;cursor:default}
+.dropzone{border:1px dashed var(--line);border-radius:6px;padding:.7rem .8rem;font-size:.86rem;color:var(--muted);margin:0}
+.dropzone b{color:var(--ink);font-weight:600}
+body.dragging .dropzone{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+body.dragging form{outline:2px dashed var(--accent);outline-offset:6px;border-radius:6px}
 .checks{margin:0;padding:0;list-style:none;display:grid;gap:.25rem;font-size:.84rem}
 .checks li{display:flex;gap:.45rem;align-items:baseline}
 .checks .dot{width:.55rem;height:.55rem;border-radius:50%;flex:none;transform:translateY(-.05rem)}
@@ -101,7 +106,7 @@ button.b:disabled{opacity:.5;cursor:default}
   <header class="top">
     <p class="eyebrow">ÉIS · Plan d'urbanisme de Mont-Tremblant</p>
     <h1>Atelier des cartes stratégies</h1>
-    <p class="lede">Chaque personne responsable complète la carte d'appel de sa stratégie : <b>l'accroche, trois chiffres sourcés et le paragraphe d'analyse</b>. Seule la stratégie 8 est remplie, à titre d'exemple; les autres cartes sont vides, c'est à vous de les écrire. Votre brouillon reste dans ce navigateur. Quand la carte est prête, cliquez sur <b>Envoyer par courriel</b> ou <b>Télécharger ma fiche</b> et transmettez le fichier.</p>
+    <p class="lede">Chaque personne responsable complète la carte d'appel de sa stratégie : <b>l'accroche, trois chiffres sourcés et le paragraphe d'analyse</b>. Seule la stratégie 7 est remplie, à titre d'exemple; les autres cartes sont vides, c'est à vous de les écrire. Vous pouvez écrire ici, ou remplir le <b>formulaire Word</b> et le déposer dans l'atelier. Votre brouillon reste dans ce navigateur. Quand la carte est prête, cliquez sur <b>Envoyer par courriel</b> ou <b>Télécharger ma fiche</b> et transmettez le fichier.</p>
     <p class="conn" id="conn">Brouillon enregistré dans ce navigateur.</p>
   </header>
 
@@ -169,9 +174,10 @@ button.b:disabled{opacity:.5;cursor:default}
         <div class="sendbar">
           <button type="button" class="b primary" id="mail">Envoyer par courriel</button>
           <button type="button" class="b" id="save">Télécharger ma fiche (.json)</button>
-          <button type="button" class="b" id="imp">Importer une fiche</button>
-          <input type="file" id="file" accept=".json,application/json" hidden="">
+          <button type="button" class="b" id="imp">Importer une fiche (Word ou .json)</button>
+          <input type="file" id="file" accept=".docx,.json,application/json,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden="">
         </div>
+        <p class="dropzone">Vous préférez Word? Téléchargez le <a href="formulaire_carte_appel.docx" download style="color:var(--accent);font-weight:700">formulaire Word</a>, remplissez-le, puis <b>glissez le fichier sur cette page</b> ou utilisez <b>Importer une fiche</b>. La stratégie choisie dans le Word décide de la carte remplie; les cases laissées vides ne changent rien au brouillon.</p>
       </fieldset>
     </form>
 
@@ -210,26 +216,29 @@ var T=[
  {n:3,titre:"Mobilité",accroche:"",
   tiles:[["",""],["",""],["",""]],
   para:""},
- {n:4,angle:true,titre:"Alimentation durable",accroche:"",
+ {n:4,titre:"Centre-ville",accroche:"",
   tiles:[["",""],["",""],["",""]],
   para:""},
- {n:5,titre:"Centre-ville",accroche:"",
+ {n:5,titre:"Village",accroche:"",
   tiles:[["",""],["",""],["",""]],
   para:""},
- {n:6,titre:"Village",accroche:"",
+ {n:6,titre:"Route 117",accroche:"",
   tiles:[["",""],["",""],["",""]],
   para:""},
- {n:7,titre:"Route 117",accroche:"",
-  tiles:[["",""],["",""],["",""]],
-  para:""},
- {n:8,exemple:true,titre:"Récréotourisme",statut:"review",nreco:"10",nchaine:"7",nmin:"13",page:"77d6f329c4104685bad74e0f96576196",
+ {n:7,exemple:true,titre:"Récréotourisme",statut:"review",nreco:"10",nchaine:"7",nmin:"13",page:"77d6f329c4104685bad74e0f96576196",
   accroche:"Mont-Tremblant vit du plaisir des autres. Reste à savoir à qui profite le terrain de jeu.",
   tiles:[["7 250","personnes à Saint-Jovite, loin des grands équipements du nord"],["300","résidents permanents dans le secteur Tremblant"],["16","appareils de loterie vidéo, à deux adresses du centre-ville"]],
   para:"Le plan enrichit l'offre récréative, surtout au nord, dans des pôles payants et accessibles en automobile. Il peut donc faire progresser la moyenne tout en creusant l'écart. Il ne dit rien des conditions d'emploi saisonnier ni de l'exposition au jeu, alors qu'il densifie le pôle où se trouve le casino."},
- {n:9,titre:"Infrastructures et eau",accroche:"",
+ {n:8,titre:"Infrastructures et investissement public",accroche:"",
+  tiles:[["",""],["",""],["",""]],
+  para:""},
+ {n:9,angle:true,titre:"Alimentation durable",accroche:"",
   tiles:[["",""],["",""],["",""]],
   para:""}
 ];
+/* Numérotation d'avant le 30 septembre 2026 (Alimentation durable en 4) vers la numérotation actuelle (en 9) */
+var ANCIEN_VERS_NOUVEAU={1:1,2:2,3:3,4:9,5:4,6:5,7:6,8:7,9:8};
+var ANCIENS_TITRES={"Infrastructures et eau":"Infrastructures et investissement public"};
 function base(t){
   return {titre:t.titre,accroche:t.accroche,para:t.para,
     v1:t.tiles[0][0],l1:t.tiles[0][1],s1:"",v2:t.tiles[1][0],l2:t.tiles[1][1],s2:"",v3:t.tiles[2][0],l3:t.tiles[2][1],s3:"",
@@ -252,13 +261,14 @@ var ANCIENS=[
  "% des ménages des Laurentides en situation d'insécurité alimentaire",
  "Cette fiche ne commente pas une stratégie du plan : elle documente son absence. L'alimentation n'apparaît qu'en creux, à travers l'affectation commerciale et la protection du territoire agricole. Or les outils d'urbanisme agissent directement sur l'accès : localisation des commerces, place des marchés publics et de l'agriculture urbaine, encadrement de l'offre de restauration rapide autour des écoles. Le plan garde ici un levier inutilisé."
 ];
+/* Appliqué seulement aux brouillons de l'ancienne version (n = ancien numéro, 8 = l'exemple Récréotourisme) */
 function nettoyer(n,d){
   if(n==8) return d;
   ["accroche","para","l1","l2","l3"].forEach(function(k){ if(ANCIENS.indexOf(String(d[k]||"").trim())>=0) d[k]=""; });
   ["v1","v2","v3"].forEach(function(k){ if(/^\s*\[\s*n\s*\]\s*$/i.test(String(d[k]||""))) d[k]=""; });
   return d;
 }
-var cur=1, savedAt={}, KEY="eis-mt-cartes-v1";
+var cur=1, savedAt={}, KEY="eis-mt-cartes-v2", KEY_V1="eis-mt-cartes-v1";
 var $=function(id){return document.getElementById(id);};
 
 /* ---------- carte HTML (gabarit identique à la carte 8) ---------- */
@@ -402,26 +412,168 @@ $("dl").onclick=function(){
 function slug(s){return String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
 $("save").onclick=function(){
   var d=state[cur];
-  var payload={format:"eis-mt-carte",version:1,strategie:cur,exporte:new Date().toISOString(),carte:d};
+  var payload={format:"eis-mt-carte",version:2,strategie:cur,exporte:new Date().toISOString(),carte:d};
   fileSave("strategie-"+cur+"_"+slug(d.titre)+".json",JSON.stringify(payload,null,2),"application/json");
   toast("Fiche de la stratégie "+cur+" téléchargée");
 };
 $("imp").onclick=function(){ $("file").click(); };
 $("file").onchange=function(e){
-  var f=e.target.files[0]; if(!f) return;
+  var f=e.target.files[0]; e.target.value=""; if(f) importFile(f);
+};
+function importFile(f){
+  var nom=String(f.name||"").toLowerCase();
+  if(/\.docx$/.test(nom)) return importWord(f);
+  if(/\.(doc|rtf|odt)$/.test(nom)){ toast("Enregistrez d'abord le Word en .docx, puis importez-le."); return; }
   var r=new FileReader();
   r.onload=function(){
     try{
       var p=JSON.parse(r.result);
-      if(p.format!=="eis-mt-carte"||!state[p.strategie]) throw 0;
-      state[p.strategie]=Object.assign(base(T[p.strategie-1]),p.carte);
-      cur=p.strategie; fillForm(); flush(cur); renderAll();
+      if(p.format!=="eis-mt-carte") throw 0;
+      /* fiches .json exportées avant la renumérotation */
+      var n=(p.version||1)<2?ANCIEN_VERS_NOUVEAU[p.strategie]:p.strategie;
+      if(!state[n]) throw 0;
+      var c=Object.assign({},p.carte); if(ANCIENS_TITRES[c.titre]) c.titre=ANCIENS_TITRES[c.titre];
+      state[n]=Object.assign(base(T[n-1]),c);
+      cur=n; fillForm(); flush(cur); renderAll();
       toast("Fiche de la stratégie "+cur+" importée");
     }catch(x){ toast("Ce fichier n'est pas une fiche de carte valide."); }
-    e.target.value="";
   };
   r.readAsText(f);
-};
+}
+
+/* ---------- import du formulaire Word ---------- */
+var JSZIP_URL="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+var WNS="http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+var CHAMPS=["resp","titre","accroche","para","v1","l1","s1","v2","l2","s2","v3","l3","s3","nreco","nchaine","nmin","page","notes"];
+function loadJSZip(){
+  if(window.JSZip) return Promise.resolve(window.JSZip);
+  return new Promise(function(ok,ko){
+    var s=document.createElement("script"); s.src=JSZIP_URL;
+    s.onload=function(){ ok(window.JSZip); }; s.onerror=function(){ ko(new Error("jszip")); };
+    document.head.appendChild(s);
+  });
+}
+function norm(s){ return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’‘]/g,"'").replace(/\s+/g," ").trim().toLowerCase(); }
+function wKid(el,name){ for(var c=el&&el.firstChild;c;c=c.nextSibling){ if(c.nodeType===1&&c.localName===name) return c; } return null; }
+function wVal(el,name){ return el?(el.getAttributeNS(WNS,name)||el.getAttribute("w:"+name)||""):""; }
+/* Texte d'un nœud Word : les paragraphes et les sauts de ligne deviennent des retours; le texte supprimé en révision est ignoré */
+function wText(node){
+  var out="";
+  (function walk(n){
+    for(var c=n.firstChild;c;c=c.nextSibling){
+      if(c.nodeType!==1) continue;
+      var ln=c.localName;
+      if(ln==="t") out+=c.textContent;
+      else if(ln==="tab") out+=" ";
+      else if(ln==="br"||ln==="cr") out+="\n";
+      else if(ln==="noBreakHyphen") out+="-";
+      else if(/^(delText|instrText|rPr|pPr|sdtPr|tcPr|trPr|tblPr|tblGrid|del|moveFrom)$/.test(ln)) continue;
+      else { walk(c); if(ln==="p") out+="\n"; }
+    }
+  })(node);
+  return out.replace(/ /g," ");
+}
+function uneLigne(s){ return String(s||"").replace(/\s+/g," ").trim(); }
+function lignes(s){ return String(s||"").split("\n").map(function(x){return x.replace(/[ \t]+/g," ").trim();}).filter(Boolean).join("\n"); }
+var STATUT_PAR_LIBELLE={}; Object.keys(LBL).forEach(function(k){ STATUT_PAR_LIBELLE[norm(LBL[k])]=k; });
+
+/* 1. Formulaire à cases (contrôles de contenu balisés eis-carte:...) */
+function lireControles(doc){
+  var res={}, n=0;
+  Array.prototype.forEach.call(doc.getElementsByTagNameNS(WNS,"sdt"),function(sdt){
+    var pr=wKid(sdt,"sdtPr"), tag=wVal(wKid(pr,"tag"),"val");
+    if(tag.indexOf("eis-carte:")!==0) return;
+    var cle=tag.slice(10), contenu=wKid(sdt,"sdtContent"), txt=contenu?wText(contenu):"";
+    if(wKid(pr,"showingPlcHdr")) txt="";
+    var liste=wKid(pr,"dropDownList")||wKid(pr,"comboBox"), vu=uneLigne(txt);
+    if(liste&&vu){
+      Array.prototype.forEach.call(liste.getElementsByTagNameNS(WNS,"listItem"),function(li){
+        if(uneLigne(wVal(li,"displayText"))===vu) txt=wVal(li,"value");
+      });
+    }
+    res[cle]=txt; n++;
+  });
+  return n?res:null;
+}
+/* 2. Repli : Word sans cases (tableaux libellé | valeur, comme la version de travail de la stratégie 9) */
+var LIBELLES={"strategie":"strategie","personne responsable":"resp","statut":"statut","titre de la strategie":"titre","accroche":"accroche",
+  "paragraphe d'analyse":"para","recommandations":"nreco","chaines d'impact":"nchaine","minutes de lecture":"nmin","identifiant de la page hub":"page"};
+function lireTableaux(doc){
+  var res={}, corps=doc.getElementsByTagNameNS(WNS,"body")[0]; if(!corps) return res;
+  var m=wText(corps).match(/Strat[ée]gie\s+(\d)\b/); if(m) res.strategie=m[1];
+  Array.prototype.forEach.call(doc.getElementsByTagNameNS(WNS,"tr"),function(tr){
+    var tcs=[]; for(var c=tr.firstChild;c;c=c.nextSibling){ if(c.nodeType===1&&c.localName==="tc") tcs.push(c); }
+    if(tcs.length===2){
+      var p1=wKid(tcs[0],"p"), cle=LIBELLES[norm(p1?wText(p1):"")];
+      if(cle) res[cle]=wText(tcs[1]);
+    }else if(tcs.length===4){
+      var i=uneLigne(wText(tcs[0]));
+      if(/^[123]$/.test(i)){ res["v"+i]=wText(tcs[1]); res["l"+i]=wText(tcs[2]); res["s"+i]=wText(tcs[3]); }
+    }
+  });
+  /* notes : paragraphes qui suivent le titre « Notes », hors consigne */
+  var dans=false, notes=[];
+  for(var c=corps.firstChild;c;c=c.nextSibling){
+    if(c.nodeType!==1||c.localName!=="p") continue;
+    var t=uneLigne(wText(c)), tn=norm(t);
+    if(/^notes( pour l'equipe)?$/.test(tn)){ dans=true; continue; }
+    if(dans&&t&&!/^questions, doutes/.test(tn)) notes.push(t);
+  }
+  if(notes.length) res.notes=notes.join("\n");
+  ["nreco","nchaine","nmin"].forEach(function(k){ if(res[k]!=null){ var x=String(res[k]).match(/\d+/); res[k]=x?x[0]:""; } });
+  Object.keys(res).forEach(function(k){ if(/^\s*\[\s*(a|à) completer\s*\]\s*$/i.test(norm(res[k]))) res[k]=""; });
+  return res;
+}
+function importWord(f){
+  Promise.all([loadJSZip(),f.arrayBuffer()]).then(function(r){ return r[0].loadAsync(r[1]); })
+  .then(function(zip){
+    var x=zip.file("word/document.xml"); if(!x) throw new Error("docx");
+    return x.async("string");
+  })
+  .then(function(xml){
+    var doc=new DOMParser().parseFromString(xml,"application/xml");
+    if(doc.getElementsByTagName("parsererror").length) throw new Error("docx");
+    var res=lireControles(doc)||lireTableaux(doc);
+    appliquerWord(res,f.name);
+  })
+  .catch(function(err){
+    toast(err&&err.message==="jszip"?"Lecteur Word indisponible : vérifiez la connexion Internet et réessayez.":"Ce fichier Word n'a pas pu être lu. Utilisez le formulaire Word de l'atelier.");
+  });
+}
+function appliquerWord(res,nom){
+  /* stratégie : liste du formulaire, sinon titre reconnu, sinon carte ouverte */
+  var n=parseInt(String(res.strategie||"").match(/\d+/),10);
+  if(!state[n]&&res.titre){ var tt=norm(ANCIENS_TITRES[uneLigne(res.titre)]||res.titre); T.forEach(function(t){ if(norm(t.titre)===tt) n=t.n; }); }
+  if(!state[n]){
+    if(!confirm("Le Word n'indique pas la stratégie. L'importer dans la carte ouverte, stratégie "+cur+" ("+state[cur].titre+") ?")) return;
+    n=cur;
+  }
+  var lu={}, d=state[n];
+  CHAMPS.forEach(function(k){
+    var v=res[k]==null?"":(k==="notes"?lignes(res[k]):uneLigne(res[k]));
+    if(v) lu[k]=v;
+  });
+  var st=STATUT_PAR_LIBELLE[norm(res.statut)]||(LBL[uneLigne(res.statut)]?uneLigne(res.statut):"");
+  if(st) lu.statut=st;
+  var cles=Object.keys(lu);
+  if(!cles.length){ toast("Le Word ne contient aucune case remplie."); return; }
+  var ecrase=cles.filter(function(k){ var a=String(d[k]==null?"":d[k]).trim(), b=String(base(T[n-1])[k]==null?"":base(T[n-1])[k]).trim(); return a&&a!==b&&a!==lu[k]; });
+  if(ecrase.length&&!confirm("La carte de la stratégie "+n+" ("+d.titre+") contient déjà un brouillon dans ce navigateur. Remplacer "+ecrase.length+" champ"+(ecrase.length>1?"s":"")+" par le contenu du Word ? Les cases vides du Word ne changent rien.")) return;
+  state[n]=Object.assign({},d,lu);
+  cur=n; fillForm(); flush(cur); renderAll();
+  toast("Word importé dans la stratégie "+n+" : "+cles.length+" champ"+(cles.length>1?"s":"")+" rempli"+(cles.length>1?"s":""));
+}
+
+/* glisser-déposer un fichier n'importe où sur la page */
+var prof=0;
+document.addEventListener("dragenter",function(e){ if(e.dataTransfer&&Array.prototype.indexOf.call(e.dataTransfer.types,"Files")>=0){ prof++; document.body.classList.add("dragging"); } });
+document.addEventListener("dragleave",function(){ if(prof>0&&--prof===0) document.body.classList.remove("dragging"); });
+document.addEventListener("dragover",function(e){ if(e.dataTransfer&&Array.prototype.indexOf.call(e.dataTransfer.types,"Files")>=0) e.preventDefault(); });
+document.addEventListener("drop",function(e){
+  if(!e.dataTransfer||!e.dataTransfer.files.length) return;
+  e.preventDefault(); prof=0; document.body.classList.remove("dragging");
+  importFile(e.dataTransfer.files[0]);
+});
 $("mail").onclick=function(){
   var d=state[cur], L=[];
   L.push("Stratégie "+cur+" : "+d.titre);
@@ -441,10 +593,21 @@ $("mail").onclick=function(){
 
 /* ---------- reprise du brouillon ---------- */
 try{
-  var saved=JSON.parse(localStorage.getItem(KEY)||"null");
+  var saved=JSON.parse(localStorage.getItem(KEY)||"null"), ancien=false;
+  if(!saved){ saved=JSON.parse(localStorage.getItem(KEY_V1)||"null"); ancien=!!saved; }
   if(saved&&saved.state){
-    Object.keys(saved.state).forEach(function(n){ if(state[n]) state[n]=nettoyer(n,Object.assign(base(T[n-1]),saved.state[n])); });
-    savedAt=saved.savedAt||{}; if(state[saved.cur]) cur=saved.cur;
+    var vu={};
+    Object.keys(saved.state).forEach(function(k){
+      var n=ancien?ANCIEN_VERS_NOUVEAU[k]:+k; if(!state[n]) return;
+      var d=Object.assign(base(T[n-1]),ancien?nettoyer(+k,Object.assign({},saved.state[k])):saved.state[k]);
+      if(ancien&&ANCIENS_TITRES[d.titre]) d.titre=ANCIENS_TITRES[d.titre];
+      state[n]=d;
+      if(saved.savedAt&&saved.savedAt[k]) vu[n]=saved.savedAt[k];
+    });
+    savedAt=vu;
+    var c=ancien?ANCIEN_VERS_NOUVEAU[saved.cur]:saved.cur; if(state[c]) cur=c;
+    /* brouillon converti : enregistré sous la nouvelle clé, l'ancienne est laissée intacte */
+    if(ancien) localStorage.setItem(KEY,JSON.stringify({state:state,savedAt:savedAt,cur:cur}));
   }
 }catch(e){}
 var q=parseInt(new URLSearchParams(location.search).get("s"),10); if(state[q]) cur=q;
