@@ -62,6 +62,10 @@ body.theme-light header.top .fontctl button:hover{color:#fff}
 .tools select{appearance:none;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
   border-radius:9px;padding:7px 12px;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer}
 .tools select:focus{outline:none;border-color:var(--teal)}
+/* La liste ouverte est dessinée par le système : lui donner ses propres couleurs */
+.tools select option{background:var(--panel);color:var(--ink);font-weight:400}
+body.theme-light .tools select option,
+body.theme-light header.top .tools select option{background:#ffffff;color:#14143a}
 .badge{font-size:.72rem;font-weight:700;letter-spacing:.4px;padding:4px 11px;border-radius:999px;
   background:#21aead1f;color:var(--teal);border:1px solid #21aead40;white-space:nowrap}
 .fontctl{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
@@ -555,13 +559,16 @@ function togglePU(){
 }
 
 /* ===== Filtres ===== */
+function videOptions(sel){ while(sel.options.length>1) sel.remove(1); }
 function buildFilters(){
   var s=document.getElementById('filter-typo');
+  videOptions(s);
   ORDRE.forEach(function(k){s.add(new Option(TYPO[k].lab,k));});
   s.add(new Option('— Offre favorable seulement','FAV'));
   s.add(new Option('— Offre moins favorable seulement','DEF'));
   s.onchange=function(){filtreTypo=s.value;applyFilters();};
   var sd=document.getElementById('filter-secteur');
+  videOptions(sd);
   SECTEURS.forEach(function(x){sd.add(new Option(x.nom,x.nom));});
   sd.add(new Option(HORS,HORS));
   sd.onchange=function(){filtreSecteur=sd.value;applyFilters();zoomSecteur();};
