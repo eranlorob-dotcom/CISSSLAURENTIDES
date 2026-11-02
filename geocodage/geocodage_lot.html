@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Géocodage en lot — CISSS des Laurentides</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ===== Charte CISSS-DSP ===== */
 :root{
@@ -74,6 +73,9 @@ header.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 
 .leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
 .leaflet-control-attribution{background:#070620cc!important;color:var(--muted)!important;font-size:10px}
 .leaflet-control-attribution a{color:var(--teal)!important}
+.leaflet-control-layers{background:var(--panel)!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:8px!important;font-family:"Source Sans 3",system-ui,sans-serif}
+.leaflet-control-layers-expanded{padding:8px 12px}
+.leaflet-control-layers label{margin:2px 0;cursor:pointer}
 
 /* ===== Panneau : sections ===== */
 .eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:700;margin:20px 0 7px;
@@ -208,7 +210,7 @@ select.bloc{cursor:pointer;font-weight:600}
 <body>
 
 <!-- ===== Avis de confidentialité (obligatoire au démarrage) ===== -->
-<div class="overlay" id="avis">
+<div class="overlay cache" id="avis">
   <div class="avis">
     <h2>Avant de commencer — <span>protection des renseignements personnels</span></h2>
     <p>Le géocodage envoie chaque adresse <b>à un service externe</b>, hébergé hors du réseau du CISSS. Cet outil est conçu pour la <b>formation</b> et pour des adresses <b>publiques</b> (installations, écoles, commerces, points de service).</p>
@@ -225,7 +227,7 @@ select.bloc{cursor:pointer;font-weight:600}
 <div class="app">
   <header class="top">
     <div class="brand">
-      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.4"/></svg></div>
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"></path><circle cx="12" cy="9" r="2.4"></circle></svg></div>
       <div class="title">
         <h1>Géocodage <span>en lot</span></h1>
         <p>Transformer une liste d'adresses en coordonnées cartographiables</p>
@@ -253,7 +255,7 @@ select.bloc{cursor:pointer;font-weight:600}
       <div class="eyebrow"><span class="num mono">1</span>Adresses à géocoder</div>
       <div class="aide">Une adresse par ligne. Vous pouvez coller depuis Excel ou importer un fichier CSV.</div>
       <textarea id="entree" spellcheck="false" placeholder="290 rue de Montigny, Saint-Jérôme, QC"></textarea>
-      <div class="compteur" id="compteur">0 adresse</div>
+      <div class="compteur" id="compteur">8 adresses · ~1 s</div>
       <div class="rangee">
         <button class="btn" onclick="document.getElementById('fichier').click()">📄 Importer un CSV</button>
         <button class="btn" onclick="chargerExemple()">Jeu d'exemple</button>
@@ -268,14 +270,14 @@ select.bloc{cursor:pointer;font-weight:600}
       <div class="eyebrow"><span class="num mono">2</span>Service de géocodage</div>
       <select class="bloc" id="service">
         <optgroup label="Gratuit — sans clé d'API">
-          <option value="aq" selected>Adresses Québec (MRNF)</option>
+          <option value="aq" selected="">Adresses Québec (MRNF)</option>
           <option value="osm">Nominatim — OpenStreetMap</option>
         </optgroup>
         <optgroup label="Commercial — clé requise">
           <option value="google">Google Maps Geocoding API</option>
         </optgroup>
       </select>
-      <div class="note" id="note-service"></div>
+      <div class="note" id="note-service">Géocodeur officiel du gouvernement du Québec, appuyé sur la géobase Adresses Québec (AQréseau+). Gratuit, sans clé, couverture provinciale. Ne géocode que le territoire québécois.</div>
 
       <div id="bloc-cle" style="display:none">
         <div class="aide" style="margin-top:12px">Clé d'API Google (jamais enregistrée, conservée en mémoire seulement) :</div>
@@ -283,14 +285,14 @@ select.bloc{cursor:pointer;font-weight:600}
         <div class="note alerte">La clé doit avoir <b>Geocoding API</b> activée et <b>ne pas</b> être restreinte par référent HTTP : les services Web Google n'acceptent que les restrictions par adresse IP. Une clé mal restreinte renvoie <span class="mono">REQUEST_DENIED</span>.</div>
       </div>
 
-      <label class="coche"><input type="checkbox" id="opt-suffixe" checked><span>Ajouter « Québec, Canada » aux adresses sans province (Nominatim et Google seulement)</span></label>
-      <label class="coche"><input type="checkbox" id="opt-cache" checked><span>Mettre en cache les adresses identiques (évite les requêtes répétées)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-suffixe" checked=""><span>Ajouter « Québec, Canada » aux adresses sans province (Nominatim et Google seulement)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-cache" checked=""><span>Mettre en cache les adresses identiques (évite les requêtes répétées)</span></label>
 
       <div class="eyebrow"><span class="num mono">3</span>Traitement</div>
       <button class="btn primaire plein" id="btn-lancer" onclick="lancer(false)">▶ Lancer le géocodage</button>
       <div class="rangee">
-        <button class="btn" id="btn-pause" onclick="basculerPause()" disabled>⏸ Pause</button>
-        <button class="btn" id="btn-stop" onclick="arreter()" disabled>■ Arrêter</button>
+        <button class="btn" id="btn-pause" onclick="basculerPause()" disabled="">⏸ Pause</button>
+        <button class="btn" id="btn-stop" onclick="arreter()" disabled="">■ Arrêter</button>
       </div>
       <button class="btn plein" id="btn-echecs" onclick="lancer(true)" style="margin-top:8px;display:none">↻ Reprendre les échecs avec le service choisi</button>
       <div class="progress" id="progress">
@@ -362,7 +364,7 @@ select.bloc{cursor:pointer;font-weight:600}
           </ul>
 
           <h5>Requête envoyée</h5>
-          <div class="formula" id="m-url">—</div>
+          <div class="formula" id="m-url">…/GeocodeServer/findAddressCandidates?SingleLine={adresse}&amp;outSR=4326&amp;f=json</div>
 
           <h5>Qualité d'appariement</h5>
           <ul>
@@ -385,7 +387,6 @@ select.bloc{cursor:pointer;font-weight:600}
           </p>
         </div>
       </div>
-    </div>
   </div>
 </div>
 
@@ -431,9 +432,16 @@ var DATA = {type:'FeatureCollection', features:[]};
 
 /* ===== Carte ===== */
 var map = L.map('map',{zoomControl:true}).setView([46.0,-74.5], 8);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://carto.com/">CARTO</a> · CISSS des Laurentides',
-  maxZoom:19, subdomains:'abcd'}).addTo(map);
+/* Fonds de carte du gouvernement du Québec (IGO / MSP), service tuilé TMS en EPSG:3857.
+   L'imagerie (orthos) est réservée au personnel des ministères et organismes
+   du gouvernement du Québec, à des fins professionnelles, dans des sites gouvernementaux. */
+var ATTR_GOUV = '© Gouvernement du Québec (<a href="https://www.igouverte.org/">IGO</a>, MSP) · Santé Québec Laurentides';
+var fondCarte = L.tileLayer('https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',{
+  attribution:ATTR_GOUV, maxZoom:19});
+var fondImagerie = L.tileLayer('https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/orthos@EPSG_3857/{z}/{x}/{-y}.png',{
+  attribution:ATTR_GOUV, maxZoom:19});
+fondCarte.addTo(map);
+L.control.layers({'Carte du Québec':fondCarte, 'Imagerie':fondImagerie}, null, {position:'topright', collapsed:true}).addTo(map);
 var couchepoints = L.layerGroup().addTo(map);
 
 /* =========================================================================
@@ -1036,5 +1044,6 @@ function chargerExemple(){
 majService();
 chargerExemple();
 </script>
-</body>
-</html>
+
+
+</body></html>
