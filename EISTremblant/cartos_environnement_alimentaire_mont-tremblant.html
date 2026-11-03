@@ -214,7 +214,7 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
     <div class="spacer"></div>
     <div class="tools">
       <select id="filter-typo" title="Filtrer par type d'offre"><option value="">Toute l'offre</option><option value="complet">Supermarchés et épiceries complètes</option><option value="frais">Commerces d’aliments frais et spécialisés</option><option value="depanneur">Dépanneurs et stations-service</option><option value="rapide">Restauration rapide et prêt-à-emporter</option><option value="resto">Restaurants avec service</option><option value="FAV">— Offre favorable seulement</option><option value="DEF">— Offre moins favorable seulement</option></select>
-      <select id="filter-secteur" title="Filtrer par secteur"><option value="">Tous les secteurs</option><option value="Noyau de Saint-Jovite">Noyau de Saint-Jovite</option><option value="Corridor de la route 117">Corridor de la route 117</option><option value="Secteur Village">Secteur Village</option><option value="Secteur de la Montagne">Secteur de la Montagne</option><option value="Reste du territoire">Reste du territoire</option></select>
+      <select id="filter-secteur" title="Filtrer par secteur"><option value="">Tous les secteurs</option><option value="Noyau de Saint-Jovite">Noyau de Saint-Jovite</option><option value="Corridor de la route 117">Corridor de la route 117</option><option value="Secteur Village">Secteur Village</option><option value="Secteur Base Sud et Versant Soleil">Secteur Base Sud et Versant Soleil</option><option value="Reste du territoire">Reste du territoire</option></select>
       <select id="couche-ad" title="Défavorisation et déserts alimentaires (aires de diffusion)" onchange="setDefav(this.value)">
         <option value="">Aucune couche de fond</option>
         <option value="com">Défavorisation combinée (matrice par quartiles)</option>
@@ -312,7 +312,7 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
           <p>Indice de défavorisation matérielle et sociale de l'INSPQ, recensement de 2021, à l'échelle de l'aire de diffusion. La couche combinée applique la <strong>matrice par quartiles du regroupement 3</strong> (échelle locale), croisant <code>QuartMatRTS</code> et <code>QuartSocRTS</code> en huit classes, A1 à A8. Les deux autres couches présentent les quintiles d'une seule dimension, <code>QuintMatRTS</code> et <code>QuintSocRTS</code>. Les quintiles et les quartiles sont calculés à l'échelle du territoire du réseau de santé (RTS). Couleurs du ministère de la Santé et des Services sociaux.</p>
           <h5>Couches informatives</h5>
           <p>La couche <strong>Logements</strong> affiche les 6 216 unités d'évaluation résidentielles du rôle 2026, colorées selon leur distance au commerce d'approvisionnement favorable le plus proche et selon le seuil qui s'applique à elles. Elle sert à voir les écarts que la moyenne par aire de diffusion efface. Le survol donne le nombre de logements et la distance.</p>
-          <p>Les <strong>périmètres d'urbanisation</strong> de la Ville sont affichés à titre informatif. Ils servent au partage entre le milieu urbain, où le seuil du protocole est de 1 km, et le reste du territoire, où il est de 16 km. Les cinq polygones couvrent le noyau de Saint-Jovite, le Village, la Montagne et deux petits secteurs.</p>
+          <p>Les <strong>périmètres d'urbanisation</strong> de la Ville sont affichés à titre informatif. Ils servent au partage entre le milieu urbain, où le seuil du protocole est de 1 km, et le reste du territoire, où il est de 16 km. Les cinq polygones correspondent aux périmètres d'urbanisation du plan : Saint-Jovite, Village, Base Sud, Versant Soleil et Camp Nord.</p>
           <h5>Limites à considérer</h5>
           <ul>
             <li>Le recensement provient de l'API Google Places : la couverture des petits commerces et des points de vente saisonniers y est inégale et aucune validation terrain n'a été faite.</li>
@@ -324,11 +324,11 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
             <li>Indice RFEI (Robitaille et Paquette, 2020) : (restauration rapide + dépanneurs) / (supermarchés + épiceries + commerces d'aliments frais). Un secteur est un marais alimentaire lorsque le rapport atteint 5.</li>
             <li>Restauration rapide : établissement où les aliments sont servis majoritairement dans des contenants, emballages ou assiettes jetables lorsqu'ils sont consommés sur place, et où il n'y a aucun service aux tables.</li>
             <li>Écoles : couche des immeubles scolaires du ministère de l'Éducation, mise à jour le 26 octobre 2026, filtrée sur le code municipal 78102. L'analyse ne retient que les six écoles primaires et secondaires. Sont écartés le pavillon L'Horizon (formation professionnelle et éducation aux adultes), les annexes sans ordre d'enseignement (serre, atelier, camp de base), ainsi que les services de garde, le centre collégial et la maison des jeunes. La liste tirée de Google, utilisée jusqu'au 28 octobre 2026, comptait pour sa part des écoles d'activités privées (escalade, arts martiaux), omettait le pavillon Trois-Saisons et dédoublait les pavillons sous un « campus primaire ».</li>
-            <li>Les secteurs (noyau de Saint-Jovite, corridor de la route 117, Village, Montagne) sont approximés par rattachement au pôle le plus proche et non par les limites officielles du plan d'urbanisme.</li>
+            <li>Les secteurs (noyau de Saint-Jovite, corridor de la route 117, Village, Base Sud et Versant Soleil) sont approximés par rattachement au pôle le plus proche et non par les limites officielles du plan d'urbanisme.</li>
             <li>L'analyse n'est pas pondérée par la population résidante ni par la population touristique saisonnière, qui module fortement la demande à Mont-Tremblant.</li>
           </ul>
           <p class="src" style="border-top:1px solid var(--line2);padding-top:10px;margin-top:10px">
-            Sources : immeubles scolaires du ministère de l'Éducation (2026-10-26) · indice de défavorisation de l'INSPQ (recensement de 2021, aires de diffusion) · rôle d'évaluation foncière 2026, unités résidentielles · périmètres d'urbanisation de la Ville de Mont-Tremblant · Google Places API (New), extraction du 22 septembre 2026 (grille de 3 km, mots-clés sur 10 km) · validation terrain de 88 établissements de restauration, 30 septembre 2026 · typologie adaptée de Robitaille et Paquette (2020) et du mRFEI (CDC) · fonds de carte : Esri (Dark Gray et Light Gray Canvas) et carte topographique gouvernementale du Québec (service public IGO) · Santé Québec Laurentides — Direction de santé publique · Mise à jour 2026-09-30
+            Sources : immeubles scolaires du ministère de l'Éducation (2026-10-26) · indice de défavorisation de l'INSPQ (recensement de 2021, aires de diffusion) · rôle d'évaluation foncière 2026, unités résidentielles · périmètres d'urbanisation de la Ville de Mont-Tremblant · Google Places API (New), extraction du 22 septembre 2026 (grille de 3 km, mots-clés sur 10 km) · validation terrain de 88 établissements de restauration, 30 septembre 2026 · typologie adaptée de Robitaille et Paquette (2020) et du mRFEI (CDC) · fonds de carte : Esri (Dark Gray et Light Gray Canvas) et carte topographique gouvernementale du Québec (service public IGO) · Santé Québec Laurentides, Direction de santé publique · Mise à jour 2026-09-30
           </p>
         </div>
       </div>
@@ -375,7 +375,7 @@ var SECTEURS=[
   {nom:'Noyau de Saint-Jovite', c:[-74.5975,46.1185], r:1600},
   {nom:'Corridor de la route 117', c:[-74.5745,46.1175], r:2200},
   {nom:'Secteur Village', c:[-74.6270,46.1955], r:1800},
-  {nom:'Secteur de la Montagne', c:[-74.5860,46.2125], r:3000}
+  {nom:'Secteur Base Sud et Versant Soleil', c:[-74.5860,46.2125], r:3000}
 ];
 var HORS='Reste du territoire';
 var visible={}; ORDRE.forEach(function(k){visible[k]=true;});
@@ -664,14 +664,14 @@ function buildSynthese(){
   }).join('')+'<div class="src" style="margin-top:2px;border:0;padding-top:2px">Part de l’offre favorable (teal) et moins favorable (mauve) parmi les commerces d’alimentation courante de chaque secteur. Cliquez un secteur pour l’isoler.</div>';
 
   var sj=parSec['Noyau de Saint-Jovite'], c117=parSec['Corridor de la route 117'],
-      vil=parSec['Secteur Village'], mtn=parSec['Secteur de la Montagne'], res=parSec[HORS];
+      vil=parSec['Secteur Village'], mtn=parSec['Secteur Base Sud et Versant Soleil'], res=parSec[HORS];
   document.getElementById('s-lecture').innerHTML=
     'L’offre est structurée par deux pôles distincts. Le <strong>noyau de Saint-Jovite</strong> regroupe '+sj.n+' commerces, '+
     'avec une composition plutôt favorable ('+fmt(sj.mrfei,0)+' %) portée par les épiceries, boulangeries et boucheries de la rue de Saint-Jovite. '+
     'Le <strong>corridor de la route 117</strong> compte '+c117.n+' commerces mais une composition inversée ('+fmt(c117.mrfei,0)+' %) : '+
     'les grandes surfaces alimentaires y côtoient une concentration de dépanneurs de station-service et de comptoirs de restauration rapide, '+
     'dans un environnement conçu pour l’automobile et peu praticable à pied.<br><br>'+
-    'Le <strong>secteur Village</strong> ('+vil.n+' commerces) et le <strong>secteur de la Montagne</strong> ('+mtn.n+') disposent chacun d’une épicerie, '+
+    'Le <strong>secteur Village</strong> ('+vil.n+' commerces) et le <strong>secteur Base Sud et Versant Soleil</strong> ('+mtn.n+') disposent chacun d’une épicerie, '+
     'mais leur offre est largement orientée vers la restauration touristique. Les '+res.n+' commerces restants sont dispersés sur le reste du territoire, '+
     'hors de toute distance de marche : l’accès à l’alimentation y dépend entièrement de l’automobile.';
 
@@ -709,20 +709,28 @@ function buildSynthese(){
   var prim=ec.filter(function(x){return /préscolaire et primaire/i.test(x.cat);});
   var primDef=prim.filter(function(x){return x.def>0;}).length;
 
+  /* commerces moins favorables autour de l'école secondaire (vol d'oiseau) */
+  var secDefListe=sec?autour(sec.c,1000,function(p){return TYPO[p.typo].fav===-1;})
+    .map(function(y){return {nom:y.properties.nom,d:dist(sec.c,y.geometry.coordinates)};})
+    .sort(function(a,b){return a.d-b.d;}):[];
+  var secDef15=sec?autour(sec.c,1500,function(p){return TYPO[p.typo].fav===-1;}).length:0;
+  var nomsDef=secDefListe.map(function(y){return y.nom.replace(/ et Mini-Golf$/,'')+' ('+fmt(Math.round(y.d/10)*10)+' m)';});
+  var listeNoms=nomsDef.length>1?nomsDef.slice(0,-1).join(', ')+' et '+nomsDef[nomsDef.length-1]:(nomsDef[0]||'');
+
   document.getElementById('s-ecoles').innerHTML=
-    'La Ville compte <strong>'+ecoles.length+' écoles publiques</strong> : '+prim.length+' au préscolaire et au primaire, regroupées rue Labelle et rue de l’École, '+
+    'La Ville compte <strong>'+ecoles.length+' écoles publiques</strong> : '+prim.length+' au primaire, regroupées rue Labelle et rue de l’École, '+
     'et l’école secondaire Curé-Mercure, boulevard du Docteur-Gervais.<br><br>'+
-    '<strong>'+avecDef+'</strong> d’entre elles comptent au moins un dépanneur ou un comptoir de restauration rapide à moins de 500 m, '+
-    'soit de 5 à 7 minutes de marche. '+
-    (primDef===prim.length?'Les '+prim.length+' écoles préscolaires et primaires sont toutes dans ce cas'
-                          :'<strong>'+primDef+'</strong> des '+prim.length+' écoles préscolaires et primaires sont dans ce cas')+
-    ', mais leurs élèves ne quittent pas la cour sur l’heure du dîner : ce qui compte pour elles, c’est plutôt le trajet domicile-école.<br><br>'+
-    (sec?'L’<strong>école secondaire Curé-Mercure</strong> est la seule où la question se pose vraiment, puisque les élèves sortent librement sur l’heure du dîner. '+
-      (sec.def===0?'Elle n’a aucun dépanneur ni comptoir de restauration rapide à moins de 500 m'
-                  :'Elle en compte <strong>'+sec.def+'</strong> à moins de 500 m')+
-      ', et <strong>'+secDef1k+'</strong> dans un rayon de 1 km, soit une dizaine de minutes de marche. '+
-      'Le commerce d’approvisionnement favorable le plus proche est à '+fmt(Math.round(sec.dfav))+' m. ':'')+
-    'Enfin, <strong>'+sansFav500+'</strong> des '+ec.length+' écoles '+(sansFav500>1?'n’ont':'n’a')+' aucun commerce d’approvisionnement favorable à moins de 500 m.';
+    (primDef===prim.length?'Les <strong>'+prim.length+'</strong> écoles primaires comptent toutes'
+                          :'<strong>'+primDef+'</strong> des '+prim.length+' écoles primaires comptent')+
+    ' au moins un dépanneur ou un comptoir de restauration rapide à moins de 500 m, soit de 5 à 7 minutes de marche. '+
+    'Les élèves du 3<sup>e</sup> cycle peuvent habituellement sortir sur l’heure du dîner, et ceux qui marchent y sont exposés sur le trajet entre la maison et l’école.<br><br>'+
+    (sec?'Pour l’<strong>école secondaire Curé-Mercure</strong>, dont les élèves sortent librement sur l’heure du dîner, '+
+      (sec.def===0?'aucun dépanneur ni comptoir de restauration rapide ne se trouve à moins de 500 m. '
+                  :'on compte <strong>'+sec.def+'</strong> dépanneurs ou comptoirs de restauration rapide à moins de 500 m. ')+
+      (secDefListe.length?'Dans un rayon de 1 km à vol d’oiseau, on en compte <strong>'+secDefListe.length+'</strong> : '+listeNoms+'. '+
+        'Par les rues, le trajet s’allonge à environ 1,1 et 1,6 km, soit de 13 à 20 minutes de marche. ':'')+
+      'Le nombre passe à <strong>'+secDef15+'</strong> dans un rayon de 1,5 km, surtout le long de la route 117. '+
+      'Le commerce d’approvisionnement favorable le plus proche est à '+fmt(Math.round(sec.dfav))+' m.':'');
 
   document.getElementById('s-ecoles-kpi').innerHTML=
     kpi(fmt(ecolesDef)+' / '+fmt(ecoles.length),'écoles publiques avec du dépannage ou de la restauration rapide à moins de 500 m')+
@@ -739,7 +747,7 @@ function buildSynthese(){
     '<div class="warn">Couche officielle des immeubles scolaires du ministère de l’Éducation, mise à jour du 26 octobre 2026. Seules les écoles primaires et secondaires sont retenues : les services de garde, le centre collégial et la maison des jeunes ne font pas partie de cette analyse.</div>';
 
   document.getElementById('s-src').textContent=
-    'Sources : Google Places API (New), extraction du 22 septembre 2026 · validation terrain du 30 septembre 2026 · typologie adaptée de Robitaille et Paquette (2020) · Santé Québec Laurentides — Direction de santé publique · Mise à jour 2026-09-30';
+    'Sources : Google Places API (New), extraction du 22 septembre 2026 · validation terrain du 30 septembre 2026 · typologie adaptée de Robitaille et Paquette (2020) · Santé Québec Laurentides, Direction de santé publique · Mise à jour 2026-11-03';
 }
 function kpi(v,l){return '<div class="kpi"><div class="v mono">'+v+'</div><div class="l">'+l+'</div></div>';}
 function filtreSecteurRapide(nm){
@@ -929,8 +937,8 @@ function texteDesert(){
   el.innerHTML='Appliqué aux '+ADS.n+' aires de diffusion de Mont-Tremblant, le protocole ne repère <strong>aucun désert alimentaire</strong> '+
     'et <strong>aucun marais alimentaire</strong>. Les <strong>'+nq5+'</strong> aires du cinquième quintile de défavorisation matérielle ('+fmt(pq5)+' personnes) '+
     'se trouvent toutes dans le noyau de Saint-Jovite, à moins de 550 m en moyenne d’un commerce d’approvisionnement favorable. '+
-    'Hors du périmètre urbain, le seuil du protocole est de 16 km, alors que la distance moyenne la plus élevée est de 3,0 km : '+
-    'la condition ne peut pas être remplie à Mont-Tremblant. L’indice RFEI le plus élevé atteint '+fmt(ADS.rfeimax,2).replace('.',',')+' par aire de diffusion, loin du seuil de 5. '+
+    'Hors du périmètre urbain, le seuil est de 16 km, alors que la distance moyenne la plus élevée est de 3,0 km : '+
+    'ce critère n’est donc pas applicable à la réalité de la Ville de Mont-Tremblant. L’indice RFEI le plus élevé atteint '+fmt(ADS.rfeimax,2).replace('.',',')+' par aire de diffusion, loin du seuil de 5. '+
     'À l’échelle des secteurs, le corridor de la route 117 (3,50) et le reste du territoire (3,67) s’en rapprochent, parce que l’offre y est faite surtout de dépanneurs de station-service et de comptoirs de restauration rapide.<br><br>'+
     'Le résultat à retenir est ailleurs : <strong>'+fmt(ADS.poploin)+' personnes</strong>, soit '+fmt(100*ADS.poploin/ADS.pop,0)+' % de la population, '+
     'habitent un logement situé au-delà du seuil de marche de leur milieu. La contrainte d’accès est donc réelle, mais elle est dispersée '+
@@ -943,3 +951,5 @@ init();
 
 
 </body></html>
+
+
