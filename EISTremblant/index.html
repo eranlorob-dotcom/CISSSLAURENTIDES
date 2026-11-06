@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Marque (charte CISSS-DSP) */
+  /* Marque (charte DSP) */
   --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
   --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
 
@@ -156,7 +157,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
     <div class="brand">
       <div class="brand-mark" aria-hidden="true">C</div>
       <div class="brand-txt">
-        <small>CISSS des Laurentides · Direction de santé publique</small>
+        <small>Santé Québec Laurentides · Direction de santé publique</small>
         <strong>C.A.R.T.O.S. · ÉIS Mont-Tremblant</strong>
       </div>
     </div>
@@ -188,8 +189,8 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
 
 <footer>
   <div class="foot">
-    <span>CISSS des Laurentides · Direction de santé publique · Outils d'aide à la décision, non réglementaires</span>
-    <span>Mise à jour <span class="mono">2026-10-13</span></span>
+    <span>Santé Québec Laurentides · Direction de santé publique · Outils d'aide à la décision, non réglementaires</span>
+    <span>Mise à jour <span class="mono">2026-11-06</span></span>
   </div>
 </footer>
 
@@ -289,6 +290,12 @@ var APPS = [
     q:'Les services du quotidien sont-ils à distance de marche des logements?',
     desc:"Score d\u2019accessibilité aux services et équipements depuis chaque immeuble résidentiel, pondéré par logement, pour la ville et pour chaque périmètre d\u2019urbanisation (Saint-Jovite, Village, Base Sud, Versant Soleil, Camp Nord).",
     tags:['Vivre en Ville 2026','Rôle 2026','OpenStreetMap','Densité résidentielle'] },
+
+  { theme:'env', ico:'dB', file:'paysages_sonores_tremblant.html',
+    title:'Paysages sonores',
+    q:'Qui habite près des sources de bruit?',
+    desc:"Typologie en cinq paysages sonores des cellules de 100 m des périmètres d\u2019urbanisation, selon les débits routiers, les sentiers de motoneige, les aires d\u2019atterrissage et ce qui atténue le bruit, croisée avec la défavorisation et les usages sensibles.",
+    tags:['DJMA MTMD 2025','AQréseau+','ACP et k-moyennes','Défavorisation RTS'] },
 
   { theme:'env', ico:'°', file:'ilots_chaleur_mont_tremblant.html',
     title:'Îlots de chaleur',
