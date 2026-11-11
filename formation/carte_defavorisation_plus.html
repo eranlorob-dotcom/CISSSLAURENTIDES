@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Défavorisation Laurentides, analyse interactive · Santé Québec Laurentides</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Données : le même fichier qu'au module 3 (il crée la variable "donnees").
+     S'il est absent, la page propose de charger un GeoJSON (bouton ou glisser-déposer). -->
+<script src="laurentides_defavorisation.js"></script>
+<style>
+/* ===== Charte DSP ===== */
+:root{
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+  --accent:var(--teal); --accent2:var(--blue);
+  /* Quintiles : même palette RdYlGn que la symbologie QGIS (module 2) et la carte du module 3 */
+  --q1:#1a9850; --q2:#91cf60; --q3:#fee090; --q4:#fc8d59; --q5:#d73027; --qna:#8b8fc4;
+  --fs:1rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Source Sans 3",system-ui,sans-serif;font-size:var(--fs);
+  background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+.mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+a{color:var(--teal)}
+button{font:inherit}
+
+/* ===== Shell ===== */
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+header.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 18px;
+  background:linear-gradient(100deg,var(--bg2) 0%,#161354 60%,#1c2a8a 100%);
+  border-bottom:1px solid var(--line);z-index:1200}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
+  background:radial-gradient(circle at 32% 28%,var(--teal),var(--navy) 75%);box-shadow:0 0 0 1px #21aead33,inset 0 0 14px #00000040}
+.mark svg{width:21px;height:21px}
+.title h1{font-size:1.18rem;font-weight:700;line-height:1.12}
+.title h1 span{color:var(--teal)}
+.title p{font-size:.78rem;color:var(--ink2);margin-top:2px}
+.spacer{flex:1 1 auto}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tools select,.tools input{appearance:none;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  border-radius:9px;padding:7px 11px;font:inherit;font-size:.86rem;font-weight:600;height:34px}
+.tools select{cursor:pointer}
+.tools input{width:190px;font-weight:400}
+.tools input::placeholder{color:var(--muted)}
+.tools select:focus,.tools input:focus{outline:none;border-color:var(--teal)}
+.badge{font-size:.7rem;font-weight:700;letter-spacing:.4px;padding:4px 10px;border-radius:999px;
+  background:#21aead1f;color:var(--teal);border:1px solid #21aead40;white-space:nowrap}
+.fontctl{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;height:34px}
+.fontctl button{background:transparent;border:0;color:var(--ink2);cursor:pointer;width:32px;height:34px;font-weight:700}
+.fontctl button:hover{background:#ffffff14;color:var(--ink)}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink2);height:34px;
+  border-radius:9px;padding:0 12px;font-size:.84rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--teal);color:var(--ink)}
+.btn.on{border-color:var(--teal);color:var(--teal);background:#21aead1a}
+
+/* ===== Main ===== */
+.main{position:relative;display:grid;grid-template-columns:400px 1fr;min-height:0;transition:grid-template-columns .3s ease}
+.main.collapsed{grid-template-columns:0 1fr}
+.panel{width:400px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;
+  display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--line) transparent;transition:transform .3s ease}
+.main.collapsed .panel{transform:translateX(-100%)}
+#map{position:relative;height:100%;width:100%;background:var(--bg);outline:none}
+.leaflet-container{font-family:"Source Sans 3",system-ui,sans-serif}
+.leaflet-interactive:focus{outline:none}
+#map.pick{cursor:crosshair}
+.leaflet-bar a,.leaflet-control-layers{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.leaflet-bar a:hover{background:var(--panel2)!important}
+.leaflet-control-layers{border:1px solid var(--line)!important;border-radius:10px!important;font-family:"Source Sans 3",system-ui,sans-serif;font-size:.82rem}
+.leaflet-control-layers-expanded{padding:10px 12px!important}
+.leaflet-control-layers-separator{border-top-color:var(--line)!important}
+.leaflet-control-layers-toggle{filter:invert(1) hue-rotate(180deg)}
+.leaflet-control-attribution{background:#070620cc!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--teal)!important}
+.leaflet-control-scale-line{background:#070620bb;color:var(--ink2);border-color:var(--ink2)}
+
+/* ===== Onglets du panneau ===== */
+.tabs{display:flex;gap:4px;padding:12px 14px 0;position:sticky;top:0;background:var(--panel);z-index:5;border-bottom:1px solid var(--line2)}
+.tabs button{flex:1;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);
+  padding:9px 4px 10px;font-size:.88rem;font-weight:700;cursor:pointer}
+.tabs button.active{color:var(--ink);border-bottom-color:var(--teal)}
+.tabs button:hover{color:var(--ink)}
+.tab{display:none;padding:14px 18px 28px}
+.tab.active{display:block}
+.eyebrow{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:700;margin:18px 0 8px}
+.eyebrow:first-child{margin-top:4px}
+.hint{font-size:.78rem;color:var(--muted);line-height:1.5;margin:-2px 0 10px}
+.scope{font-size:.82rem;color:var(--ink2);margin-bottom:6px}
+.scope b{color:var(--ink)}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kpi .v{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:500;line-height:1.1}
+.kpi .l{font-size:.74rem;color:var(--muted);margin-top:2px;line-height:1.3}
+
+/* Barres par quintile */
+.qbar{display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;border-radius:6px;padding:2px 4px;margin-left:-4px}
+.qbar:hover{background:#ffffff0a}
+.qbar.off{opacity:.35}
+.qbar .lab{width:94px;font-size:.78rem;color:var(--ink2);flex:0 0 auto}
+.qbar .bg{flex:1;height:9px;background:var(--line2);border-radius:5px;overflow:hidden}
+.qbar .fill{height:100%;border-radius:5px;transition:width .4s ease}
+.qbar .val{width:84px;text-align:right;font-size:.74rem;color:var(--ink2);flex:0 0 auto;white-space:nowrap}
+
+/* Tableau MRC */
+table.mrc{width:100%;border-collapse:collapse;font-size:.8rem}
+table.mrc th{color:var(--muted);font-weight:600;text-align:left;padding:5px 4px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;font-size:.74rem}
+table.mrc th:hover{color:var(--ink)}
+table.mrc td{padding:6px 4px;border-bottom:1px solid var(--line2);color:var(--ink2)}
+table.mrc td.n{text-align:right;font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+table.mrc th.n{text-align:right}
+table.mrc tr.row{cursor:pointer}
+table.mrc tr.row:hover td{background:#ffffff08;color:var(--ink)}
+table.mrc tr.sel td{color:var(--teal)}
+.minibar{display:inline-block;height:6px;border-radius:3px;background:var(--q5);vertical-align:middle;margin-left:6px;opacity:.85}
+
+/* Matrice croisée */
+.matrix{display:grid;grid-template-columns:44px repeat(5,1fr);gap:3px;font-size:.72rem}
+.matrix .h{color:var(--muted);text-align:center;align-self:center;font-weight:600}
+.matrix .c{aspect-ratio:1.35;border-radius:5px;display:grid;place-items:center;cursor:pointer;
+  font-family:"JetBrains Mono",monospace;font-size:.8rem;border:1px solid var(--line2);color:var(--ink)}
+.matrix .c:hover{border-color:var(--teal)}
+.matrix .c.sel{outline:2px solid var(--white);outline-offset:1px}
+.matrix .c.zero{color:var(--muted);opacity:.5}
+.axis{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin:5px 0 0 47px}
+
+/* Chips, listes */
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;padding:3px 9px;border-radius:999px;
+  background:var(--panel2);border:1px solid var(--line);color:var(--ink2);cursor:pointer}
+.chip:hover{border-color:var(--teal);color:var(--ink)}
+.chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.notice{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#21aead14;border:1px solid #21aead40;
+  border-radius:10px;padding:8px 11px;font-size:.8rem;color:var(--ink2);margin:10px 0}
+.notice button{background:transparent;border:1px solid var(--line);color:var(--ink2);border-radius:7px;padding:3px 9px;cursor:pointer;font-size:.76rem}
+.notice button:hover{color:var(--ink);border-color:var(--teal)}
+
+/* Outil rayon */
+.radius-box{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.radius-box .row{display:flex;align-items:center;gap:10px}
+.radius-box input[type=range]{flex:1;accent-color:var(--teal)}
+.radius-out{margin-top:10px;font-size:.8rem;color:var(--ink2);line-height:1.5}
+
+/* Profil */
+.empty{text-align:center;padding:48px 14px;color:var(--muted)}
+.empty .ic{font-size:32px;margin-bottom:10px}
+.empty p{font-size:.88rem;line-height:1.55}
+.scopename{font-size:1.45rem;font-weight:700;line-height:1.12}
+.scopesub{font-size:.82rem;color:var(--muted);margin:3px 0 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hero{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.hero .lab{font-size:.8rem;color:var(--ink2);font-weight:600}
+.hero .big{font-size:3rem;font-weight:500;line-height:1;letter-spacing:-1px;margin:6px 0 4px}
+.hero .big small{font-size:1.05rem;color:var(--muted);margin-left:4px;letter-spacing:0}
+.hero .sub{font-size:.84rem;color:var(--ink2);line-height:1.45}
+.gauge{margin-top:12px}
+.gauge .gl{display:flex;justify-content:space-between;font-size:.78rem;color:var(--ink2);margin-bottom:4px}
+.gauge .segs{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.gauge .segs span{height:9px;border-radius:3px;background:var(--line2)}
+.cmp{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:4px}
+.cmp td{padding:5px 2px;border-bottom:1px solid var(--line2);color:var(--ink2)}
+.cmp td.n{text-align:right;font-family:"JetBrains Mono",monospace;color:var(--ink)}
+.cmp th{font-size:.72rem;color:var(--muted);text-align:right;font-weight:600;padding:3px 2px}
+.cmp th:first-child{text-align:left}
+.dbl{background:#d730271f;color:#ff8f7f;border:1px solid #d7302755}
+
+/* Onglet Leaflet */
+.cap{display:grid;grid-template-columns:22px 1fr;gap:2px 8px;padding:9px 0;border-bottom:1px solid var(--line2)}
+.cap .n{grid-row:span 3;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--teal);padding-top:2px}
+.cap .t{font-size:.86rem;font-weight:700;color:var(--ink)}
+.cap code{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--teal-l);background:var(--panel2);border-radius:4px;padding:1px 5px}
+.cap .w{font-size:.78rem;color:var(--muted);line-height:1.4}
+.src{margin-top:18px;font-size:.72rem;color:var(--muted);line-height:1.5;border-top:1px solid var(--line2);padding-top:12px}
+
+/* ===== Légende ===== */
+#legend{position:absolute;bottom:42px;left:12px;z-index:600;background:var(--panel);
+  background:color-mix(in srgb,var(--panel) 95%,transparent);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:210px;max-width:250px}
+.legend-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+#legend.min .legend-body{display:none}
+#legend.min .legend-title{margin-bottom:0}
+.legend-item{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:.78rem;color:var(--ink2);cursor:pointer;user-select:none}
+.legend-item.off{opacity:.35;text-decoration:line-through}
+.legend-sw{width:15px;height:15px;border-radius:4px;border:1px solid #ffffff44;flex:0 0 auto}
+.legend-note{font-size:.7rem;color:var(--muted);margin-top:7px}
+.bivar{display:grid;grid-template-columns:repeat(3,22px);gap:2px;margin:6px 0 0 18px}
+.bivar span{width:22px;height:22px;border-radius:3px}
+.bivar-wrap{position:relative;padding-bottom:16px}
+.bivar-wrap .ax-x{position:absolute;bottom:0;left:18px;font-size:.68rem;color:var(--muted)}
+.bivar-wrap .ax-y{position:absolute;left:0;top:6px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:.68rem;color:var(--muted)}
+.opac{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:.72rem;color:var(--muted)}
+.opac input{flex:1;accent-color:var(--teal)}
+
+/* ===== Méthodo ===== */
+#methodo{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:650}
+#methodo-btn{background:var(--panel);border:1px solid var(--line);color:var(--ink2);padding:7px 15px;border-radius:999px;font-size:.78rem;cursor:pointer}
+#methodo-btn:hover{color:var(--ink);border-color:var(--teal)}
+#methodo-content{display:none;position:absolute;bottom:42px;left:50%;transform:translateX(-50%);
+  width:min(560px,90vw);max-height:62vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;font-size:.82rem;line-height:1.6;color:var(--ink2);box-shadow:0 12px 40px #0008}
+#methodo-content.show{display:block}
+#methodo-content h4{color:var(--ink);font-size:.95rem;margin:4px 0 6px}
+#methodo-content ul{padding-left:18px}
+
+/* ===== Contrôles personnalisés ===== */
+.coords{background:var(--panel)!important;border:1px solid var(--line)!important;border-radius:8px;padding:4px 9px;
+  font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--ink2);min-width:200px;text-align:center}
+.ctl-btn a{font-size:15px;line-height:30px!important;width:30px!important;height:30px!important}
+.lbl{background:none!important;border:0!important}
+.lbl-cache .lbl{display:none}
+.lbl div{transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;font-weight:700;color:#14143a;
+  text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff;pointer-events:none}
+
+/* ===== Tooltip & popup ===== */
+.muni-tooltip{background:var(--panel2)!important;border:1px solid var(--line)!important;color:var(--ink)!important;
+  border-radius:9px!important;padding:8px 12px!important;font-family:"Source Sans 3",system-ui,sans-serif!important;font-size:.8rem!important;box-shadow:0 6px 20px #0007!important}
+.muni-tooltip .tt-nom{font-weight:700;font-size:.92rem}
+.muni-tooltip .tt-mrc{color:var(--muted);font-size:.74rem}
+.muni-tooltip .tt-q{display:flex;gap:10px;margin-top:5px;font-family:"JetBrains Mono";font-size:.8rem}
+.muni-tooltip .tt-q b{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px}
+.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{border-color:transparent!important}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel)!important;color:var(--ink)!important;border:1px solid var(--line)}
+.leaflet-popup-content{font-family:"Source Sans 3",system-ui,sans-serif;font-size:.82rem;margin:12px 14px}
+.leaflet-popup-content .mono{color:var(--ink2);font-size:.74rem}
+.leaflet-popup-content button{margin-top:8px;width:100%}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+
+/* ===== Divers ===== */
+#panel-toggle{position:absolute;top:calc(50% - 17px);left:400px;z-index:700;background:var(--panel);
+  border:1px solid var(--line);color:var(--ink);width:26px;height:34px;border-radius:0 8px 8px 0;cursor:pointer;font-size:13px;transition:left .3s ease}
+#panel-toggle.shifted{left:0}
+#toast{position:fixed;left:50%;top:76px;transform:translateX(-50%) translateY(-10px);background:var(--panel2);border:1px solid var(--teal);
+  color:var(--ink);padding:9px 16px;border-radius:10px;font-size:.84rem;z-index:3000;opacity:0;pointer-events:none;transition:all .25s ease;max-width:90vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#loader{position:absolute;inset:0;z-index:2000;display:none;place-items:center;background:#070620ee}
+#loader.show{display:grid}
+#loader .card{max-width:460px;background:var(--panel);border:1px dashed var(--teal);border-radius:16px;padding:26px;text-align:center;line-height:1.55}
+#loader h2{font-size:1.15rem;margin-bottom:8px}
+#loader p{font-size:.88rem;color:var(--ink2);margin-bottom:14px}
+#drop{position:absolute;inset:0;z-index:1500;display:none;place-items:center;background:#21aead22;border:3px dashed var(--teal);
+  font-size:1.1rem;font-weight:700;color:var(--white);pointer-events:none}
+#drop.show{display:grid}
+
+@media(max-width:800px){
+  header.top{padding:8px 12px;gap:8px}
+  .tools{gap:6px}
+  .tools select,.tools input,.btn{height:32px;font-size:.8rem}
+  .fontctl,.tools .btn.exp{display:none}
+  .main{grid-template-columns:1fr}
+  .main.collapsed{grid-template-columns:1fr}
+  .panel{position:absolute;inset:auto 0 0 0;width:auto;height:52vh;border-right:none;border-top:1px solid var(--line);z-index:800}
+  .main.collapsed .panel{transform:translateY(100%)}
+  #panel-toggle{display:none}
+  #legend{bottom:auto;top:12px;left:56px;padding:9px 11px;min-width:0;max-width:calc(100vw - 130px)}
+  #legend .legend-note{display:none}
+  .tools input{width:140px}
+  .title p,.badge,.coords{display:none}
+  #methodo{bottom:auto;top:auto;left:12px;right:auto;transform:none;bottom:calc(52vh + 10px)}
+  .main.collapsed #methodo{bottom:30px}
+  #methodo-content{left:0;transform:none;bottom:40px;width:calc(100vw - 24px)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.4"/></svg></div>
+      <div class="title">
+        <h1>Défavorisation <span>Laurentides</span></h1>
+        <p>Indice de Pampalon par municipalité · analyse interactive</p>
+      </div>
+    </div>
+    <span class="badge">Leaflet 1.9.4 · sans extension</span>
+    <div class="spacer"></div>
+    <div class="tools">
+      <select id="sel-ind" title="Indicateur affiché">
+        <option value="mat">Défavorisation matérielle</option>
+        <option value="soc">Défavorisation sociale</option>
+        <option value="bi">Matérielle × sociale</option>
+      </select>
+      <select id="sel-mrc" title="Filtrer par MRC"><option value="">Toutes les MRC</option></select>
+      <input id="search" list="munis" placeholder="Municipalité…" autocomplete="off">
+      <datalist id="munis"></datalist>
+      <div class="fontctl"><button onclick="setFont(-1)" title="Réduire le texte">A−</button><button onclick="setFont(1)" title="Agrandir le texte">A+</button></div>
+      <button class="btn" onclick="shareView()" title="Copier un lien vers cette vue">🔗 Lien</button>
+      <button class="btn exp" onclick="exportCSV()" title="Exporter le tableau (municipalités du filtre)">⬇ CSV</button>
+      <button class="btn exp" onclick="exportGeoJSON()" title="Exporter la couche (municipalités du filtre)">⬇ GeoJSON</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="panel" id="panel">
+      <nav class="tabs">
+        <button data-tab="analyse" class="active">Analyse</button>
+        <button data-tab="muni">Municipalité</button>
+        <button data-tab="leaflet">Leaflet</button>
+      </nav>
+
+      <!-- ===== Onglet Analyse ===== -->
+      <section class="tab active" id="tab-analyse">
+        <div class="scope" id="scope"></div>
+        <div id="hl-notice"></div>
+        <div class="kpis">
+          <div class="kpi"><div class="v" id="k-n">0</div><div class="l">municipalités dans le filtre</div></div>
+          <div class="kpi"><div class="v" id="k-q45" style="color:var(--q4)">0</div><div class="l" id="k-q45-l">en Q4 ou Q5</div></div>
+          <div class="kpi"><div class="v" id="k-dbl" style="color:var(--q5)">0</div><div class="l">double défavorisation (matérielle et sociale en Q4 ou Q5)</div></div>
+          <div class="kpi"><div class="v" id="k-na" style="color:var(--muted)">0</div><div class="l">sans donnée</div></div>
+        </div>
+
+        <div class="eyebrow" id="dist-title">Répartition par quintile</div>
+        <p class="hint">Cliquez sur une barre pour masquer ou afficher ce quintile sur la carte.</p>
+        <div id="dist"></div>
+
+        <div class="eyebrow">Portrait par MRC</div>
+        <p class="hint">Cliquez sur une MRC pour la filtrer et zoomer. Cliquez sur un en-tête pour trier.</p>
+        <table class="mrc" id="mrc-table"></table>
+
+        <div class="eyebrow">Matérielle × sociale</div>
+        <p class="hint">Nombre de municipalités par combinaison de quintiles. Cliquez sur une case pour repérer ces municipalités sur la carte.</p>
+        <div class="matrix" id="matrix"></div>
+        <div class="axis"><span>Sociale Q1</span><span>Sociale Q5 →</span></div>
+        <div id="matrix-list" style="margin-top:10px"></div>
+
+        <div class="eyebrow">Analyse de proximité</div>
+        <div class="radius-box">
+          <p class="hint" style="margin:0 0 10px">Choisissez un point sur la carte (ou clic droit n'importe où) pour analyser les municipalités dont le centre est à moins de :</p>
+          <div class="row">
+            <input type="range" id="radius" min="5" max="60" step="5" value="20">
+            <span class="mono" id="radius-v" style="width:52px;text-align:right">20 km</span>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="btn-pick" onclick="togglePick()">◎ Choisir un point</button>
+            <button class="btn" onclick="clearRadius()">Effacer</button>
+          </div>
+          <div class="radius-out" id="radius-out"></div>
+        </div>
+        <div class="src" id="src-analyse"></div>
+      </section>
+
+      <!-- ===== Onglet Municipalité ===== -->
+      <section class="tab" id="tab-muni">
+        <div class="empty" id="empty"><div class="ic">🗺️</div><p>Cliquez sur une municipalité de la carte, ou utilisez la recherche, pour afficher son profil.</p></div>
+        <div id="profil" style="display:none"></div>
+      </section>
+
+      <!-- ===== Onglet Leaflet ===== -->
+      <section class="tab" id="tab-leaflet">
+        <p class="hint" style="margin-top:4px">Tout ce que fait cette page repose sur Leaflet seul, sans extension. Voici les fonctions utilisées et où les voir. Le code source (Ctrl+U) est commenté avec les mêmes numéros.</p>
+        <div id="caps"></div>
+      </section>
+    </aside>
+
+    <button id="panel-toggle" onclick="togglePanel()" title="Masquer ou afficher le panneau">◀</button>
+    <div id="map">
+      <div id="legend"></div>
+      <div id="methodo">
+        <button id="methodo-btn" onclick="toggleMethodo()">ⓘ Méthodologie</button>
+        <div id="methodo-content">
+          <h4>Indice de défavorisation matérielle et sociale</h4>
+          <p>L'indice de Pampalon combine des indicateurs du recensement : scolarité, emploi et revenu pour la dimension <b>matérielle</b>; personnes vivant seules, familles monoparentales et personnes séparées, divorcées ou veuves pour la dimension <b>sociale</b>. Les valeurs sont ramenées à la municipalité, puis classées en <b>quintiles régionaux</b> calculés parmi les municipalités des Laurentides : Q1 regroupe le 20 % le moins défavorisé, Q5 le 20 % le plus défavorisé.</p>
+          <h4>Lecture des analyses</h4>
+          <ul>
+            <li><b>Mode Matérielle × sociale</b> : chaque dimension est regroupée en trois niveaux (Q1-Q2 faible, Q3 moyen, Q4-Q5 élevé), d'où une grille de 3 × 3 couleurs.</li>
+            <li><b>Double défavorisation</b> : quintile matériel et quintile social tous deux en Q4 ou Q5.</li>
+            <li><b>MRC</b> : déduite des deux premiers chiffres du code géographique municipal (72 Deux-Montagnes à 79 Antoine-Labelle), sauf si le fichier contient déjà un champ MRC.</li>
+            <li><b>Quintile moyen</b> : moyenne simple des quintiles, non pondérée par la population. Les quintiles sont des rangs : cette moyenne est indicative seulement.</li>
+            <li><b>Proximité</b> : distance à vol d'oiseau entre le point choisi et le centre géométrique de chaque municipalité.</li>
+          </ul>
+          <p class="src">Sources : INSPQ, indice de défavorisation matérielle et sociale (Pampalon), données du module 2 · Fonds de carte : gouvernement du Québec · Santé Québec Laurentides, Direction de santé publique · Mise à jour 2026-11-03</p>
+        </div>
+      </div>
+      <div id="drop">Déposez votre fichier GeoJSON ici</div>
+      <div id="loader">
+        <div class="card">
+          <h2>Données introuvables</h2>
+          <p>La page cherche le fichier <span class="mono">laurentides_defavorisation.js</span> du module 3 dans le même dossier. Vous pouvez aussi charger directement votre fichier <span class="mono">.geojson</span> du module 2.</p>
+          <button class="btn" onclick="document.getElementById('file').click()">Choisir un fichier GeoJSON</button>
+          <p style="margin:12px 0 0;font-size:.78rem;color:var(--muted)">ou glissez-le sur la carte</p>
+          <input type="file" id="file" accept=".geojson,.json" hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   0. RÉGLAGES ET OUTILS
+   ===================================================================== */
+var QCOL={1:'#1a9850',2:'#91cf60',3:'#fee090',4:'#fc8d59',5:'#d73027'};   // = --q1..--q5
+var NA='#8b8fc4';
+// Grille bivariée 3 × 3 (charte DSP) : ligne = matérielle (faible, moyen, élevé), colonne = sociale
+var BIVAR=[['#cdd6f0','#8fb4e6','#0482D3'],['#7fcfc9','#5aa5c2','#1a5fb4'],['#21AEAD','#1786a8','#140C74']];
+var NIV=['faible','moyen','élevé'];
+var MRC_CODES={'72':'Deux-Montagnes','73':'Thérèse-De Blainville','74':'Mirabel','75':'La Rivière-du-Nord',
+  '76':'Argenteuil','77':"Les Pays-d'en-Haut",'78':'Les Laurentides','79':'Antoine-Labelle'};
+var IND_LAB={mat:'Défavorisation matérielle',soc:'Défavorisation sociale',bi:'Matérielle × sociale'};
+var INTERP={1:'parmi les 20 % des municipalités les moins défavorisées de la région',
+  2:'sous la médiane régionale',3:'autour de la médiane régionale',4:'au-dessus de la médiane régionale',
+  5:'parmi les 20 % des municipalités les plus défavorisées de la région'};
+
+function fmt(n,d){return n==null||isNaN(n)?'n.d.':Number(n).toLocaleString('fr-CA',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
+function pct(a,b){return b?fmt(100*a/b,0)+' %':'n.d.';}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function toQ(v){var n=Number(String(v==null?'':v).replace(',','.'));return (n>=1&&n<=5&&Math.round(n)===n)?n:null;}
+function niv(q){return q==null?null:(q<=2?0:q===3?1:2);}
+function el(id){return document.getElementById(id);}
+function toast(msg){var t=el('toast');t.innerHTML=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('show');},3200);}
+var narrow=function(){return window.innerWidth<=800;};
+
+/* =====================================================================
+   1. CARTE ET FONDS DE CARTE : L.map, L.tileLayer (TMS {-y}), L.control.layers
+   ===================================================================== */
+var map=L.map('map',{zoomControl:false,keyboard:true,minZoom:6,maxZoom:18}).setView([46.3,-74.8],8);
+L.control.zoom({position:'topleft',zoomInTitle:'Zoom avant',zoomOutTitle:'Zoom arrière'}).addTo(map);
+
+var ATTR='© Gouvernement du Québec | Santé Québec Laurentides, DSP';
+var fondReseau=L.tileLayer('https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',{attribution:ATTR,maxZoom:18});
+var fondOrtho=L.tileLayer('https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/orthos@EPSG_3857/{z}/{x}/{-y}.png',{attribution:ATTR+' (orthoimagerie)',maxZoom:18});
+var fondVide=L.layerGroup();
+fondReseau.addTo(map);
+
+/* 2. VOLETS (PANES) : superposer la sélection et le rayon au-dessus des polygones */
+map.createPane('surbrillance'); map.getPane('surbrillance').style.zIndex=450; map.getPane('surbrillance').style.pointerEvents='none';
+map.createPane('analyse');      map.getPane('analyse').style.zIndex=440;     map.getPane('analyse').style.pointerEvents='none';
+
+/* 3. ÉCHELLE : L.control.scale */
+L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);
+
+/* =====================================================================
+   4. CONTRÔLES PERSONNALISÉS : L.Control.extend
+   ===================================================================== */
+var BoutonsCtl=L.Control.extend({
+  options:{position:'topleft'},
+  onAdd:function(){
+    var div=L.DomUtil.create('div','leaflet-bar ctl-btn');
+    div.innerHTML='<a href="#" title="Vue d\'ensemble de la région" id="b-home">⌂</a><a href="#" title="Me localiser" id="b-loc">⌖</a>';
+    L.DomEvent.disableClickPropagation(div);
+    div.querySelector('#b-home').onclick=function(e){e.preventDefault();vueEnsemble(true);};
+    div.querySelector('#b-loc').onclick=function(e){e.preventDefault();localiser();};
+    return div;
+  }
+});
+new BoutonsCtl().addTo(map);
+
+var CoordsCtl=L.Control.extend({
+  options:{position:'bottomright'},
+  onAdd:function(){this._div=L.DomUtil.create('div','coords');this._div.textContent='Survolez la carte';return this._div;},
+  maj:function(ll){this._div.textContent=fmt(ll.lat,4)+' N · '+fmt(Math.abs(ll.lng),4)+' O · zoom '+map.getZoom();}
+});
+var coordsCtl=new CoordsCtl().addTo(map);
+map.on('mousemove',function(e){coordsCtl.maj(e.latlng);});
+
+/* =====================================================================
+   ÉTAT
+   ===================================================================== */
+var DATA=null, FEATS=[], dataLayer=null, labelsLayer=L.layerGroup(), dblLayer=L.layerGroup(), radiusLayer=L.layerGroup().addTo(map);
+var layersCtl=null, selLayer=null, selected=null;
+var IND='mat', MRC='', HIDDEN={}, HL=null, HL_LABEL='', OPAC=.78, PICK=false, RADIUS=null;
+var mrcSort={k:'q45',dir:-1};
+
+/* =====================================================================
+   5. CHARGEMENT DES DONNÉES (variable "donnees", fichier choisi, ou glisser-déposer)
+   ===================================================================== */
+function pick(p,keys){for(var i=0;i<keys.length;i++){if(p[keys[i]]!=null&&p[keys[i]]!=='')return p[keys[i]];}return null;}
+function findKey(p,re){for(var k in p){if(re.test(k))return p[k];}return null;}
+
+// Centre géométrique de l'anneau extérieur le plus grand (pour étiquettes, points et distances)
+function centroide(layer){
+  var rings=[],ll=layer.getLatLngs();
+  (function walk(a){if(a.length&&a[0].lat!==undefined){rings.push(a);}else{a.forEach(walk);}})(ll);
+  var best=null,bestA=0;
+  rings.forEach(function(r){var A=0,cx=0,cy=0;for(var i=0,j=r.length-1;i<r.length;j=i++){var f=r[j].lng*r[i].lat-r[i].lng*r[j].lat;A+=f;cx+=(r[j].lng+r[i].lng)*f;cy+=(r[j].lat+r[i].lat)*f;}
+    if(Math.abs(A)>bestA&&A!==0){bestA=Math.abs(A);best=L.latLng(cy/(3*A),cx/(3*A));}});
+  return best||layer.getBounds().getCenter();
+}
+
+function init(data){
+  if(!data||!data.features||!data.features.length){toast('Ce fichier ne contient aucune entité GeoJSON.');return;}
+  if(dataLayer){map.removeLayer(dataLayer);labelsLayer.clearLayers();dblLayer.clearLayers();if(layersCtl)map.removeControl(layersCtl);}
+  DATA=data; FEATS=[]; selected=null; HL=null; HL_LABEL=''; HIDDEN={}; clearRadius();
+  if(selLayer){map.removeLayer(selLayer);selLayer=null;}
+  el('profil').style.display='none'; el('empty').style.display='block';
+  el('loader').classList.remove('show');
+
+  // Normalisation des propriétés : on accepte quelques variantes de noms de champs
+  data.features.forEach(function(f,i){
+    var p=f.properties=f.properties||{};
+    var code=String(pick(p,['code_mun','CODE_MUN','MUS_CO_GEO','code'])||'');
+    p._id=i;
+    p._code=code;
+    p._nom=pick(p,['nom_mun','NOM_MUN','MUS_NM_MUN','nom'])||('Entité '+(i+1));
+    p._mrc=pick(p,['mrc','MRC','nom_mrc','MUS_NM_MRC'])||MRC_CODES[code.slice(0,2)]||'MRC inconnue';
+    p._qm=toQ(pick(p,['defav_mat_quintile','QuintMat','quintile_mat'])!=null?pick(p,['defav_mat_quintile','QuintMat','quintile_mat']):findKey(p,/mat.*quint|quint.*mat/i));
+    p._qs=toQ(pick(p,['defav_soc_quintile','QuintSoc','quintile_soc'])!=null?pick(p,['defav_soc_quintile','QuintSoc','quintile_soc']):findKey(p,/soc.*quint|quint.*soc/i));
+  });
+
+  /* 6. COUCHE GEOJSON STYLÉE : L.geoJSON({style, onEachFeature}) */
+  dataLayer=L.geoJSON(data,{style:styleFeature,onEachFeature:onEach,bubblingMouseEvents:false}).addTo(map);
+
+  // Centres, étiquettes (L.divIcon) et points de double défavorisation (L.circleMarker)
+  dataLayer.eachLayer(function(l){
+    var p=l.feature.properties; p._c=centroide(l); FEATS.push(l);
+    labelsLayer.addLayer(L.marker(p._c,{icon:L.divIcon({className:'lbl',html:'<div>'+esc(p._nom)+'</div>',iconSize:[0,0]}),interactive:false,keyboard:false}));
+    if(p._qm>=4&&p._qs>=4){
+      dblLayer.addLayer(L.circleMarker(p._c,{radius:7,color:'#fff',weight:1.5,fillColor:QCOL[5],fillOpacity:.95})
+        .bindTooltip('<div class="tt-nom">'+esc(p._nom)+'</div><div class="tt-mrc">Double défavorisation · Q'+p._qm+' matérielle, Q'+p._qs+' sociale</div>',{className:'muni-tooltip',direction:'top'})
+        .on('click',function(){selectFeature(l,true);}));
+    }
+  });
+
+  /* 7. SÉLECTEUR DE COUCHES : L.control.layers (fonds + couches superposées) */
+  layersCtl=L.control.layers(
+    {'Carte du gouvernement du Québec':fondReseau,'Orthoimagerie du Québec':fondOrtho,'Aucun fond':fondVide},
+    {'Municipalités (choroplèthe)':dataLayer,'Noms des municipalités (zoom 9 et plus)':labelsLayer,'Double défavorisation (points)':dblLayer,'Rayon d\'analyse':radiusLayer},
+    {position:'topright',collapsed:narrow()}).addTo(map);
+
+  // Listes déroulantes et recherche
+  var mrcs=[...new Set(FEATS.map(function(l){return l.feature.properties._mrc;}))].sort(function(a,b){return a.localeCompare(b,'fr');});
+  var sm=el('sel-mrc'); sm.length=1; mrcs.forEach(function(m){sm.add(new Option(m,m));});
+  el('munis').innerHTML=FEATS.map(function(l){return '<option value="'+esc(l.feature.properties._nom)+'">';}).join('');
+
+  labelsLayer.addTo(map);
+  lireLien();
+  majEtiquettes();
+  refresh();
+  if(!location.hash) vueEnsemble(false);
+}
+
+/* =====================================================================
+   STYLE : couleur selon l'indicateur, filtres, surbrillance
+   ===================================================================== */
+function couleur(p){
+  if(IND==='bi'){var a=niv(p._qm),b=niv(p._qs);return (a==null||b==null)?null:BIVAR[a][b];}
+  var q=IND==='mat'?p._qm:p._qs; return q==null?null:QCOL[q];
+}
+function qCourant(p){return IND==='mat'?p._qm:IND==='soc'?p._qs:null;}
+function cleLegende(p){
+  if(IND==='bi'){var a=niv(p._qm),b=niv(p._qs);return (a==null||b==null)?'na':a+'-'+b;}
+  var q=qCourant(p);return q==null?'na':String(q);
+}
+function visible(p){return !HIDDEN[cleLegende(p)];}
+function dansFiltre(p){return !MRC||p._mrc===MRC;}
+function styleFeature(f){
+  var p=f.properties,c=couleur(p),vis=visible(p),inF=dansFiltre(p),inH=!HL||HL.has(p._id);
+  var s=c===null?{fillColor:NA,fillOpacity:OPAC*.25,weight:.8,color:NA,opacity:.7,dashArray:'4 3'}
+                :{fillColor:c,fillOpacity:OPAC,weight:.8,color:'#ffffff',opacity:.75,dashArray:null};
+  if(!vis){s.fillOpacity=0;s.opacity=.25;}
+  if(!inF||!inH){s.fillOpacity=s.fillOpacity*.15;s.opacity=.15;}
+  return s;
+}
+function restyle(){if(dataLayer)dataLayer.setStyle(styleFeature);}
+
+/* 8. INFO-BULLES, SURVOL ET CLIC : bindTooltip, setStyle, bringToFront, on('click') */
+function onEach(f,layer){
+  layer.bindTooltip(function(){
+    var p=f.properties;
+    var sw=function(q){return q==null?'<span style="color:var(--muted)">n.d.</span>':'<b style="background:'+QCOL[q]+'"></b>Q'+q;};
+    return '<div class="tt-nom">'+esc(p._nom)+'</div><div class="tt-mrc">MRC '+esc(p._mrc)+'</div>'+
+      '<div class="tt-q"><span>Mat. '+sw(p._qm)+'</span><span>Soc. '+sw(p._qs)+'</span></div>';
+  },{className:'muni-tooltip',sticky:true,direction:'top',offset:[0,-8]});
+  layer.on({
+    mouseover:function(){layer.setStyle({weight:2.2,color:'#ffffff',opacity:1});layer.bringToFront();},
+    mouseout:function(){dataLayer.resetStyle(layer);},
+    click:function(e){ if(PICK){placerRayon(e.latlng);return;} selectFeature(layer,false); },
+    contextmenu:function(e){menuContextuel(e);}
+  });
+}
+
+/* =====================================================================
+   9. SÉLECTION ET PROFIL : flyToBounds + volet "surbrillance"
+   ===================================================================== */
+function selectFeature(layer,voler){
+  selected=layer; var p=layer.feature.properties;
+  if(selLayer) map.removeLayer(selLayer);
+  selLayer=L.geoJSON(layer.feature,{pane:'surbrillance',interactive:false,style:{color:'#ffffff',weight:3.5,fill:false,opacity:1}}).addTo(map);
+  if(voler) map.flyToBounds(layer.getBounds(),{paddingTopLeft:padTL(),paddingBottomRight:[40,40],maxZoom:11,duration:1.1});
+  profil(p); ouvrirOnglet('muni'); majLien();
+}
+function moyenne(arr){var v=arr.filter(function(x){return x!=null;});return v.length?v.reduce(function(a,b){return a+b;},0)/v.length:null;}
+function jauge(lab,q){
+  var segs='';for(var i=1;i<=5;i++)segs+='<span style="'+(q!=null&&i<=q?'background:'+QCOL[i]:'')+'"></span>';
+  return '<div class="gauge"><div class="gl"><span>'+lab+'</span><span class="mono">'+(q==null?'n.d.':'Q'+q+' sur 5')+'</span></div><div class="segs">'+segs+'</div></div>';
+}
+function profil(p){
+  el('empty').style.display='none'; var box=el('profil'); box.style.display='block';
+  var memeMrc=FEATS.map(function(l){return l.feature.properties;}).filter(function(x){return x._mrc===p._mrc;});
+  var tous=FEATS.map(function(l){return l.feature.properties;});
+  var dbl=p._qm>=4&&p._qs>=4;
+  var heroQ,heroCol,heroLab,heroTxt;
+  if(IND==='bi'){
+    var a=niv(p._qm),b=niv(p._qs);
+    heroCol=(a==null||b==null)?NA:BIVAR[a][b]; heroLab='Matérielle × sociale';
+    heroQ=(a==null||b==null)?'n.d.':NIV[a]+' × '+NIV[b];
+    heroTxt=(a==null||b==null)?'Donnée non disponible pour au moins une dimension.':'Défavorisation matérielle de niveau '+NIV[a]+', sociale de niveau '+NIV[b]+'.';
+  } else {
+    var q=qCourant(p); heroCol=q==null?NA:QCOL[q]; heroLab=IND_LAB[IND];
+    heroQ=q==null?'n.d.':'Q'+q; heroTxt=q==null?'Donnée non disponible.':'Cette municipalité se situe '+INTERP[q]+'.';
+  }
+  // Municipalités proches : centres à moins de 15 km (map.distance)
+  var proches=FEATS.filter(function(l){var x=l.feature.properties;return x._id!==p._id&&map.distance(p._c,x._c)<=15000;})
+    .sort(function(a,b){return map.distance(p._c,a.feature.properties._c)-map.distance(p._c,b.feature.properties._c);});
+  var row=function(lab,vm,vs){return '<tr><td>'+lab+'</td><td class="n">'+(vm==null?'n.d.':fmt(vm,1))+'</td><td class="n">'+(vs==null?'n.d.':fmt(vs,1))+'</td></tr>';};
+  box.innerHTML=
+    '<div class="eyebrow">Municipalité</div>'+
+    '<div class="scopename">'+esc(p._nom)+'</div>'+
+    '<div class="scopesub"><span>MRC '+esc(p._mrc)+'</span>'+(p._code?'<span class="mono">'+esc(p._code)+'</span>':'')+(dbl?'<span class="badge dbl">Double défavorisation</span>':'')+'</div>'+
+    '<div class="hero"><div class="lab">'+heroLab+'</div><div class="big mono" style="color:'+heroCol+'">'+heroQ+(IND!=='bi'&&heroQ!=='n.d.'?'<small>sur 5</small>':'')+'</div><div class="sub">'+heroTxt+'</div></div>'+
+    jauge('Défavorisation matérielle',p._qm)+jauge('Défavorisation sociale',p._qs)+
+    '<div class="eyebrow">Comparaison (quintile moyen)</div>'+
+    '<table class="cmp"><tr><th></th><th>Matérielle</th><th>Sociale</th></tr>'+
+      row(esc(p._nom),p._qm,p._qs)+
+      row('MRC '+esc(p._mrc)+' ('+memeMrc.length+')',moyenne(memeMrc.map(function(x){return x._qm;})),moyenne(memeMrc.map(function(x){return x._qs;})))+
+      row('Région ('+tous.length+')',moyenne(tous.map(function(x){return x._qm;})),moyenne(tous.map(function(x){return x._qs;})))+
+    '</table>'+
+    '<div class="eyebrow">À moins de 15 km ('+proches.length+')</div>'+
+    (proches.length?'<div class="chips">'+proches.slice(0,14).map(function(l){var x=l.feature.properties,c=couleur(x)||NA;
+      return '<span class="chip" data-id="'+x._id+'"><i style="background:'+c+'"></i>'+esc(x._nom)+'</span>';}).join('')+'</div>':'<p class="hint">Aucune municipalité dont le centre est à moins de 15 km.</p>')+
+    '<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" id="p-rayon">◎ Analyser un rayon autour</button><button class="btn" id="p-zoom">⤢ Zoomer</button></div>'+
+    '<div class="src">Quintiles régionaux : Q1 = moins défavorisé, Q5 = plus défavorisé. Les moyennes de quintiles sont indicatives (non pondérées par la population).</div>';
+  box.querySelectorAll('.chip').forEach(function(c){c.onclick=function(){selectFeature(FEATS[+c.dataset.id],true);};});
+  el('p-rayon').onclick=function(){ouvrirOnglet('analyse');placerRayon(p._c);};
+  el('p-zoom').onclick=function(){map.flyToBounds(selected.getBounds(),{paddingTopLeft:padTL(),paddingBottomRight:[40,40],maxZoom:12});};
+}
+
+/* =====================================================================
+   10. ANALYSE : indicateurs, répartition, MRC, matrice croisée
+   ===================================================================== */
+function portee(){return FEATS.map(function(l){return l.feature.properties;}).filter(dansFiltre);}
+function refresh(){
+  restyle(); legende(); analyse();
+  if(selected) profil(selected.feature.properties);
+  if(RADIUS) placerRayon(RADIUS.c,true);
+  majLien();
+}
+function analyse(){
+  var P=portee(),n=P.length;
+  var qOf=function(p){return IND==='soc'?p._qs:p._qm;};   // en mode croisé, la répartition porte sur la matérielle
+  var na=P.filter(function(p){return IND==='bi'?(p._qm==null||p._qs==null):qOf(p)==null;}).length;
+  var q45=P.filter(function(p){var q=qOf(p);return q>=4;}).length;
+  var dbl=P.filter(function(p){return p._qm>=4&&p._qs>=4;}).length;
+  el('scope').innerHTML='Portée : <b>'+(MRC?'MRC '+esc(MRC):'région des Laurentides')+'</b> · indicateur <b>'+IND_LAB[IND].toLowerCase()+'</b>';
+  el('k-n').textContent=fmt(n); el('k-q45').textContent=fmt(q45); el('k-dbl').textContent=fmt(dbl); el('k-na').textContent=fmt(na);
+  var avecQ=P.filter(function(p){return qOf(p)!=null;}).length;
+  el('k-q45-l').textContent='en Q4 ou Q5 ('+(IND==='soc'?'sociale':'matérielle')+'), soit '+pct(q45,avecQ);
+
+  // Répartition
+  var dimLab=IND==='soc'?'sociale':'matérielle';
+  el('dist-title').textContent='Répartition par quintile ('+dimLab+')';
+  var cnt={1:0,2:0,3:0,4:0,5:0},max=1;
+  P.forEach(function(p){var q=qOf(p);if(q)cnt[q]++;});
+  for(var k in cnt)max=Math.max(max,cnt[k]);
+  var lib={1:'Q1 moins défav.',2:'Q2',3:'Q3',4:'Q4',5:'Q5 plus défav.'};
+  el('dist').innerHTML=[1,2,3,4,5].map(function(q){
+    var off=IND!=='bi'&&HIDDEN[String(q)];
+    return '<div class="qbar'+(off?' off':'')+'" data-q="'+q+'"><span class="lab">'+lib[q]+'</span><div class="bg"><div class="fill" style="width:'+(100*cnt[q]/max)+'%;background:'+QCOL[q]+'"></div></div><span class="val mono">'+cnt[q]+' · '+pct(cnt[q],n)+'</span></div>';
+  }).join('');
+  el('dist').querySelectorAll('.qbar').forEach(function(b){b.onclick=function(){
+    if(IND==='bi'){toast('En mode croisé, utilisez la légende ou la matrice pour filtrer.');return;}
+    basculer(b.dataset.q);};});
+
+  // Tableau par MRC (toujours sur toute la région, la ligne filtrée est mise en évidence)
+  var all=FEATS.map(function(l){return l.feature.properties;}),G={};
+  all.forEach(function(p){var g=G[p._mrc]=G[p._mrc]||{m:p._mrc,n:0,qs:[],q45:0,v:0};g.n++;var q=qOf(p);if(q){g.qs.push(q);g.v++;if(q>=4)g.q45++;}});
+  var rows=Object.keys(G).map(function(k){var g=G[k];g.moy=moyenne(g.qs);g.p45=g.v?g.q45/g.v:0;return g;});
+  rows.sort(function(a,b){var ka=mrcSort.k==='m'?a.m:mrcSort.k==='n'?a.n:mrcSort.k==='moy'?(a.moy||0):a.p45,kb=mrcSort.k==='m'?b.m:mrcSort.k==='n'?b.n:mrcSort.k==='moy'?(b.moy||0):b.p45;
+    return (typeof ka==='string'?ka.localeCompare(kb,'fr'):ka-kb)*mrcSort.dir;});
+  var arrow=function(k){return mrcSort.k===k?(mrcSort.dir>0?' ▲':' ▼'):'';};
+  el('mrc-table').innerHTML='<tr><th data-k="m">MRC'+arrow('m')+'</th><th class="n" data-k="n">Mun.'+arrow('n')+'</th><th class="n" data-k="moy">Q moyen'+arrow('moy')+'</th><th class="n" data-k="q45">% Q4-Q5'+arrow('q45')+'</th></tr>'+
+    rows.map(function(g){return '<tr class="row'+(g.m===MRC?' sel':'')+'" data-m="'+esc(g.m)+'"><td>'+esc(g.m)+'</td><td class="n">'+g.n+'</td><td class="n">'+fmt(g.moy,1)+'</td><td class="n">'+fmt(100*g.p45,0)+'<span class="minibar" style="width:'+Math.round(40*g.p45)+'px"></span></td></tr>';}).join('');
+  el('mrc-table').querySelectorAll('th').forEach(function(th){th.onclick=function(){var k=th.dataset.k;mrcSort={k:k,dir:mrcSort.k===k?-mrcSort.dir:(k==='m'?1:-1)};analyse();};});
+  el('mrc-table').querySelectorAll('tr.row').forEach(function(tr){tr.onclick=function(){choisirMrc(tr.dataset.m===MRC?'':tr.dataset.m,true);};});
+
+  // Matrice croisée 5 × 5 (lignes : matérielle, colonnes : sociale)
+  var M={},mx=1;P.forEach(function(p){if(p._qm&&p._qs){var k=p._qm+'-'+p._qs;M[k]=(M[k]||0)+1;mx=Math.max(mx,M[k]);}});
+  var h='<div class="h" style="font-size:.66rem">Mat. ↓</div>';
+  for(var s=1;s<=5;s++)h+='<div class="h">Q'+s+'</div>';
+  for(var m=5;m>=1;m--){
+    h+='<div class="h">Q'+m+'</div>';
+    for(s=1;s<=5;s++){var c=M[m+'-'+s]||0,a=c?.18+.72*c/mx:0,key=m+'-'+s;
+      h+='<div class="c'+(c?'':' zero')+(HL_LABEL==='mx'+key?' sel':'')+'" data-k="'+key+'" title="Matérielle Q'+m+', sociale Q'+s+' : '+c+'" style="background:rgba(33,174,173,'+a.toFixed(2)+')">'+c+'</div>';}
+  }
+  el('matrix').innerHTML=h;
+  el('matrix').querySelectorAll('.c').forEach(function(d){d.onclick=function(){
+    var kk=d.dataset.k.split('-'),qm=+kk[0],qs=+kk[1];
+    if(HL_LABEL==='mx'+d.dataset.k){effacerSurbrillance();return;}
+    surbrillance(P.filter(function(p){return p._qm===qm&&p._qs===qs;}),'mx'+d.dataset.k,'Matérielle Q'+qm+' × sociale Q'+qs);
+  };});
+  notice();
+}
+
+/* Surbrillance d'un groupe (matrice, rayon) */
+function surbrillance(list,key,label){
+  HL=new Set(list.map(function(p){return p._id;})); HL_LABEL=key; HL._label=label; HL._list=list;
+  restyle(); analyse();
+  if(list.length){var b=L.latLngBounds(list.map(function(p){return p._c;}));map.flyToBounds(b.pad(.3),{paddingTopLeft:padTL(),paddingBottomRight:[40,40],maxZoom:11,duration:.9});}
+}
+function effacerSurbrillance(){HL=null;HL_LABEL='';restyle();analyse();}
+function notice(){
+  var box=el('hl-notice'),lst=el('matrix-list');
+  if(!HL){box.innerHTML='';lst.innerHTML='';return;}
+  box.innerHTML='<div class="notice"><span>Surbrillance : <b>'+esc(HL._label)+'</b> ('+HL.size+')</span><button id="hl-x">Effacer</button></div>';
+  el('hl-x').onclick=effacerSurbrillance;
+  lst.innerHTML=HL_LABEL.indexOf('mx')===0?'<div class="chips">'+HL._list.map(function(p){return '<span class="chip" data-id="'+p._id+'"><i style="background:'+(couleur(p)||NA)+'"></i>'+esc(p._nom)+'</span>';}).join('')+'</div>':'';
+  lst.querySelectorAll('.chip').forEach(function(c){c.onclick=function(){selectFeature(FEATS[+c.dataset.id],true);};});
+}
+
+/* =====================================================================
+   11. LÉGENDE INTERACTIVE ET OPACITÉ : setStyle({fillOpacity})
+   ===================================================================== */
+function legende(){
+  var h='<div class="legend-title" id="lg-t"><span>'+IND_LAB[IND]+'</span><span>'+(el('legend').classList.contains('min')?'▸':'▾')+'</span></div><div class="legend-body">';
+  if(IND==='bi'){
+    h+='<div class="bivar-wrap"><span class="ax-y">Matérielle →</span><div class="bivar">';
+    for(var a=2;a>=0;a--)for(var b=0;b<3;b++){var k=a+'-'+b;
+      h+='<span data-k="'+k+'" title="Matérielle '+NIV[a]+', sociale '+NIV[b]+'" style="background:'+BIVAR[a][b]+';cursor:pointer;'+(HIDDEN[k]?'opacity:.2':'')+'"></span>';}
+    h+='</div><span class="ax-x">Sociale →</span></div>';
+    h+='<div class="legend-note">Faible : Q1-Q2 · moyen : Q3 · élevé : Q4-Q5</div>';
+  } else {
+    var lib={1:'Q1 · moins défavorisé',2:'Q2',3:'Q3',4:'Q4',5:'Q5 · plus défavorisé'};
+    for(var q=1;q<=5;q++)h+='<div class="legend-item'+(HIDDEN[String(q)]?' off':'')+'" data-k="'+q+'"><div class="legend-sw" style="background:'+QCOL[q]+'"></div><span>'+lib[q]+'</span></div>';
+  }
+  h+='<div class="legend-item'+(HIDDEN.na?' off':'')+'" data-k="na"><div class="legend-sw" style="background:repeating-linear-gradient(45deg,transparent,transparent 2px,#8b8fc466 2px,#8b8fc466 4px)"></div><span>Donnée non disponible</span></div>';
+  h+='<div class="legend-note">Cliquez sur une classe pour la masquer.</div>';
+  h+='<div class="opac"><span>Opacité</span><input type="range" id="opac" min="0.2" max="1" step="0.05" value="'+OPAC+'"></div></div>';
+  var lg=el('legend'); lg.innerHTML=h;
+  el('lg-t').onclick=function(){lg.classList.toggle('min');legende();};
+  lg.querySelectorAll('[data-k]').forEach(function(d){d.onclick=function(){basculer(d.dataset.k);};});
+  el('opac').oninput=function(){OPAC=+this.value;restyle();};
+}
+L.DomEvent.disableClickPropagation(el('legend')); L.DomEvent.disableScrollPropagation(el('legend'));
+function basculer(k){HIDDEN[k]=!HIDDEN[k];restyle();legende();analyse();}
+
+/* =====================================================================
+   12. ANALYSE DE PROXIMITÉ : L.circle + map.distance()
+   ===================================================================== */
+function togglePick(){PICK=!PICK;el('btn-pick').classList.toggle('on',PICK);el('map').classList.toggle('pick',PICK);
+  if(PICK)toast('Cliquez sur la carte pour placer le centre du rayon.');}
+map.on('click',function(e){if(PICK)placerRayon(e.latlng);});
+function placerRayon(ll,silencieux){
+  if(PICK)togglePick();
+  var r=+el('radius').value*1000; radiusLayer.clearLayers();
+  if(!map.hasLayer(radiusLayer))radiusLayer.addTo(map);
+  var cercle=L.circle(ll,{radius:r,pane:'analyse',color:'#21AEAD',weight:2,dashArray:'6 5',fillColor:'#21AEAD',fillOpacity:.08}).addTo(radiusLayer);
+  L.circleMarker(ll,{pane:'analyse',radius:5,color:'#fff',weight:2,fillColor:'#21AEAD',fillOpacity:1}).addTo(radiusLayer);
+  RADIUS={c:L.latLng(ll),r:r};
+  var dedans=FEATS.map(function(l){return l.feature.properties;}).filter(function(p){return map.distance(ll,p._c)<=r;})
+    .sort(function(a,b){return map.distance(ll,a._c)-map.distance(ll,b._c);});
+  var m=moyenne(dedans.map(function(p){return p._qm;})),s=moyenne(dedans.map(function(p){return p._qs;}));
+  var dbl=dedans.filter(function(p){return p._qm>=4&&p._qs>=4;}).length;
+  el('radius-out').innerHTML='<b class="mono" style="color:var(--teal)">'+dedans.length+'</b> municipalités dans un rayon de '+fmt(r/1000)+' km · quintile moyen <span class="mono">'+fmt(m,1)+'</span> (matérielle), <span class="mono">'+fmt(s,1)+'</span> (sociale) · <span style="color:var(--q5)">'+dbl+'</span> en double défavorisation'+
+    (dedans.length?'<div class="chips" style="margin-top:8px">'+dedans.map(function(p){return '<span class="chip" data-id="'+p._id+'"><i style="background:'+(couleur(p)||NA)+'"></i>'+esc(p._nom)+' <span class="mono" style="color:var(--muted)">'+fmt(map.distance(ll,p._c)/1000,0)+' km</span></span>';}).join('')+'</div>':'');
+  el('radius-out').querySelectorAll('.chip').forEach(function(c){c.onclick=function(){selectFeature(FEATS[+c.dataset.id],true);};});
+  if(!silencieux){
+    HL=new Set(dedans.map(function(p){return p._id;}));HL_LABEL='rayon';HL._label='rayon de '+fmt(r/1000)+' km';HL._list=dedans;
+    restyle();analyse();map.flyToBounds(cercle.getBounds(),{paddingTopLeft:padTL(),paddingBottomRight:[40,40],duration:.8});
+    ouvrirOnglet('analyse');
+  } else if(HL_LABEL==='rayon'){HL=new Set(dedans.map(function(p){return p._id;}));HL._label='rayon de '+fmt(r/1000)+' km';HL._list=dedans;restyle();notice();}
+}
+function clearRadius(){radiusLayer.clearLayers();RADIUS=null;el('radius-out').innerHTML='';if(HL_LABEL==='rayon')effacerSurbrillance();}
+el('radius').oninput=function(){el('radius-v').textContent=this.value+' km';if(RADIUS)placerRayon(RADIUS.c,true);};
+
+/* 13. MENU CONTEXTUEL : map.on('contextmenu') + L.popup */
+function menuContextuel(e){
+  var ll=e.latlng;
+  var div=L.DomUtil.create('div');
+  div.innerHTML='<b>Point choisi</b><br><span class="mono">'+fmt(ll.lat,5)+', '+fmt(ll.lng,5)+'</span><button class="btn">◎ Analyser un rayon de '+el('radius').value+' km ici</button>';
+  div.querySelector('button').onclick=function(){map.closePopup();placerRayon(ll);};
+  L.popup({maxWidth:260}).setLatLng(ll).setContent(div).openOn(map);
+}
+map.on('contextmenu',menuContextuel);
+
+/* 14. ÉTIQUETTES SELON LE ZOOM : événement zoomend (la couche reste cochée, on masque sous le zoom 9) */
+function majEtiquettes(){map.getContainer().classList.toggle('lbl-cache',map.getZoom()<9);}
+map.on('zoomend',majEtiquettes);
+
+/* 15. GÉOLOCALISATION : map.locate() */
+var posLayer=L.layerGroup().addTo(map);
+function localiser(){toast('Recherche de votre position…');map.locate({setView:true,maxZoom:11});}
+map.on('locationfound',function(e){posLayer.clearLayers();
+  L.circle(e.latlng,{radius:e.accuracy,color:'#0482D3',weight:1,fillOpacity:.1}).addTo(posLayer);
+  L.circleMarker(e.latlng,{radius:7,color:'#fff',weight:2,fillColor:'#0482D3',fillOpacity:1}).bindTooltip('Vous êtes ici (± '+fmt(e.accuracy)+' m)',{className:'muni-tooltip'}).addTo(posLayer);
+  var dans=FEATS.filter(function(l){return l.getBounds().contains(e.latlng);});
+  toast(dans.length?'Vous êtes près de '+esc(dans[0].feature.properties._nom)+'.':'Position trouvée, hors des Laurentides.');});
+map.on('locationerror',function(){toast('Position non disponible (autorisation refusée ou page ouverte hors https).');});
+
+/* =====================================================================
+   16. FILTRE MRC, INDICATEUR, RECHERCHE
+   ===================================================================== */
+function choisirMrc(m,zoomer){
+  MRC=m; el('sel-mrc').value=m;
+  refresh();
+  if(zoomer){
+    var ls=FEATS.filter(function(l){return !m||l.feature.properties._mrc===m;});
+    if(ls.length)map.flyToBounds(L.featureGroup(ls).getBounds(),{paddingTopLeft:padTL(),paddingBottomRight:[40,40],duration:.9});
+  }
+}
+el('sel-mrc').onchange=function(){choisirMrc(this.value,true);};
+el('sel-ind').onchange=function(){IND=this.value;HIDDEN={};refresh();};
+el('search').addEventListener('change',chercher);
+el('search').addEventListener('keydown',function(e){if(e.key==='Enter')chercher();});
+function chercher(){
+  var v=el('search').value.trim().toLowerCase(); if(!v)return;
+  var norm=function(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();};
+  var hit=FEATS.find(function(l){return norm(l.feature.properties._nom)===norm(v);})||FEATS.find(function(l){return norm(l.feature.properties._nom).indexOf(norm(v))>=0;});
+  if(hit){selectFeature(hit,true);el('search').blur();}else toast('Aucune municipalité ne correspond à « '+esc(el('search').value)+' ».');
+}
+
+/* =====================================================================
+   17. LIEN PARTAGEABLE : getCenter(), getZoom() + location.hash
+   ===================================================================== */
+function majLien(){
+  if(!DATA)return; var c=map.getCenter();
+  var h='#'+map.getZoom()+'/'+c.lat.toFixed(4)+'/'+c.lng.toFixed(4)+'/'+IND+'/'+encodeURIComponent(MRC)+'/'+(selected?encodeURIComponent(selected.feature.properties._code||selected.feature.properties._id):'');
+  try{history.replaceState(null,'',h);}catch(e){}
+}
+map.on('moveend',majLien);
+function lireLien(){
+  var h=decodeURIComponent(location.hash.slice(1)).split('/');
+  if(h.length<3||isNaN(+h[0]))return;
+  if(h[3]&&IND_LAB[h[3]]){IND=h[3];el('sel-ind').value=IND;}
+  if(h[4]&&FEATS.some(function(l){return l.feature.properties._mrc===h[4];})){MRC=h[4];el('sel-mrc').value=MRC;}
+  map.setView([+h[1],+h[2]],+h[0]);
+  if(h[5]){var s=FEATS.find(function(l){var p=l.feature.properties;return String(p._code||p._id)===h[5];});if(s)selectFeature(s,false);}
+}
+function shareView(){
+  majLien(); var url=location.href;
+  var ok=function(){toast('Lien copié : la vue, l\'indicateur, le filtre et la sélection sont conservés.');};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(url).then(ok,function(){toast('Copiez ce lien : <span class="mono">'+esc(url)+'</span>');});}
+  else toast('Copiez l\'adresse de la page : elle contient la vue en cours.');
+}
+
+/* =====================================================================
+   18. EXPORTS : Blob + toGeoJSON()
+   ===================================================================== */
+function telecharger(contenu,type,nom){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([contenu],{type:type}));a.download=nom;document.body.appendChild(a);a.click();a.remove();}
+function nettoyer(p){var o={};for(var k in p){if(k.charAt(0)!=='_')o[k]=p[k];}o.mrc=p._mrc;return o;}
+function exportGeoJSON(){
+  if(!DATA)return;
+  var fs=FEATS.filter(function(l){return dansFiltre(l.feature.properties);}).map(function(l){var g=l.toGeoJSON();g.properties=nettoyer(l.feature.properties);return g;});
+  telecharger(JSON.stringify({type:'FeatureCollection',metadata:{source:'Santé Québec Laurentides, DSP',filtre:MRC||'région',date:'2026-11-03'},features:fs}),'application/geo+json','defavorisation_'+(MRC?MRC.replace(/\W+/g,'_'):'laurentides')+'.geojson');
+}
+function exportCSV(){
+  if(!DATA)return;
+  var lignes=[['code_mun','nom_mun','mrc','defav_mat_quintile','defav_soc_quintile','double_defavorisation']];
+  portee().forEach(function(p){lignes.push([p._code,p._nom,p._mrc,p._qm==null?'':p._qm,p._qs==null?'':p._qs,(p._qm>=4&&p._qs>=4)?'oui':'non']);});
+  var csv='﻿'+lignes.map(function(r){return r.map(function(v){v=String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(';');}).join('\r\n');
+  telecharger(csv,'text/csv;charset=utf-8','defavorisation_'+(MRC?MRC.replace(/\W+/g,'_'):'laurentides')+'.csv');
+}
+
+/* 19. CHARGER UN FICHIER : FileReader + glisser-déposer */
+function lireFichier(file){
+  if(!file)return; var r=new FileReader();
+  r.onload=function(){try{var t=r.result.trim();if(t.indexOf('{')>0)t=t.slice(t.indexOf('{')).replace(/;\s*$/,'');init(JSON.parse(t));toast(esc(file.name)+' chargé : '+FEATS.length+' entités.');}
+    catch(e){toast('Lecture impossible : ce fichier n\'est pas un GeoJSON valide.');}};
+  r.readAsText(file,'utf-8');
+}
+el('file').onchange=function(){lireFichier(this.files[0]);};
+['dragenter','dragover'].forEach(function(t){el('map').addEventListener(t,function(e){e.preventDefault();el('drop').classList.add('show');});});
+['dragleave','drop'].forEach(function(t){el('map').addEventListener(t,function(e){e.preventDefault();el('drop').classList.remove('show');});});
+el('map').addEventListener('drop',function(e){lireFichier(e.dataTransfer.files[0]);});
+
+/* =====================================================================
+   INTERFACE : onglets, panneau, police, méthodo
+   ===================================================================== */
+function padTL(){return [30,30];}
+function vueEnsemble(anim){if(!dataLayer)return;var b=dataLayer.getBounds(),o={paddingTopLeft:padTL(),paddingBottomRight:[30,30]};anim?map.flyToBounds(b,o):map.fitBounds(b,o);}
+function ouvrirOnglet(t){document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===t);});
+  document.querySelectorAll('.tab').forEach(function(s){s.classList.toggle('active',s.id==='tab-'+t);});
+  if(narrow()&&!panelOpen)togglePanel();}
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){ouvrirOnglet(b.dataset.tab);};});
+var fs=1; function setFont(d){fs=Math.max(.85,Math.min(1.3,fs+d*.08));document.documentElement.style.setProperty('--fs',fs+'rem');}
+function toggleMethodo(){el('methodo-content').classList.toggle('show');}
+L.DomEvent.disableClickPropagation(el('methodo')); L.DomEvent.disableScrollPropagation(el('methodo'));
+var panelOpen=true;
+function togglePanel(){panelOpen=!panelOpen;document.querySelector('.main').classList.toggle('collapsed',!panelOpen);
+  var t=el('panel-toggle');t.classList.toggle('shifted',!panelOpen);t.textContent=panelOpen?'◀':'▶';
+  setTimeout(function(){map.invalidateSize();},320);}
+L.DomEvent.disableClickPropagation(el('panel-toggle'));
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(PICK)togglePick();map.closePopup();el('methodo-content').classList.remove('show');}});
+
+/* Liste des capacités Leaflet (onglet Leaflet) */
+var CAPS=[
+ ['Fonds de carte tuilés du gouvernement du Québec','L.tileLayer(... {-y} ...)','Format TMS : rangées de tuiles numérotées du bas vers le haut.'],
+ ['Sélecteur de fonds et de couches','L.control.layers()','En haut à droite : réseau, orthoimagerie, aucun fond, et quatre couches superposées.'],
+ ['Volets de superposition','map.createPane()','Le contour de sélection et le rayon restent toujours au-dessus des polygones.'],
+ ['Échelle graphique','L.control.scale()','En bas à gauche, en kilomètres.'],
+ ['Contrôles personnalisés','L.Control.extend()','Boutons ⌂ (vue d\'ensemble) et ⌖ (localisation), coordonnées en bas à droite.'],
+ ['Couche GeoJSON stylée','L.geoJSON({style})','La choroplèthe; le style change selon l\'indicateur, le filtre et la légende.'],
+ ['Étiquettes et symboles ponctuels','L.divIcon · L.circleMarker','Noms des municipalités (zoom 9+) et points de double défavorisation.'],
+ ['Info-bulles, survol, clic','bindTooltip() · setStyle() · bringToFront()','Survolez puis cliquez une municipalité : son profil s\'ouvre ici.'],
+ ['Navigation animée','map.flyToBounds()','Recherche, clic sur une MRC, sur une case de la matrice ou sur une municipalité proche.'],
+ ['Analyse de proximité','L.circle() · map.distance()','Onglet Analyse : rayon ajustable, liste des municipalités et distances.'],
+ ['Menu au clic droit','map.on(\'contextmenu\') · L.popup()','Clic droit n\'importe où sur la carte.'],
+ ['Événements de carte','zoomend · moveend · mousemove','Étiquettes selon le zoom, lien mis à jour, coordonnées en direct.'],
+ ['Géolocalisation','map.locate()','Bouton ⌖ (fonctionne en https, par exemple sur GitHub Pages).'],
+ ['Lien partageable','getCenter() · getZoom() · location.hash','Bouton 🔗 Lien : la vue, l\'indicateur, la MRC et la sélection sont dans l\'adresse.'],
+ ['Opacité et classes masquables','setStyle({fillOpacity})','Curseur et classes cliquables dans la légende.'],
+ ['Exports','layer.toGeoJSON() · Blob','Boutons ⬇ CSV et ⬇ GeoJSON (municipalités du filtre en cours).'],
+ ['Chargement de fichier','FileReader · L.geoJSON(data)','Glissez un fichier .geojson sur la carte pour remplacer les données.'],
+ ['Navigation au clavier','keyboard: true','Cliquez la carte, puis flèches pour déplacer, + et − pour zoomer.']
+];
+el('caps').innerHTML=CAPS.map(function(c,i){return '<div class="cap"><span class="n">'+String(i+1).padStart(2,'0')+'</span><span class="t">'+c[0]+'</span><span><code>'+esc(c[1])+'</code></span><span class="w">'+c[2]+'</span></div>';}).join('')+
+  '<div class="src">Santé Québec Laurentides, Direction de santé publique · Formation C.A.R.T.O.S. · Mise à jour 2026-11-03</div>';
+el('src-analyse').textContent='Sources : INSPQ, indice de défavorisation (Pampalon), quintiles régionaux du module 2 · Santé Québec Laurentides, DSP · Mise à jour 2026-11-03';
+
+/* =====================================================================
+   DÉMARRAGE
+   ===================================================================== */
+if(narrow()) el('legend').classList.add('min');
+if(typeof donnees!=='undefined') init(donnees);
+else el('loader').classList.add('show');
+window.addEventListener('resize',function(){map.invalidateSize();});
+</script>
+</body>
+</html>
