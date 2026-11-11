@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Défavorisation Laurentides : 3. Popups et légende</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    #map { height: 100vh; }
+
+    /* >>> DÉBUT AJOUT ÉTAPE 3 : CSS de la légende >>> */
+    .legende {
+      background: white;
+      padding: 10px 14px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 22px;
+    }
+    .legende i {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      margin-right: 6px;
+      opacity: 0.75;
+      vertical-align: middle;
+    }
+    /* <<< FIN AJOUT ÉTAPE 3 (CSS) <<< */
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+  <!-- BASE (FICHIER 2) : les données, inchangé -->
+  <script src="laurentides_defavorisation.js"></script>
+  <script>
+    /* === BASE (FICHIER 1) : carte vide, inchangée === */
+    const carte = L.map('map').setView([46.5, -74.5], 8);
+
+    L.tileLayer('https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png', {
+      attribution: '© Gouvernement du Québec | Santé Québec Laurentides, DSP'
+    }).addTo(carte);
+
+    /* === BASE (FICHIER 2) : fonction de couleur, inchangée === */
+    function getCouleur(q) {
+      q = Number(q); // accepte aussi un quintile stocké en texte ("5")
+      return q === 5 ? '#d73027' :  // Q5 : rouge (plus défavorisé)
+             q === 4 ? '#fc8d59' :  // Q4 : orange
+             q === 3 ? '#fee090' :  // Q3 : jaune pâle
+             q === 2 ? '#91cf60' :  // Q2 : vert clair
+             q === 1 ? '#1a9850' :  // Q1 : vert foncé (moins défavorisé)
+                       '#cccccc';   // gris : donnée manquante ou invalide
+    } // fin getCouleur()
+
+    // >>> DÉBUT AJOUT ÉTAPE 3 : texte du quintile pour le popup >>>
+    function formaterQuintile(q) {
+      q = Number(q);
+      return (q >= 1 && q <= 5) ? 'Q' + q + ' sur 5' : 'Donnée non disponible';
+    } // fin formaterQuintile()
+    // <<< FIN AJOUT ÉTAPE 3 (formaterQuintile) <<<
+
+    /* === BASE (FICHIER 2) : affichage des municipalités + coloration ===
+       AJOUT ÉTAPE 3 : le bloc onEachFeature (popup) est ajouté DANS
+       ce même L.geoJSON({...}), juste après "style". */
+    L.geoJSON(donnees, {
+      // --- BASE (FICHIER 2) : inchangé ---
+      style: function(feature) {
+        return {
+          fillColor: getCouleur(feature.properties.defav_mat_quintile),
+          weight: 1,
+          opacity: 1,
+          color: 'white',
+          fillOpacity: 0.75
+        };
+      }, // <-- virgule obligatoire ici, car onEachFeature suit juste après
+
+      // >>> DÉBUT AJOUT ÉTAPE 3 (onEachFeature / popup) >>>
+      onEachFeature: function(feature, layer) {
+        const p = feature.properties;
+        layer.bindPopup(
+          '<strong>' + (p.nom_mun || 'Municipalité inconnue') + '</strong><br>' +
+          'Défavorisation matérielle : ' + formaterQuintile(p.defav_mat_quintile) + '<br>' +
+          'Défavorisation sociale : ' + formaterQuintile(p.defav_soc_quintile) + '<br>' +
+          '<small>Q1 = moins défavorisé, Q5 = plus défavorisé</small>'
+        );
+      } // fin onEachFeature
+      // <<< FIN AJOUT ÉTAPE 3 (onEachFeature / popup) <<<
+    }).addTo(carte); // fin L.geoJSON({...}) : referme l'objet {style, onEachFeature}
+
+    // >>> DÉBUT AJOUT ÉTAPE 3 : contrôle de légende (APRÈS la couche, même niveau) >>>
+    const legende = L.control({ position: 'bottomright' });
+
+    legende.onAdd = function() {
+      const div = L.DomUtil.create('div', 'legende');
+      div.innerHTML = '<strong>Défavorisation<br>matérielle (quintile)</strong><br>';
+      const libelles = ['Q1 : moins défavorisé', 'Q2', 'Q3', 'Q4', 'Q5 : plus défavorisé'];
+      for (let q = 1; q <= 5; q++) {
+        // getCouleur() garantit que la légende utilise les mêmes couleurs que la carte
+        div.innerHTML += '<i style="background:' + getCouleur(q) + '"></i>' + libelles[q - 1] + '<br>';
+      } // fin for
+      div.innerHTML += '<i style="background:#cccccc"></i>Donnée non disponible';
+      return div;
+    }; // fin legende.onAdd : NOTER LE POINT-VIRGULE, car c'est une affectation (const ... = function)
+
+    legende.addTo(carte);
+    // <<< FIN AJOUT ÉTAPE 3 (légende) <<<
+  </script>
+</body>
+</html>
+
