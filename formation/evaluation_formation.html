@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Évaluation de la formation | Cartographie interactive et géoweb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070620;
+    --navy: #140C74;
+    --teal: #21AEAD;
+    --blue: #0482D3;
+    --texte: #eef1f8;
+    --texte-doux: #a7b0cc;
+    --carte: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--texte);
+    font-family: "Source Sans 3", "Segoe UI", Roboto, -apple-system, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  /* Bandeau */
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--bg) 70%);
+    border-bottom: 3px solid var(--teal);
+    padding: 2.4rem 1.5rem 2rem;
+  }
+
+  .contenu {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .surtitre {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--teal);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 0.8rem;
+  }
+
+  .sous-titre {
+    color: var(--texte-doux);
+    margin: 0;
+    max-width: 62ch;
+  }
+
+  /* Repères */
+  .reperes {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 0;
+    margin: 1.4rem 0 0;
+  }
+
+  .reperes li {
+    background: rgba(33, 174, 173, 0.12);
+    border: 1px solid rgba(33, 174, 173, 0.45);
+    border-radius: 999px;
+    padding: 0.3rem 0.95rem;
+    font-size: 0.9rem;
+    color: var(--texte);
+  }
+
+  /* Corps */
+  main { padding: 2.2rem 1.5rem 3rem; }
+
+  .avis {
+    border-left: 3px solid var(--blue);
+    padding: 0.2rem 0 0.2rem 1rem;
+    margin: 0 0 1.8rem;
+    color: var(--texte-doux);
+  }
+
+  .bouton {
+    display: inline-block;
+    background: var(--teal);
+    color: #04121f;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.8rem 1.7rem;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+
+  .bouton:hover, .bouton:focus { background: #2fc9c8; }
+
+  /* Cadre du formulaire */
+  .cadre {
+    background: var(--carte);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.8rem 0 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  }
+
+  .cadre iframe {
+    display: block;
+    width: 100%;
+    height: 1150px;
+    border: 0;
+  }
+
+  .secours {
+    font-size: 0.93rem;
+    color: var(--texte-doux);
+    margin: 0 0 2rem;
+  }
+
+  .secours a { color: var(--teal); }
+
+  footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 1.6rem 1.5rem 2.4rem;
+    font-size: 0.88rem;
+    color: var(--texte-doux);
+  }
+
+  footer p { margin: 0.2rem 0; }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .cadre iframe { height: 1400px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="contenu">
+    <p class="surtitre">Santé Québec Laurentides &middot; Direction de santé publique</p>
+    <h1>Évaluation de la formation</h1>
+    <p class="sous-titre">
+      Cartographie interactive et géoweb : QGIS, Leaflet.js et GitHub Pages.
+      Vos réponses servent à ajuster les prochaines séances.
+    </p>
+    <ul class="reperes">
+      <li>Environ 8 minutes</li>
+      <li>Réponses anonymes</li>
+      <li>8 sections</li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <div class="contenu">
+
+    <p class="avis">
+      Il n'y a pas de bonne ou de mauvaise réponse : répondez selon votre expérience réelle.
+      Le questionnaire ne recueille aucune adresse courriel.
+    </p>
+
+    <div class="cadre">
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLSeGkUm32zE2yYFxcuiWpRrtE-BfO6S97zofK43r3db_HA27dQ/viewform?embedded=true"
+        title="Formulaire d'évaluation de la formation"
+        loading="lazy">
+        Chargement du formulaire…
+      </iframe>
+    </div>
+
+    <p class="secours">
+      Le formulaire ne s'affiche pas? Certains réseaux d'entreprise bloquent les contenus intégrés.
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeGkUm32zE2yYFxcuiWpRrtE-BfO6S97zofK43r3db_HA27dQ/viewform"
+         target="_blank" rel="noopener">Ouvrir le formulaire dans un nouvel onglet</a>.
+    </p>
+
+    <a class="bouton"
+       href="https://docs.google.com/forms/d/e/1FAIpQLSeGkUm32zE2yYFxcuiWpRrtE-BfO6S97zofK43r3db_HA27dQ/viewform"
+       target="_blank" rel="noopener">Répondre au formulaire</a>
+
+  </div>
+</main>
+
+<footer>
+  <div class="contenu">
+    <p>Formation Cartographie interactive et géoweb</p>
+    <p>Éric Robitaille, Ph.D. &middot; Direction de santé publique, Santé Québec Laurentides</p>
+  </div>
+</footer>
+
+</body>
+</html>
