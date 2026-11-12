@@ -1,0 +1,2347 @@
+{
+ "type": "FeatureCollection",
+ "name": "destinations_officielles_mont-tremblant",
+ "metadata": {
+  "organisme": "Santé Québec Laurentides, Direction de santé publique",
+  "exporte_le": "2026-11-12",
+  "note": "Une entrée par destination. Le champ categorie_mvc doit reprendre l'identifiant d'une catégorie de l'outil (alimentation, service_garde, ecole_prim, ecole_sec, nature, loisirs, culture, pharmacie, sante, transport, autopartage, cyclable). Les catégories absentes du fichier sont tirées d'OpenStreetMap."
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.596555,
+     46.118109
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Metro",
+    "detail": "Supermarchés",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.599198,
+     46.118277
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Marché S.Bourassa Mont-Tremblant",
+    "detail": "Supermarchés",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.572729,
+     46.117066
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "IGA extra Tremblant",
+    "detail": "Supermarchés",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.57416,
+     46.117523
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Super C",
+    "detail": "Supermarchés",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.570962,
+     46.117757
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Maxi Mont-Tremblant rte. 117",
+    "detail": "Supermarchés",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.627145,
+     46.195145
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Marché Bonichoix",
+    "detail": "Supermarchés",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.585763,
+     46.211889
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Magasin Général",
+    "detail": "Supermarchés",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.6601,
+     46.111016
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Érablière du Rang des Vents",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.590816,
+     46.130739
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "83 Nord",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.594373,
+     46.118383
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Tigre Géant",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.591535,
+     46.122994
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Marché Jovi",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.59122,
+     46.11881
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "L'Apogée Santé",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.590616,
+     46.118958
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Vrac et vous",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.594014,
+     46.121615
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Épicerie africaine Salvé Régina",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.629213,
+     46.195145
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Cucinotto",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.630454,
+     46.195081
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Les 2 Sœurs market",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.585471,
+     46.212875
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Maison Fayard",
+    "detail": "Épiceries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.605579,
+     46.097439
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Boeuf Tremblant",
+    "detail": "Boucheries / poissonneries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.572499,
+     46.118933
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Les Mercenaires Culinaires",
+    "detail": "Boucheries / poissonneries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.59696,
+     46.1186
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Les Moulins La Fayette",
+    "detail": "Restaurants",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.591899,
+     46.123463
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Bagel Boréal",
+    "detail": "Restaurants",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592795,
+     46.118426
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Marché d'été de Mont-Tremblant",
+    "detail": "Marchés publics et fermiers",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.598285,
+     46.118654
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Poissonnerie Ô Capitaine",
+    "detail": "Boucheries / poissonneries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592111,
+     46.122941
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Boulangerie la perle noire",
+    "detail": "Boulangeries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592406,
+     46.118456
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "La pâtisserie des Mercenaires Culinaires",
+    "detail": "Boulangeries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.588792,
+     46.118801
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Le St-Amour Épicerie Urbaine",
+    "detail": "Boulangeries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.614724,
+     46.134696
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "La Diperie Mont-Tremblant",
+    "detail": "Boulangeries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.594998,
+     46.118386
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "alimentation",
+    "nom": "Les délices de Fanny",
+    "detail": "Boulangeries",
+    "source": "Outil C.A.R.T.O.S. Environnement alimentaire (commerces d'approvisionnement favorables, validation du 30 sept. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592997,
+     46.119521
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "ecole_prim",
+    "nom": "Pavillon Fleur-Soleil",
+    "detail": "Préscolaire - Primaire",
+    "source": "Ministère de l'Éducation, immeubles scolaires (mise à jour du 26 oct. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.593141,
+     46.121834
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "ecole_prim",
+    "nom": "Pavillon Tournesol",
+    "detail": "Primaire",
+    "source": "Ministère de l'Éducation, immeubles scolaires (mise à jour du 26 oct. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.59274,
+     46.120655
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "ecole_prim",
+    "nom": "Pavillon Trois-Saisons",
+    "detail": "Primaire",
+    "source": "Ministère de l'Éducation, immeubles scolaires (mise à jour du 26 oct. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592988,
+     46.121339
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "ecole_prim",
+    "nom": "École l'Odyssée",
+    "detail": "Préscolaire - Primaire",
+    "source": "Ministère de l'Éducation, immeubles scolaires (mise à jour du 26 oct. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592421,
+     46.119449
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "ecole_prim",
+    "nom": "Pavillon La Ribambelle",
+    "detail": "Préscolaire - Primaire",
+    "source": "Ministère de l'Éducation, immeubles scolaires (mise à jour du 26 oct. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.583254,
+     46.124264
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "ecole_sec",
+    "nom": "École secondaire Curé-Mercure",
+    "detail": "Secondaire - Formation professionnelle",
+    "source": "Ministère de l'Éducation, immeubles scolaires (mise à jour du 26 oct. 2026)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.5874,
+     46.1404
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "service_garde",
+    "nom": "Garderie-prématernelle Kinder",
+    "detail": "Garderie non-subventionnée",
+    "source": "Ministère de la Famille, services de garde en installation (version du 1er mai 2024)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.5871,
+     46.1194
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "service_garde",
+    "nom": "CPE L'Antre-Temps",
+    "detail": "Centre de la petite enfance",
+    "source": "Ministère de la Famille, services de garde en installation (version du 1er mai 2024)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.5791,
+     46.1226
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "service_garde",
+    "nom": "Garderie Coucou Hibou",
+    "detail": "Garderie subventionnée",
+    "source": "Ministère de la Famille, services de garde en installation (version du 1er mai 2024)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.5875,
+     46.1251
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "service_garde",
+    "nom": "CPE des Rires",
+    "detail": "Centre de la petite enfance",
+    "source": "Ministère de la Famille, services de garde en installation (version du 1er mai 2024)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.6286,
+     46.1943
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "service_garde",
+    "nom": "CPE Les Petits Manitous",
+    "detail": "Centre de la petite enfance",
+    "source": "Ministère de la Famille, services de garde en installation (version du 1er mai 2024)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.602812,
+     46.108976
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "sante",
+    "nom": "CLSC de Mont-Tremblant",
+    "detail": "1500, chemin du Docteur-Ouimet (fichier du MSSS : 635, rue Léonard, adresse antérieure au déménagement d'avril 2026; position provisoire, à confirmer)",
+    "source": "MSSS, installations du réseau (26 oct. 2026), position du CLSC corrigée"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592234,
+     46.122269
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "sante",
+    "nom": "GMF du Grand Mont-Tremblant, Clinique médicale du Grand-Tremblant",
+    "detail": "585, rue Labelle, bureau 201",
+    "source": "Santé Québec Laurentides, liste des GMF et cliniques médicales (DRMG); position : rôle d'évaluation 2025"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.595586,
+     46.118903
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "sante",
+    "nom": "GMF du Grand Mont-Tremblant, Centre médical St-Jovite (site satellite)",
+    "detail": "992, rue de Saint-Jovite",
+    "source": "Santé Québec Laurentides, liste des GMF et cliniques médicales (DRMG); position : rôle d'évaluation 2025"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.631275,
+     46.192493
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "culture",
+    "nom": "Amphithéâtre et auditorium",
+    "detail": "1829 CH VILLAGE · CUBF 7211",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.630608,
+     46.193717
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "culture",
+    "nom": "Bibliothèque",
+    "detail": "1875 CH VILLAGE · CUBF 7111",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.600377,
+     46.117391
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "culture",
+    "nom": "Bibliothèque Samuel-Ouimet",
+    "detail": "1145, rue de Saint-Jovite",
+    "source": "Ajout manuel (bibliothèque municipale logée dans l'hôtel de ville, CUBF 6713); position : rôle d'évaluation 2025"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.577495,
+     46.119777
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Gymnase et formation athlétique",
+    "detail": "510 RU SAINT-JOVITE · CUBF 7425",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.601665,
+     46.116278
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Terrain de jeux",
+    "detail": "RU NORMANDIE · CUBF 7422",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.615809,
+     46.134495
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Gymnase et formation athlétique",
+    "detail": "20 CH NAPOLEON · CUBF 7425",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.58265,
+     46.126333
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Piscine intérieure et activités connexes",
+    "detail": "635 RU CADIEUX · CUBF 7432",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.583947,
+     46.216151
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Piscine intérieure et activités connexes",
+    "detail": "141 CH KANDAHAR · CUBF 7432",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.597568,
+     46.207157
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Salle et terrain de squash, de raquetball et de tennis",
+    "detail": "RU PINOTEAU · CUBF 7413",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.574444,
+     46.119807
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Gymnase et formation athlétique",
+    "detail": "444 RU SAINT-JOVITE · CUBF 7425",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.601055,
+     46.207166
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Salle et terrain de squash, de raquetball et de tennis",
+    "detail": "RU PINOTEAU · CUBF 7413",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.594887,
+     46.208281
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Centre récréatif en général",
+    "detail": "2900 CH VILLAGE · CUBF 7424",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.625511,
+     46.193796
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Salle et terrain de squash, de raquetball et de tennis",
+    "detail": "RU COUVENT · CUBF 7413",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.581961,
+     46.125701
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Aréna et activités connexes (patinage sur glace)",
+    "detail": "625 RU CADIEUX · CUBF 7451",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.583953,
+     46.122834
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Centre sportif multidisciplinaire (couvert)",
+    "detail": "637 BO DOCTEUR-GERVAIS · CUBF 7222",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.549862,
+     46.179316
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Centre récréatif en général",
+    "detail": "CH SAINT-BERNARD · CUBF 7424",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.584733,
+     46.125656
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Terrain de sport",
+    "detail": "RU CADIEUX · CUBF 7423",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.569821,
+     46.184196
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Centre récréatif en général",
+    "detail": "485 CH SAINT-BERNARD · CUBF 7424",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.599386,
+     46.172513
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "loisirs",
+    "nom": "Salle et terrain de squash, de raquetball et de tennis",
+    "detail": "RU LABELLE · CUBF 7413",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.524858,
+     46.177324
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH PARC · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.593038,
+     46.118166
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU SAINT-JOVITE · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.620406,
+     46.170207
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "PARC LINEAIRE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592131,
+     46.177568
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH SAINT-BERNARD · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.593272,
+     46.123413
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU CHARBONNEAU · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.612318,
+     46.145335
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH PAROI · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.599566,
+     46.209078
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH VILLAGE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.569149,
+     46.087821
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH PAQUETTE · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.606226,
+     46.166792
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "MO RYAN · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.641287,
+     46.209442
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH BOISES · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.614679,
+     46.21452
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH LAC-TREMBLANT-NORD · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.587953,
+     46.120789
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CR GERARD-COTE · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.643411,
+     46.173136
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH CASTORS · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.574002,
+     46.124795
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU ANNE-DESIREE-GODIN · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.588384,
+     46.131536
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU ESTELLE · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.593156,
+     46.11876
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "910 RU SAINT-JOVITE · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.580284,
+     46.126125
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU ALBERT · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.565762,
+     46.079642
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "MO TASSE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.635117,
+     46.132178
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH LAC-DUFOUR · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.578417,
+     46.126144
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU PASSE-TEMPS · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.60077,
+     46.195831
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CLAUDE-LEFEBVRE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.596726,
+     46.086553
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH TOUR-DU-LAC · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.596569,
+     46.117226
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU LEONARD · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.64493,
+     46.174995
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CASTORS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.559824,
+     46.134056
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU LATOUR · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.615205,
+     46.217369
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH LAC-TREMBLANT-NORD · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.537666,
+     46.187025
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH DUPLESSIS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.626804,
+     46.190735
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU MONT-PLAISANT · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.603942,
+     46.19674
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CLAUDE-LEFEBVRE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.583008,
+     46.135416
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU EMOND · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.623116,
+     46.167208
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH LAC-GELINAS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.626606,
+     46.105448
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH LAC-FORTIER · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.591942,
+     46.138418
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU PICHE · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.600573,
+     46.208238
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU PINOTEAU · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.574357,
+     46.109448
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU PIONNIERS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.594427,
+     46.130661
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU SAINT-ROCH · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.5887,
+     46.216324
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU NANSEN · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.611081,
+     46.145294
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "MO RYAN · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.568895,
+     46.151384
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "8E RANG · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.636229,
+     46.123643
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH VILLA-DES-BOIS · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.644392,
+     46.173173
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CASTORS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.575822,
+     46.118525
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU VAILLANCOURT · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.567559,
+     46.155094
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "8E RANG · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.638007,
+     46.200868
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH OREE-DES-LACS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.596875,
+     46.155302
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH CHAMPAGNE · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.644571,
+     46.173772
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH CASTORS · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.613513,
+     46.206146
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH PAIN-DE-SUCRE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.632598,
+     46.173123
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH O'REILLY · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.567721,
+     46.135038
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU EMOND · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.599442,
+     46.149841
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "AL COURANT · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.606469,
+     46.208802
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH GROSSE-ROCHE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.595387,
+     46.084378
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "MO TRILLES · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.609058,
+     46.207762
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH GROSSE-ROCHE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.624506,
+     46.194013
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU COUVENT · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.653205,
+     46.210295
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH FRANC-NORD · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.610479,
+     46.08761
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU LEONARD · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.600843,
+     46.172639
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU LABELLE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.592803,
+     46.117599
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU LACASSE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.587112,
+     46.123437
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU PLANTATION · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.574669,
+     46.118679
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU VAILLANCOURT · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.560862,
+     46.121085
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "RU MONTCALM · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.609754,
+     46.087143
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH TOUR-DU-LAC · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.609946,
+     46.169786
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH BOISE-RYAN · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.613369,
+     46.12795
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "135 RU CHAMPS · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.572194,
+     46.194751
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH DUPLESSIS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.57004,
+     46.122805
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU IRIS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.601229,
+     46.167293
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH MALARDS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.589698,
+     46.130017
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "875 RU COUPAL · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.599489,
+     46.204098
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU PINOTEAU · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.638043,
+     46.173284
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CASTORS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.602664,
+     46.202061
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CLAUDE-LEFEBVRE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.65898,
+     46.205093
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH BOISES · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.651022,
+     46.134777
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc à caractère récréatif et ornemental",
+    "detail": "CH CLERMONT-DUBOIS · CUBF 7620",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.636279,
+     46.175044
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CASTORS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.596913,
+     46.16935
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU LABELLE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.587398,
+     46.212877
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CHAPELLE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.60327,
+     46.19111
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH EAUX-VIVES · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.629948,
+     46.194861
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH VILLAGE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.599895,
+     46.185853
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH EAUX-VIVES · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.594766,
+     46.227948
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH SKIEURS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.600761,
+     46.118695
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU SAINT-JOVITE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.591983,
+     46.207882
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CHAPELLE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.568485,
+     46.124245
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "RU IRIS · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.593927,
+     46.207419
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH CHAPELLE · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.630347,
+     46.166288
+    ]
+   },
+   "properties": {
+    "categorie_mvc": "nature",
+    "nom": "Parc pour la récréation en général",
+    "detail": "CH BREARD · CUBF 7611",
+    "source": "Rôle d'évaluation foncière 2025, code d'utilisation (CUBF)"
+   }
+  }
+ ]
+}
