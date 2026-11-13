@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette : tableau de bord territorial de Val-David</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: none;
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: none;
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: none;
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: none;
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+:root{
+  --navy:#140C74; --teal:#21AEAD; --blue:#0482D3; --white:#FFFFFF;
+  --teal-d:#178f8e; --teal-l:#5fd0cf; --blue-d:#0366a6; --blue-l:#6aa6e8; --indigo:#5b54c0;
+  --bg:#070620; --bg2:#0b0930; --panel:#11103e; --panel2:#181a52;
+  --line:#2a2870; --line2:#1d1b50;
+  --ink:#eef0fb; --ink2:#c4c8ea; --muted:#8b8fc4;
+  --accent:var(--teal); --accent2:var(--blue);
+  --warn:#f2c14e;
+  --fsk:1;
+}
+*{box-sizing:border-box}
+html{font-size:calc(16px*var(--fsk))}
+html,body{height:100%;margin:0}
+body{font-family:'Source Sans 3',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+  display:grid;grid-template-rows:auto auto 1fr;grid-template-columns:23.5rem 1fr;
+  grid-template-areas:"head head" "note note" "panel map";overflow:hidden}
+body.panel-off{grid-template-columns:0 1fr}
+body.panel-off #panel{display:none}
+.num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+
+header{grid-area:head;display:flex;align-items:center;gap:.9rem;padding:.6rem 1rem;
+  background:linear-gradient(90deg,var(--navy),var(--bg2));border-bottom:1px solid var(--line)}
+.brand{display:flex;flex-direction:column;min-width:0}
+.brand h1{margin:0;font-size:1.2rem;font-weight:700;line-height:1.15;text-wrap:balance}
+.brand h1 span{color:var(--teal-l);font-weight:400}
+.brand small{color:var(--ink2);font-size:.8rem}
+.badge{font-size:.7rem;font-weight:700;letter-spacing:.08em;padding:.2rem .5rem;border-radius:99px;
+  border:1px solid var(--warn);color:var(--warn);white-space:nowrap}
+.tools{margin-left:auto;display:flex;gap:.35rem;flex-wrap:wrap;justify-content:flex-end}
+.tools button{min-height:2.1rem;min-width:2.1rem;padding:0 .6rem;border-radius:.4rem;
+  background:var(--panel);border:1px solid var(--line);font-size:.85rem;font-weight:600}
+.tools button:hover{border-color:var(--teal)}
+
+#note{grid-area:note;padding:.35rem 1rem;font-size:.82rem;color:var(--bg);background:var(--warn);font-weight:600}
+
+#panel{grid-area:panel;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;
+  display:flex;flex-direction:column}
+.sec{padding:.85rem 1rem;border-bottom:1px solid var(--line2)}
+.sec h2{margin:0 0 .55rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.kpi{background:var(--panel2);border-radius:.45rem;padding:.5rem .55rem}
+.kpi b{display:block;font-size:1.15rem;font-weight:500;color:var(--teal-l)}
+.kpi span{font-size:.72rem;color:var(--ink2);line-height:1.2;display:block}
+
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-bottom:.6rem}
+.tabs button{min-height:2.3rem;border-radius:.4rem;background:var(--bg2);border:1px solid var(--line);
+  font-size:.82rem;font-weight:600;color:var(--ink2)}
+.tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:var(--bg)}
+.inds{display:flex;flex-direction:column;gap:.25rem}
+.ind{text-align:left;padding:.45rem .6rem;border-radius:.4rem;background:transparent;border:1px solid transparent;
+  min-height:2.2rem;display:flex;flex-direction:column}
+.ind:hover{background:var(--panel2)}
+.ind[aria-pressed="true"]{background:var(--panel2);border-color:var(--teal)}
+.ind b{font-size:.92rem;font-weight:600}
+.ind small{font-size:.76rem;color:var(--muted)}
+
+.legend .ttl{font-size:.9rem;font-weight:600;margin-bottom:.1rem}
+.legend .sub{font-size:.76rem;color:var(--muted);margin-bottom:.5rem}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.sw i{height:.8rem;border-radius:2px;border:1px solid var(--line)}
+.swl{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;font-size:.68rem;color:var(--ink2);margin-top:.2rem;text-align:center}
+.lgx{display:flex;flex-wrap:wrap;gap:.3rem .9rem;margin-top:.55rem;font-size:.76rem;color:var(--ink2)}
+.lgx span{display:inline-flex;align-items:center;gap:.35rem}
+.k-null{width:.9rem;height:.8rem;border:1px dashed var(--muted);background:var(--bg2);display:inline-block}
+.k-ppu{width:1.1rem;height:0;border-top:2px dashed var(--warn);display:inline-block}
+.k-mun{width:1.1rem;height:0;border-top:2px solid var(--ink2);display:inline-block}
+
+.prof h3{margin:0;font-size:1.02rem;font-weight:700}
+.prof p{margin:.15rem 0 .6rem;font-size:.8rem;color:var(--muted)}
+.row{margin-bottom:.55rem}
+.row .top{display:flex;justify-content:space-between;gap:.5rem;font-size:.82rem}
+.row .top b{font-weight:500;color:var(--teal-l);white-space:nowrap}
+.track{position:relative;height:.4rem;background:var(--bg2);border-radius:99px;margin-top:.2rem}
+.track i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--blue)}
+.track u{position:absolute;top:-.2rem;bottom:-.2rem;width:2px;background:var(--ink)}
+.hint{font-size:.72rem;color:var(--muted)}
+.reset{margin-top:.3rem;background:none;border:1px solid var(--line);border-radius:.4rem;padding:.3rem .6rem;font-size:.8rem;min-height:2rem}
+
+.hc{background:var(--panel2);border-radius:.45rem;padding:.55rem .65rem;margin-bottom:.45rem}
+.hc .t{font-size:.84rem;font-weight:600;margin-bottom:.3rem}
+.hc .b{display:grid;grid-template-columns:5.2rem 1fr 3.2rem;align-items:center;gap:.4rem;font-size:.74rem;color:var(--ink2);margin-top:.15rem}
+.hc .b i{height:.45rem;border-radius:99px;background:var(--line);display:block}
+.hc .b.me i{background:var(--teal)}
+.hc .b b{text-align:right;font-weight:500;color:var(--ink)}
+
+#map{grid-area:map;background:var(--bg2);min-height:0}
+.leaflet-container{background:var(--bg2);font-family:inherit}
+.leaflet-control-attribution{background:var(--panel)!important;color:var(--muted)!important;font-size:.68rem}
+.leaflet-control-attribution a{color:var(--teal-l)!important}
+.leaflet-bar a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.base{position:absolute;right:.7rem;top:.7rem;z-index:500;display:flex;background:var(--panel);border:1px solid var(--line);border-radius:.4rem;overflow:hidden}
+.base button{background:none;border:0;padding:0 .65rem;min-height:2.1rem;font-size:.78rem;font-weight:600;color:var(--ink2)}
+.base button[aria-pressed="true"]{background:var(--teal);color:var(--bg)}
+.mapwrap{grid-area:map;position:relative;min-height:0}
+.mapwrap #map{position:absolute;inset:0}
+.lbl{background:none;border:0;box-shadow:none;color:var(--warn);font-weight:700;font-size:.74rem;text-shadow:0 0 3px var(--bg),0 0 3px var(--bg)}
+.lbl:before{display:none}
+
+#tip{position:fixed;z-index:2000;pointer-events:none;display:none;background:var(--panel);border:1px solid var(--teal);
+  border-radius:.4rem;padding:.4rem .55rem;font-size:.8rem;max-width:15rem;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+#tip b{display:block;font-size:1rem;font-weight:500;color:var(--teal-l)}
+
+#pop{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;background:rgba(7,6,32,.7);padding:1rem}
+#pop.on{display:flex}
+#pop .box{background:var(--panel);border:1px solid var(--line);border-radius:.6rem;max-width:44rem;width:100%;max-height:88vh;overflow:auto;padding:1.2rem 1.4rem}
+#pop h2{margin:0 0 .6rem;font-size:1.15rem}
+#pop h3{margin:1rem 0 .3rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-l)}
+#pop p,#pop li{font-size:.9rem;line-height:1.45;color:var(--ink2)}
+#pop ul{margin:.2rem 0;padding-left:1.1rem}
+#pop table{width:100%;border-collapse:collapse;font-size:.84rem}
+#pop th,#pop td{text-align:left;padding:.3rem .4rem;border-bottom:1px solid var(--line2);vertical-align:top;color:var(--ink2)}
+#pop th{color:var(--ink);font-weight:600}
+#pop .src{margin-top:1rem;font-size:.76rem;color:var(--muted)}
+#pop .x{float:right;background:var(--panel2);border:1px solid var(--line);border-radius:.4rem;min-width:2.1rem;min-height:2.1rem}
+#toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);z-index:4000;background:var(--teal);color:var(--bg);
+  font-weight:600;font-size:.85rem;padding:.5rem .9rem;border-radius:.4rem;display:none}
+
+
+body{grid-template-columns:13rem 1fr 21rem;grid-template-rows:auto auto 1fr 14rem;
+  grid-template-areas:"head head head" "note note note" "kpi map side" "kpi charts lg";gap:0}
+body.panel-off{grid-template-columns:13rem 1fr 0}
+body.panel-off #side,body.panel-off #lg{display:none}
+#kpis{grid-area:kpi;display:grid;grid-template-rows:repeat(4,1fr);gap:.5rem;padding:.5rem;background:var(--bg);border-right:1px solid var(--line);min-height:0}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.4rem;min-height:0}
+.tile b{font-size:2.5rem;font-weight:500;line-height:1.05;color:var(--white)}
+.tile b small{font-size:1rem;color:var(--teal-l);font-weight:400}
+.tile span{font-size:.82rem;color:var(--ink2);line-height:1.2;margin-top:.25rem;text-wrap:balance}
+.tile.hl{border-color:var(--teal)}
+.tile.hl b{color:var(--teal-l)}
+#side{grid-area:side;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;min-height:0}
+#charts{grid-area:charts;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:.5rem;background:var(--bg);border-top:1px solid var(--line);min-height:0}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:.5rem;padding:.55rem .75rem;display:flex;flex-direction:column;min-height:0;min-width:0}
+.chart h2{margin:0;font-size:.84rem;font-weight:600}
+.chart p{margin:.05rem 0 .35rem;font-size:.72rem;color:var(--muted)}
+.vb{flex:1;display:grid;grid-template-columns:repeat(6,1fr);gap:.45rem;align-items:end;min-height:0}
+.vb button{background:none;border:0;padding:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;min-width:0}
+.vb .n{font-size:.78rem;text-align:center;color:var(--ink)}
+.vb .bar{border-radius:3px 3px 0 0;min-height:2px;border:1px solid var(--line)}
+.vb .x{font-size:.64rem;color:var(--ink2);text-align:center;padding-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vb button[aria-pressed="true"] .bar{outline:2px solid var(--white);outline-offset:1px}
+.vb button.dim{opacity:.35}
+.hb{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;min-height:0}
+.hb .r{display:grid;grid-template-columns:8.2rem 1fr 4.6rem;gap:.5rem;align-items:center;font-size:.8rem;color:var(--ink2)}
+.hb .r i{display:block;height:.85rem;border-radius:0 3px 3px 0;background:var(--line)}
+.hb .r.me{color:var(--ink);font-weight:600}
+.hb .r.me i{background:var(--teal)}
+.hb .r b{text-align:right;font-weight:500;color:var(--ink)}
+.hb .na{font-size:.84rem;color:var(--muted);align-self:center;text-align:center;max-width:22rem}
+#lg{grid-area:lg;background:var(--panel);border-left:1px solid var(--line);border-top:1px solid var(--line);overflow-y:auto;min-height:0}
+#lg .sec{border-bottom:0}
+@media (max-width:1050px){
+  body{grid-template-columns:10rem 1fr 17rem}
+  body.panel-off{grid-template-columns:10rem 1fr 0}
+  .tile b{font-size:1.9rem}
+}
+@media (max-width:800px){
+  body{display:block;overflow:auto;height:auto}
+  #kpis{grid-template-rows:none;grid-template-columns:1fr 1fr;border-right:0}
+  .tile{padding:.7rem .4rem}.tile b{font-size:1.8rem}
+  .mapwrap{height:58vh}
+  #charts{grid-template-columns:1fr}.chart{height:13rem}
+  #side,#lg{border-left:0;border-top:1px solid var(--line)}
+  .brand small{display:none}.tools button.opt{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Portrait de Val-David <span>· tableau de bord territorial</span></h1>
+    <small>Santé Québec Laurentides · Direction de santé publique</small>
+  </div>
+  <span class="badge">MAQUETTE</span>
+  <div class="tools">
+    <button id="bPanel" title="Afficher ou masquer le panneau" aria-label="Afficher ou masquer le panneau">☰</button>
+    <button id="bMinus" class="opt" title="Réduire le texte" aria-label="Réduire le texte">A−</button>
+    <button id="bPlus" class="opt" title="Agrandir le texte" aria-label="Agrandir le texte">A+</button>
+    <button id="bMeth" title="Méthodologie et sources">Méthodo</button>
+    <button id="bExp" title="Exporter la couche en GeoJSON">Export</button>
+  </div>
+</header>
+<div id="note">Maquette de discussion : géométries schématiques et valeurs fictives. Aucune donnée réelle de Val-David n'est affichée.</div>
+
+<section id="kpis" aria-label="Chiffres clés de l'indicateur affiché">
+  <div class="tile hl"><b class="num" id="kMed"></b><span>Médiane de Val-David</span></div>
+  <div class="tile"><b class="num" id="kMin"></b><span>Valeur minimale d'une maille</span></div>
+  <div class="tile"><b class="num" id="kMax"></b><span>Valeur maximale d'une maille</span></div>
+  <div class="tile"><b class="num" id="kBad"></b><span id="kBadL"></span></div>
+</section>
+
+<div class="mapwrap">
+  <div id="map"></div>
+  <div class="base" role="group" aria-label="Fond de carte">
+    <button data-b="carte" aria-pressed="true">Carte</button>
+    <button data-b="ortho" aria-pressed="false">Imagerie</button>
+    <button data-b="none" aria-pressed="false">Sans fond</button>
+  </div>
+</div>
+
+<aside id="side">
+  <div class="sec">
+    <h2>Choisir un indicateur</h2>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="inds" id="inds"></div>
+  </div>
+  <div class="sec" id="health" hidden>
+    <h2>Santé : échelle territoriale seulement</h2>
+    <p class="hint" style="margin:0 0 .5rem">Ces indicateurs ne sont pas diffusables à l'échelle fine. Ils sont présentés pour le territoire de RLS, comparé à la région et au Québec.</p>
+    <div id="hcards"></div>
+  </div>
+  <div class="sec prof">
+    <h2>Profil</h2>
+    <h3 id="pT"></h3>
+    <p id="pS"></p>
+    <div id="pRows"></div>
+    <div class="hint">Barre : position dans l'étendue municipale. Trait blanc : médiane de Val-David.</div>
+    <button class="reset" id="bReset" hidden>Revenir à l'ensemble de Val-David</button>
+  </div>
+</aside>
+
+<section id="charts">
+  <div class="chart"><h2>Nombre de mailles par classe</h2><p id="c1S">Cliquer une barre pour isoler la classe sur la carte.</p><div class="vb" id="c1"></div></div>
+  <div class="chart"><h2>Comparaison territoriale</h2><p id="c2S"></p><div class="hb" id="c2"></div></div>
+</section>
+
+<aside id="lg">
+  <div class="sec legend">
+    <h2>Légende</h2>
+    <div class="ttl" id="lgT"></div>
+    <div class="sub" id="lgS"></div>
+    <div class="sw" id="lgSw"></div>
+    <div class="swl num" id="lgL"></div>
+    <div class="lgx">
+      <span><i class="k-null"></i>Donnée masquée ou absente</span>
+      <span><i class="k-ppu"></i>Secteur du PPU (ÉIS)</span>
+      <span><i class="k-mun"></i>Limite municipale</span>
+    </div>
+  </div>
+</aside>
+
+<div id="tip"></div>
+<div id="toast"></div>
+<div id="pop" role="dialog" aria-modal="true" aria-labelledby="popT">
+  <div class="box">
+    <button class="x" id="bClose" aria-label="Fermer">✕</button>
+    <h2 id="popT">Méthodologie et sources (proposition)</h2>
+    <p>Cette maquette illustre la structure proposée du tableau de bord. Les géométries sont schématiques et toutes les valeurs sont fictives. Elle sert à valider avec la municipalité le choix des thèmes, des indicateurs, de l'unité spatiale et des fonctions.</p>
+    <h3>Unité spatiale</h3>
+    <p>Maille hexagonale de 500 m pour les indicateurs environnementaux (issus de rasters ou de couches ponctuelles). Les indicateurs du recensement sont produits par aire de diffusion, puis rapportés à la maille. Les indicateurs de santé restent à l'échelle du RLS, faute de données fiables et diffusables à l'échelle fine pour une municipalité de cette taille.</p>
+    <h3>Indicateurs et sources envisagées</h3>
+    <table>
+      <tr><th>Thème</th><th>Indicateur</th><th>Source envisagée</th></tr>
+      <tr><td rowspan="4">Socio-économique</td><td>Locataires consacrant 30 % ou plus du revenu au logement</td><td>Recensement 2021, Statistique Canada</td></tr>
+      <tr><td>Personnes de 65 ans et plus</td><td>Recensement 2021</td></tr>
+      <tr><td>Personnes vivant seules</td><td>Recensement 2021</td></tr>
+      <tr><td>Faible revenu (MFR-ApI)</td><td>Recensement 2021; complément possible : indice de défavorisation, INSPQ</td></tr>
+      <tr><td rowspan="5">Environnement</td><td>Indice de canopée</td><td>Indicateurs environnementaux existants de la municipalité; indicateur 3-30-300 (C.A.R.T.O.S.)</td></tr>
+      <tr><td>Écart de température de surface</td><td>Îlots de chaleur et de fraîcheur urbains, INSPQ et CERFO</td></tr>
+      <tr><td>Distance au parc ou espace vert public le plus proche</td><td>Couches municipales, OpenStreetMap</td></tr>
+      <tr><td>Services de proximité accessibles à pied</td><td>Outil Milieux de vie complets (MVC), C.A.R.T.O.S.</td></tr>
+      <tr><td>Bruit routier modélisé</td><td>Débits de circulation, MTMD (à valider)</td></tr>
+      <tr><td rowspan="3">Santé</td><td>Indice de vulnérabilité à la chaleur</td><td>Atlas de la vulnérabilité, Université Laval</td></tr>
+      <tr><td>Collisions impliquant piétons ou cyclistes</td><td>Rapports d'accident, SAAQ et MTMD; agrégation par maille, masquage sous 5 événements</td></tr>
+      <tr><td>Indicateurs territoriaux (RLS)</td><td>Infocentre de santé publique, EQSP, SISMACQ</td></tr>
+    </table>
+    <h3>Classes et lecture</h3>
+    <ul>
+      <li>Cinq classes d'égale amplitude entre le minimum et le maximum municipal.</li>
+      <li>Le sens de lecture (valeur élevée favorable ou défavorable) est indiqué sous le titre de la légende.</li>
+      <li>Les mailles comptant moins de 5 événements sont masquées.</li>
+    </ul>
+    <h3>Lien avec l'ÉIS</h3>
+    <p>Le périmètre du PPU du secteur de la Sapinière est superposé pour situer le secteur dans son contexte municipal. Son tracé est ici approximatif.</p>
+    <div class="src">Sources : à confirmer avec la municipalité · Santé Québec Laurentides, Direction de santé publique · Maquette du 2026-11-11</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+(function(){
+function $(id){return document.getElementById(id);}
+function fmt(n,d){return (n==null)?'n.d.':Number(n).toLocaleString('fr-CA',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+/* Rampe de la charte */
+var RAMP=['#140C74','#0482D3','#21AEAD','#6fdbd8'];
+function hexRgb(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+function lerp(a,b,t){var pa=hexRgb(a),pb=hexRgb(b);return 'rgb('+Math.round(pa[0]+(pb[0]-pa[0])*t)+','+Math.round(pa[1]+(pb[1]-pa[1])*t)+','+Math.round(pa[2]+(pb[2]-pa[2])*t)+')';}
+function rampT(t){var seg=t*(RAMP.length-1),i=Math.min(Math.floor(seg),RAMP.length-2);return lerp(RAMP[i],RAMP[i+1],seg-i);}
+var CLS=[0,1,2,3,4].map(function(i){return rampT(i/4);});
+
+/* Géométrie schématique (fictive) centrée sur Val-David */
+var LAT0=46.031,LNG0=-74.207,KX=111320*Math.cos(LAT0*Math.PI/180),KY=110540,R=290,S3=Math.sqrt(3);
+function ll(x,y){return [LAT0+y/KY,LNG0+x/KX];}
+function rnd(i){var s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s);}
+function lim(t){return 1+.18*Math.sin(3*t+1)+.1*Math.cos(5*t);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+var THEMES=[
+ {id:'socio',nom:'Socio-économique'},
+ {id:'env',nom:'Environnement'},
+ {id:'sante',nom:'Santé'}
+];
+var IND=[
+ {id:'loyer',bad:'hi',th:'socio',nom:'Effort au logement des locataires',desc:'Locataires consacrant 30 % ou plus du revenu au logement',u:' %',d:0,sens:'Valeur élevée : défavorable',f:function(c){return 16+24*c.u+8*c.n1;}},
+ {id:'aines',bad:null,th:'socio',nom:'Personnes de 65 ans et plus',desc:'Part de la population totale',u:' %',d:0,sens:'Indicateur descriptif',f:function(c){return 20+12*(1-c.u)+7*c.n2;}},
+ {id:'seuls',bad:'hi',th:'socio',nom:'Personnes vivant seules',desc:'Part des personnes de 15 ans et plus',u:' %',d:0,sens:'Valeur élevée : vulnérabilité accrue',f:function(c){return 12+17*c.u+6*c.n3;}},
+ {id:'mfr',bad:'hi',th:'socio',nom:'Faible revenu',desc:'Mesure de faible revenu après impôt (MFR-ApI)',u:' %',d:1,sens:'Valeur élevée : défavorable',f:function(c){return 7+10*c.u+4*c.n1;}},
+ {id:'canopee',bad:'lo',th:'env',nom:'Indice de canopée',desc:'Part de la maille couverte par les arbres',u:' %',d:0,sens:'Valeur élevée : favorable',f:function(c){return clamp(82-48*c.u-18*c.rt+8*c.n2,5,95);}},
+ {id:'chaleur',bad:'hi',cmp:false,th:'env',nom:'Température de surface',desc:'Écart par rapport à la moyenne municipale',u:' °C',d:1,sens:'Valeur élevée : défavorable',f:function(c){return -2+6.5*c.u+3*c.rt+1.2*c.n3;}},
+ {id:'parc',bad:'hi',cmp:false,th:'env',nom:'Distance au parc le plus proche',desc:'Distance de marche au réseau',u:' m',d:0,sens:'Valeur élevée : défavorable',f:function(c){return Math.round((140+1100*(1-c.u)+250*c.n1)/10)*10;}},
+ {id:'mvc',bad:'lo',cmp:false,th:'env',nom:'Services de proximité à pied',desc:'Catégories accessibles sur 9 (outil MVC)',u:' / 9',d:0,sens:'Valeur élevée : favorable',f:function(c){return Math.round(clamp(9.4*Math.pow(c.u,.8)+c.n2-.5,0,9));}},
+ {id:'bruit',bad:'hi',th:'env',nom:'Bruit routier modélisé',desc:'Niveau moyen sur 24 h (Lden)',u:' dB',d:0,sens:'Valeur élevée : défavorable',f:function(c){return 41+24*c.rt+4*c.u+3*c.n3;}},
+ {id:'vuln',bad:'hi',cmp:false,th:'sante',nom:'Vulnérabilité à la chaleur',desc:'Indice composite (sensibilité, exposition, capacité à faire face)',u:' / 100',d:0,sens:'Valeur élevée : défavorable',f:function(c){return clamp(18+50*c.u+18*c.rt+14*c.n1,0,100);}},
+ {id:'coll',bad:'hi',cmp:false,th:'sante',nom:'Collisions piétons et cyclistes',desc:'Nombre sur 12 ans, masqué sous 5 événements',u:'',d:0,sens:'Valeur élevée : défavorable',f:function(c){var v=Math.round(11*c.u*c.u+8*c.rt*c.rt+3*c.n2);return v<5?null:v;}}
+];
+var HEALTH=[
+ {t:'Espérance de vie à la naissance (années)',d:1,max:90,v:[['RLS',82.4],['Laurentides',82.9],['Québec',82.6]]},
+ {t:'Adultes vivant avec au moins une maladie chronique (%)',d:1,max:60,v:[['RLS',41.2],['Laurentides',38.5],['Québec',37.9]]},
+ {t:'Santé perçue passable ou mauvaise (%)',d:1,max:20,v:[['RLS',11.8],['Laurentides',10.4],['Québec',10.9]]},
+ {t:'Adultes actifs dans les loisirs et les transports (%)',d:1,max:60,v:[['RLS',44.0],['Laurentides',39.6],['Québec',40.3]]}
+];
+
+var cells=[],id=0;
+for(var r=-14;r<=14;r++){for(var q=-18;q<=18;q++){
+  var x=R*S3*(q+r/2),y=R*1.5*r,t=Math.atan2(y,x),l=lim(t);
+  if(Math.pow(x/3600,2)+Math.pow(y/2900,2)>l*l) continue;
+  id++;
+  var d=Math.sqrt(x*x+y*y),c={id:id,x:x,y:y,u:Math.exp(-d/1500),rt:Math.exp(-Math.abs(x+1300+y*.15)/420),n1:rnd(id),n2:rnd(id+500),n3:rnd(id+900),v:{}};
+  IND.forEach(function(I){c.v[I.id]=I.f(c);});
+  c.ring=[0,1,2,3,4,5].map(function(k){var a=(30+60*k)*Math.PI/180;return ll(x+R*Math.cos(a),y+R*Math.sin(a));});
+  cells.push(c);
+}}
+
+var STATS={};
+IND.forEach(function(I){
+  var a=cells.map(function(c){return c.v[I.id];}).filter(function(v){return v!=null;}).sort(function(p,q){return p-q;});
+  STATS[I.id]={min:a[0],max:a[a.length-1],med:a[Math.floor(a.length/2)],n:a.length};
+});
+function klass(I,v){var s=STATS[I.id];if(v==null)return -1;return Math.min(4,Math.floor(5*(v-s.min)/((s.max-s.min)||1)));}
+
+/* Carte */
+var map=L.map('map',{zoomControl:true,attributionControl:true,zoomSnap:.25});
+map.setView([LAT0,LNG0],13);
+var ATTR='© Gouvernement du Québec · Santé Québec Laurentides';
+var BASES={
+  carte:L.tileLayer('https://geoegl.msp.gouv.qc.ca/apis/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{y}.png',{tms:true,maxZoom:18,attribution:ATTR,opacity:.55}),
+  ortho:L.tileLayer('https://geoegl.msp.gouv.qc.ca/apis/carto/tms/1.0.0/orthos@EPSG_3857/{z}/{x}/{y}.jpeg',{tms:true,maxZoom:18,attribution:ATTR,opacity:.7})
+};
+var curBase=BASES.carte.addTo(map);
+document.querySelectorAll('.base button').forEach(function(b){b.onclick=function(){
+  if(curBase){map.removeLayer(curBase);curBase=null;}
+  var k=b.getAttribute('data-b');if(BASES[k]){curBase=BASES[k].addTo(map);curBase.bringToBack();}
+  document.querySelectorAll('.base button').forEach(function(o){o.setAttribute('aria-pressed',o===b);});
+};});
+
+var cur=IND[4],sel=null,flt=-2,tip=$('tip');
+var layer=L.layerGroup().addTo(map);
+cells.forEach(function(c){
+  c.poly=L.polygon(c.ring,{weight:.6}).addTo(layer);
+  c.poly.on('mousemove',function(e){
+    var v=c.v[cur.id];
+    tip.innerHTML='Maille nº '+c.id+'<b class="num">'+(v==null?'Donnée masquée':fmt(v,cur.d)+cur.u)+'</b>'+cur.nom;
+    tip.style.display='block';
+    var px=e.originalEvent.clientX+14,py=e.originalEvent.clientY+14;
+    tip.style.left=Math.min(px,window.innerWidth-tip.offsetWidth-8)+'px';
+    tip.style.top=Math.min(py,window.innerHeight-tip.offsetHeight-8)+'px';
+  });
+  c.poly.on('mouseout',function(){tip.style.display='none';});
+  c.poly.on('click',function(){sel=c;paint();profile();});
+});
+var bpts=[];for(var a=0;a<360;a+=3){var tt=a*Math.PI/180,k=lim(tt)*1.06;bpts.push(ll(3600*k*Math.cos(tt),2900*k*Math.sin(tt)));}
+var bound=L.polygon(bpts,{fill:false,color:css('--ink2'),weight:2,interactive:false}).addTo(map);
+var ppu=L.polygon([ll(650,-150),ll(1500,-60),ll(1750,-620),ll(1250,-1050),ll(600,-820)],{fill:false,color:css('--warn'),weight:2.5,dashArray:'7 5',interactive:false}).addTo(map);
+ppu.bindTooltip('PPU La Sapinière',{permanent:true,direction:'center',className:'lbl'});
+map.fitBounds(bound.getBounds(),{padding:[18,18]});
+
+function paint(){
+  cells.forEach(function(c){
+    var k=klass(cur,c.v[cur.id]),on=(sel===c),dim=(flt>-2&&k!==flt);
+    c.poly.setStyle(k<0?{fillColor:css('--bg2'),fillOpacity:dim?.1:.55,opacity:dim?.25:1,color:css('--muted'),weight:on?3:.8,dashArray:'3 3'}
+      :{fillColor:CLS[k],fillOpacity:dim?.22:.82,opacity:1,color:on?css('--white'):css('--bg'),weight:on?3:.6,dashArray:null});
+    if(on) c.poly.bringToFront();
+  });
+}
+function legend(){
+  var s=STATS[cur.id],st=(s.max-s.min)/5;
+  $('lgT').textContent=cur.nom+(cur.u?' ('+cur.u.trim()+')':'');
+  $('lgS').textContent=cur.desc+'. '+cur.sens+'.';
+  $('lgSw').innerHTML=CLS.map(function(c){return '<i style="background:'+c+'"></i>';}).join('');
+  $('lgL').innerHTML=[0,1,2,3,4].map(function(i){return '<span>'+fmt(s.min+i*st,cur.d)+' à '+fmt(s.min+(i+1)*st,cur.d)+'</span>';}).join('');
+}
+function profile(){
+  var list=IND.filter(function(I){return I.th===cur.th;});
+  $('pT').textContent=sel?'Maille nº '+sel.id:'Ensemble de Val-David';
+  $('pS').textContent=sel?'Valeurs de la maille pour le thème affiché.':'Médianes municipales. Cliquer une maille pour afficher son profil.';
+  $('bReset').hidden=!sel;
+  $('pRows').innerHTML=list.map(function(I){
+    var s=STATS[I.id],v=sel?sel.v[I.id]:s.med,rg=(s.max-s.min)||1;
+    var w=v==null?0:100*(v-s.min)/rg,m=100*(s.med-s.min)/rg;
+    return '<div class="row"><div class="top"><span>'+I.nom+'</span><b class="num">'+(v==null?'masqué':fmt(v,I.d)+I.u)+'</b></div>'+
+      '<div class="track"><i style="width:'+w+'%"></i><u style="left:'+m+'%"></u></div></div>';
+  }).join('');
+}
+function menus(){
+  $('tabs').innerHTML=THEMES.map(function(T){return '<button role="tab" data-t="'+T.id+'" aria-selected="'+(T.id===cur.th)+'">'+T.nom+'</button>';}).join('');
+  $('inds').innerHTML=IND.filter(function(I){return I.th===cur.th;}).map(function(I){
+    return '<button class="ind" data-i="'+I.id+'" aria-pressed="'+(I===cur)+'"><b>'+I.nom+'</b><small>'+I.desc+'</small></button>';}).join('');
+  $('health').hidden=cur.th!=='sante';
+}
+function kpis(){
+  var s=STATS[cur.id],u='<small>'+cur.u+'</small>';
+  $('kMed').innerHTML=fmt(s.med,cur.d)+u;$('kMin').innerHTML=fmt(s.min,cur.d)+u;$('kMax').innerHTML=fmt(s.max,cur.d)+u;
+  var target=cur.bad==='lo'?0:4,n=cells.filter(function(c){return klass(cur,c.v[cur.id])===target;}).length;
+  $('kBad').textContent=fmt(n);
+  $('kBadL').textContent=cur.bad?'Mailles dans la classe la plus défavorable':'Mailles dans la classe la plus élevée';
+}
+function charts(){
+  var s=STATS[cur.id],st=(s.max-s.min)/5,cnt=[0,0,0,0,0],nul=0;
+  cells.forEach(function(c){var k=klass(cur,c.v[cur.id]);if(k<0)nul++;else cnt[k]++;});
+  var mx=Math.max.apply(null,cnt.concat([nul]))||1;
+  function bar(k,n,col,lab){return '<button data-k="'+k+'" aria-pressed="'+(flt===k)+'" class="'+(flt>-2&&flt!==k?'dim':'')+'" title="'+lab+' : '+n+' mailles">'+
+    '<span class="n num">'+fmt(n)+'</span><span class="bar" style="height:'+(72*n/mx)+'%;background:'+col+'"></span><span class="x num">'+lab+'</span></button>';}
+  $('c1').innerHTML=cnt.map(function(n,i){return bar(i,n,CLS[i],fmt(s.min+i*st,cur.d)+' à '+fmt(s.min+(i+1)*st,cur.d));}).join('')+bar(-1,nul,'var(--bg2)','masqué');
+  if(cur.cmp===false){
+    $('c2S').textContent='';
+    $('c2').innerHTML='<div class="na">Indicateur calculé à l\'échelle locale seulement : aucune valeur comparable n\'existe pour la MRC, la région ou le Québec.</div>';
+  }else{
+    var i=IND.indexOf(cur),rows=[['Val-David',s.med],['MRC des Laurentides',s.med*(.86+.3*rnd(i+11))],['Laurentides',s.med*(.84+.3*rnd(i+23))],['Québec',s.med*(.82+.3*rnd(i+37))]];
+    var m=Math.max.apply(null,rows.map(function(r){return r[1];}))*1.08;
+    $('c2S').textContent=cur.desc+(cur.u?' ('+cur.u.trim()+')':'');
+    $('c2').innerHTML=rows.map(function(r,j){return '<div class="r'+(j===0?' me':'')+'"><span>'+r[0]+'</span><i style="width:'+(100*r[1]/m)+'%"></i><b class="num">'+fmt(r[1],cur.d)+cur.u+'</b></div>';}).join('');
+  }
+}
+$('c1').onclick=function(e){var b=e.target.closest('button');if(!b)return;var k=+b.getAttribute('data-k');flt=(flt===k)?-2:k;charts();paint();};
+function refresh(){menus();legend();kpis();charts();paint();profile();}
+$('tabs').onclick=function(e){var b=e.target.closest('button');if(!b)return;cur=IND.filter(function(I){return I.th===b.getAttribute('data-t');})[0];flt=-2;refresh();};
+$('inds').onclick=function(e){var b=e.target.closest('button');if(!b)return;cur=IND.filter(function(I){return I.id===b.getAttribute('data-i');})[0];flt=-2;refresh();};
+$('bReset').onclick=function(){sel=null;paint();profile();};
+
+$('hcards').innerHTML=HEALTH.map(function(h){
+  return '<div class="hc"><div class="t">'+h.t+'</div>'+h.v.map(function(p,i){
+    return '<div class="b'+(i===0?' me':'')+'"><span>'+p[0]+'</span><i style="width:'+(100*p[1]/h.max)+'%"></i><b class="num">'+fmt(p[1],h.d)+'</b></div>';}).join('')+'</div>';
+}).join('');
+
+/* Outils */
+var fs=1;function setFs(k){fs=clamp(k,.85,1.4);document.documentElement.style.setProperty('--fsk',fs);setTimeout(function(){map.invalidateSize();},50);}
+$('bMinus').onclick=function(){setFs(fs-.1);};$('bPlus').onclick=function(){setFs(fs+.1);};
+$('bPanel').onclick=function(){document.body.classList.toggle('panel-off');setTimeout(function(){map.invalidateSize();},50);};
+$('bMeth').onclick=function(){$('pop').classList.add('on');};
+$('bClose').onclick=function(){$('pop').classList.remove('on');};
+$('pop').onclick=function(e){if(e.target===$('pop'))$('pop').classList.remove('on');};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')$('pop').classList.remove('on');});
+function toast(m){var t=$('toast');t.textContent=m;t.style.display='block';setTimeout(function(){t.style.display='none';},2600);}
+$('bExp').onclick=function(){
+  var gj={type:'FeatureCollection',name:'maquette_val_david_fictif',features:cells.map(function(c){
+    var ring=c.ring.map(function(p){return [+p[1].toFixed(6),+p[0].toFixed(6)];});ring.push(ring[0]);
+    var pr={id:c.id,fictif:true};IND.forEach(function(I){pr[I.id]=c.v[I.id]==null?null:+Number(c.v[I.id]).toFixed(I.d);});
+    return {type:'Feature',properties:pr,geometry:{type:'Polygon',coordinates:[ring]}};})};
+  var txt=JSON.stringify(gj);
+  try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/geo+json'}));a.download='maquette_val_david_fictif.geojson';document.body.appendChild(a);a.click();a.remove();}catch(e){}
+  try{navigator.clipboard.writeText(txt).then(function(){toast('GeoJSON (fictif) copié dans le presse-papiers');},function(){toast('Export lancé');});}catch(e){toast('Export lancé');}
+};
+window.addEventListener('resize',function(){map.invalidateSize();});
+refresh();
+})();
+</script>
+</body>
+</html>
