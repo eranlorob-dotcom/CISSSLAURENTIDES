@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
@@ -212,8 +213,8 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
     <span class="badge">Portrait territorial</span>
     <div class="spacer"></div>
     <div class="tools">
-      <select id="filter-typo" title="Filtrer par type d'offre"><option value="">Toute l'offre</option><option value="complet">Supermarchés et épiceries complètes</option><option value="frais">Commerces d’aliments frais et spécialisés</option><option value="depanneur">Dépanneurs et stations-service</option><option value="rapide">Restauration rapide et prêt-à-emporter</option><option value="resto">Restaurants avec service</option><option value="FAV">— Offre favorable seulement</option><option value="DEF">— Offre moins favorable seulement</option></select>
-      <select id="filter-secteur" title="Filtrer par secteur"><option value="">Tous les secteurs</option><option value="Noyau de Saint-Jovite">Noyau de Saint-Jovite</option><option value="Corridor de la route 117">Corridor de la route 117</option><option value="Secteur Village">Secteur Village</option><option value="Secteur de la Montagne">Secteur de la Montagne</option><option value="Reste du territoire">Reste du territoire</option></select>
+      <select id="filter-typo" title="Filtrer par type d'offre"><option value="">Toute l\'offre</option></select>
+      <select id="filter-secteur" title="Filtrer par secteur"><option value="">Tous les secteurs</option></select>
       <select id="couche-ad" title="Défavorisation et déserts alimentaires (aires de diffusion)" onchange="setDefav(this.value)">
         <option value="">Aucune couche de fond</option>
         <option value="com">Défavorisation combinée (matrice par quartiles)</option>
@@ -239,8 +240,8 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
     <aside class="panel" id="panel">
       <div id="synthese">
         <div class="eyebrow">Portrait d'ensemble</div>
-        <div class="scopename">Mont-Tremblant</div>
-        <div class="scopesub"><span>MRC des Laurentides</span><span class="badge" id="s-n"></span></div>
+        <div class="scopename">Boisbriand</div>
+        <div class="scopesub"><span>MRC de Thérèse-De Blainville</span><span class="badge" id="s-n"></span></div>
         <div class="hero">
           <div class="lab">Indice de l'offre alimentaire favorable (mRFEI)</div>
           <div class="big mono"><span id="s-mrfei"></span><small>%</small></div>
@@ -305,7 +306,7 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
           <p>Repérage selon le protocole de <strong>Robitaille et Paquette (2020)</strong>, appliqué à l'aire de diffusion. Une aire est un <strong>désert alimentaire</strong> si elle se situe dans le cinquième quintile de défavorisation matérielle et que sa population se trouve à plus de 1 km d'un commerce d'approvisionnement favorable en milieu urbain, ou à plus de 16 km en milieu rural. Elle est un <strong>marais alimentaire</strong> si l'indice RFEI y atteint 5. Le milieu urbain correspond aux centres de population (au moins 1 000 personnes et 400 personnes par km²).</p>
           <div class="formula">RFEI = (restauration rapide + dépanneurs) / (supermarchés + épiceries + aliments frais)</div>
           <p>Le calcul part des <strong>8 466 unités d'évaluation résidentielles du rôle 2026</strong> (12 189 logements), comme dans l'article. Pour chacune, on mesure la distance au commerce d'approvisionnement favorable le plus proche, puis on agrège par aire de diffusion en pondérant par le nombre de logements. Le milieu urbain est déterminé par la densité de l'aire de diffusion, à partir de 400 personnes par km², soit le critère de densité des centres de population de Statistique Canada : 42 des 46 aires de Boisbriand sont urbaines. L'indice RFEI d'une aire compte les commerces distincts accessibles depuis au moins un de ses logements, dans le seuil applicable.</p>
-          <p>Un écart par rapport à l'article : les distances sont à vol d'oiseau, multipliées par 1,3 pour approcher un trajet routier. Aucun réseau routier n'était disponible dans l'environnement de calcul. Les distances réelles sur le réseau seraient donc un peu plus longues dans les secteurs au relief accidenté ou au réseau discontinu.</p>
+          <p>Un écart par rapport à l'article : les distances sont à vol d'oiseau, multipliées par 1,3 pour approcher un trajet routier. Aucun réseau routier n'était disponible dans l'environnement de calcul. Les distances réelles sur le réseau seraient donc plus longues là où l'autoroute 640, la rivière aux Chiens et les grands stationnements commerciaux imposent des détours.</p>
           <h5>Défavorisation</h5>
           <p>Indice de défavorisation matérielle et sociale de l'INSPQ, recensement de 2021, à l'échelle de l'aire de diffusion. La couche combinée applique la <strong>matrice par quartiles du regroupement 3</strong> (échelle locale), croisant <code>QuartMatRTS</code> et <code>QuartSocRTS</code> en huit classes, A1 à A8. Les deux autres couches présentent les quintiles d'une seule dimension, <code>QuintMatRTS</code> et <code>QuintSocRTS</code>. Les quintiles et les quartiles sont calculés à l'échelle du territoire du réseau de santé (RTS). Couleurs du ministère de la Santé et des Services sociaux.</p>
           <h5>Couches informatives</h5>
@@ -313,7 +314,7 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
           
           <h5>Limites à considérer</h5>
           <ul>
-            <li>Le recensement provient de l'API Google Places : la couverture des petits commerces et des points de vente saisonniers y est inégale et aucune validation terrain n'a été faite.</li>
+            <li>Le recensement provient de l'API Google Places : la couverture des petits commerces y est inégale. Les 107 établissements recensés ont été validés un à un, mais un commerce absent de Google et inconnu de la personne qui a validé reste absent de l'analyse.</li>
             <li>Les catégories attribuées par Google ont été reclassées manuellement lorsqu'elles étaient trompeuses (enseignes de dépannage classées « épicerie », chaînes de restauration rapide classées « boulangerie »). Les cas reclassés sont signalés dans la fiche de chaque commerce.</li>
             <li>Cinq commerces classés dépanneurs sont en fait deux pharmacies, un Uniprix et deux Dollarama. Les retirer de l'offre moins favorable ferait passer l'indice mRFEI de 30 % à 32 % et le RFEI de 2,35 à 2,10. Le classement reste à trancher.</li>
             <li>L'indice porte sur le <em>nombre</em> de commerces et non sur la surface de vente, l'assortiment réel, les prix ou la qualité nutritionnelle de l'offre.</li>
@@ -323,8 +324,8 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
             <li>Indice RFEI (Robitaille et Paquette, 2020) : (restauration rapide + dépanneurs) / (supermarchés + épiceries + commerces d'aliments frais). Un secteur est un marais alimentaire lorsque le rapport atteint 5.</li>
             <li>Restauration rapide : établissement où les aliments sont servis majoritairement dans des contenants, emballages ou assiettes jetables lorsqu'ils sont consommés sur place, et où il n'y a aucun service aux tables.</li>
             <li>Écoles : couche des immeubles scolaires du ministère de l'Éducation, réseaux public et privé, filtrée sur le code municipal 73005. L'analyse retient les huit écoles primaires et secondaires et écarte les services de garde et les centres de formation.</li>
-            <li>Les secteurs (noyau de Saint-Jovite, corridor de la route 117, Village, Montagne) sont approximés par rattachement au pôle le plus proche et non par les limites officielles du plan d'urbanisme.</li>
-            <li>L'analyse n'est pas pondérée par la population résidante ni par la population touristique saisonnière, qui module fortement la demande à Mont-Tremblant.</li>
+            <li>Les secteurs (Faubourg Boisbriand, Grande-Côte ouest, Grande-Côte est, chemin de la Côte Nord, Tash) sont dérivés des données : les commerces ont été regroupés par proximité, puis chaque grappe a été nommée d'après sa rue principale. Ils ne correspondent à aucun découpage officiel.</li>
+            <li>L'analyse porte sur l'offre et non sur la demande. Elle ne tient pas compte de la clientèle venue des municipalités voisines, qui pèse lourd dans un pôle commercial régional comme le Faubourg, ni des habitudes d'achat réelles des résidents, dont une partie s'approvisionne hors de Boisbriand.</li>
           </ul>
           <p class="src" style="border-top:1px solid var(--line2);padding-top:10px;margin-top:10px">
             Sources : immeubles scolaires du ministère de l'Éducation (réseaux public et privé) · indice de défavorisation de l'INSPQ (recensement de 2021, aires de diffusion) · rôle d'évaluation foncière 2026, unités résidentielles · Google Places API (New), extraction du 7 octobre 2026 (cellules de 250 m, tuiles de mots-clés de 1 km) · validation des 107 commerces, novembre 2026 · typologie adaptée de Robitaille et Paquette (2020) et du mRFEI (CDC) · fonds de carte : Esri (Dark Gray et Light Gray Canvas) et carte topographique gouvernementale du Québec (service public IGO) · Santé Québec Laurentides — Direction de santé publique · Mise à jour 2026-11-16
@@ -612,7 +613,7 @@ function buildSynthese(){
   STATS.rfei=fav?def/fav:null;
   document.getElementById('s-interp').innerHTML='Sur les '+(fav+def)+' commerces d’alimentation courante, '+fav+
     ' offrent principalement des aliments favorables à la santé et '+def+' relèvent du dépannage ou de la restauration rapide. '+
-    'À Mont-Tremblant, le même indice atteint 44 %. Un indice sous 35 % signale une offre dominée par le dépannage et la restauration rapide, '+
+    'Un indice sous 35 % signale une offre dominée par le dépannage et la restauration rapide, '+
     'et il masque encore les écarts entre les secteurs.';
 
   // KPI : concentration et composition
