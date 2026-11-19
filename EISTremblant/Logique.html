@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modèle logique d'ÉIS — Plan d'urbanisme de Mont-Tremblant</title>
-<meta name="description" content="Modèle logique interactif de l'évaluation d'impact sur la santé du plan d'urbanisme de la Ville de Mont-Tremblant. CISSS des Laurentides — Direction de santé publique.">
+<meta name="description" content="Modèle logique interactif de l'évaluation d'impact sur la santé du plan d'urbanisme de la Ville de Mont-Tremblant. Santé Québec Laurentides, Direction de santé publique.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -261,7 +261,7 @@ footer.app{
       <p class="sub">Plan d'urbanisme de la Ville de Mont-Tremblant — perspective tourisme durable</p>
       <span class="badge">Figure interactive</span>
     </div>
-    <div class="sign">CISSS des Laurentides<br>Direction de santé publique<br><span class="num">2026</span></div>
+    <div class="sign">Santé Québec Laurentides<br>Direction de santé publique<br><span class="num">2026</span></div>
   </div>
 </header>
 
@@ -301,8 +301,8 @@ footer.app{
 </main>
 
 <footer class="app">
-  Sources : Ville de Mont-Tremblant, projet de plan d'urbanisme · analyse de la Direction de santé publique · CISSS des Laurentides — Direction de santé publique · Mise à jour <span class="num">2026-08-20</span>.<br>
-  Citation suggérée : CISSS des Laurentides, Direction de santé publique (2026). <i>Modèle logique d'ÉIS : plan d'urbanisme de la Ville de Mont-Tremblant</i>. Figure interactive.
+  Sources : Ville de Mont-Tremblant, projet de plan d'urbanisme · analyse de la Direction de santé publique · Santé Québec Laurentides, Direction de santé publique · Mise à jour <span class="num">2026-11-19</span>.<br>
+  Citation suggérée : Santé Québec Laurentides, Direction de santé publique (2026). <i>Modèle logique d'ÉIS : plan d'urbanisme de la Ville de Mont-Tremblant</i>. Figure interactive.
 </footer>
 
 <div class="scrim" id="scrim"></div>
@@ -330,7 +330,7 @@ footer.app{
     <p>Le modèle porte sur le projet de plan d'urbanisme tel que soumis au moment de l'analyse. Il ne tient pas compte des modalités de mise en œuvre, des budgets ni des règlements d'urbanisme qui en découleront, lesquels détermineront une part importante des effets réels. L'ampleur des effets n'est pas quantifiée à cette étape.</p>
     <h4>Correspondance avec le rapport</h4>
     <p>Le modèle est organisé en cinq enjeux structurants, alors que le rapport d'ÉIS est organisé en neuf stratégies. Les pastilles affichées sous chaque enjeu indiquent les stratégies du rapport où l'analyse détaillée, les recommandations et les indicateurs de suivi correspondants se trouvent.</p>
-    <div class="srcs">Sources : Ville de Mont-Tremblant, projet de plan d'urbanisme · analyse de la Direction de santé publique · CISSS des Laurentides — Direction de santé publique · Mise à jour 2026-08-20.</div>
+    <div class="srcs">Sources : Ville de Mont-Tremblant, projet de plan d'urbanisme · analyse de la Direction de santé publique · Santé Québec Laurentides, Direction de santé publique · Mise à jour 2026-11-19.</div>
   </div>
 </div>
 
@@ -346,7 +346,7 @@ footer.app{
 <script>
 /* ============================================================
    Modèle logique d'ÉIS — Plan d'urbanisme de Mont-Tremblant
-   CISSS des Laurentides — Direction de santé publique, 2026
+   Santé Québec Laurentides, Direction de santé publique, 2026
    Fichier autonome. Pour modifier le contenu, éditer DATA.
    sens : 'pos' (+) | 'neg' (−) | 'inc' (?) | 'neu' (neutre)
    ============================================================ */
@@ -355,7 +355,7 @@ var DATA = [
   {
     num: 1,
     titre: "Mobilité et pression automobile",
-    strategies: ["S3 Mobilité", "S5 Centre-ville", "S6 Village", "S7 Route 117"],
+    strategies: ["S3 Mobilité", "S4 Centre-ville", "S5 Village", "S6 Route 117"],
     note: "C'est l'enjeu qui concentre à la fois le plus grand potentiel de gain et le risque le plus grave. Le développement du réseau actif et du transport collectif gratuit agit favorablement sur l'activité physique, la qualité de l'air et l'accès aux services. À l'inverse, l'évaluation de nouvelles traverses piétonnes non protégées sur la route 117, un axe à fort débit, expose directement des piétons à un risque de blessure grave ou mortelle.",
     composantes: [
       {t:"Stratégie 3 : réseau de mobilité efficace", s:"neu"},
@@ -386,7 +386,7 @@ var DATA = [
   {
     num: 2,
     titre: "Logement de la main-d'œuvre",
-    strategies: ["S2 Habitation", "S5 Centre-ville", "S6 Village"],
+    strategies: ["S2 Habitation", "S4 Centre-ville", "S5 Village"],
     note: "L'enjeu dont les chaînes causales sont les plus univoques : toutes vont dans le sens de la santé. La réserve foncière et la prohibition de la location à court terme dans les secteurs centraux protègent le parc locatif permanent, dont dépend la capacité des travailleurs à vivre là où ils travaillent. Le principal point de vigilance ne figure pas au modèle : l'absence de cible chiffrée et d'échéancier au plan.",
     composantes: [
       {t:"Stratégie 2 : offre d'habitation diversifiée", s:"neu"},
@@ -409,7 +409,7 @@ var DATA = [
   {
     num: 3,
     titre: "Protection de l'actif naturel",
-    strategies: ["S1 Milieux naturels", "S9 Infrastructures et eau"],
+    strategies: ["S1 Milieux naturels", "S8 Infrastructures et investissement public"],
     note: "L'actif naturel est ici à la fois la ressource protégée et la ressource exploitée. La préservation des milieux naturels, le verdissement et l'accès public aux lacs produisent des gains nets, mais la pression continue du développement récréotouristique (stratégie 7 du plan) s'exerce sur les mêmes bassins versants. La chaîne de risque passe par l'apport en phosphore, l'eutrophisation et, en bout de course, les épisodes de cyanobactéries qui compromettent la baignade.",
     composantes: [
       {t:"Stratégie 1 : préservation des milieux naturels", s:"neu"},
@@ -439,7 +439,7 @@ var DATA = [
   {
     num: 4,
     titre: "Tensions sociales et économiques",
-    strategies: ["S8 Récréotourisme"],
+    strategies: ["S7 Récréotourisme"],
     note: "Le seul enjeu dont le bilan est majoritairement défavorable. La densification du pôle récréotouristique crée des emplois, mais souvent saisonniers et précaires, et augmente simultanément l'exposition aux jeux de hasard, les nuisances et l'iniquité d'accès au loisir pour la population résidente. L'objectif 7.3.10, sur l'accessibilité locale, constitue le seul levier d'atténuation repéré au plan : son potentiel reste à documenter.",
     composantes: [
       {t:"Stratégie 7 : densification du pôle récréotouristique (Versant Soleil, casino)", s:"neu"},
@@ -470,7 +470,7 @@ var DATA = [
   {
     num: 5,
     titre: "Accès à l'alimentation saine",
-    strategies: ["S4 Alimentation durable"],
+    strategies: ["S9 Alimentation durable"],
     note: "Cet enjeu ne découle pas d'une stratégie du plan : il découle de son absence. Le plan ne comporte aucune stratégie alimentaire, et le contrôle des usages commerciaux qui y figure vise la concurrence entre commerces, non la qualité de l'offre. Toutes les chaînes sont donc cotées incertaines. L'analyse des environnements alimentaires prévue au rapport doit convertir au moins deux de ces incertitudes en chaînes documentées.",
     composantes: [
       {t:"Angle mort : absence d'une stratégie alimentaire dans le plan d'urbanisme", s:"inc", tension:true},
