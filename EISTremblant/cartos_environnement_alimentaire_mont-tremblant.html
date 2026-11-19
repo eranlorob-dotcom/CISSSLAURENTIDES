@@ -1,15 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Environnement alimentaire — Mont-Tremblant — Santé Québec Laurentides</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 /* ===== Charte CISSS-DSP ===== */
 :root{
@@ -213,8 +212,8 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
     <span class="badge">ÉIS · Plan d'urbanisme</span>
     <div class="spacer"></div>
     <div class="tools">
-      <select id="filter-typo" title="Filtrer par type d'offre"><option value="">Toute l'offre</option><option value="complet">Supermarchés et épiceries complètes</option><option value="frais">Commerces d’aliments frais et spécialisés</option><option value="depanneur">Dépanneurs et stations-service</option><option value="rapide">Restauration rapide et prêt-à-emporter</option><option value="resto">Restaurants avec service</option><option value="FAV">— Offre favorable seulement</option><option value="DEF">— Offre moins favorable seulement</option></select>
-      <select id="filter-secteur" title="Filtrer par secteur"><option value="">Tous les secteurs</option><option value="Noyau de Saint-Jovite">Noyau de Saint-Jovite</option><option value="Corridor de la route 117">Corridor de la route 117</option><option value="Secteur Village">Secteur Village</option><option value="Secteur Base Sud et Versant Soleil">Secteur Base Sud et Versant Soleil</option><option value="Reste du territoire">Reste du territoire</option></select>
+      <select id="filter-typo" title="Filtrer par type d'offre"><option value="">Toute l'offre</option></select>
+      <select id="filter-secteur" title="Filtrer par secteur"><option value="">Tous les secteurs</option></select>
       <select id="couche-ad" title="Défavorisation et déserts alimentaires (aires de diffusion)" onchange="setDefav(this.value)">
         <option value="">Aucune couche de fond</option>
         <option value="com">Défavorisation combinée (matrice par quartiles)</option>
@@ -228,7 +227,7 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
         <option value="light">Fond clair (Esri)</option>
       </select>
       <button class="btn" id="btn-marche" onclick="toggleMarche()" title="Rayons de 500 m et 1 km autour des commerces d'approvisionnement">◎ Zones de marche</button>
-      <button class="btn" id="btn-ecoles" onclick="toggleEcoles()" title="Écoles primaires et secondaires du ministère de l'Éducation">✎ Écoles</button>
+      <button class="btn" id="btn-ecoles" onclick="toggleEcoles()" title="Écoles primaires et secondaires du ministère de l'Éducation · rayon de 800 m">✎ Écoles</button>
       <button class="btn" id="btn-log" onclick="toggleLog()" title="Unités résidentielles du rôle 2026 et distance au commerce d'approvisionnement">⌂ Logements</button>      <button class="btn" id="btn-pu" onclick="togglePU()" title="Périmètres d'urbanisation de la Ville (couche informative)">▢ Périmètres d'urbanisation</button>
       <button class="btn" id="btn-heat" onclick="toggleHeat()" title="Densité de l'offre">▦ Densité</button>
       <div class="fontctl"><button onclick="setFont(-1)" title="Réduire le texte">A−</button><button onclick="setFont(1)" title="Agrandir le texte">A+</button></div>
@@ -282,7 +281,7 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
       </div>
     </aside>
 
-    <div id="map" class="" style="outline-style: none;">
+    <div id="map">
       <button id="panel-toggle" onclick="togglePanel()">◀</button>
       <div id="legend">
         <div class="legend-title">Type d'offre alimentaire</div>
@@ -313,6 +312,7 @@ body.theme-light .poi{border-color:rgba(255,255,255,.95);box-shadow:0 2px 7px #1
           <h5>Couches informatives</h5>
           <p>La couche <strong>Logements</strong> affiche les 6 216 unités d'évaluation résidentielles du rôle 2026, colorées selon leur distance au commerce d'approvisionnement favorable le plus proche et selon le seuil qui s'applique à elles. Elle sert à voir les écarts que la moyenne par aire de diffusion efface. Le survol donne le nombre de logements et la distance.</p>
           <p>Les <strong>périmètres d'urbanisation</strong> de la Ville sont affichés à titre informatif. Ils servent au partage entre le milieu urbain, où le seuil du protocole est de 1 km, et le reste du territoire, où il est de 16 km. Les cinq polygones correspondent aux périmètres d'urbanisation du plan : Saint-Jovite, Village, Base Sud, Versant Soleil et Camp Nord.</p>
+          <p>La couche <strong>Écoles</strong> trace autour de chaque école un rayon de <strong>800 m</strong> à vol d'oiseau, soit environ 1 km par les rues et une douzaine de minutes de marche. Ce rayon correspond à l'aire de déplacement piéton courante d'un élève sur l'heure du dîner ou sur le trajet domicile-école. Les décomptes du volet « Proximité des écoles » sont calculés dans ce même rayon.</p>
           <h5>Limites à considérer</h5>
           <ul>
             <li>Le recensement provient de l'API Google Places : la couverture des petits commerces et des points de vente saisonniers y est inégale et aucune validation terrain n'a été faite.</li>
@@ -460,19 +460,20 @@ function buildMarche(){
     marcheLayer.addLayer(L.circle(ll,{radius:500,color:'#5fd0cf',weight:1,opacity:.5,fillColor:'#21AEAD',fillOpacity:.07,interactive:false}));
   });
 }
+var R_ECOLE=800; /* rayon d'exposition retenu autour des écoles, en mètres */
 function buildEcoles(){
   CTX.features.forEach(function(f){
     var c=f.geometry.coordinates, ll=[c[1],c[0]];
-    var proches=autour(c,500,function(p){return TYPO[p.typo].fav===-1;});
-    var favs=autour(c,1000,function(p){return TYPO[p.typo].fav===1;});
-    ecolesLayer.addLayer(L.circle(ll,{radius:500,color:'#6aa6e8',weight:1,dashArray:'4 4',opacity:.6,fillColor:'#0482D3',fillOpacity:.05,interactive:false}));
+    var proches=autour(c,R_ECOLE,function(p){return TYPO[p.typo].fav===-1;});
+    var favs=autour(c,R_ECOLE,function(p){return TYPO[p.typo].fav===1;});
+    ecolesLayer.addLayer(L.circle(ll,{radius:R_ECOLE,color:'#6aa6e8',weight:1,dashArray:'4 4',opacity:.6,fillColor:'#0482D3',fillOpacity:.05,interactive:false}));
     var m=L.marker(ll,{icon:L.divIcon({className:'poi-wrap',
       html:'<div class="poi poi-ecole" style="width:24px;height:24px">'+svgIc('toque','#0482D3')+'</div>',
       iconSize:[24,24],iconAnchor:[12,12],tooltipAnchor:[0,-12]})});
     m.bindTooltip('<div class="tt-nom">'+f.properties.nom+'</div><div class="tt-mrc">'+f.properties.cat+
       (f.properties.ordre?' · '+f.properties.ordre:'')+'</div>'+
-      '<div class="tt-val" style="color:#7b6fe0">'+proches.length+' dépanneur(s) ou restauration rapide à 500 m</div>'+
-      '<div class="tt-mrc">'+favs.length+' commerce(s) d’approvisionnement favorable à 1 km</div>'+
+      '<div class="tt-val" style="color:#7b6fe0">'+proches.length+' dépanneur(s) ou restauration rapide à '+R_ECOLE+' m</div>'+
+      '<div class="tt-mrc">'+favs.length+' commerce(s) d’approvisionnement favorable à '+R_ECOLE+' m</div>'+
       '<div class="tt-mrc" style="margin-top:4px;opacity:.75">'+(f.properties.src==='MEQ'
         ? 'Ministère de l’Éducation, immeubles scolaires 2026'
         : 'Google Places, à valider')+'</div>',
@@ -482,7 +483,7 @@ function buildEcoles(){
 }
 function toggleMarche(){
   var on=map.hasLayer(marcheLayer);
-  if(on)map.removeLayer(marcheLayer); else marcheLayer.addTo(map).bringToBack();
+  if(on){map.removeLayer(marcheLayer);} else {marcheLayer.addTo(map);}
   document.getElementById('btn-marche').classList.toggle('on',!on);
 }
 function toggleEcoles(){
@@ -681,25 +682,25 @@ function buildSynthese(){
     var dfav=DATA.features.filter(function(y){return TYPO[y.properties.typo].fav===1;})
       .map(function(y){return dist(c,y.geometry.coordinates);}).sort(function(a,b){return a-b;})[0];
     return {nom:x.properties.nom, cat:x.properties.cat, ordre:x.properties.ordre||'', src:x.properties.src||'', c:c,
-      def:autour(c,500,function(p){return TYPO[p.typo].fav===-1;}).length,
-      rapide:autour(c,500,function(p){return p.typo==='rapide';}).length,
-      dep:autour(c,500,function(p){return p.typo==='depanneur';}).length,
-      fav500:autour(c,500,function(p){return TYPO[p.typo].fav===1;}).length,
+      def:autour(c,R_ECOLE,function(p){return TYPO[p.typo].fav===-1;}).length,
+      rapide:autour(c,R_ECOLE,function(p){return p.typo==='rapide';}).length,
+      dep:autour(c,R_ECOLE,function(p){return p.typo==='depanneur';}).length,
+      favR:autour(c,R_ECOLE,function(p){return TYPO[p.typo].fav===1;}).length,
       fav:autour(c,1000,function(p){return TYPO[p.typo].fav===1;}).length,
       dfav:dfav};
   });
   var avecDef=ec.filter(function(x){return x.def>0;}).length;
   var sansFav=ec.filter(function(x){return x.fav===0;}).length;
-  var sansFav500=ec.filter(function(x){return x.fav500===0;}).length;
+  var sansFavR=ec.filter(function(x){return x.favR===0;}).length;
   var maxDef=Math.max.apply(null,ec.map(function(x){return x.def;}));
   var pire=ec.filter(function(x){return x.def===maxDef;})[0];
   var ecoles=ec.filter(function(x){return /^Écoles/i.test(x.cat);});
   var dm=ec.map(function(x){return x.dfav;}).sort(function(a,b){return a-b;});
   var median=dm.length%2?dm[(dm.length-1)/2]:(dm[dm.length/2-1]+dm[dm.length/2])/2;
   var ecolesDef=ecoles.filter(function(x){return x.def>0;}).length;
-  /* commerces moins favorables distincts situés à 500 m d'au moins un milieu jeunesse */
+  /* commerces moins favorables distincts situés dans le rayon d'au moins un milieu jeunesse */
   var prox={};
-  ec.forEach(function(x){autour(x.c,500,function(p){return TYPO[p.typo].fav===-1;})
+  ec.forEach(function(x){autour(x.c,R_ECOLE,function(p){return TYPO[p.typo].fav===-1;})
     .forEach(function(y){prox[y.properties.nom+y.properties.adresse]=y.properties.typo;});});
   var nProx=Object.keys(prox).length;
   var nRapide=Object.keys(prox).filter(function(k){return prox[k]==='rapide';}).length;
@@ -708,11 +709,14 @@ function buildSynthese(){
   var secDef1k=sec?autour(sec.c,1000,function(p){return TYPO[p.typo].fav===-1;}).length:0;
   var prim=ec.filter(function(x){return /préscolaire et primaire/i.test(x.cat);});
   var primDef=prim.filter(function(x){return x.def>0;}).length;
+  function plDef(k){return k+' '+(k>1?'commerces de dépannage ou de restauration rapide':'commerce de dépannage ou de restauration rapide');}
 
   /* commerces moins favorables autour de l'école secondaire (vol d'oiseau) */
-  var secDefListe=sec?autour(sec.c,1000,function(p){return TYPO[p.typo].fav===-1;})
+  var secDefListe=sec?autour(sec.c,R_ECOLE,function(p){return TYPO[p.typo].fav===-1;})
     .map(function(y){return {nom:y.properties.nom,d:dist(sec.c,y.geometry.coordinates)};})
     .sort(function(a,b){return a.d-b.d;}):[];
+  var primDefs=prim.map(function(x){return x.def;}),
+      primMin=Math.min.apply(null,primDefs), primMax=Math.max.apply(null,primDefs);
   var secDef15=sec?autour(sec.c,1500,function(p){return TYPO[p.typo].fav===-1;}).length:0;
   var nomsDef=secDefListe.map(function(y){return y.nom.replace(/ et Mini-Golf$/,'')+' ('+fmt(Math.round(y.d/10)*10)+' m)';});
   var listeNoms=nomsDef.length>1?nomsDef.slice(0,-1).join(', ')+' et '+nomsDef[nomsDef.length-1]:(nomsDef[0]||'');
@@ -720,25 +724,29 @@ function buildSynthese(){
   document.getElementById('s-ecoles').innerHTML=
     'La Ville compte <strong>'+ecoles.length+' écoles publiques</strong> : '+prim.length+' au primaire, regroupées rue Labelle et rue de l’École, '+
     'et l’école secondaire Curé-Mercure, boulevard du Docteur-Gervais.<br><br>'+
+    'L’exposition est mesurée dans un rayon de <strong>'+R_ECOLE+' m</strong> à vol d’oiseau autour de chaque école, '+
+    'soit environ 1 km par les rues et une douzaine de minutes de marche.<br><br>'+
     (primDef===prim.length?'Les <strong>'+prim.length+'</strong> écoles primaires comptent toutes'
                           :'<strong>'+primDef+'</strong> des '+prim.length+' écoles primaires comptent')+
-    ' au moins un dépanneur ou un comptoir de restauration rapide à moins de 500 m, soit de 5 à 7 minutes de marche. '+
+    ' au moins un dépanneur ou un comptoir de restauration rapide dans ce rayon'+
+    (primMin===primMax?', et chacune en compte <strong>'+primMax+'</strong>. '
+                      :', de <strong>'+primMin+'</strong> à <strong>'+primMax+'</strong> selon l’école. ')+
     'Les élèves du 3<sup>e</sup> cycle peuvent habituellement sortir sur l’heure du dîner, et ceux qui marchent y sont exposés sur le trajet entre la maison et l’école.<br><br>'+
     (sec?'Pour l’<strong>école secondaire Curé-Mercure</strong>, dont les élèves sortent librement sur l’heure du dîner, '+
-      (sec.def===0?'aucun dépanneur ni comptoir de restauration rapide ne se trouve à moins de 500 m. '
-                  :'on compte <strong>'+sec.def+'</strong> dépanneurs ou comptoirs de restauration rapide à moins de 500 m. ')+
-      (secDefListe.length?'Dans un rayon de 1 km à vol d’oiseau, on en compte <strong>'+secDefListe.length+'</strong> : '+listeNoms+'. '+
-        'Par les rues, le trajet s’allonge à environ 1,1 et 1,6 km, soit de 13 à 20 minutes de marche. ':'')+
-      'Le nombre passe à <strong>'+secDef15+'</strong> dans un rayon de 1,5 km, surtout le long de la route 117. '+
+      (sec.def===0?'aucun dépanneur ni comptoir de restauration rapide ne se trouve dans le rayon de '+R_ECOLE+' m. '
+                  :'on compte <strong>'+plDef(sec.def)+'</strong> dans le rayon de '+R_ECOLE+' m'+
+                   (listeNoms?' : '+listeNoms:'')+'. ')+
+      'Le nombre passe à <strong>'+secDef1k+'</strong> dans un rayon de 1 km et à <strong>'+secDef15+'</strong> dans un rayon de 1,5 km, '+
+      'surtout le long de la route 117. '+
       'Le commerce d’approvisionnement favorable le plus proche est à '+fmt(Math.round(sec.dfav))+' m.':'');
 
   document.getElementById('s-ecoles-kpi').innerHTML=
-    kpi(fmt(ecolesDef)+' / '+fmt(ecoles.length),'écoles publiques avec du dépannage ou de la restauration rapide à moins de 500 m')+
-    kpi(fmt(nProx),'commerces moins favorables distincts à 500 m ou moins d’une école, dont '+nRapide+' de restauration rapide')+
+    kpi(fmt(ecolesDef)+' / '+fmt(ecoles.length),'écoles publiques avec du dépannage ou de la restauration rapide à moins de '+R_ECOLE+' m')+
+    kpi(fmt(nProx),'commerces moins favorables distincts à '+R_ECOLE+' m ou moins d’une école, dont '+nRapide+' de restauration rapide')+
     kpi(fmt(Math.round(median))+' m','distance médiane entre une école et le commerce d’approvisionnement favorable le plus proche');
 
   document.getElementById('s-ecoleslist').innerHTML=
-    '<div class="src" style="border:0;padding:0;margin:0 0 8px">Écoles les plus exposées, nombre de dépanneurs et de comptoirs de restauration rapide à 500 m</div>'+
+    '<div class="src" style="border:0;padding:0;margin:0 0 8px">Écoles les plus exposées, nombre de dépanneurs et de comptoirs de restauration rapide à '+R_ECOLE+' m</div>'+
     ec.filter(function(x){return x.def>0;}).sort(function(a,b){return b.def-a.def;}).slice(0,6).map(function(x){
       return '<div class="sect-row" style="cursor:default" title="'+x.cat+' · commerce favorable le plus proche : '+fmt(Math.round(x.dfav))+' m">'+
         '<div class="sect-nom">'+x.nom+'</div>'+
@@ -747,7 +755,7 @@ function buildSynthese(){
     '<div class="warn">Couche officielle des immeubles scolaires du ministère de l’Éducation, mise à jour du 26 octobre 2026. Seules les écoles primaires et secondaires sont retenues : les services de garde, le centre collégial et la maison des jeunes ne font pas partie de cette analyse.</div>';
 
   document.getElementById('s-src').textContent=
-    'Sources : Google Places API (New), extraction du 22 septembre 2026 · validation terrain du 30 septembre 2026 · typologie adaptée de Robitaille et Paquette (2020) · Santé Québec Laurentides, Direction de santé publique · Mise à jour 2026-11-03';
+    'Sources : Google Places API (New), extraction du 22 septembre 2026 · validation terrain du 30 septembre 2026 · typologie adaptée de Robitaille et Paquette (2020) · Santé Québec Laurentides, Direction de santé publique · Mise à jour 2026-11-19';
 }
 function kpi(v,l){return '<div class="kpi"><div class="v mono">'+v+'</div><div class="l">'+l+'</div></div>';}
 function filtreSecteurRapide(nm){
@@ -950,6 +958,7 @@ init();
 </script>
 
 
+
+
+
 </body></html>
-
-
