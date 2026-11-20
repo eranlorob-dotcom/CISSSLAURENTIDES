@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr-CA">
-<head>
-<meta charset="utf-8">
+<html lang="fr-CA"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Atelier des fiches-stratégies ÉIS Mont-Tremblant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
 <style>
@@ -97,30 +96,30 @@ iframe#pv{display:block;width:100%;height:calc(100vh - 150px);min-height:520px;b
   <header class="top">
     <p class="eyebrow">ÉIS · Plan d'urbanisme de Mont-Tremblant</p>
     <h1>Atelier des fiches-stratégies</h1>
-    <p class="lede">Cet atelier transforme votre fiche Word en <b>blocs HTML prêts à coller dans Hub</b>, au gabarit de la fiche 8. Importez votre Word ou remplissez le formulaire : l'onglet « Blocs Hub » découpe la fiche bloc par bloc, avec les cartes intégrées entre les blocs.</p>
+    <p class="lede">Cet atelier transforme votre fiche Word en <b>page web autonome</b>, au gabarit des fiches-stratégies adopté en octobre 2026. La page se dépose sur GitHub Pages et s'affiche dans ArcGIS Experience Builder avec le widget Intégrer. Importez votre Word ou remplissez le formulaire, puis passez à l'onglet « Publication ».</p>
   </header>
 
   <div class="steps">
-    <div class="step"><span class="k">Étape 1</span><b>Importer votre fiche Word</b><p>Le gabarit en sept parties est lu automatiquement. Tout reste modifiable.</p>
-      <div class="btns"><button type="button" class="b primary" id="impWord">Importer un .docx</button><input type="file" id="fWord" accept=".docx" hidden></div></div>
-    <div class="step"><span class="k">Étape 2</span><b>Mettre en forme</b><p>Choisissez les constats clés et leur chiffre, les objectifs du plan, les chiffres du terrain et la place des cartes.</p></div>
+    <div class="step"><span class="k">Étape 1</span><b>Importer votre fiche Word</b><p>Les six parties du gabarit sont lues automatiquement, ainsi que les médias, les angles morts et « Pour aller plus loin ». Tout reste modifiable.</p>
+      <div class="btns"><button type="button" class="b primary" id="impWord">Importer un .docx</button><input type="file" id="fWord" accept=".docx" hidden=""></div></div>
+    <div class="step"><span class="k">Étape 2</span><b>Mettre en forme</b><p>Ajoutez au besoin des chiffres clés, une phrase-choc ou des panneaux, vérifiez la place des cartes et les appels de sources.</p></div>
     <div class="step"><span class="k">Étape 3</span><b>Transmettre</b><p>Téléchargez votre fiche (.json) et joignez-la à un courriel.</p>
       <div class="btns"><button type="button" class="b" id="saveJson">Télécharger ma fiche (.json)</button><button type="button" class="b ghost" id="mail">Préparer le courriel</button></div></div>
     <div class="step"><span class="k">Étape 4</span><b>Révision linguistique</b><p>Exportez le texte à publier en Word, faites-le réviser en suivi des modifications, puis réimportez-le.</p>
-      <div class="btns"><button type="button" class="b" id="revOut">Exporter pour révision (.docx)</button><button type="button" class="b ghost" id="revIn">Réimporter le Word révisé</button><input type="file" id="fRev" accept=".docx" hidden></div>
-      <p class="revsum" id="revsum" hidden></p></div>
+      <div class="btns"><button type="button" class="b" id="revOut">Exporter pour révision (.docx)</button><button type="button" class="b ghost" id="revIn">Réimporter le Word révisé</button><input type="file" id="fRev" accept=".docx" hidden=""></div>
+      <p class="revsum" id="revsum" hidden=""></p></div>
   </div>
 
   <div class="bar">
     <div class="tabs" role="tablist">
       <button type="button" class="tab" role="tab" id="tForm" aria-selected="true">Formulaire</button>
-      <button type="button" class="tab" role="tab" id="tBlocks" aria-selected="false">Blocs Hub</button>
+      <button type="button" class="tab" role="tab" id="tBlocks" aria-selected="false">Publication</button>
       <button type="button" class="tab" role="tab" id="tPrev" aria-selected="false">Aperçu</button>
     </div>
     <span class="status" id="status">Brouillon enregistré dans ce navigateur.</span>
     <div class="btns">
-      <button type="button" class="b" id="impJson">Importer une fiche .json</button><input type="file" id="fJson" accept=".json,application/json" hidden>
-      <button type="button" class="b ghost" id="loadEx">Voir l'exemple (fiche 8)</button>
+      <button type="button" class="b" id="impJson">Importer une fiche .json</button><input type="file" id="fJson" accept=".json,application/json" hidden="">
+      <button type="button" class="b ghost" id="loadEx">Voir l'exemple (fiche 2)</button>
       <button type="button" class="b ghost" id="clear">Nouvelle fiche</button>
     </div>
   </div>
@@ -129,52 +128,71 @@ iframe#pv{display:block;width:100%;height:calc(100vh - 150px);min-height:520px;b
     <nav class="toc" id="toc" aria-label="Parties"></nav>
     <form id="f" autocomplete="off" onsubmit="return false"></form>
   </div>
-  <div id="paneBlocks" hidden>
+  <div id="paneBlocks" hidden="">
     <div class="howto">
-      <b>Dans la page Hub de la stratégie</b>
+      <b>Publier la fiche</b>
+      <div class="row2" style="margin:.7rem 0 .4rem">
+        <div class="row"><label for="pubDossier">Adresse du dossier GitHub Pages</label><input id="pubDossier"></div>
+        <div class="row"><label for="pubFichier">Nom du fichier</label><input id="pubFichier" readonly></div>
+      </div>
+      <div class="row"><span class="lbl">Adresse publique de la fiche</span><p class="url" id="pubUrl"></p></div>
+      <div class="btns" style="margin:.6rem 0 .2rem"><button type="button" class="b primary" id="saveAll">Télécharger la page</button><button type="button" class="b" id="copyUrl">Copier l'adresse</button></div>
       <ol>
-        <li>Pour chaque bloc « Texte HTML », ajoutez une carte Texte, passez en mode code et collez le bloc.</li>
-        <li>Pour chaque bloc « Intégrer », ajoutez une carte d'intégration (iframe) et collez l'adresse de la carte.</li>
-        <li>Respectez l'ordre des blocs. Le dernier bloc, l'impression, est le même pour toutes les fiches.</li>
+        <li>Téléchargez la page, puis déposez-la dans ce dossier du dépôt GitHub (Add file, puis Upload files). Elle est en ligne une ou deux minutes plus tard.</li>
+        <li>Dans ArcGIS Experience Builder, créez une page pour la fiche et ajoutez-y un widget Intégrer qui occupe toute la page. Choisissez « Intégrer par URL » et collez l'adresse publique. C'est la fiche qui défile, pas la page Experience.</li>
+        <li>Facultatif : dans ArcGIS Online, ajoutez un élément « Application » qui pointe vers la même adresse, pour retrouver la fiche dans votre contenu et la partager dans un groupe.</li>
+        <li>Après une correction, téléchargez de nouveau la page et remplacez le fichier sur GitHub sous le même nom : la page Experience se met à jour sans autre manipulation.</li>
+        <li>Remplissez l'adresse de la page Experience (bouton de retour) et celle du PDF officiel dans la section « Sources et publication » du formulaire.</li>
       </ol>
-      <div class="btns" style="margin-top:.6rem"><button type="button" class="b" id="saveAll">Télécharger la fiche complète (.html)</button></div>
+      <p class="hint" style="margin-top:.6rem">Dans Experience Builder, la fiche est affichée dans un cadre protégé. Vérifiez une première fois que les cartes, les liens et le lien « Ouvrir la fiche en pleine page » fonctionnent.</p>
     </div>
-    <div class="blocks" id="blocks"></div>
   </div>
-  <div id="panePrev" hidden>
+  <div id="panePrev" hidden="">
     <div class="previewwrap"><iframe id="pv" title="Aperçu de la fiche"></iframe></div>
   </div>
 </div>
-<div class="toast" id="toast" role="status" hidden></div>
+<div class="toast" id="toast" role="status" hidden=""></div>
 
 <script>
 (function(){
 "use strict";
 /* ===== À CONFIGURER ===== */
 var DESTINATAIRE="";   /* adresse qui reçoit les fiches */
-var KEY="eis-mt-fiche-v2";
+var KEY="eis-mt-fiche-v3";
 
 var $=function(id){return document.getElementById(id);};
 function toast(m){var t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){t.hidden=true;},2600);}
 
 /* ================= MODÈLE ================= */
-var SENS=[["++","++ Effet favorable majeur"],["+","+ Effet favorable"],["?","? Effet incertain"],["−","− Effet défavorable"],["−−","−− Effet défavorable majeur"]];
+var SENS=[["++","++ Effet favorable majeur"],["+","+ Effet favorable"],["+?","+ / ? Effet favorable sous conditions"],["?","? Effet incertain"],["−","− Effet défavorable"],["−−","−− Effet défavorable majeur"]];
 var COUL=[["","Automatique"],["#21AEAD","Turquoise"],["#6aa6e8","Bleu"],["#a8a2ee","Lavande"],["#e6a23c","Ambre (vigilance)"]];
 var POS=[["apres","Légende sous la carte"],["avant","Légende au-dessus de la carte"]];
 function blank(){return {n:"",titre:"",enonce:"",auteur:"",date:"",version:"",
-  enjeu1:"",enjeuPhrase:"",enjeu2:"",
-  planIntro:"",objectifs:[],anglesIntro:"Le plan ne traite pas :",anglesMorts:[],
+  constats:[],
+  planIntro:"",objectifs:[],obs:[],anglesIntro:"",anglesMorts:[],
   sciIntro:"",enonces:[],
-  obs:[],
-  impIntro:"",impacts:[],gagne1:"",gagne2:"",
+  impIntro:"",impacts:[],gagne1:"",gagne2:"",vigilanceTitre:"Conditions pour que l’effet reste positif et enjeux à surveiller",vigilance:[],
   recoIntro:"",recos:[],
   indIntro:"",indicateurs:[],plusLoin:"",
-  sources:[],retour:"383f99f94ce3407f883a4ce04f065a06",pdf:"/documents/EIS_Mont-Tremblant.pdf"};}
+  sources:[],dossier:"https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/fiches/",retour:"",pdf:""};}
+/* Fiches produites avec l'ancien gabarit (partie 1 « L'enjeu ») : reprise du texte comme constats */
+function migrate(o){
+  o=Object.assign(blank(),o||{});
+  if(!o.constats.length&&(o.enjeu1||o.enjeuPhrase||o.enjeu2)) o.constats=[o.enjeu1,o.enjeuPhrase,o.enjeu2].filter(Boolean);
+  delete o.enjeu1; delete o.enjeuPhrase; delete o.enjeu2;
+  (o.recos||[]).forEach(function(r){ if(r.contexte==null) r.contexte=""; });
+  /* anciennes valeurs propres à Hub (identifiant de page, chemin /documents/) : sans effet hors de Hub */
+  if(!/^https?:\/\//i.test(o.retour||"")) o.retour="";
+  if(!/^https?:\/\//i.test(o.pdf||"")) o.pdf="";
+  return o;
+}
 var D=blank();
 
 var ENTYPES=[["constat","Constat clé"],["encadre","Encadré à rebours de l'intuition"],["loin","Pour aller plus loin"]];
 var OBTYPES=[["texte","Paragraphe"],["phrase","Phrase-choc"],["chiffres","Chiffres clés"],["soustitre","Sous-titre"],["liste","Liste de valeurs"],["panneau","Panneau"],["note","Note de sources"],["carte","Carte intégrée"]];
 var LISTS={
+  constats:{label:"Constat",str:true,fields:[["t","Une phrase (références : [3] ou [1,2])","textarea",2]]},
+  vigilance:{label:"Condition",str:true,fields:[["t","Condition ou enjeu à surveiller","textarea",2]]},
   objectifs:{label:"Objectif",fields:[["titre","Titre de l'objectif","text"],["codes","Numéros du plan (séparés par des virgules)","text"],["texte","Ce que le plan prévoit","textarea",2]]},
   anglesMorts:{label:"Angle mort",str:true,fields:[["t","Énoncé","textarea",2]]},
   enonces:{label:"Énoncé",typed:ENTYPES,fieldsFor:function(it){
@@ -195,23 +213,25 @@ var LISTS={
     }
   }},
   impacts:{label:"Chaîne d'impact",fields:[["effet","Effet attendu du plan","textarea",2],["codes","Numéros du plan","text"],["sens","Sens","select",SENS],["determinant","Déterminant touché","text"],["impact","Impact sur la santé","text"],["populations","Populations touchées","text"]]},
-  recos:{label:"Recommandation",fields:[["code","Code","text"],["couleur","Couleur","select",COUL],["titre","Intitulé","textarea",2],["moyens","Moyens (un par ligne)","lines",4]]},
-  indicateurs:{label:"Indicateur",fields:[["indicateur","Indicateur","textarea",2],["unite","Unité (ex. n, %)","text"],["source","Source","text"],["frequence","Fréquence","text"],["ventilation","Ventilation","text"],["direction","Direction attendue","text"],["responsable","Responsable","text"]]},
+  recos:{label:"Recommandation",fields:[["code","Code","text"],["couleur","Couleur","select",COUL],["titre","Intitulé","textarea",2],["contexte","Mise en contexte (facultatif, un paragraphe par ligne)","textarea",2],["moyens","Moyens (un par ligne)","lines",4]]},
+  indicateurs:{label:"Indicateur",fields:[["indicateur","Piste d'indicateur","textarea",2],["unite","Unité (ex. n, %)","text"],["source","Source possible","text"],["direction","Tendance favorable à la santé (↑, ↓)","text"],["frequence","Fréquence (facultatif)","text"],["ventilation","Ventilation (facultatif)","text"]]},
   sources:{label:"Source",numbered:true,fields:[["libelle","Référence (auteur ou organisme. Titre)","text"],["url","Adresse (DOI ou lien)","text"]]}
 };
-var REFHINT="Pour citer une source, écrivez son numéro entre crochets, par exemple [3] ou [1,2]. Les sources sont numérotées dans la partie 7.";
+var REFHINT="Pour citer une source, écrivez son numéro entre crochets, par exemple [3] ou [1,2]. Les sources sont numérotées dans la section « Sources et publication ».";
+var T2="Ce que prévoit le plan et ce qu'on observe à Mont-Tremblant";
 var PARTS=[
- {id:"p0",t:"Identification",blk:"Bloc A",body:[
+ {id:"p0",t:"Identification",blk:"",body:[
    ["row2",[["n","Numéro de la stratégie","text"],["titre","Titre","text"]]],
    ["enonce","Énoncé du plan (citation)","textarea",2],
    ["row2",[["auteur","Rédaction (nom, titre)","text"],["date","Date","text"],["version","Version","text"]]]]},
- {id:"p1",n:"Partie 1",t:"L'enjeu",blk:"Bloc A",body:[["enjeu1","Mise en contexte (2 ou 3 phrases)","textarea",3],["enjeuPhrase","La question ou la phrase-clé, mise en évidence","textarea",2],["enjeu2","Phrase de conclusion","textarea",2]]},
- {id:"p2",n:"Partie 2",t:"Ce que prévoit le plan",blk:"Bloc A",body:[["planIntro","Phrase d'introduction (ex. Le plan structure le récréotourisme autour de cinq objectifs.)","textarea",2],["@objectifs","Objectifs du plan, un encadré par objectif"],["anglesIntro","Introduction des angles morts","text"],["@anglesMorts","Angles morts"]]},
- {id:"p3",n:"Partie 3",t:"Ce que dit la science",blk:"Bloc A",body:[["sciIntro","Phrase d'introduction","textarea",2],["#"+REFHINT+" Retenez trois ou quatre constats clés; les autres énoncés vont dans « Pour aller plus loin »."],["@enonces","Énoncés"]]},
- {id:"p4",n:"Partie 4",t:"Ce qu'on observe à Mont-Tremblant",blk:"Blocs B, C, D",body:[["#Composez la partie élément par élément, dans l'ordre d'affichage. Chaque « Carte intégrée » coupe la fiche : un bloc d'intégration est inséré à cet endroit dans Hub."],["@obs","Éléments de la partie"]]},
- {id:"p5",n:"Partie 5",t:"Impacts anticipés sur la santé",blk:"Bloc E",body:[["impIntro","Phrase d'introduction","textarea",2],["@impacts","Chaînes d'impact"],["gagne1","Qui gagne, qui perd : constat","textarea",3],["gagne2","Qui gagne, qui perd : point de vigilance (en gras)","textarea",2]]},
- {id:"p6",n:"Partie 6",t:"Nos recommandations",blk:"Bloc E",body:[["recoIntro","Phrase d'introduction","text"],["@recos","Recommandations"]]},
- {id:"p7",n:"Partie 7",t:"Comment savoir si ça fonctionne",blk:"Bloc E",body:[["indIntro","Phrase d'introduction","text"],["@indicateurs","Indicateurs"],["plusLoin","Pour aller plus loin (municipalité comparable, ressource)","textarea",2],["@sources","Sources, numérotées dans l'ordre"],["row2",[["retour","Identifiant de la page Hub de retour","text"],["pdf","Lien du PDF officiel","text"]]]]}
+ {id:"p1",n:"Partie 1",t:"Les constats en trois phrases",blk:"",body:[["#Trois phrases qui résument l'analyse de la fiche, avec ses chiffres. Les connaissances générales vont dans la partie 3."],["@constats","Constats"]]},
+ {id:"p2",n:"Partie 2",t:T2,blk:"",body:[["planIntro","Introduction (facultatif, un paragraphe par ligne)","textarea",2],["@objectifs","Objectifs du plan en encadrés (facultatif)"],["#Composez ensuite la partie élément par élément, dans l'ordre d'affichage. Chaque « Carte intégrée » coupe la fiche : un bloc d'intégration est inséré à cet endroit dans Hub. Les lignes « Média · » du Word deviennent des cartes intégrées."],["@obs","Éléments de la partie"],["anglesIntro","Angles morts : introduction (un paragraphe par ligne)","textarea",3],["@anglesMorts","Angles morts"]]},
+ {id:"p3",n:"Partie 3",t:"Ce que dit la science",blk:"",body:[["sciIntro","Phrase d'introduction","textarea",2],["#"+REFHINT+" Retenez trois ou quatre constats clés; les autres énoncés vont dans « Pour aller plus loin dans les connaissances »."],["@enonces","Énoncés"]]},
+ {id:"p4",n:"Partie 4",t:"Impacts anticipés sur la santé",blk:"",body:[["impIntro","Phrase d'introduction","textarea",2],["@impacts","Chaînes d'impact"],["gagne1","Qui gagne, qui perd : constat (un paragraphe par ligne)","textarea",3],["gagne2","Qui gagne, qui perd : point de vigilance en gras (facultatif)","textarea",2],["vigilanceTitre","Titre de la liste des conditions","text"],["@vigilance","Conditions de réussite et enjeux à surveiller"]]},
+ {id:"p5",n:"Partie 5",t:"Nos recommandations",blk:"",body:[["recoIntro","Phrase d'introduction","text"],["@recos","Recommandations"]]},
+ {id:"p6",n:"Partie 6",t:"Comment savoir si ça fonctionne",blk:"",body:[["indIntro","Phrase d'introduction","text"],["@indicateurs","Indicateurs"]]},
+ {id:"p7",t:"Pour aller plus loin",blk:"",body:[["#Un paragraphe par ligne. Une ligne qui commence par « # » devient un intertitre, une ligne qui commence par « - » devient une puce. Pour un lien : [texte du lien](https://adresse)."],["plusLoin","Contenu de l'encadré","textarea",8]]},
+ {id:"p8",t:"Sources et publication",blk:"",body:[["@sources","Sources, numérotées dans l'ordre"],["row2",[["retour","Adresse de la page Experience, pour le bouton de retour (https://…)","text"],["pdf","Adresse du PDF officiel (https://…, facultatif)","text"]]]]}
 ];
 
 /* ================= FORMULAIRE ================= */
@@ -288,7 +308,7 @@ function buildForm(){
     var h=document.createElement("h2");
     if(p.n){var n=document.createElement("span");n.className="n";n.textContent=p.n;h.appendChild(n);}
     h.append(p.t);
-    var b=document.createElement("span"); b.className="blk"; b.textContent=p.blk; h.appendChild(b);
+    if(p.blk){ var b=document.createElement("span"); b.className="blk"; b.textContent=p.blk; h.appendChild(b); }
     s.appendChild(h);
     p.body.forEach(function(x){
       if(x[0]==="row2"){ var g=document.createElement("div"); g.className="row2"; x[1].forEach(function(y){g.appendChild(mkField(y[0],y[1],y[2],null,D[y[0]],function(v){D[y[0]]=v;changed();}));}); s.appendChild(g); }
@@ -309,16 +329,16 @@ function changed(){ clearTimeout(saveT); saveT=setTimeout(function(){
   if(!$("panePrev").hidden) preview();
   if(!$("paneBlocks").hidden) showBlocks();
 },500); }
-function load(obj){ D=Object.assign(blank(),obj||{}); buildForm(); changed(); }
+function load(obj){ D=migrate(obj); buildForm(); changed(); }
 function fileSave(name,text,type){ var blob=new Blob([text],{type:type}),a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500); }
 function slug(s){return String(s||"fiche").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
 function base(){return "EIS_MT_S"+(D.n||"x")+"_"+slug(D.titre);}
 
-/* ================= BLOCS HUB (gabarit de la fiche 8) ================= */
+/* ================= PAGE PUBLIÉE (gabarit des fiches-stratégies, octobre 2026) ================= */
 var FONT="font-family:'Source Sans 3','Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;";
 var MONO="font-family:'JetBrains Mono',Consolas,monospace;";
 var CYC=["#21AEAD","#6aa6e8","#a8a2ee"], TILE=["#21AEAD","#a8a2ee","#e6a23c","#6aa6e8"];
-var SX={"++":["#21AEAD","Effet favorable majeur","++"],"+":["#5fd0cf","Effet favorable","+"],"?":["#8b8fc4","Effet incertain","?"],"−":["#e6a23c","Effet défavorable","&minus;"],"−−":["#e06c5a","Effet défavorable majeur","&minus;&minus;"]};
+var SX={"++":["#21AEAD","Effet favorable majeur","++"],"+":["#5fd0cf","Effet favorable","+"],"+?":["#6aa6e8","Effet favorable sous conditions","+&#8239;/&#8239;?"],"?":["#8b8fc4","Effet incertain","?"],"−":["#e6a23c","Effet défavorable","&minus;"],"−−":["#e06c5a","Effet défavorable majeur","&minus;&minus;"]};
 var NUMW=["Aucune","Une","Deux","Trois","Quatre","Cinq","Six","Sept","Huit","Neuf","Dix","Onze","Douze","Treize","Quatorze","Quinze"];
 function ent(s){
   return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")
@@ -332,40 +352,44 @@ function rich(s){
 }
 function lines(s){return String(s||"").split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
 function wrapOpen(pad){return '<div style="background-color:#070620;color:#eef0fb;padding:'+(pad||"0 1.5rem 2.4rem")+';'+FONT+'line-height:1.6;">\n  <div style="max-width:52rem;margin:0 auto;">\n';}
+var COUPE="<!--COUPE-->";
 var WRAPCLOSE='  </div>\n</div>\n';
 var DIV='    <div style="border-top:1px solid #2a2870;margin:2.6rem 0 1.8rem;"></div>\n';
 function partHead(n,t){return '    <span style="display:block;'+MONO+'font-size:0.78rem;font-weight:600;color:#8b8fc4;margin:0 0 0.35rem;">Partie '+n+'</span>\n    <h3 style="font-size:1.4rem;line-height:1.22;font-weight:800;letter-spacing:-0.01em;color:#eef0fb;margin:0 0 0.8rem;">'+ent(t)+'</h3>\n';}
 function P(s,last){return '    <p style="color:#c4c8ea;font-size:1.04rem;line-height:1.6;margin:'+(last?"0":"0 0 1rem")+';max-width:40rem;">'+rich(s)+'</p>\n';}
 function bullet(t,col){return '<div style="display:flex;align-items:flex-start;margin:0 0 0.5rem;"><span style="flex:0 0 1.1rem;color:'+col+';font-weight:700;line-height:1.55;">&middot;</span><span style="flex:1 1 auto;color:#c4c8ea;font-size:1rem;line-height:1.55;">'+rich(t)+'</span></div>';}
+function bulletL(t,col){return '<div style="display:flex;align-items:flex-start;margin:0 0 0.5rem;"><span style="flex:0 0 1.1rem;color:'+col+';font-weight:700;line-height:1.55;">&middot;</span><span style="flex:1 1 auto;color:#c4c8ea;font-size:1rem;line-height:1.55;">'+richL(t)+'</span></div>';}
 function tag(t,col){return '<span style="display:inline-block;'+MONO+'font-size:0.74rem;color:'+col+';border:1px solid '+col+';padding:0.1rem 0.42rem;margin:0 0.35rem 0.35rem 0;">'+ent(t)+'</span>';}
 function splitCodes(s){return String(s||"").split(/\s*,\s*/).filter(Boolean);}
 function isNumish(s){return /^[\d\s.,%$±<>≈~+−-]/.test(String(s||"").trim());}
 
+function richL(s){
+  /* texte enrichi avec liens au format [texte](https://adresse) */
+  s=String(s||""); var out="", last=0, re=/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, m;
+  function seg(x){ return ent(x).replace(/\s*\[(\d+(?:\s*[,;]\s*\d+)*)\]/g,function(mm,g){ return g.split(/\s*[,;]\s*/).map(refLink).join('<span style="color:#6aa6e8;font-size:0.68em;vertical-align:super;">,</span>'); }); }
+  while((m=re.exec(s))){ out+=seg(s.slice(last,m.index))+'<a href="'+ent(m[2])+'" target="_blank" rel="noopener" style="color:#6aa6e8;text-decoration:none;font-weight:600;">'+ent(m[1])+'</a>'; last=re.lastIndex; }
+  return out+seg(s.slice(last));
+}
 function blockA(d){
   var h=[];
   h.push('<a name="strategie-'+ent(d.n)+'"></a>\n<div style="background-color:#070620;color:#eef0fb;border-top:4px solid #21AEAD;padding:2.6rem 1.5rem 2.8rem;'+FONT+'line-height:1.6;">\n  <div style="max-width:52rem;margin:0 auto;">\n\n');
   h.push('    <p style="'+MONO+'font-size:0.85rem;font-weight:600;color:#21AEAD;margin:0 0 0.7rem;">Strat&eacute;gie '+ent(d.n)+'</p>\n');
   h.push('    <h2 style="font-size:2.4rem;line-height:1.1;font-weight:900;letter-spacing:-0.02em;color:#eef0fb;margin:0 0 1.2rem;max-width:16ch;">'+ent(d.titre)+'</h2>\n');
   if(d.enonce) h.push('    <p style="color:#eef0fb;font-size:1.1rem;font-weight:600;line-height:1.45;border-left:3px solid #21AEAD;padding:0.1rem 0 0.1rem 1.1rem;margin:0 0 2.4rem;max-width:40rem;">&laquo;&nbsp;'+ent(d.enonce.replace(/^[«"\s]+|[»"\s]+$/g,""))+'&nbsp;&raquo;<br><span style="font-size:0.85rem;font-weight:400;color:#8b8fc4;">&Eacute;nonc&eacute; du plan d&rsquo;urbanisme</span></p>\n');
-  h.push(partHead(1,"L'enjeu"));
-  if(d.enjeu1) h.push(P(d.enjeu1, !d.enjeuPhrase&&!d.enjeu2));
-  if(d.enjeuPhrase) h.push('    <p style="color:#eef0fb;font-size:1.25rem;font-weight:700;line-height:1.35;margin:0 0 0.8rem;max-width:34rem;">'+rich(d.enjeuPhrase)+'</p>\n');
-  if(d.enjeu2) h.push(P(d.enjeu2,true));
-  h.push('\n'+DIV+partHead(2,"Ce que prévoit le plan"));
-  lines(d.planIntro).forEach(function(l){h.push(P(l));});
-  if(d.objectifs.length){
-    h.push('    <div style="margin:0 0 1.8rem;">\n');
-    d.objectifs.forEach(function(o,i){ var c=CYC[i%3], cs=splitCodes(o.codes);
-      h.push('      <div style="background-color:#11103e;border-left:3px solid '+c+';padding:1rem 1.2rem;margin:0 0 0.75rem;">\n        <p style="font-size:1.06rem;font-weight:700;color:'+c+';margin:0 0 0.3rem;line-height:1.3;">'+ent(o.titre)+'</p>\n        <p style="color:#c4c8ea;font-size:0.99rem;line-height:1.5;margin:0;">'+rich(o.texte)+'</p>'+(cs.length?'<span style="display:block;margin-top:0.7rem;">'+cs.map(function(x){return tag(x,c);}).join("")+'</span>':'')+'\n      </div>');
+  h.push(partHead(1,"Les constats en trois phrases"));
+  var cs=(d.constats||[]).filter(function(x){return String(x).trim();});
+  if(cs.length){
+    h.push('    <div style="margin:0;">\n');
+    cs.forEach(function(c,i){
+      h.push('      <div style="display:flex;align-items:flex-start;border-top:'+(i?"1px solid #1d1b50":"2px solid #2a2870")+';padding:1.1rem 0'+(i===cs.length-1?";border-bottom:1px solid #1d1b50":"")+';">\n        <span style="flex:0 0 2.6rem;'+MONO+'font-size:1.6rem;font-weight:500;color:'+CYC[i%3]+';line-height:1.15;">'+(i+1)+'</span>\n        <p style="flex:1 1 auto;color:#eef0fb;font-size:1.14rem;font-weight:600;line-height:1.45;margin:0;max-width:40rem;">'+rich(c)+'</p>\n      </div>\n');
     });
-    h.push('\n    </div>\n');
+    h.push('    </div>\n');
   }
-  if(d.anglesMorts.length){
-    h.push('\n    <div style="background-color:#11103e;border-left:4px solid #e6a23c;padding:1.3rem 1.4rem;margin:0;">\n      <p style="font-size:0.78rem;font-weight:700;color:#e6a23c;margin:0 0 0.5rem;">Angles morts du plan</p>\n');
-    if(d.anglesIntro) h.push('      <p style="color:#c4c8ea;font-size:1rem;line-height:1.55;margin:0 0 0.7rem;">'+ent(d.anglesIntro)+'</p>\n');
-    h.push(d.anglesMorts.map(function(a){return bullet(a,"#e6a23c");}).join("")+'\n    </div>\n');
-  }
-  h.push('\n'+DIV+partHead(3,"Ce que dit la science"));
+  h.push('\n'+WRAPCLOSE);
+  return h.join("");
+}
+function blockSci(d){
+  var h=[partHead(3,"Ce que dit la science")];
   if(d.sciIntro) h.push(P(d.sciIntro));
   var cons=d.enonces.filter(function(e){return (e.type||"constat")==="constat";}), enc=d.enonces.filter(function(e){return e.type==="encadre";}), loin=d.enonces.filter(function(e){return e.type==="loin";});
   if(cons.length){
@@ -393,22 +417,40 @@ function blockA(d){
     });
     h.push('\n      </div>\n    </details>\n');
   }
-  h.push('\n'+DIV+WRAPCLOSE);
   return h.join("");
 }
 function legend(c,before){
-  var link=c.url?' &middot; <a href="'+ent(c.url)+'" target="_blank" rel="noopener" style="color:#6aa6e8;text-decoration:none;font-weight:600;">Ouvrir la carte en pleine page</a>':'';
+  var link=c.url?(c.sources?' &middot; ':'')+'<a href="'+ent(c.url)+'" target="_blank" rel="noopener" style="color:#6aa6e8;text-decoration:none;font-weight:600;">Ouvrir la carte en pleine page</a>':'';
   return wrapOpen(before?"0.4rem 1.5rem 2rem":"0.9rem 1.5rem 1.8rem")+
     '    <p style="margin:0 0 0.35rem;"><span style="'+MONO+'font-size:0.76rem;font-weight:500;color:#21AEAD;margin-right:0.6rem;">Carte '+ent(c.num)+'</span><span style="font-size:1.02rem;font-weight:700;color:#eef0fb;">'+ent(c.titre)+'</span></p>\n'+
     (c.texte?'    <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.5rem;max-width:40rem;">'+rich(c.texte)+'</p>\n':'')+
     ((c.sources||link)?'    <p style="margin:0;font-size:0.85rem;color:#8b8fc4;line-height:1.5;">'+(c.sources?'Sources : '+ent(c.sources):'')+link+'</p>\n':'')+WRAPCLOSE;
 }
+function planHead(d){
+  var h=[];
+  lines(d.planIntro).forEach(function(l){h.push(P(l));});
+  if(d.objectifs.length){
+    h.push('    <div style="margin:0 0 1.8rem;">\n');
+    d.objectifs.forEach(function(o,i){ var c=CYC[i%3], cs=splitCodes(o.codes);
+      h.push('      <div style="background-color:#11103e;border-left:3px solid '+c+';padding:1rem 1.2rem;margin:0 0 0.75rem;">\n        <p style="font-size:1.06rem;font-weight:700;color:'+c+';margin:0 0 0.3rem;line-height:1.3;">'+ent(o.titre)+'</p>\n        <p style="color:#c4c8ea;font-size:0.99rem;line-height:1.5;margin:0;">'+rich(o.texte)+'</p>'+(cs.length?'<span style="display:block;margin-top:0.7rem;">'+cs.map(function(x){return tag(x,c);}).join("")+'</span>':'')+'\n      </div>');
+    });
+    h.push('\n    </div>\n');
+  }
+  return h.join("");
+}
+function anglesBox(d){
+  var ls=lines(d.anglesIntro);
+  return '\n    <div style="background-color:#11103e;border-left:4px solid #e6a23c;padding:1.3rem 1.4rem;margin:1.8rem 0 0;">\n      <p style="font-size:0.78rem;font-weight:700;color:#e6a23c;margin:0 0 0.5rem;">Angles morts du plan</p>\n'+
+    ls.map(function(l){return '      <p style="color:#c4c8ea;font-size:1rem;line-height:1.55;margin:0 0 0.7rem;">'+rich(l)+'</p>\n';}).join("")+
+    d.anglesMorts.map(function(x){return bullet(x,"#e6a23c");}).join("")+'\n    </div>\n';
+}
 function obsBlocks(d){
   var out=[], cur=null, first=true, prev=null;
   function open(){ cur={parts:[],open:false}; }
   function flush(){ if(cur&&cur.parts.length) out.push({kind:"txt",html:cur.parts.join("")}); cur=null; }
-  function body(){ if(!cur) open(); if(!cur.open){ cur.parts.push(wrapOpen()); cur.open=true; if(first){ cur.parts.push(partHead(4,"Ce qu'on observe à Mont-Tremblant")); first=false; } } }
+  function body(){ if(!cur) open(); if(!cur.open){ cur.parts.push(wrapOpen()); cur.open=true; if(first){ cur.parts.push(DIV+partHead(2,T2)+planHead(d)); first=false; } } }
   function closeWrap(){ if(cur&&cur.open){ cur.parts.push(WRAPCLOSE); cur.open=false; } }
+  body();
   d.obs.forEach(function(e){
     var t=e.type||"texte";
     if(t==="carte"){
@@ -439,15 +481,15 @@ function obsBlocks(d){
     else if(t==="note") cur.parts.push('    <p style="font-size:0.85rem;color:#8b8fc4;line-height:1.5;margin:1.3rem 0 0;max-width:40rem;">'+rich(e.texte)+'</p>\n');
     prev=t;
   });
-  if(first) body();
+  if(d.anglesMorts.length||String(d.anglesIntro||"").trim()){ body(); cur.parts.push(anglesBox(d)); }
   closeWrap(); flush();
   return out;
 }
 function blockE(d){
-  var h=[wrapOpen(), DIV, partHead(5,"Impacts anticipés sur la santé")];
+  var h=[wrapOpen(), DIV, blockSci(d), '\n'+DIV, partHead(4,"Impacts anticipés sur la santé")];
   if(d.impIntro) h.push(P(d.impIntro));
   if(d.impacts.length){
-    h.push('    <div style="margin:0 0 1.2rem;">'+["++","+","?","−","−−"].map(function(k){var s=SX[k];return '<span style="display:inline-block;margin:0 1.1rem 0.4rem 0;font-size:0.84rem;color:#8b8fc4;"><span style="'+MONO+'font-weight:500;color:'+s[0]+';margin-right:0.3rem;">'+s[2]+'</span>'+ent(s[1])+'</span>';}).join("")+'</div>\n    <div style="margin:0 0 1.8rem;">\n');
+    h.push('    <div style="margin:0 0 1.2rem;">'+["++","+","+?","?","−","−−"].filter(function(k){return k!=="+?"||d.impacts.some(function(r){return r.sens==="+?";});}).map(function(k){var s=SX[k];return '<span style="display:inline-block;margin:0 1.1rem 0.4rem 0;font-size:0.84rem;color:#8b8fc4;"><span style="'+MONO+'font-weight:500;color:'+s[0]+';margin-right:0.3rem;">'+s[2]+'</span>'+ent(s[1])+'</span>';}).join("")+'</div>\n    <div style="margin:0 0 1.8rem;">\n');
     d.impacts.forEach(function(r){ var s=SX[r.sens]||SX["?"];
       var rows=[["Déterminant touché",r.determinant],["Impact sur la santé",r.impact],["Populations touchées",r.populations]].filter(function(x){return x[1];});
       h.push('      <div style="background-color:#11103e;border-left:3px solid '+s[0]+';padding:1.1rem 1.25rem;margin:0 0 0.8rem;">\n        <div style="display:flex;flex-wrap:wrap;align-items:baseline;margin:0 0 0.6rem;">\n          <span style="flex:0 0 auto;'+MONO+'font-size:1.5rem;font-weight:500;color:'+s[0]+';margin-right:0.8rem;line-height:1;">'+s[2]+'</span>\n          <span style="flex:1 1 240px;font-size:1.06rem;font-weight:700;color:#eef0fb;line-height:1.3;">'+ent(r.effet)+'</span>\n        </div>\n'+
@@ -456,54 +498,85 @@ function blockE(d){
     });
     h.push('\n    </div>\n');
   }
-  if(d.gagne1||d.gagne2) h.push('\n    <div style="background-color:#11103e;border-left:4px solid #e6a23c;padding:1.4rem 1.5rem;margin:0;">\n      <p style="font-size:0.78rem;font-weight:700;color:#e6a23c;margin:0 0 0.45rem;">Qui gagne, qui perd</p>\n'+(d.gagne1?'      <p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:'+(d.gagne2?"0 0 0.6rem":"0")+';">'+rich(d.gagne1)+'</p>\n':'')+(d.gagne2?'      <p style="color:#eef0fb;font-size:1.06rem;font-weight:600;line-height:1.45;margin:0;">'+rich(d.gagne2)+'</p>\n':'')+'    </div>\n');
-  h.push('\n'+DIV+partHead(6,"Nos recommandations"));
+  var g1=lines(d.gagne1), vg=(d.vigilance||[]).filter(function(x){return String(x).trim();});
+  if(g1.length||d.gagne2||vg.length){
+    h.push('\n    <div style="background-color:#11103e;border-left:4px solid #e6a23c;padding:1.4rem 1.5rem;margin:0;">\n      <p style="font-size:0.78rem;font-weight:700;color:#e6a23c;margin:0 0 0.45rem;">Qui gagne, qui perd</p>\n');
+    g1.forEach(function(l,i){ h.push('      <p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:'+((i<g1.length-1||d.gagne2||vg.length)?"0 0 0.6rem":"0")+';">'+rich(l)+'</p>\n'); });
+    if(d.gagne2) h.push('      <p style="color:#eef0fb;font-size:1.06rem;font-weight:600;line-height:1.45;margin:'+(vg.length?"0 0 0.6rem":"0")+';">'+rich(d.gagne2)+'</p>\n');
+    if(vg.length) h.push('      <p style="font-size:1.02rem;font-weight:700;color:#eef0fb;margin:1rem 0 0.5rem;line-height:1.3;">'+ent(d.vigilanceTitre||"Conditions pour que l’effet reste positif")+'</p>\n      '+vg.map(function(x){return bullet(x,"#e6a23c");}).join("")+'\n');
+    h.push('    </div>\n');
+  }
+  h.push(COUPE+'\n'+DIV+partHead(5,"Nos recommandations"));
   if(d.recoIntro) h.push(P(d.recoIntro));
   if(d.recos.length){
     h.push('    <div style="margin:0;">\n');
     d.recos.forEach(function(r,i){ var c=r.couleur||CYC[i%3];
-      h.push('      <div style="background-color:#11103e;border-left:3px solid '+c+';padding:1.15rem 1.3rem;margin:0 0 0.8rem;">\n        <p style="margin:0 0 0.5rem;"><span style="'+MONO+'font-size:0.95rem;font-weight:500;color:'+c+';margin-right:0.6rem;">'+ent(r.code)+'</span><span style="font-size:1.08rem;font-weight:700;color:#eef0fb;line-height:1.3;">'+ent(r.titre)+'</span></p>\n'+(r.moyens||[]).map(function(m){return bullet(m,c);}).join("")+'\n      </div>');
+      h.push('      <div style="background-color:#11103e;border-left:3px solid '+c+';padding:1.15rem 1.3rem;margin:0 0 0.8rem;">\n        <p style="margin:0 0 0.5rem;"><span style="'+MONO+'font-size:0.95rem;font-weight:500;color:'+c+';margin-right:0.6rem;">'+ent(r.code)+'</span><span style="font-size:1.08rem;font-weight:700;color:#eef0fb;line-height:1.3;">'+ent(r.titre)+'</span></p>\n'+lines(r.contexte).map(function(l){return '<p style="color:#c4c8ea;font-size:0.99rem;line-height:1.55;margin:0 0 0.5rem;max-width:40rem;">'+rich(l)+'</p>';}).join("")+(r.moyens||[]).map(function(m){return bullet(m,c);}).join("")+'\n      </div>');
     });
     h.push('\n    </div>\n');
   }
-  h.push('\n'+DIV+partHead(7,"Comment savoir si ça fonctionne"));
+  h.push('\n'+DIV+partHead(6,"Comment savoir si ça fonctionne"));
   if(d.indIntro) h.push(P(d.indIntro));
   if(d.indicateurs.length){
     h.push('    <div style="margin:0 0 2.2rem;border-bottom:1px solid #1d1b50;">\n');
     d.indicateurs.forEach(function(r){
-      var meta=[["Source",r.source],["Fréquence",r.frequence],["Ventilation",r.ventilation],["Direction attendue",r.direction],["Responsable",r.responsable]].filter(function(x){return x[1];});
+      var meta=[["Source possible",r.source],["Tendance favorable",r.direction],["Fréquence",r.frequence],["Ventilation",r.ventilation]].filter(function(x){return x[1];});
       h.push('      <div style="border-top:1px solid #1d1b50;padding:1rem 0;">\n        <p style="margin:0 0 0.4rem;"><span style="font-size:1.04rem;font-weight:700;color:#eef0fb;line-height:1.35;">'+ent(r.indicateur)+'</span>'+(r.unite?' <span style="'+MONO+'font-size:0.8rem;color:#21AEAD;">('+ent(r.unite)+')</span>':'')+'</p>\n        <p style="margin:0;">'+meta.map(function(x){return '<span style="display:inline-block;margin:0 1.2rem 0.25rem 0;font-size:0.84rem;color:#8b8fc4;">'+ent(x[0])+' <span style="color:#c4c8ea;">'+ent(x[1])+'</span></span>';}).join("")+'</p>\n      </div>');
     });
     h.push('\n    </div>\n');
   }
-  if(d.plusLoin) h.push('\n    <div style="background-color:#11103e;border-left:4px solid #5b54c0;padding:1.3rem 1.4rem;margin:0 0 2.4rem;">\n      <p style="font-size:0.78rem;font-weight:700;color:#a8a2ee;margin:0 0 0.45rem;">Pour aller plus loin</p>\n      <p style="color:#c4c8ea;font-size:1.02rem;line-height:1.55;margin:0;">'+rich(d.plusLoin)+'</p>\n    </div>\n');
+  var pl=lines(d.plusLoin);
+  if(pl.length){
+    h.push('\n    <div style="background-color:#11103e;border-left:4px solid #5b54c0;padding:1.3rem 1.4rem;margin:0 0 2.4rem;">\n      <p style="font-size:0.78rem;font-weight:700;color:#a8a2ee;margin:0 0 0.45rem;">Pour aller plus loin</p>\n');
+    pl.forEach(function(l,i){
+      if(/^#\s*/.test(l)) h.push('      <p style="font-size:1.06rem;font-weight:700;color:#eef0fb;margin:'+(i?"1.3rem":"0.2rem")+' 0 0.4rem;line-height:1.3;">'+richL(l.replace(/^#\s*/,""))+'</p>\n');
+      else if(/^[-•]\s+/.test(l)) h.push('      '+bulletL(l.replace(/^[-•]\s+/,""),"#a8a2ee")+'\n');
+      else h.push('      <p style="color:#c4c8ea;font-size:1rem;line-height:1.55;margin:0 0 0.6rem;max-width:40rem;">'+richL(l)+'</p>\n');
+    });
+    h.push('    </div>\n');
+  }
   if(d.sources.length){
     h.push('    <details style="border-top:1px solid #1d1b50;border-bottom:1px solid #1d1b50;">\n      <summary style="cursor:pointer;font-size:1.05rem;font-weight:700;color:#21AEAD;padding:0.95rem 0;">Sources ('+d.sources.length+' r&eacute;f&eacute;rence'+(d.sources.length>1?'s':'')+')</summary>\n      <div style="padding:0 0 1.4rem 0;">\n        <ol style="margin:0;padding-left:1.5rem;font-size:0.88rem;line-height:1.5;">\n');
     h.push(d.sources.map(function(s,i){ var lib=String(s.libelle||"").trim().replace(/\.$/,"");
       return '          <li style="margin-bottom:0.55rem;color:#c4c8ea;"><a name="src-'+(i+1)+'"></a>'+(lib?ent(lib)+'. ':'')+(s.url?'<a href="'+ent(s.url)+'" target="_blank" rel="noopener" style="color:#6aa6e8;word-break:break-word;">'+ent(s.url)+'</a>':'')+'</li>';}).join("")+'\n        </ol>\n      </div>\n    </details>\n');
   }
-  h.push('\n    <div style="border-top:1px solid #2a2870;margin:2.4rem 0 1.4rem;"></div>\n\n    <div style="display:flex;flex-wrap:wrap;align-items:center;">\n      <a href="/pages/'+ent(d.retour||"")+'" style="display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.98rem;font-weight:700;text-decoration:none;padding:0.55rem 1.1rem;border-radius:3px;margin:0 1.1rem 0.4rem 0;">Retour &agrave; l&rsquo;&eacute;valuation d&rsquo;impact sur la sant&eacute;</a>\n      <span style="font-size:0.88rem;color:#8b8fc4;margin:0 0 0.4rem;">Les neuf strat&eacute;gies, le portrait du territoire et le mod&egrave;le logique</span>\n    </div>\n\n');
+  if(isUrl(d.retour||"")) h.push('\n    <div style="border-top:1px solid #2a2870;margin:2.4rem 0 1.4rem;"></div>\n\n    <div style="display:flex;flex-wrap:wrap;align-items:center;">\n      <a href="'+ent(d.retour)+'" target="_top" style="display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.98rem;font-weight:700;text-decoration:none;padding:0.55rem 1.1rem;border-radius:3px;margin:0 1.1rem 0.4rem 0;">Retour &agrave; l&rsquo;&eacute;valuation d&rsquo;impact sur la sant&eacute;</a>\n      <span style="font-size:0.88rem;color:#8b8fc4;margin:0 0 0.4rem;">Les neuf strat&eacute;gies, le portrait du territoire et le mod&egrave;le logique</span>\n    </div>\n\n');
+  else h.push('\n    <div style="border-top:1px solid #2a2870;margin:2.4rem 0 0;"></div>\n');
   h.push('    <p style="font-size:0.85rem;color:#8b8fc4;margin:1.6rem 0 0;">Fiche-strat&eacute;gie '+ent(d.n)+' &middot; &Eacute;valuation d&rsquo;impact sur la sant&eacute; du plan d&rsquo;urbanisme de Mont-Tremblant &middot; Sant&eacute; Qu&eacute;bec Laurentides, Direction de sant&eacute; publique.</p>\n');
   h.push(WRAPCLOSE);
   return h.join("");
 }
 function blockPrint(d){
-  return '<style>\n@media print {\n  body, div, section, article, p, span, li, ol, ul, h1, h2, h3, h4, h5, summary, details, a {\n    background-color: #ffffff !important;\n    background-image: none !important;\n    color: #14143a !important;\n    box-shadow: none !important;\n    text-shadow: none !important;\n  }\n  div[style*="border-left"] { border-left: 3px solid #178f8e !important; }\n  div[style*="border-top"]  { border-top: 1px solid #b8bed6 !important; }\n  details > *        { display: block !important; }\n  summary            { font-weight: 700 !important; border-bottom: 1px solid #b8bed6 !important; }\n  summary::marker, summary::-webkit-details-marker { content: "" !important; }\n  div[style*="position:sticky"], .impression-ecran-seul { display: none !important; }\n  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.75em; color: #4a4f72 !important; word-break: break-all; }\n  a[href^="#"]::after    { content: ""; }\n  h2, h3, h4         { break-after: avoid; page-break-after: avoid; }\n  div[style*="border-left"] { break-inside: avoid; page-break-inside: avoid; }\n  img               { max-width: 100% !important; }\n  @page { margin: 2cm; }\n}\n</style>\n\n'+
+  return '<style>\n@media print {\n  body, div, section, article, p, span, li, ol, ul, h1, h2, h3, h4, h5, summary, details, a {\n    background-color: #ffffff !important;\n    background-image: none !important;\n    color: #14143a !important;\n    box-shadow: none !important;\n    text-shadow: none !important;\n  }\n  div[style*="border-left"] { border-left: 3px solid #178f8e !important; }\n  div[style*="border-top"]  { border-top: 1px solid #b8bed6 !important; }\n  details > *        { display: block !important; }\n  summary            { font-weight: 700 !important; border-bottom: 1px solid #b8bed6 !important; }\n  summary::marker, summary::-webkit-details-marker { content: "" !important; }\n  div[style*="position:sticky"], .impression-ecran-seul, iframe { display: none !important; }\n  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.75em; color: #4a4f72 !important; word-break: break-all; }\n  a[href^="#"]::after    { content: ""; }\n  h2, h3, h4         { break-after: avoid; page-break-after: avoid; }\n  div[style*="border-left"] { break-inside: avoid; page-break-inside: avoid; }\n  img               { max-width: 100% !important; }\n  @page { margin: 2cm; }\n}\n</style>\n\n'+
   '<div class="impression-ecran-seul" style="background-color:#11103e;border-left:4px solid #5b54c0;padding:1.3rem 1.5rem;margin:2rem 0 0;'+FONT+'line-height:1.6;">\n  <div style="max-width:52rem;margin:0 auto;">\n\n    <p style="font-size:0.78rem;font-weight:700;color:#a8a2ee;margin:0 0 0.5rem;">Emporter ce document</p>\n\n    <div style="display:flex;flex-wrap:wrap;margin:0 -0.7rem;">\n\n'+
-  '      <div style="flex:1 1 260px;padding:0 0.7rem;margin:0 0 0.9rem;">\n        <p style="font-size:1.05rem;font-weight:700;color:#eef0fb;margin:0 0 0.35rem;line-height:1.3;">Imprimer ou enregistrer en PDF</p>\n        <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.5rem;">Utilisez le raccourci de votre navigateur, puis choisissez votre imprimante ou &laquo;&nbsp;Enregistrer au format PDF&nbsp;&raquo;.</p>\n        <p style="margin:0;">\n          <span style="display:inline-block;'+MONO+'font-size:0.88rem;color:#eef0fb;background-color:#181a52;border:1px solid #2a2870;border-radius:3px;padding:0.25rem 0.6rem;margin:0 0.5rem 0.3rem 0;">Ctrl + P</span>\n          <span style="font-size:0.85rem;color:#8b8fc4;margin-right:0.8rem;">Windows</span>\n          <span style="display:inline-block;'+MONO+'font-size:0.88rem;color:#eef0fb;background-color:#181a52;border:1px solid #2a2870;border-radius:3px;padding:0.25rem 0.6rem;margin:0 0.5rem 0.3rem 0;">&#8984; + P</span>\n          <span style="font-size:0.85rem;color:#8b8fc4;">Mac</span>\n        </p>\n        <p style="color:#8b8fc4;font-size:0.86rem;line-height:1.45;margin:0.6rem 0 0;">La mise en page bascule automatiquement en noir sur blanc, les sections repli&eacute;es s&rsquo;ouvrent et l&rsquo;adresse des liens s&rsquo;affiche.</p>\n      </div>\n\n'+
-  '      <div style="flex:1 1 260px;padding:0 0.7rem;margin:0 0 0.9rem;">\n        <p style="font-size:1.05rem;font-weight:700;color:#eef0fb;margin:0 0 0.35rem;line-height:1.3;">Version officielle en PDF</p>\n        <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.8rem;">Document mis en page au gabarit de Sant&eacute; Qu&eacute;bec, avec pagination et cartes en version statique. C&rsquo;est la version &agrave; citer et &agrave; d&eacute;poser.</p>\n        <p style="margin:0;"><a href="'+ent(d.pdf||"")+'" style="display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.96rem;font-weight:700;text-decoration:none;padding:0.5rem 1rem;border-radius:3px;">T&eacute;l&eacute;charger le PDF</a></p>\n      </div>\n\n    </div>\n  </div>\n</div>\n';
+  '      <div style="flex:1 1 260px;padding:0 0.7rem;margin:0 0 0.9rem;">\n        <p style="font-size:1.05rem;font-weight:700;color:#eef0fb;margin:0 0 0.35rem;line-height:1.3;">Imprimer ou enregistrer en PDF</p>\n'+
+  '        <div class="hors-cadre">\n          <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.7rem;">Choisissez votre imprimante ou &laquo;&nbsp;Enregistrer au format PDF&nbsp;&raquo;. La mise en page bascule en noir sur blanc, les sections repli&eacute;es s&rsquo;ouvrent et l&rsquo;adresse des liens s&rsquo;affiche.</p>\n          <p style="margin:0;"><button type="button" onclick="window.print()" style="'+"display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.96rem;font-weight:700;text-decoration:none;padding:0.5rem 1rem;border-radius:3px;border:0;cursor:pointer;"+FONT+'">Imprimer cette fiche</button></p>\n        </div>\n'+
+  '        <div class="si-cadre" style="display:none;">\n          <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.7rem;">La fiche est affich&eacute;e dans une autre page. Pour l&rsquo;imprimer seule, ouvrez-la d&rsquo;abord en pleine page.</p>\n          <p style="margin:0;"><a class="lien-pleine-page" href="#" target="_blank" rel="noopener" style="'+"display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.96rem;font-weight:700;text-decoration:none;padding:0.5rem 1rem;border-radius:3px;border:0;cursor:pointer;"+'">Ouvrir la fiche en pleine page</a></p>\n        </div>\n      </div>\n\n'+
+  (isUrl(d.pdf||"")?'      <div style="flex:1 1 260px;padding:0 0.7rem;margin:0 0 0.9rem;">\n        <p style="font-size:1.05rem;font-weight:700;color:#eef0fb;margin:0 0 0.35rem;line-height:1.3;">Version officielle en PDF</p>\n        <p style="color:#c4c8ea;font-size:0.97rem;line-height:1.5;margin:0 0 0.8rem;">Document mis en page au gabarit de Sant&eacute; Qu&eacute;bec, avec pagination et cartes en version statique. C&rsquo;est la version &agrave; citer et &agrave; d&eacute;poser.</p>\n        <p style="margin:0;"><a href="'+ent(d.pdf)+'" target="_blank" rel="noopener" style="'+"display:inline-block;background-color:#178f8e;color:#eef0fb;font-size:0.96rem;font-weight:700;text-decoration:none;padding:0.5rem 1rem;border-radius:3px;border:0;cursor:pointer;"+'">T&eacute;l&eacute;charger le PDF</a></p>\n      </div>\n\n':'')+
+  '    </div>\n  </div>\n</div>\n';
 }
 function allBlocks(d){
-  var out=[{kind:"txt",html:blockA(d),label:"En-tête et parties 1 à 3"}], k=0;
-  obsBlocks(d).forEach(function(b){ if(b.kind==="txt"){ b.label=k===0?"Partie 4, début":"Partie 4, suite"; k++; } out.push(b); });
-  out.push({kind:"txt",html:blockE(d),label:"Parties 5 à 7, sources et retour"});
+  var ob=obsBlocks(d), out=[], k=0;
+  /* l'en-tête et la partie 1 partagent le premier bloc de texte de la partie 2 */
+  if(ob.length&&ob[0].kind==="txt"){ ob[0].html=blockA(d)+ob[0].html; ob[0].label="En-tête, partie 1 et début de la partie 2"; k=1; }
+  else out.push({kind:"txt",html:blockA(d),label:"En-tête et partie 1"});
+  ob.forEach(function(b,i){ if(b.kind==="txt"&&!b.label){ b.label="Partie 2, suite"; } out.push(b); });
+  /* bloc de clôture en deux sections */
+  var e=blockE(d).split(COUPE);
+  out.push({kind:"txt",html:e[0]+WRAPCLOSE,label:"Parties 3 et 4 : science et impacts"});
+  out.push({kind:"txt",html:wrapOpen()+e[1],label:"Parties 5 et 6, pour aller plus loin, sources et retour"});
   out.push({kind:"txt",html:blockPrint(d),label:"Impression (identique pour toutes les fiches)"});
   return out;
 }
+/* Petit script de la page publiée : repère l'affichage dans un cadre (Experience Builder)
+   et propose alors d'ouvrir la fiche en pleine page plutôt que d'imprimer le cadre. */
+var PAGEJS='<script>\n(function(){\n  var cadre=false; try{ cadre=window.self!==window.top; }catch(e){ cadre=true; }\n  if(!cadre) return;\n  var u=location.href.split("#")[0];\n  document.querySelectorAll(".si-cadre").forEach(function(e){ e.style.display=""; });\n  document.querySelectorAll(".hors-cadre").forEach(function(e){ e.style.display="none"; });\n  document.querySelectorAll(".lien-pleine-page").forEach(function(a){ if(/^https?:/.test(u)) a.href=u; else a.removeAttribute("href"); });\n})();\n<\/script>\n';
 function fullPage(d){
   var bl=allBlocks(d);
-  return '<!DOCTYPE html>\n<html lang="fr-CA">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>Strat&eacute;gie '+ent(d.n)+' : '+ent(d.titre)+'</title>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap">\n</head>\n<body style="margin:0;background-color:#070620;">\n'+
-    bl.map(function(b,i){ return "<!-- ===== BLOC "+(i+1)+" : "+(b.kind==="emb"?"INTEGRER "+(b.url||"(adresse a preciser)"):"TEXTE HTML")+" ===== -->\n"+(b.kind==="emb"?(b.url?'<iframe src="'+ent(b.url)+'" title="'+ent(b.label)+'" style="display:block;width:100%;height:600px;border:0;"></iframe>\n':'<div style="background:#11103e;color:#8b8fc4;font-family:sans-serif;padding:3rem 1.5rem;text-align:center;">'+ent(b.label)+' : adresse de la carte &agrave; pr&eacute;ciser</div>\n'):b.html); }).join("\n")+'\n</body>\n</html>\n';
+  var desc="Fiche-stratégie "+(d.n||"")+" "+(d.titre||"")+" de l'évaluation d'impact sur la santé du plan d'urbanisme de Mont-Tremblant. Santé Québec Laurentides, Direction de santé publique.";
+  var top='<div class="impression-ecran-seul si-cadre" style="display:none;background-color:#070620;'+FONT+'padding:0.6rem 1.5rem 0;text-align:right;"><a class="lien-pleine-page" href="#" target="_blank" rel="noopener" style="font-size:0.88rem;font-weight:600;color:#6aa6e8;text-decoration:none;">Ouvrir la fiche en pleine page &#8599;</a></div>\n';
+  return '<!DOCTYPE html>\n<html lang="fr-CA">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>Strat&eacute;gie '+ent(d.n)+' : '+ent(d.titre)+' &middot; &Eacute;IS Mont-Tremblant</title>\n<meta name="description" content="'+ent(desc)+'">\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap">\n</head>\n<body style="margin:0;background-color:#070620;">\n'+top+
+    bl.map(function(b){ return b.kind==="emb"?(b.url?'<iframe src="'+ent(b.url)+'" title="'+ent(b.label)+'" loading="lazy" style="display:block;width:100%;height:70vh;min-height:420px;max-height:680px;border:0;"></iframe>\n':'<div style="background:#11103e;color:#8b8fc4;font-family:sans-serif;padding:3rem 1.5rem;text-align:center;">'+ent(b.label)+' : adresse de la carte &agrave; pr&eacute;ciser</div>\n'):b.html; }).join("\n")+'\n'+PAGEJS+'</body>\n</html>\n';
 }
 
 /* ================= AFFICHAGE DES BLOCS ================= */
@@ -512,51 +585,47 @@ function copyText(t,label){
   else fallbackCopy(t,label);
 }
 function fallbackCopy(t,label){ var ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");toast(label+" copié");}catch(e){toast("Copie impossible : sélectionnez le code à la main.");} ta.remove(); }
+function pubName(){ return "fiche_"+(D.n||"x")+"_"+slug(D.titre)+".html"; }
+function pubUrl(){ var b=String(D.dossier||"").trim(); if(b&&!/\/$/.test(b)) b+="/"; return b+pubName(); }
 function showBlocks(){
-  var box=$("blocks"); box.textContent="";
-  allBlocks(D).forEach(function(b,i){
-    var c=document.createElement("div"); c.className="blk-card";
-    var top=document.createElement("div"); top.className="top";
-    var l=document.createElement("div");
-    var n=document.createElement("span"); n.className="num"; n.textContent="Bloc "+(i+1);
-    var k=document.createElement("span"); k.className="kind "+(b.kind==="emb"?"emb":"txt"); k.textContent=b.kind==="emb"?"Intégrer":"Texte HTML";
-    var t=document.createElement("b"); t.textContent=b.label||"";
-    l.append(n,k,t); top.appendChild(l);
-    var bs=document.createElement("div"); bs.className="btns";
-    if(b.kind==="emb"){
-      var cp=document.createElement("button"); cp.type="button"; cp.className="b small primary"; cp.textContent="Copier l'adresse"; cp.disabled=!b.url; cp.onclick=function(){copyText(b.url,"Adresse");}; bs.appendChild(cp);
-      top.appendChild(bs); c.appendChild(top);
-      var u=document.createElement("p"); u.className="url"; u.textContent=b.url||"Adresse de la carte à préciser dans la partie 4."; c.appendChild(u);
-    } else {
-      var cp2=document.createElement("button"); cp2.type="button"; cp2.className="b small primary"; cp2.textContent="Copier le bloc"; cp2.onclick=function(){copyText(b.html,"Bloc "+(i+1));}; bs.appendChild(cp2);
-      var sh=document.createElement("button"); sh.type="button"; sh.className="b small ghost"; sh.textContent="Voir le code"; bs.appendChild(sh);
-      top.appendChild(bs); c.appendChild(top);
-      var m=document.createElement("span"); m.className="meta"; m.textContent=b.html.length.toLocaleString("fr-CA")+" caractères"; c.appendChild(m);
-      var ta=document.createElement("textarea"); ta.readOnly=true; ta.hidden=true; ta.value=b.html; ta.setAttribute("aria-label","Code du bloc "+(i+1)); c.appendChild(ta);
-      sh.onclick=function(){ ta.hidden=!ta.hidden; sh.textContent=ta.hidden?"Voir le code":"Masquer le code"; };
-    }
-    box.appendChild(c);
-  });
+  $("pubDossier").value=D.dossier||""; $("pubFichier").value=pubName(); $("pubUrl").textContent=pubUrl();
 }
 function preview(){ $("pv").srcdoc=fullPage(D); }
 
 /* ================= IMPORT WORD ================= */
 function isUrl(s){return /^https?:\/\//i.test(s);}
-function normSens(s){ s=String(s||"").replace(/\s/g,"").replace(/[-–—‐]/g,"−"); if(/^\+\+/.test(s)) return "++"; if(/^\+/.test(s)) return "+"; if(/^−−/.test(s)) return "−−"; if(/^−/.test(s)) return "−"; return "?"; }
+function normSens(s){ s=String(s||"").replace(/\s/g,"").replace(/[-–—‐]/g,"−"); if(/^\+\+/.test(s)) return "++"; if(/^\+\/?\?/.test(s)) return "+?"; if(/^\+/.test(s)) return "+"; if(/^−−/.test(s)) return "−−"; if(/^−/.test(s)) return "−"; return "?"; }
 function txt(el){ return (el.textContent||"").replace(/\s+/g," ").trim(); }
 function sentences(t){ return String(t).split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«])/).map(function(s){return s.trim();}).filter(Boolean); }
+var LIBS={};  /* libellé tiré du texte des liens (ex. « Projections de ménages des municipalités ») */
 function urlsIn(el){
-  var out=[];
-  el.querySelectorAll&&el.querySelectorAll("a[href]").forEach(function(a){ var h=a.getAttribute("href"); if(isUrl(h)) out.push(h); });
-  (el.textContent||"").replace(/https?:\/\/[^\s<>()\]]+/g,function(u){ u=u.replace(/[.,;:»]+$/,""); out.push(u); });
+  /* adresses dans l'ordre de lecture : liens Word et adresses écrites en clair */
+  var out=[], hrefs=[];
+  (function walk(n){
+    if(n.nodeType===1&&n.tagName.toLowerCase()==="a"&&isUrl(n.getAttribute("href")||"")){
+      var h=n.getAttribute("href"), t=txt(n); out.push(h); hrefs.push(h);
+      if(t&&!isUrl(t)&&!/^consulter\b/i.test(t)&&t.length>=8&&!LIBS[h]) LIBS[h]=t;
+      return;
+    }
+    if(n.nodeType===3){ (n.nodeValue||"").replace(/https?:\/\/[^\s<>()\]]+/g,function(u){ out.push(u.replace(/[.,;:»]+$/,"")); }); return; }
+    [].slice.call(n.childNodes||[]).forEach(walk);
+  })(el);
+  function dec(u){ try{ return decodeURI(u); }catch(e){ return u; } }
+  out=out.filter(function(u){ return hrefs.indexOf(u)>=0||!hrefs.some(function(h){ return h!==u&&(h.indexOf(u)===0||dec(h).indexOf(u)===0); }); });
   return out.filter(function(u,i){return out.indexOf(u)===i;});
 }
 function cleanText(el){
   var c=el.cloneNode(true);
-  c.querySelectorAll("a[href]").forEach(function(a){ var t=txt(a); if(isUrl(t)||/\.(pdf|html?|docx?)$/i.test(t)||t.length<4) a.remove(); });
+  c.querySelectorAll("a[href]").forEach(function(a){ var t=txt(a); if(isUrl(t)||/\.(pdf|html?|docx?|xlsx?)$/i.test(t)||/^consulter\b/i.test(t)||t.length<4) a.remove(); });
   var s=txt(c).replace(/https?:\/\/[^\s<>()\]]+/g,"").replace(/\((établi|etabli|probable|plausible|incertain)\)/ig,"");
-  for(var k=0;k<3;k++){ s=s.replace(/\(\s*[;,]?\s*\)/g,"").replace(/\[\s*\]/g,"").replace(/\s+([.,)])/g,"$1").replace(/\(\s*;?\s*/g,"(").replace(/\s{2,}/g," "); }
+  for(var k=0;k<3;k++){ s=s.replace(/,\s*;/g,";").replace(/[,;]\s*\)/g,")").replace(/\(\s*[;,]?\s*\)/g,"").replace(/\[\s*\]/g,"").replace(/\s+([.,;)])/g,"$1").replace(/\(\s*;?\s*/g,"(").replace(/\s{2,}/g," "); }
   return s.replace(/\s*;\s*\./g,".").replace(/\.\s*\./g,".").replace(/[;,]\s*$/,".").trim();
+}
+/* texte d'un élément avec ses liens au format [texte](adresse) */
+function mdText(el){
+  var c=el.cloneNode(true);
+  c.querySelectorAll("a[href]").forEach(function(a){ var h=a.getAttribute("href"), t=txt(a); if(isUrl(h)) a.replaceWith(c.ownerDocument.createTextNode(isUrl(t)?t:"["+t+"]("+h+")")); });
+  return txt(c);
 }
 function tableRows(tb){
   var rows=[].slice.call(tb.querySelectorAll("tr")).map(function(tr){return [].slice.call(tr.children).map(txt);});
@@ -564,49 +633,56 @@ function tableRows(tb){
   return {head:rows[0].map(function(x){return x.toLowerCase();}),body:rows.slice(1).filter(function(r){return r.join("").trim();})};
 }
 function col(head,res){ for(var i=0;i<head.length;i++){ for(var j=0;j<res.length;j++){ if(res[j].test(head[i])) return i; } } return -1; }
+function endDot(x){ return String(x||"").trim().replace(/\s*;\s*$/,".").replace(/\s*:\s*$/,""); }
+/* Gabarit d'octobre 2026 :
+   1 Les constats en trois phrases · 2 Ce que prévoit le plan et ce qu'on observe à Mont-Tremblant (médias, angles morts)
+   3 Ce que dit la science · 4 Impacts anticipés sur la santé (qui gagne, qui perd; conditions) · 5 Nos recommandations
+   6 Comment savoir si ça fonctionne · Pour aller plus loin */
 function parseWordHtml(html){
   var doc=new DOMParser().parseFromString("<div id='r'>"+html+"</div>","text/html"), root=doc.getElementById("r");
-  var d=blank(), part=0, sub="", curReco=null, curPan=null, b1=[], b2=[], bg=[], bl=[];
-  function srcIdx(u){ for(var i=0;i<d.sources.length;i++) if(d.sources[i].url===u) return i+1; d.sources.push({libelle:"",url:u}); return d.sources.length; }
+  var d=blank(), part=0, sub="", curReco=null, curPan=null, ang=[], bg=[], bl=[];
+  LIBS={};
+  d.vigilanceTitre="";
+  function srcIdx(u){ for(var i=0;i<d.sources.length;i++) if(d.sources[i].url===u) return i+1; d.sources.push({libelle:LIBS[u]||"",url:u}); return d.sources.length; }
+  function withRefs(el){ var c=cleanText(el), r=urlsIn(el).map(srcIdx); return c+(r.length?" ["+r.join(",")+"]":""); }
   function partOf(t){
-    var m=t.match(/^(?:partie|bloc)\s*(\d)/i); if(m) return +m[1];
     var l=t.toLowerCase();
-    if(/enjeu en trois/.test(l)) return 1; if(/ce que pr[ée]voit/.test(l)) return 2; if(/ce que dit la science/.test(l)) return 3;
-    if(/ce qu.on observe/.test(l)) return 4; if(/impacts anticip/.test(l)) return 5; if(/nos recommandations|^recommandations/.test(l)) return 6;
-    if(/indicateurs de monitorage|comment savoir/.test(l)) return 7; return 0;
+    if(/constats? en trois|enjeu en trois|^l.enjeu$/.test(l)) return 1;
+    if(/ce que pr[ée]voit|ce qu.on observe/.test(l)) return 2;
+    if(/ce que dit la science/.test(l)) return 3;
+    if(/impacts anticip/.test(l)) return 4;
+    if(/nos recommandations|^recommandations/.test(l)) return 5;
+    if(/indicateurs de monitorage|comment savoir/.test(l)) return 6;
+    return 0;
   }
   [].slice.call(root.children).forEach(function(el){
     var tag=el.tagName.toLowerCase(), t=txt(el); if(!t && tag!=="table") return;
     var isHead=/^h[1-6]$/.test(tag);
-    var p=(isHead||(tag==="p"&&el.querySelector("strong")&&txt(el.querySelector("strong"))===t&&t.length<90))?partOf(t):0;
+    var boldOnly=tag==="p"&&el.querySelector("strong")&&txt(el.querySelector("strong"))===t&&t.length<90;
+    var p=(isHead||boldOnly)?partOf(t):0;
     if(p){ part=p; sub=""; curReco=null; curPan=null; return; }
-    if(/^pour aller plus loin/i.test(t)&&t.length<40){ part=8; sub=""; return; }
-    if(/^angles? morts?$/i.test(t)){ sub="angles"; return; }
-    if(/^m[ée]dias/i.test(t)&&t.length<60){ sub="medias"; return; }
+    if(/^pour aller plus loin/i.test(t)&&t.length<40&&part>=4){ part=7; sub=""; return; }
+    if(/^angles? morts?/i.test(t)&&t.length<40){ sub="angles"; return; }
     if(/^panneaux/i.test(t)&&t.length<60){ sub="panneaux"; return; }
     if(/^qui gagne/i.test(t)&&t.length<40){ sub="gagne"; return; }
+    if(part===4&&!el.querySelector("li")&&/^(conditions|effets n[ée]gatifs|enjeux [àa] surveiller|points? de vigilance)/i.test(t)&&t.length<120){ sub="vigil"; d.vigilanceTitre=t.replace(/\s*:\s*$/,""); return; }
     if(part===0){
       var m=t.match(/(?:fiche-?\s*)?strat[ée]gie\s*(\d+)\s*[—–\-:]+\s*(.+)$/i); if(m&&!d.titre){ d.n=m[1]; d.titre=m[2].replace(/\[|\]/g,"").trim(); return; }
       m=t.match(/[ÉE]nonc[ée] du plan\s*:\s*(.+)$/i); if(m){ d.enonce=m[1].replace(/^[«"\s]+|[»"\s]+$/g,""); return; }
+      if(/^«/.test(t)&&!d.enonce){ d.enonce=t.replace(/^[«"\s]+|[»"\s]+$/g,""); return; }
       m=t.match(/R[ée]daction\s*:\s*([^·]*)(?:·\s*Date\s*:\s*([^·]*))?(?:·\s*Version\s*:\s*(.*))?/i); if(m){ d.auteur=m[1].trim(); d.date=(m[2]||"").trim(); d.version=(m[3]||"").trim(); return; }
       m=t.match(/version\s*([\d.]+)/i); if(m&&!d.version) d.version="Version "+m[1];
       return;
     }
     var items=tag==="ul"||tag==="ol"?[].slice.call(el.querySelectorAll("li")):null;
-    if(part===1){ b1.push(t); }
+    if(part===1){ (items||[el]).forEach(function(x){ var c=withRefs(x); if(c) d.constats.push(c); }); }
     else if(part===2){
-      if(sub==="angles"){ if(items) items.forEach(function(li){d.anglesMorts.push(txt(li));}); else sentences(t).forEach(function(s){d.anglesMorts.push(s);}); }
-      else b2.push(t);
-    }
-    else if(part===3){
-      (items||[el]).forEach(function(x){ var c=cleanText(x); if(c.length<16) return; var refs=urlsIn(x).map(srcIdx);
-        d.enonces.push({type:"constat",chiffre:"",chiffreLegende:"",titre:"",texte:c+(refs.length?" ["+refs.join(",")+"]":"")}); });
-    }
-    else if(part===4){
       if(tag==="table") return;
-      if(sub==="medias"){
-        if(/^panneau/i.test(t)) sub="panneaux";
-        else { (items?items.map(txt):[t]).forEach(function(x){ d.obs.push({type:"carte",num:String(d.obs.filter(function(o){return o.type==="carte";}).length+1),titre:x.replace(/^(carte|figure)\s*\d*\s*[—–\-:]*\s*/i,""),url:"",position:"apres",texte:"",sources:""}); }); return; }
+      if(sub==="angles"){ if(items) items.forEach(function(li){d.anglesMorts.push(endDot(txt(li)));}); else ang.push(t); return; }
+      if(/^m[ée]dia\s*[·:\-–]/i.test(t)){
+        var a=el.querySelector("a[href]"), href=a?a.getAttribute("href"):"";
+        d.obs.push({type:"carte",num:String(d.obs.filter(function(o){return o.type==="carte";}).length+1),titre:t.replace(/^m[ée]dia\s*[·:\-–]\s*/i,"").replace(/\s*:\s*(consulter|voir|ouvrir)\b.*$/i,"").trim(),url:isUrl(href)?href:"",position:"apres",texte:"",sources:""});
+        return;
       }
       if(sub==="panneaux"){
         var pm=t.match(/^panneau\s*\d*\s*[—–\-:]*\s*(.*?)\s*(?:\(\s*\d+\s*mots\s*\))?$/i);
@@ -614,41 +690,54 @@ function parseWordHtml(html){
         else if(curPan){ curPan.texte=(curPan.texte?curPan.texte+" ":"")+t; }
         return;
       }
-      var c4=cleanText(el), r4=urlsIn(el).map(srcIdx);
-      d.obs.push({type:"texte",texte:c4+(r4.length?" ["+r4.join(",")+"]":"")});
+      if(items){ items.forEach(function(li){ d.obs.push({type:"texte",texte:withRefs(li)}); }); return; }
+      d.obs.push({type:"texte",texte:withRefs(el)});
     }
-    else if(part===5){
+    else if(part===3){
+      (items||[el]).forEach(function(x){ var c=withRefs(x); if(cleanText(x).length<16) return;
+        d.enonces.push({type:"constat",chiffre:"",chiffreLegende:"",titre:"",texte:c}); });
+    }
+    else if(part===4){
       if(tag==="table"){ var tr=tableRows(el), H=tr.head;
         var ci={effet:col(H,[/effet/]),determinant:col(H,[/d[ée]terminant/]),impact:col(H,[/impact/]),sens:col(H,[/sens/]),populations:col(H,[/population/])};
         tr.body.forEach(function(r){ var o={}; Object.keys(ci).forEach(function(k){o[k]=ci[k]>=0?(r[ci[k]]||""):"";}); o.sens=normSens(o.sens);
-          var cm=o.effet.match(/\s*\(([^()]*\d[^()]*)\)\s*$/); o.codes=""; if(cm){ o.codes=cm[1].trim(); o.effet=o.effet.slice(0,cm.index).trim(); }
+          o.codes=""; var cm=o.effet.match(/\s*\(([^()]*\d[^()]*)\)\s*$/);
+          if(cm){ o.codes=cm[1].trim(); o.effet=o.effet.slice(0,cm.index).trim(); }
+          else { cm=o.effet.match(/^(\d+(?:\.\d+)+)\s+/); if(cm){ o.codes=cm[1]; o.effet=o.effet.slice(cm[0].length).trim(); } }
+          o.effet=o.effet.charAt(0).toUpperCase()+o.effet.slice(1);
           d.impacts.push(o); }); return; }
-      if(sub==="gagne") bg.push(t);
+      if(sub==="vigil"){ (items?items.map(txt):[t]).forEach(function(x){ d.vigilance.push(endDot(x)); }); return; }
+      if(sub==="gagne"){ if(items) items.forEach(function(li){ d.vigilance.push(endDot(txt(li))); }); else bg.push(t); }
+    }
+    else if(part===5){
+      var rm=t.match(/^(R\s?-?\s?\d+(?:\.\d+)?)\s*[—–\-:.]?\s*(.*)$/);
+      if(rm&&(tag==="p"||isHead)){ curReco={code:rm[1].replace(/[\s-]/g,""),couleur:"",titre:rm[2].replace(/\s*:\s*$/,"").replace(/([^.])$/,"$1."),contexte:"",moyens:[]}; d.recos.push(curReco); return; }
+      if(!curReco) return;
+      if(items) items.forEach(function(li){ curReco.moyens.push(endDot(txt(li))); });
+      else if(!curReco.moyens.length) curReco.contexte=(curReco.contexte?curReco.contexte+"\n":"")+t;
+      else curReco.moyens.push(endDot(t));
     }
     else if(part===6){
-      var rm=t.match(/^(R\s?-?\s?\d+(?:\.\d+)?)\s*[—–\-:.]?\s*(.*)$/);
-      if(rm&&tag==="p"){ curReco={code:rm[1].replace(/\s/g,""),couleur:"",titre:rm[2],moyens:[]}; d.recos.push(curReco); return; }
-      if(!curReco) return;
-      (items?items.map(txt):[t]).forEach(function(x){ curReco.moyens.push(x.replace(/\s*;\s*$/,".")); });
+      if(tag==="table"){ var tr2=tableRows(el), H2=tr2.head;
+        var cj={indicateur:col(H2,[/indicateur/]),source:col(H2,[/source/]),frequence:col(H2,[/fr[ée]quence/]),ventilation:col(H2,[/ventilation/]),direction:col(H2,[/direction|tendance/])};
+        tr2.body.forEach(function(r){ var o={}; Object.keys(cj).forEach(function(k){o[k]=cj[k]>=0?(r[cj[k]]||"").trim():"";});
+          o.indicateur=o.indicateur.replace(/^\d+\s*[.)]\s*/,"");
+          var um=o.indicateur.match(/\s*\(([^()]{1,20})\)\s*$/); o.unite=""; if(um){ o.unite=um[1]; o.indicateur=o.indicateur.slice(0,um.index).trim(); }
+          d.indicateurs.push(o); }); return; }
+      if(!d.indIntro&&tag==="p") d.indIntro=t;
     }
     else if(part===7){
-      if(tag==="table"){ var tr2=tableRows(el), H2=tr2.head;
-        var cj={indicateur:col(H2,[/indicateur/]),source:col(H2,[/source/]),frequence:col(H2,[/fr[ée]quence/]),ventilation:col(H2,[/ventilation/]),direction:col(H2,[/direction/]),responsable:col(H2,[/responsable/])};
-        tr2.body.forEach(function(r){ var o={}; Object.keys(cj).forEach(function(k){o[k]=cj[k]>=0?(r[cj[k]]||""):"";});
-          var um=o.indicateur.match(/\s*\(([^()]{1,20})\)\s*$/); o.unite=""; if(um){ o.unite=um[1]; o.indicateur=o.indicateur.slice(0,um.index).trim(); }
-          d.indicateurs.push(o); }); }
+      if(items){ items.forEach(function(li){ bl.push("- "+mdText(li)); }); return; }
+      if(boldOnly) bl.push("# "+t); else bl.push(mdText(el));
     }
-    else if(part===8){ bl.push(t); }
   });
-  var s1=sentences(b1.join(" ")), qi=-1; s1.forEach(function(s,i){ if(qi<0&&/\?/.test(s)) qi=i; });
-  if(qi>=0){ d.enjeu1=s1.slice(0,qi).join(" "); d.enjeuPhrase=s1[qi]; d.enjeu2=s1.slice(qi+1).join(" "); } else d.enjeu1=s1.join(" ");
-  d.planIntro=b2.join("\n");
-  var sg=sentences(bg.join(" ")); if(sg.length>=3){ d.gagne1=sg.slice(0,-2).join(" "); d.gagne2=sg.slice(-2).join(" "); } else d.gagne1=sg.join(" ");
-  d.plusLoin=bl.join(" ");
-  if(d.anglesMorts.length) d.anglesIntro="";
+  d.anglesIntro=ang.join("\n");
+  d.gagne1=bg.join("\n");
+  d.plusLoin=bl.join("\n");
+  if(!d.vigilanceTitre) d.vigilanceTitre=blank().vigilanceTitre;
   if(d.impacts.length) d.impIntro=(NUMW[d.impacts.length]||d.impacts.length)+" chaînes causales relient les effets attendus du plan aux déterminants de la santé.";
   if(d.recos.length) d.recoIntro=(NUMW[d.recos.length]||d.recos.length)+" recommandations, reprises sans reformulation.";
-  if(d.indicateurs.length) d.indIntro=(NUMW[d.indicateurs.length]||d.indicateurs.length)+" indicateurs de suivi, avec leur source, leur fréquence et le service responsable.";
+  if(d.indicateurs.length&&!d.indIntro) d.indIntro=(NUMW[d.indicateurs.length]||d.indicateurs.length)+" pistes d’indicateurs, avec leur source possible et la tendance favorable à la santé.";
   return d;
 }
 async function importDocx(file){
@@ -656,27 +745,29 @@ async function importDocx(file){
   var buf=await file.arrayBuffer();
   var res=await window.mammoth.convertToHtml({arrayBuffer:buf},{ignoreEmptyParagraphs:true,convertImage:window.mammoth.images.imgElement(function(){return Promise.resolve({src:""});})});
   var d=parseWordHtml(res.value);
-  var found=[d.enjeu1,d.planIntro||d.anglesMorts.length,d.enonces.length,d.obs.length,d.impacts.length,d.recos.length,d.indicateurs.length].filter(Boolean).length;
+  var found=[d.constats.length,d.obs.length||d.anglesMorts.length,d.enonces.length,d.impacts.length,d.recos.length,d.indicateurs.length].filter(Boolean).length;
   load(d);
-  toast(found?("Fiche importée : "+found+" parties sur 7 reconnues. Mettez-la ensuite en forme."):"Aucune partie reconnue. Le document suit-il le gabarit en sept parties ?");
+  toast(found?("Fiche importée : "+found+" parties sur 6 reconnues. Mettez-la ensuite en forme."):"Aucune partie reconnue. Le document suit-il le gabarit des fiches-stratégies ?");
 }
-window.__allBlocks=allBlocks; window.__fullPage=fullPage; window.__getD=function(){return D;}; window.__load=load;
+window.__parse=parseWordHtml; window.__allBlocks=allBlocks; window.__fullPage=fullPage; window.__getD=function(){return D;}; window.__load=load;
 
 /* ================= ACTIONS ================= */
-function hasContent(){ return !!(D.titre||D.enjeu1||D.planIntro||D.recos.length); }
+function hasContent(){ return !!(D.titre||D.constats.length||D.obs.length||D.recos.length); }
 $("impWord").onclick=function(){ if(hasContent()&&!confirm("Remplacer la fiche en cours par le contenu du fichier Word ?")) return; $("fWord").click(); };
 $("fWord").onchange=function(e){ var f=e.target.files[0]; if(f) importDocx(f).catch(function(){toast("Lecture du fichier Word impossible.");}); e.target.value=""; };
 $("impJson").onclick=function(){ $("fJson").click(); };
 $("fJson").onchange=function(e){ var f=e.target.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){ try{ var p=JSON.parse(r.result); if(p.format!=="eis-mt-fiche") throw 0; load(p.fiche); toast("Fiche importée"); }catch(x){ toast("Ce fichier n'est pas une fiche valide."); } e.target.value=""; }; r.readAsText(f); };
-$("saveJson").onclick=function(){ fileSave(base()+".json",JSON.stringify({format:"eis-mt-fiche",version:2,exporte:new Date().toISOString(),fiche:D},null,2),"application/json"); toast("Fiche téléchargée"); };
-$("saveAll").onclick=function(){ fileSave(base()+"_fiche_complete_hub.html",fullPage(D),"text/html"); toast("Fiche complète téléchargée"); };
+$("saveJson").onclick=function(){ fileSave(base()+".json",JSON.stringify({format:"eis-mt-fiche",version:3,exporte:new Date().toISOString(),fiche:D},null,2),"application/json"); toast("Fiche téléchargée"); };
+$("saveAll").onclick=function(){ fileSave(pubName(),fullPage(D),"text/html"); toast("Page téléchargée : "+pubName()); };
+$("copyUrl").onclick=function(){ copyText(pubUrl(),"Adresse"); };
+$("pubDossier").addEventListener("input",function(e){ D.dossier=e.target.value; $("pubUrl").textContent=pubUrl(); changed(); });
 $("mail").onclick=function(){
   var s="ÉIS Mont-Tremblant, fiche de la stratégie "+(D.n||"")+(D.titre?" ("+D.titre+")":"");
   var b="Bonjour,\n\nVoici ma fiche-stratégie, en pièce jointe (fichier "+base()+".json).\n\nMerci!";
   location.href="mailto:"+encodeURIComponent(DESTINATAIRE)+"?subject="+encodeURIComponent(s)+"&body="+encodeURIComponent(b);
 };
 $("clear").onclick=function(){ if(confirm("Commencer une nouvelle fiche vide ? Téléchargez d'abord la fiche en cours si vous voulez la garder.")) load(blank()); };
-$("loadEx").onclick=function(){ if(hasContent()&&!confirm("Remplacer la fiche en cours par l'exemple de la fiche 8 ?")) return; load(JSON.parse(JSON.stringify(EXEMPLE))); toast("Exemple chargé : fiche 8, Récréotourisme"); };
+$("loadEx").onclick=function(){ if(hasContent()&&!confirm("Remplacer la fiche en cours par l'exemple de la fiche 2 ?")) return; load(JSON.parse(JSON.stringify(EXEMPLE))); toast("Exemple chargé : fiche 2, Habitation"); };
 function tab(which){
   [["tForm","paneForm"],["tBlocks","paneBlocks"],["tPrev","panePrev"]].forEach(function(p){ var on=p[0]===which; $(p[0]).setAttribute("aria-selected",on?"true":"false"); $(p[1]).hidden=!on; });
   if(which==="tPrev") preview(); if(which==="tBlocks") showBlocks();
@@ -695,36 +786,38 @@ var ENLBL={constat:"Constat",encadre:"Encadré",loin:"Pour aller plus loin"};
 function reviewFields(d){
   var F=[];
   function add(part,label,key,multi){ var v=getPath(d,key); if(v==null) return; if(Array.isArray(v)?!v.length:!String(v).trim()) return; F.push({part:part,label:label,key:key,multi:multi||"s"}); }
-  var P0="Identification",P1="Partie 1 : L'enjeu",P2="Partie 2 : Ce que prévoit le plan",P3="Partie 3 : Ce que dit la science",P4="Partie 4 : Ce qu'on observe à Mont-Tremblant",P5="Partie 5 : Impacts anticipés sur la santé",P6="Partie 6 : Nos recommandations",P7="Partie 7 : Comment savoir si ça fonctionne";
+  var P0="Identification",P1="Partie 1 : Les constats en trois phrases",P2="Partie 2 : "+T2,P3="Partie 3 : Ce que dit la science",P4="Partie 4 : Impacts anticipés sur la santé",P5="Partie 5 : Nos recommandations",P6="Partie 6 : Comment savoir si ça fonctionne",P7="Pour aller plus loin et sources";
   add(P0,"Titre de la stratégie","titre"); add(P0,"Énoncé du plan (citation)","enonce");
-  add(P1,"Mise en contexte","enjeu1"); add(P1,"Phrase mise en évidence","enjeuPhrase"); add(P1,"Conclusion","enjeu2");
+  (d.constats||[]).forEach(function(c,i){ add(P1,"Constat "+(i+1),"constats."+i); });
   add(P2,"Introduction","planIntro","p");
   d.objectifs.forEach(function(o,i){ add(P2,"Objectif "+(i+1)+" : titre","objectifs."+i+".titre"); add(P2,"Objectif "+(i+1)+" : texte","objectifs."+i+".texte"); });
-  add(P2,"Angles morts : introduction","anglesIntro");
+  var cnt={};
+  d.obs.forEach(function(e,i){ var t=e.type||"texte"; cnt[t]=(cnt[t]||0)+1; var L=OBLBL[t]+" "+(t==="carte"?e.num:cnt[t]), k="obs."+i+".";
+    if(t==="chiffres") add(P2,L,k+"lignes","p");
+    else if(t==="liste"){ add(P2,L+" : introduction",k+"intro"); add(P2,L+" : lignes",k+"lignes","p"); }
+    else if(t==="panneau"){ add(P2,L+" : titre",k+"titre"); add(P2,L+" : texte",k+"texte"); }
+    else if(t==="carte"){ add(P2,L+" : titre",k+"titre"); add(P2,L+" : légende",k+"texte"); add(P2,L+" : sources",k+"sources"); }
+    else add(P2,L,k+"texte",t==="texte"?"p":"s"); });
+  add(P2,"Angles morts : introduction","anglesIntro","p");
   d.anglesMorts.forEach(function(a,i){ add(P2,"Angle mort "+(i+1),"anglesMorts."+i); });
   add(P3,"Introduction","sciIntro");
-  var cnt={};
+  cnt={};
   d.enonces.forEach(function(e,i){ var t=e.type||"constat"; cnt[t]=(cnt[t]||0)+1; var L=ENLBL[t]+" "+cnt[t];
     if(t==="constat"){ add(P3,L+" : chiffre","enonces."+i+".chiffre"); add(P3,L+" : légende du chiffre","enonces."+i+".chiffreLegende"); }
     if(t==="encadre") add(P3,L+" : étiquette","enonces."+i+".etiquette");
     add(P3,L+" : titre","enonces."+i+".titre"); add(P3,L+" : texte","enonces."+i+".texte","p"); });
-  cnt={};
-  d.obs.forEach(function(e,i){ var t=e.type||"texte"; cnt[t]=(cnt[t]||0)+1; var L=OBLBL[t]+" "+(t==="carte"?e.num:cnt[t]), k="obs."+i+".";
-    if(t==="chiffres") add(P4,L,k+"lignes","p");
-    else if(t==="liste"){ add(P4,L+" : introduction",k+"intro"); add(P4,L+" : lignes",k+"lignes","p"); }
-    else if(t==="panneau"){ add(P4,L+" : titre",k+"titre"); add(P4,L+" : texte",k+"texte"); }
-    else if(t==="carte"){ add(P4,L+" : titre",k+"titre"); add(P4,L+" : légende",k+"texte"); add(P4,L+" : sources",k+"sources"); }
-    else add(P4,L,k+"texte",t==="texte"?"p":"s"); });
-  add(P5,"Introduction","impIntro");
+  add(P4,"Introduction","impIntro");
   d.impacts.forEach(function(r,i){ var L="Chaîne "+(i+1)+" : ", k="impacts."+i+".";
-    add(P5,L+"effet attendu",k+"effet"); add(P5,L+"déterminant",k+"determinant"); add(P5,L+"impact sur la santé",k+"impact"); add(P5,L+"populations",k+"populations"); });
-  add(P5,"Qui gagne, qui perd : constat","gagne1"); add(P5,"Qui gagne, qui perd : point de vigilance","gagne2");
-  add(P6,"Introduction","recoIntro");
-  d.recos.forEach(function(r,i){ var L=(r.code||("Recommandation "+(i+1)))+" : "; add(P6,L+"intitulé","recos."+i+".titre"); add(P6,L+"moyens (un par paragraphe)","recos."+i+".moyens","a"); });
-  add(P7,"Introduction","indIntro");
+    add(P4,L+"effet attendu",k+"effet"); add(P4,L+"déterminant",k+"determinant"); add(P4,L+"impact sur la santé",k+"impact"); add(P4,L+"populations",k+"populations"); });
+  add(P4,"Qui gagne, qui perd : constat","gagne1","p"); add(P4,"Qui gagne, qui perd : point de vigilance","gagne2");
+  add(P4,"Conditions : titre","vigilanceTitre");
+  (d.vigilance||[]).forEach(function(v,i){ add(P4,"Condition "+(i+1),"vigilance."+i); });
+  add(P5,"Introduction","recoIntro");
+  d.recos.forEach(function(r,i){ var L=(r.code||("Recommandation "+(i+1)))+" : "; add(P5,L+"intitulé","recos."+i+".titre"); add(P5,L+"mise en contexte","recos."+i+".contexte","p"); add(P5,L+"moyens (un par paragraphe)","recos."+i+".moyens","a"); });
+  add(P6,"Introduction","indIntro");
   d.indicateurs.forEach(function(r,i){ var L="Indicateur "+(i+1)+" : ", k="indicateurs."+i+".";
-    [["indicateur","libellé"],["source","source"],["frequence","fréquence"],["ventilation","ventilation"],["direction","direction attendue"],["responsable","responsable"]].forEach(function(f){ add(P7,L+f[1],k+f[0]); }); });
-  add(P7,"Pour aller plus loin","plusLoin");
+    [["indicateur","libellé"],["source","source possible"],["direction","tendance favorable"],["frequence","fréquence"],["ventilation","ventilation"]].forEach(function(f){ add(P6,L+f[1],k+f[0]); }); });
+  add(P7,"Pour aller plus loin","plusLoin","p");
   d.sources.forEach(function(s,i){ add(P7,"Source ["+(i+1)+"] : référence","sources."+i+".libelle"); });
   return F;
 }
@@ -740,12 +833,12 @@ async function exportReview(){
   var children=[
     para("Révision linguistique",{bold:true,size:20,color:"0E7F7E"}),
     para("Stratégie "+(D.n||"")+" : "+(D.titre||""),{bold:true,size:36,color:"140C74"},{spacing:{after:120}}),
-    para("ÉIS du plan d'urbanisme de Mont-Tremblant · texte destiné à la publication dans ArcGIS Hub",{size:20,color:"5B5F7E"},{spacing:{after:240}}),
+    para("ÉIS du plan d'urbanisme de Mont-Tremblant · texte destiné à la publication web (GitHub Pages et ArcGIS Experience Builder)",{size:20,color:"5B5F7E"},{spacing:{after:240}}),
     para("Consignes",{bold:true,size:24,color:"140C74"},{spacing:{after:80}})
   ];
   ["Révisez seulement la colonne de droite, en mode suivi des modifications.",
    "Ne modifiez pas la colonne de gauche et n'ajoutez ni ne supprimez de lignes : elle sert à replacer chaque passage dans la fiche.",
-   "Conservez les numéros entre crochets, par exemple [3] : ce sont les appels de sources.",
+   "Conservez les numéros entre crochets, par exemple [3] : ce sont les appels de sources. Conservez aussi les liens écrits [texte](adresse) et les signes # et - en début de paragraphe.",
    "Dans les chiffres clés et les listes de valeurs, conservez le trait vertical | qui sépare la valeur du libellé.",
    "Les commentaires ne sont pas réimportés : utilisez-les pour échanger avec la personne experte."].forEach(function(t){
     children.push(new X.Paragraph({children:[run(t,{size:21})],bullet:{level:0},spacing:{after:60}})); });
@@ -808,10 +901,11 @@ $("revIn").onclick=function(){ $("fRev").click(); };
 $("fRev").onchange=function(e){ var f=e.target.files[0]; if(f) importReview(f).catch(function(x){ console.error(x); toast("Lecture du Word révisé impossible."); }); e.target.value=""; };
 window.__reviewFields=reviewFields;
 
-var EXEMPLE=/*EXEMPLE*/{"n": "8", "titre": "Récréotourisme", "auteur": "", "date": "", "version": "Version 1", "retour": "383f99f94ce3407f883a4ce04f065a06", "pdf": "/documents/EIS_Mont-Tremblant.pdf", "enonce": "Consolider l'offre récréotouristique destinée à la population permanente et touristique.", "enjeu1": "Mont-Tremblant vit du plaisir des autres. La montagne, les lacs et les sentiers attirent des visiteurs de partout, et cette économie fait vivre la ville. Mais un territoire de loisir n’est pas automatiquement un territoire où la population résidente bouge, se baigne et se rencontre.", "enjeuPhrase": "Cette stratégie pose une question d’équité : à qui profite le terrain de jeu ?", "enjeu2": "La réponse se joue dans le prix d’un accès, dans la distance jusqu’au parc le plus proche et dans le silence d’une nuit d’été.", "planIntro": "Le plan structure le récréotourisme autour de cinq objectifs.", "objectifs": [{"titre": "Limiter l’impact sur les milieux naturels", "texte": "Contenir l’expansion des pôles hôteliers hors des périmètres urbains et maintenir les résidences de tourisme dans les secteurs déjà voués à cet usage. Favoriser l’écotourisme.", "codes": "obj. 7.1, 7.1.1, 7.1.3"}, {"titre": "Assurer des accès publics aux lacs et milieux naturels", "texte": "Projets Plage et tennis et Gray Rocks, confirmation des lieux de baignade actuels, stratégie d’acquisition de terrains.", "codes": "obj. 7.2, 7.2.1, 7.2.2, 7.2.3, 7.2.4"}, {"titre": "Développer une offre quatre saisons", "texte": "Réseau de parcs et de sentiers, équipements pour les jeunes familles, accès aux activités pour la population locale par la carte du citoyen, mise à niveau des parcs en fonction du vieillissement.", "codes": "obj. 7.3, 7.3.1 à 7.3.8, 7.3.9, 7.3.10, 7.3.12"}, {"titre": "Concentrer l’hébergement dans le pôle de la station", "texte": "Densification de la Base Sud et du Versant Soleil, catégories d’usages destinées à éviter les nuisances.", "codes": "obj. 7.4, 7.4.1, 7.4.5, 7.4.6"}, {"titre": "Arrimer les activités au parc national", "texte": "Arrimage au plan directeur du parc national.", "codes": "obj. 7.5"}], "anglesIntro": "Le plan ne traite pas :", "anglesMorts": ["Les conditions d’emploi de la main-d’œuvre saisonnière, alors que le plan planifie la croissance du secteur qui l’emploie.", "L’exposition aux jeux de hasard, alors que le plan densifie le pôle où se trouve le casino.", "Toute exigence d’accessibilité universelle pour les équipements récréatifs.", "Un programme de surveillance et d’affichage de la qualité de l’eau, alors que le plan confirme les lieux de baignade (7.2.3).", "Tout objectif de cadre bâti applicable au Versant Soleil, malgré la densification prévue."], "sciIntro": "Quatre constats documentés sur le lien entre l’aménagement récréotouristique et la santé.", "enonces": [{"type": "constat", "chiffre": "10 min", "chiffreLegende": "au-delà, le parc cesse d’être fréquenté", "titre": "Dix minutes de marche, pas vingt", "texte": "Un parc à moins de dix minutes de marche est fréquenté. Le même parc à vingt minutes ne l’est plus.[3] Ce n’est pas une question de motivation, mais de distance.\nLà où l’accès est proche, on bouge davantage, le stress baisse et la santé mentale s’améliore. L’effet est plus marqué chez les personnes à faible revenu, qui se déplacent moins loin.[1,2]"}, {"type": "constat", "chiffre": "45 dB", "chiffreLegende": "limite OMS pour le bruit routier la nuit ; 53 dB en moyenne sur 24 heures", "titre": "Le seuil d’une nuit réparatrice", "texte": "L’OMS fixe à 45 décibels la limite du bruit routier nocturne.[5] Au-delà, le sommeil se fragmente. Avec les années, la tension monte et le risque cardiovasculaire suit.\nDans les zones où le touristique touche le résidentiel, le bruit ne vient pas d’abord des activités : il vient de la circulation qu’elles attirent et des stationnements.[6]"}, {"type": "constat", "chiffre": "16", "chiffreLegende": "appareils de loterie vidéo, à deux adresses du centre-ville", "titre": "Les appareils ne sont pas répartis au hasard", "texte": "Plus il y a d’appareils de jeu près de chez soi, plus le jeu problématique est fréquent dans le secteur.[10] Et ces appareils se concentrent dans les quartiers à faible revenu, un écart expliqué d’abord par le revenu des résidents.[13] La publicité agit en plus sur l’initiation des jeunes.[12]\nLe jeu problématique ne reste pas un problème d’argent : détresse, endettement, ruptures familiales, risque suicidaire accru.[11] Au Piémont, réduire le nombre d’appareils et de points de vente a fait baisser le jeu à risque.[15] Une municipalité peut plafonner les appareils dans un périmètre et imposer une distance minimale des lieux fréquentés par les jeunes.[14]"}, {"type": "constat", "chiffre": "Saison", "chiffreLegende": "revenus d’une partie de l’année, loyer de toute l’année", "titre": "Travailler l’hiver, payer le loyer toute l’année", "texte": "L’emploi saisonnier, temporaire et à horaires atypiques va de pair avec une détresse psychologique plus élevée,[7] davantage d’insécurité alimentaire[8] et un moindre recours aux services préventifs.\nQuand s’y ajoute un marché locatif tendu, l’instabilité résidentielle s’installe.[9] La main-d’œuvre qui fait tourner l’offre récréotouristique est la première exposée."}, {"type": "encadre", "etiquette": "À rebours de l’intuition", "titre": "Rendre l’accès gratuit ne ramène pas les absents", "texte": "Le coût est bien une barrière pour les ménages à faible revenu. Mais les évaluations de programmes de gratuité montrent que retirer le prix, seul, profite surtout aux personnes déjà actives. Tout dépend ensuite de la proximité de l’équipement, de l’accompagnement et de la notoriété du programme.[4]"}, {"type": "loin", "titre": "Les lieux publics gratuits font se croiser des gens qui ne se croisent pas", "texte": "La qualité des relations sociales pèse sur la mortalité autant que les grands facteurs de risque comportementaux.[16] Les lieux publics ouverts et confortables favorisent les contacts informels entre groupes sociaux.[17]"}, {"type": "loin", "titre": "Densifier sans commerces reporte tout sur l’automobile", "texte": "Les états des connaissances sur l’action municipale recommandent une densité suffisante pour la marche et une mixité des usages.[18] La cible québécoise du milieu de vie complet est d’au moins un commerce alimentaire à 800 mètres de marche du domicile.[19] L’outil MilieuxVie mesure la proximité de douze catégories de services à partir du rôle foncier, avec une cible de couverture de 70 %.[20]"}, {"type": "loin", "titre": "Un équipement n’est utilisé que s’il est utilisable", "texte": "L’annexe H de la norme CAN/CSA Z614 exige que les composantes de jeu accessibles soient intégrées au reste de l’aire, et non regroupées à part.[21] Chez les aînés, la marche dépend de conditions aménageables : pentes faibles, revêtement adapté, bancs avec dossier, blocs sanitaires accessibles.[22]"}, {"type": "loin", "titre": "Se baigner est aussi une mesure d’adaptation à la chaleur", "texte": "La baignade est une mesure de rafraîchissement accessible et une activité physique répandue.[23] Les lacs et rivières d’une superficie appréciable affichent une température inférieure d’environ 2,5 °C aux secteurs environnants, et élargir les heures d’accès améliore le répit des personnes vulnérables à la chaleur.[24] Les interventions en milieu aquatique améliorent aussi le bien-être psychosocial.[25]"}, {"type": "loin", "titre": "Le vélo utilitaire tient à l’infrastructure, pas à la volonté", "texte": "Près de sept adultes québécois sur dix ne pratiquent pas ou rarement le transport actif.[26] Piétons et cyclistes restent surreprésentés dans les décès routiers : sécuriser les aménagements est une condition, pas un complément.[27] Le transport représente environ 18 % des dépenses des ménages québécois, au second rang derrière le logement.[28]"}, {"type": "loin", "titre": "La qualité des eaux de baignade se surveille et s’affiche", "texte": "Bactéries d’origine fécale et cyanobactéries causent gastro-entérites, dermatites et irritations. Santé Canada fixe les seuils de conformité et recommande l’affichage rapide des résultats aux sites de baignade.[29]"}], "obs": [{"type": "chiffres", "lignes": "7 250 | personnes à Saint-Jovite, les deux tiers de la population\n300 | résidents dans le secteur Tremblant\n38,4 % | des logements occupés par des résidents non habituels, contre 7,4 % au Québec\n16 | appareils de loterie vidéo, à deux adresses"}, {"type": "texte", "texte": "Les grands équipements récréotouristiques se concentrent au nord du territoire : la station, le Domaine Saint-Bernard et ses quelque 600 hectares, le parc national. Les deux tiers de la population résidente vivent ailleurs, dans le secteur de Saint-Jovite : 7 250 personnes, un revenu médian après impôt de 34 000 $, la proportion la plus élevée de personnes sous la mesure de faible revenu (15 %) et de locataires (49 %) de la ville. Le secteur Tremblant, lui, compte 300 résidents et le revenu moyen des ménages le plus élevé (152 000 $)."}, {"type": "phrase", "texte": "Le terrain de jeu et les ménages les plus susceptibles d’en avoir besoin ne sont pas au même endroit."}, {"type": "carte", "num": "1", "titre": "Équipements récréatifs et défavorisation matérielle", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/mont_tremblant_parcs_defavorisation.html", "position": "apres", "texte": "Les grands équipements se lisent au nord, les quintiles les plus défavorisés au centre-ville. Comparez la position des équipements et celle des ménages : c’est l’écart que la stratégie 8 doit combler.", "sources": "inventaire municipal des équipements récréatifs ; indice de défavorisation de Pampalon, quintiles régionaux ; recensement de 2021"}, {"type": "texte", "texte": "La pression touristique se lit dans le parc de logements : 38,4 % des logements de Mont-Tremblant sont occupés par des résidents non habituels, contre 7,4 % pour l’ensemble du Québec. Dans le secteur Village, 29 % des emplois sont temporaires et 20 % saisonniers. Au Versant Soleil, le casino est en exploitation depuis 2009 et un Club Med doit s’implanter à proximité, sur un secteur de 81 hectares dont le plan prévoit la densification, sans objectif de services de proximité pour les résidents et les travailleurs qui s’y trouveront."}, {"type": "soustitre", "texte": "Ce que montre l’analyse des milieux de vie complets"}, {"type": "texte", "texte": "Le principal périmètre urbain de la ville, qui regroupe 3 774 des 8 111 logements du territoire, obtient un score de proximité de 73 %, l’un des deux seuls périmètres des Laurentides à atteindre la cible de 70 %. Il couvre l’ensemble de ses logements pour les commerces alimentaires, l’école secondaire, le transport collectif et le réseau cyclable, ainsi que 99 % pour les espaces naturels et 93 % pour les loisirs et le sport.[20]"}, {"type": "liste", "intro": "Cinq services restent sous la cible.", "lignes": "Mobilité partagée | 0 %\nPharmacie | 30 %\nÉquipements culturels | 53 %\nService de garde | 55 %\nÉcole primaire | 62 %"}, {"type": "texte", "texte": "Les trois autres périmètres urbains obtiennent 53 %, 53 % et 6 %. À l’échelle de la municipalité entière, le score tombe à 50 % : 62 % des logements seulement ont un espace naturel à moins de 800 mètres de marche et 69 % un équipement de loisir ou de sport dans le rayon applicable."}, {"type": "soustitre", "texte": "L’offre de jeu de hasard et d’argent sur le territoire"}, {"type": "panneau", "titre": "Deux offres de jeu, deux publics", "couleur": "", "texte": "Mont-Tremblant compte 34 établissements titulaires d’un permis de bar. Un seul détient un casino. Trois exploitent des appareils de loterie vidéo, tous rue de Saint-Jovite, au centre-ville. Le casino, lui, est au Versant Soleil, à près de neuf kilomètres. L’offre de jeu se divise donc en deux pôles distincts : le casino dessert la clientèle touristique, les appareils de loterie vidéo sont dans le milieu de vie de la population permanente."}, {"type": "panneau", "titre": "Seize appareils, deux adresses", "couleur": "", "texte": "Huit appareils sont au 468, rue de Saint-Jovite. Huit autres se partagent deux portes voisines, aux 1074 et 1076. Six cents mètres séparent les deux grappes. Le reste de la ville n’en compte aucun. Cette concentration est confirmée par les licences inscrites au fichier de la Régie des alcools, des courses et des jeux. Elle n’est pas une estimation."}, {"type": "panneau", "titre": "Là où l’offre rencontre la défavorisation", "couleur": "#e6a23c", "texte": "Dix-sept aires de diffusion couvrent Mont-Tremblant, pour 10 992 résidents en 2021. Environ quatre résidents sur dix vivent dans une aire des deux quintiles les plus défavorisés matériellement de la région. La plus forte concentration d’appareils du territoire se trouve dans l’aire la plus défavorisée à la fois sur le plan matériel et sur le plan social. L’exposition à l’offre de jeu ne se répartit donc pas également sur le territoire."}, {"type": "panneau", "titre": "Ce que le projet du Versant Soleil ajoute", "couleur": "#a8a2ee", "texte": "Le plan prévoit la consolidation du pôle du Versant Soleil. Un projet hôtelier de 300 chambres y est à l’étude, près du casino. Les promoteurs annoncent environ 300 emplois directs et le logement de la moitié du personnel sur le site. Ce personnel vivrait à quelques centaines de mètres du casino, à pied. Il s’agit d’une population jeune, saisonnière et souvent sans véhicule."}, {"type": "note", "texte": "Sources : fichier des licences de la Régie des alcools, des courses et des jeux ; recensement de 2021 ; indice de défavorisation de Pampalon, quintiles régionaux. Le rattachement des adresses d’appareils à leur aire de diffusion reste à confirmer par géocodage."}, {"type": "note", "texte": "Sources de la partie 4 : recensement de la population de 2021, Statistique Canada ; analyse MilieuxVie du 15 septembre 2026, Direction de santé publique des Laurentides."}, {"type": "carte", "num": "2", "titre": "Offre de jeu de hasard et d’argent", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/JHA/cartos_jha_mont_tremblant.html", "position": "avant", "texte": "La carte ci-dessous situe les deux grappes d’appareils de loterie vidéo de la rue de Saint-Jovite et le casino du Versant Soleil sur les quintiles de défavorisation. Six cents mètres séparent les deux grappes ; neuf kilomètres les séparent du casino.", "sources": "fichier des licences de la Régie des alcools, des courses et des jeux ; indice de défavorisation de Pampalon ; recensement de 2021"}], "impIntro": "Sept chaînes causales relient les effets attendus du plan aux déterminants de la santé. Trois sont favorables ou incertaines, quatre signalent un risque.", "impacts": [{"effet": "Consolidation du réseau de parcs, sentiers et équipements quatre saisons", "codes": "7.3.1 à 7.3.12", "sens": "++", "determinant": "Accès aux espaces verts ; occasions d’activité physique", "impact": "Hausse de l’activité physique, réduction du stress, meilleure santé mentale", "populations": "Familles, personnes aînées, ménages sans automobile"}, {"effet": "Confirmation et acquisition d’accès publics aux lacs et milieux naturels", "codes": "7.2.1 à 7.2.4", "sens": "+", "determinant": "Contact avec la nature ; rafraîchissement en canicule", "impact": "Bien-être, baignade sécuritaire, répit thermique", "populations": "Ménages non riverains et à faible revenu de Saint-Jovite"}, {"effet": "Accès aux activités pour la population locale sans engagement tarifaire chiffré", "codes": "7.3.10", "sens": "?", "determinant": "Conditions socioéconomiques ; accès aux loisirs", "impact": "Maintien ou creusement des écarts de pratique entre groupes de revenu", "populations": "Ménages à faible revenu, familles monoparentales"}, {"effet": "Densification touristique du pôle Versant Soleil", "codes": "7.4.1, 7.4.5", "sens": "−", "determinant": "Environnement social : offre de jeu et d’alcool", "impact": "Jeu problématique, détresse psychologique, endettement", "populations": "Jeunes, travailleurs du secteur, personnes en situation de vulnérabilité"}, {"effet": "Hausse de l’achalandage et de la circulation aux abords des pôles", "codes": "7.4", "sens": "−", "determinant": "Environnement sonore ; cohabitation des usages", "impact": "Troubles du sommeil, stress, conflits de voisinage", "populations": "Résidents des zones de transition, Village, abords du chemin Duplessis"}, {"effet": "Croissance de l’emploi récréotouristique sans encadrement des conditions", "codes": "7.1.2, 7.4", "sens": "−", "determinant": "Conditions d’emploi et de revenu", "impact": "Détresse psychologique, insécurité alimentaire et résidentielle", "populations": "Travailleurs saisonniers et temporaires, jeunes adultes"}, {"effet": "Confirmation des lieux de baignade sans programme de suivi ni affichage", "codes": "7.2.3", "sens": "−", "determinant": "Qualité de l’eau", "impact": "Gastro-entérites, dermatites, exposition aux cyanobactéries", "populations": "Baigneurs, enfants, usagers des accès publics"}], "gagne1": "Les mesures du plan améliorent l’offre récréative moyenne du territoire. Elles ne garantissent pas que les ménages du secteur Saint-Jovite, les travailleurs saisonniers et les personnes en situation de handicap en bénéficient.", "gagne2": "Une offre qui s’enrichit surtout au nord, dans des pôles payants et accessibles en automobile, peut faire progresser la moyenne tout en creusant l’écart. C’est le point de vigilance central de cette fiche.", "recoIntro": "Dix recommandations, reprises sans reformulation.", "recos": [{"code": "R8.1", "couleur": "#21AEAD", "titre": "Renforcer et pérenniser l’accessibilité aux loisirs pour les résidents", "moyens": ["Maintenir et bonifier la carte « Accès Mont-Tremblant » : garantir la pérennité des tarifs préférentiels et de la gratuité pour l’accès aux infrastructures municipales (plage, transports) et négocier des ententes avec les opérateurs privés (ski, golf) pour des accès à tarifs réduits pour les résidents permanents.", "Diversifier l’offre de loisirs abordables : prioriser le développement d’infrastructures récréatives gratuites ou à faible coût (parcs de quartier, sentiers pédestres de proximité) dans les secteurs résidentiels, en dehors des pôles touristiques payants."]}, {"code": "R8.2", "couleur": "#6aa6e8", "titre": "Atténuer les nuisances et les conflits d’usage", "moyens": ["Appliquer strictement le zonage des nuisances (obj. 7.4.6) : s’assurer que les catégories d’usages visant à limiter le bruit et l’achalandage dans les zones de transition entre les secteurs touristiques et résidentiels soient rigoureusement respectées.", "Mettre en place un mécanisme de gestion des plaintes : créer ou renforcer un canal de communication clair et efficace pour que les résidents puissent signaler les nuisances liées aux activités touristiques (bruit, stationnement illégal), avec un suivi rapide des interventions municipales."]}, {"code": "R8.3", "couleur": "#a8a2ee", "titre": "Favoriser la diversification économique et la stabilité de l’emploi", "moyens": ["Soutenir l’entrepreneuriat local non touristique : encourager le développement de PME et de services de proximité (commerces locaux, services professionnels) pour diversifier le marché de l’emploi et réduire la dépendance saisonnière.", "Promouvoir l’emploi à l’année : collaborer avec les employeurs touristiques majeurs pour explorer des modèles de fidélisation de la main-d’œuvre (contrats annuels, avantages sociaux, logement) afin de réduire la précarité financière des travailleurs."]}, {"code": "R8.4", "couleur": "#e6a23c", "titre": "Prévenir les risques liés aux jeux de hasard", "moyens": ["Interdire la publicité pour les jeux de hasard ciblée localement : restreindre l’affichage publicitaire incitant au jeu dans les secteurs résidentiels et à proximité des écoles ou lieux fréquentés par les jeunes et les populations vulnérables.", "Soutenir les organismes communautaires : assurer un financement adéquat aux organismes locaux offrant des services d’aide aux joueurs pathologiques et de soutien psychosocial, en prévision d’une demande accrue liée à la densification du pôle Versant Soleil."]}, {"code": "R8.5", "couleur": "#21AEAD", "titre": "Créer des espaces de rencontre et de mixité sociale", "moyens": ["Aménager des lieux publics inclusifs : concevoir les nouveaux espaces publics (parcs, places publiques) au Centre-ville et au Village comme des lieux de rencontre intergénérationnels et interculturels, favorisant les échanges informels entre résidents de tous horizons socioéconomiques.", "Soutenir les initiatives citoyennes : encourager et financer les projets communautaires (fêtes de quartier, jardins collectifs, événements culturels gratuits) qui renforcent le lien social et le sentiment d’appartenance."]}, {"code": "R8.6", "couleur": "#e6a23c", "titre": "Versant Soleil : éviter la monofonctionnalité touristique", "moyens": ["Le plan ne propose pas d’objectifs de cadre bâti spécifiques au pôle Versant Soleil malgré la densification prévue.", "Exiger dans toute planification détaillée du secteur des services et commerces de proximité du quotidien accessibles à pied aux résidents et travailleurs (épicerie, services de santé de base, parc de quartier, services pour enfants)."]}, {"code": "R8.7", "couleur": "#6aa6e8", "titre": "S’assurer que les parcs, espaces verts et équipements de loisir répondent aux besoins de tous les âges et pour toutes les saisons", "moyens": ["Prévoir des installations qui favorisent le jeu libre pour les tout-petits.", "Planifier des espaces de socialisation et d’activité physique pour les personnes aînées.", "S’assurer que plusieurs infrastructures sportives et récréatives ainsi que les installations sanitaires soient accessibles pour les personnes en situation de handicap."]}, {"code": "R8.8", "couleur": "#21AEAD", "titre": "Garantir un accès universel et inclusif aux cours d’eau et espaces naturels publics", "moyens": ["Assurer un accès équitable aux espaces naturels publics pour l’ensemble de la population, notamment par un maintien de la gratuité, un accès facilité et l’aménagement d’infrastructures favorisant l’accessibilité universelle."]}, {"code": "R8.9", "couleur": "#a8a2ee", "titre": "Promouvoir l’attestation « Bienvenue cyclistes ! » de Vélo Québec", "moyens": ["Promouvoir l’attestation auprès des hébergements et des restaurants pour augmenter la part de touristes qui visitent la ville en vélo."]}, {"code": "R8.10", "couleur": "#6aa6e8", "titre": "Assurer le suivi analytique et l’affichage de la qualité des eaux de baignade aux accès publics", "moyens": ["Se doter d’un programme municipal autonome de surveillance de la qualité des eaux de baignade, fondé sur les Recommandations au sujet de la qualité des eaux utilisées à des fins récréatives au Canada comme cadre de référence normatif.", "Assurer l’accès à l’information en temps opportun sur la qualité des eaux récréatives, notamment les risques à la santé et les mesures à prendre pour se protéger (affiches, dépliants, sources médiatiques)."]}], "indIntro": "Six indicateurs de suivi, avec leur source, leur fréquence et le service responsable.", "indicateurs": [{"indicateur": "Nombre d’accès publics aménagés aux plans d’eau et part conforme à l’accessibilité universelle", "unite": "n, %", "source": "Inventaire municipal", "frequence": "Annuelle", "ventilation": "Secteur", "direction": "Hausse", "responsable": "Loisirs"}, {"indicateur": "Taux d’adhésion à la carte « Accès Mont-Tremblant » parmi les ménages résidents", "unite": "%", "source": "Fichier municipal", "frequence": "Annuelle", "ventilation": "Secteur, revenu médian de l’aire de diffusion", "direction": "Hausse, écart entre secteurs en baisse", "responsable": "Loisirs"}, {"indicateur": "Part des équipements récréatifs et sanitaires municipaux conformes à l’accessibilité universelle", "unite": "%", "source": "Audit d’accessibilité", "frequence": "Aux 3 ans", "ventilation": "Type d’équipement", "direction": "Hausse", "responsable": "Loisirs, Travaux publics"}, {"indicateur": "Plaintes pour nuisances liées aux activités touristiques et délai médian de traitement", "unite": "n, jours", "source": "Registre municipal des plaintes", "frequence": "Trimestrielle", "ventilation": "Secteur, type de nuisance", "direction": "Délai en baisse ; volume suivi et non ciblé", "responsable": "Greffe, Urbanisme"}, {"indicateur": "Part des emplois à l’année dans les entreprises touristiques participantes", "unite": "%", "source": "Entente de suivi avec les employeurs (R8.3)", "frequence": "Annuelle", "ventilation": "Taille d’entreprise", "direction": "Hausse", "responsable": "Développement économique"}, {"indicateur": "Part de la population de 12 ans et plus atteignant les recommandations d’activité physique", "unite": "%", "source": "Enquêtes populationnelles régionales", "frequence": "Au cycle d’enquête", "ventilation": "Âge, sexe, revenu", "direction": "Hausse", "responsable": "Direction de santé publique"}], "plusLoin": "Municipalité comparable : Whistler, en Colombie-Britannique, et ses programmes d’accès réservés aux résidents et aux employés du secteur touristique.", "sources": [{"libelle": "INSPQ. Verdir les villes pour la santé de la population", "url": "https://www.inspq.qc.ca/publications/2517"}, {"libelle": "OMS Europe. Urban green spaces and health", "url": "https://www.who.int/europe/publications/i/item/WHO-EURO-2016-3352-43111-60341"}, {"libelle": "Trust for Public Land. 10-Minute Walk, Key Park Equity Policies ; et Rigolon et coll", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7369687/"}, {"libelle": "Journal of Physical Activity and Health, évaluation de programmes de gratuité", "url": "https://doi.org/10.1123/jpah.6.6.716"}, {"libelle": "OMS Europe. Environmental noise guidelines for the European Region", "url": "https://www.who.int/europe/publications/i/item/9789289053563"}, {"libelle": "Noise & Health, bruit en zones de transition", "url": "https://doi.org/10.4103/1463-1741.155833"}, {"libelle": "Emploi précaire et détresse psychologique", "url": "https://pubmed.ncbi.nlm.nih.gov/38012123/"}, {"libelle": "Canadian Public Policy, emploi atypique et insécurité alimentaire", "url": "https://doi.org/10.3138/cpp.2024-059"}, {"libelle": "Urban Studies, marché locatif tendu et instabilité résidentielle", "url": "https://doi.org/10.1177/0042098017711649"}, {"libelle": "Addiction, proximité et densité de l’offre de jeu", "url": "https://doi.org/10.1111/add.16153"}, {"libelle": "Journal of Public Health, jeu problématique et santé", "url": "https://doi.org/10.1093/pubmed/fdad096"}, {"libelle": "Health Promotion International, exposition publicitaire et initiation des jeunes", "url": "https://doi.org/10.1093/heapro/dah509"}, {"libelle": "BMC Public Health, densité d’appareils et statut socioéconomique", "url": "https://doi.org/10.1186/s12889-019-7535-1"}, {"libelle": "International Journal of Health Geographics, encadrement géographique de l’offre de jeu", "url": "https://doi.org/10.1186/s12942-024-00379-2"}, {"libelle": "BMC Public Health, réduction de l’offre au Piémont", "url": "https://doi.org/10.1186/s12889-022-13398-0"}, {"libelle": "Holt-Lunstad et coll., PLOS Medicine, relations sociales et mortalité", "url": "https://doi.org/10.1371/journal.pmed.1000316"}, {"libelle": "Lieux publics et contacts informels", "url": "https://www.jstor.org/stable/jj.41003893"}, {"libelle": "INSPQ. Qualité de vie et action municipale", "url": "https://www.inspq.qc.ca/sites/default/files/publications/3262-qualite-vie-action-municipale.pdf"}, {"libelle": "Vivre en Ville. Milieux de vie complets, destinations de proximité", "url": "https://carrefour.vivreenville.org/milieux-de-vie-complets/destinations-de-proximite/alimentation"}, {"libelle": "Robitaille et coll., Geographies, outil MilieuxVie", "url": "https://doi.org/10.3390/geographies6030066"}, {"libelle": "Guides Sports Loisirs. Accessibilité universelle des aires de jeu, CAN/CSA Z614 annexe H", "url": "https://www.guides-sports-loisirs.ca/projetespaces/espaces-jeu-enfants/accessibilite-universelle-aire-jeu/"}, {"libelle": "Santé Montérégie. Guide d’aménagement des parcs pour les aînés", "url": "https://extranet.santemonteregie.qc.ca/app/uploads/2024/01/guide-amenagement-parcs-pour-aines.pdf"}, {"libelle": "INSPQ. Baignade et activité physique", "url": "https://www.inspq.qc.ca/publications/2501"}, {"libelle": "INSPQ. Mesures populationnelles d’adaptation à la chaleur", "url": "https://www.inspq.qc.ca/changements-climatiques/menaces/chaleur/mesures-populationnelles"}, {"libelle": "Health Promotion International, interventions en milieu aquatique et bien-être", "url": "https://doi.org/10.1093/heapro/day103"}, {"libelle": "INSPQ. Transport actif et habitudes de vie", "url": "https://www.inspq.qc.ca/habitudes-de-vie/activite-physique/transports"}, {"libelle": "INSPQ. Favoriser la sécurité des transports actifs par l’environnement bâti", "url": "https://www.inspq.qc.ca/sites/default/files/publications/3653-TOPO-favoriser-securite-transports-actifs-environnement-bati.pdf"}, {"libelle": "Vélo Québec. Données et arguments pour le vélo dans la collectivité", "url": "https://velosympathique.velo.qc.ca/ressources/donnees-arguments-velo-collectivite/"}, {"libelle": "Santé Canada. Recommandations au sujet de la qualité des eaux utilisées à des fins récréatives au Canada, 2024", "url": "https://www.canada.ca/fr/sante-canada/services/publications/vie-saine/recommandations-sujet-qualite-eaux-utilisees-fins-recreatives-canada-document-synthese.html"}]}/*FIN*/;
-try{ var sv=JSON.parse(localStorage.getItem(KEY)||"null"); if(sv) D=Object.assign(blank(),sv); }catch(e){}
+var EXEMPLE=/*EXEMPLE*/{"n": "2", "titre": "Habitation", "enonce": "Développer une offre en habitation assurant l'accessibilité au logement pour une population tremblantoise diversifiée.", "auteur": "", "date": "", "version": "Version 7", "constats": ["Le marché locatif est saturé : le taux d’inoccupation était de 0 % en 2023 et en 2024, et près d’un ménage locataire sur quatre (23 %) consacrait en 2021 30 % ou plus de son revenu au logement.", "Près de la moitié des logements de la ville (45 %) n’abritent aucun ménage résident, contre 13 % dans les Laurentides, et l’interdiction de la location à court terme prévue au centre-ville et au Village ne touchera que 12 % des résidences de tourisme.", "Le besoin tient moins au nombre de logements qu’à leur type : la hausse projetée d’environ 570 ménages d’ici 2041 viendra surtout des 75 ans et plus, ce qui exige des logements abordables, adaptés et près des services, surtout à Saint-Jovite, où vivent 88 % des locataires."], "planIntro": "", "objectifs": [], "obs": [{"type": "texte", "texte": "La stratégie 2 (5.3) se définit autour de cinq objectifs. Le plan veut favoriser la densification douce des terrains occupés par des maisons unifamiliales (2.1), entre autres par l’assouplissement de la réglementation relative aux logements additionnels (2.1.1). Il aspire à accroître le nombre de logements répondant aux besoins de la population permanente et des travailleurs en favorisant leur concentration au centre-ville (2.2), par l’adoption d’un cadre réglementaire favorable aux projets d’insertion d’immeubles multifamiliaux (2.2.2). Il vise à maintenir un parc de logements de qualité, adapté à la population locale (2.3), par une réglementation qui évite la vacance et assure l’entretien des immeubles (2.3.1). Il propose aussi de prohiber la location à court terme à l’intérieur du centre-ville et du Village (2.3.4). Il veut accroître la part de logements sociaux et abordables et soutenir l’accès à la propriété (2.4), notamment par une réserve foncière (2.4.3). Enfin, il veut accélérer la construction de logements abordables (2.5) par des processus d’approbation simplifiés et moins coûteux (2.5.2-3), la Ville agissant comme catalyseur des projets."}, {"type": "texte", "texte": "Le marché locatif est extrêmement tendu : le taux d’inoccupation était de 0 % en 2023 et en 2024. À Mont-Tremblant, la part des revenus du secteur de l’hébergement générée par les locations privées à court terme est passée de 26,0 % en 2017 à 57,9 % en 2021, soit près de trois fois la moyenne québécoise (19,7 %). [1,2]"}, {"type": "texte", "texte": "Les rôles d’évaluation de 2025-2026 donnent des données supplémentaires : 4 958 des 10 973 logements de la ville (45 %) n’abritent aucun ménage résident, contre 13 % pour l’ensemble des Laurentides (DSP, outil « Le parc qui échappe aux résidents », 2026; donnée régionale non publiée). Le rôle compte aussi 1 194 résidences de tourisme, dont 848 dans le secteur de Tremblant. Seules 138 de ces 1 194 résidences de tourisme (12 %) se trouvent au centre-ville ou au Village, où le plan veut prohiber la location à court terme (2.3.4) (DSP, outil « Le parc qui échappe aux résidents », 2026). [3]"}, {"type": "texte", "texte": "La population présente dépasse donc largement la population résidente. En pointe hivernale, environ 27 000 personnes peuvent passer la nuit à Mont-Tremblant, soit 2,3 fois les 12 000 résidents. Dans le secteur de Tremblant, la population présente atteint 16 fois la population résidente. Logements, services et infrastructures répondent ainsi à une demande bien plus large que celle du recensement (DSP, outil « Qui est vraiment là? », 2026). [4]"}, {"type": "texte", "texte": "Selon le scénario de référence des projections de ménages de l’Institut de la statistique du Québec (ISQ) diffusées en octobre 2026, Mont-Tremblant compterait environ 572 ménages de plus entre 2025 et 2041, une révision à la baisse par rapport à l’édition précédente, qui en prévoyait environ 830 (ISQ, Projections de ménages des municipalités, 2026). Les ménages de 75 ans et plus forment le groupe qui augmenterait le plus, ce qui accroît le besoin de logements accessibles, adaptés et situés près des services. Le rythme des dix dernières années, soit environ 116 logements occupés de plus par année, couvrirait largement ce besoin s’il se maintient (DSP, outil « Besoins en logement par secteur », 2026). L’enjeu tient donc moins au nombre total de logements qu’à leur type, à leur abordabilité et à leur occupation par des résidents permanents. L’abordabilité reste un enjeu, surtout pour les locataires : en 2021, 15,4 % des ménages, et 23 % des ménages locataires, consacraient 30 % ou plus de leur revenu au logement. Les ménages locataires sont aussi très concentrés : 88 % d’entre eux habitent le secteur Saint-Jovite, où le plan veut justement concentrer les nouveaux logements (2.2). [5,6,7]"}, {"type": "texte", "texte": "Sur les autres dimensions que la science associe à la santé, le recensement de 2021 indique que 5,5 % des logements nécessitaient des réparations majeures et que 1,8 % des ménages vivaient dans un logement de taille non convenable. Ces enjeux, aussi associés à des effets sur la santé, touchent une faible part des ménages tremblantois et ne sont pas retenus comme prioritaires dans cette fiche. Sur le plan de la stabilité résidentielle, 48 % des résidents avaient déménagé au cours des cinq années précédentes. Le parc se compose à 49 % de maisons individuelles (DSP, outil « Besoins en logement par secteur », 2026), et 49,8 % des logements comptent deux chambres ou moins (Statistique Canada, Recensement 2021). La ville compte 147 logements sociaux et communautaires. [6,8]"}, {"type": "carte", "num": "1", "titre": "Le parc qui échappe aux résidents", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/parc_non_permanent_tremblant.html", "position": "apres", "texte": "", "sources": ""}, {"type": "carte", "num": "2", "titre": "Qui est vraiment là? Population de pointe et capacité d’accueil", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/population_pointe_tremblant.html", "position": "apres", "texte": "", "sources": ""}, {"type": "carte", "num": "3", "titre": "Besoins en logement par secteur", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/logement_mont_tremblant.html", "position": "apres", "texte": "", "sources": ""}], "anglesIntro": "Le plan d’urbanisme et la Politique de l'habitation de la Ville de Mont-Tremblant sont des documents de base solides qui identifient très bien les défis locaux, notamment la pression touristique, le manque de logements pour la population locale et la main-d'œuvre. Cependant, ces documents pourraient être renforcés pour les rendre plus incisifs et applicables.\nVoici les principaux éléments qui pourraient être améliorés :", "anglesMorts": ["L'ajout de cibles quantitatives et d'un échéancier précis.", "Des engagements financiers plus concrets.", "Une vision écologique plus transversale.", "L'encadrement strict des logements « abordables » privés afin d’en assurer la durabilité dans le temps."], "sciIntro": "", "enonces": [{"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "Un logement abordable, de taille suffisante et en bon état est une composante importante d’un environnement sain, tant sur le plan physique, mental que social. [9]"}, {"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "Or, les ménages socio-économiquement défavorisés doivent souvent faire des compromis sur la qualité et la taille des logements choisis, ce qui peut affecter leur santé et leur qualité de vie."}, {"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "L’abordabilité du logement constitue un enjeu de santé publique puisque les ménages qui consacrent une grande part de leur revenu pour se loger parviennent difficilement à répondre aux autres besoins essentiels tels que de se nourrir, se vêtir adéquatement et se déplacer. Le fait de consacrer une trop grande part du revenu pour se loger peut être une source d’anxiété et de dépression, nuire à la santé perçue et entraîner de l’insécurité alimentaire. [10]"}, {"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "L’élaboration d’un règlement sur la location à court terme favoriserait l’abordabilité des logements. Une équipe de l’Université McGill, qui a étudié 309 quartiers canadiens, rapporte que les restrictions relatives à la location à court terme ont permis aux locataires du pays d’économiser 192,4 millions de dollars par mois. [11]"}, {"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "Les politiques d’inclusion de logements abordables dans les nouveaux projets résidentiels (zonage d’inclusion) contribuent à accroître l’accès à des logements abordables et de qualité, selon une synthèse de recherche de 2022. La plupart exigent que 10 à 20 % des nouveaux logements soient abordables. Aux États-Unis, la part moyenne exigée est de 16 %, et près de trois programmes sur dix exigent 20 % ou plus. Au Québec, le Règlement pour une métropole mixte de Montréal vise une contribution de 20 % de logements sociaux, de 20 % de logements abordables et de 20 % de logements familiaux. Le milieu du logement communautaire et social recommande aussi de porter à 20 % la part du logement locatif hors marché sur un horizon de 20 ans. [12,13,14,15]"}, {"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "Les déménagements répétitifs, fréquents chez les ménages mal logés, peuvent être à l’origine de problèmes comportementaux chez les enfants, de l’adoption de comportements à risque à l’adolescence, en plus de compromettre la réussite scolaire. Les déménagements fréquents peuvent aussi nuire à l’accès et à la continuité des soins de santé et au maintien d’un réseau social. L’accès à des logements abordables, sociaux et familiaux peut contribuer à réduire ces effets néfastes. [16]"}, {"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "Une offre variée en typologie et en taille de logements renforce la stabilité d’un quartier en permettant aux gens de rester dans la même communauté à différentes étapes de leur vie, en plus d’encourager la diversité sociale et économique. [17]"}, {"type": "constat", "chiffre": "", "chiffreLegende": "", "titre": "", "texte": "Le logement joue aussi un rôle déterminant dans la capacité des personnes aînées à vieillir en santé chez elles et dans leur communauté. Un logement abordable, salubre et accessible, situé à proximité des services, des commerces, des espaces verts et des transports collectifs, favorise leur autonomie et leur participation sociale. [18]"}], "impIntro": "Cinq chaînes causales relient les effets attendus du plan aux déterminants de la santé.", "impacts": [{"effet": "Accroître la résilience des milieux de vie face à l'évolution démographique en favorisant la densification douce des terrains occupés par des habitations unifamiliales", "determinant": "Accessibilité résidentielle, cohésion sociale, sécurité économique.", "impact": "Amélioration de l'accès au logement pour les différentes étapes de vie; favoriser le maintien des résidents dans leur communauté; soutenir la mixité générationnelle.", "sens": "+?", "populations": "Jeunes adultes, aînés, familles, travailleurs locaux.", "codes": "2.1"}, {"effet": "Accroître le nombre de logements répondant aux besoins de la population permanente et des travailleurs en favorisant leur concentration au centre-ville", "determinant": "Logement, mobilité, accès aux services, transport actif, participation sociale, sécurité économique", "impact": "Amélioration de l'accès aux commerces, services de santé et transports collectifs; augmentation des déplacements actifs; réduction des coûts de transport; diminution du stress associé à la recherche de logement.", "sens": "+?", "populations": "Travailleurs, ménages à revenu faible ou moyen, personnes sans véhicule, aînés, jeunes familles.", "codes": "2.2"}, {"effet": "Maintenir un inventaire de logements de qualité et adaptés aux besoins de la population locale", "determinant": "Qualité de l’habitation, salubrité, sécurité résidentielle, revenu disponible, stabilité résidentielle", "impact": "Réduction des problèmes liés à l'insalubrité et vétusté; amélioration de la santé physique et mentale; diminution de l'insécurité résidentielle; préservation du parc locatif permanent.", "sens": "+", "populations": "Locataires, ménages vulnérables, personnes âgées, familles avec enfants, personnes atteintes de maladies chroniques.", "codes": "2.3"}, {"effet": "Accroître la part de logements sociaux et abordables sur le territoire et soutenir l'accès à la propriété", "determinant": "Revenu, équité, inclusion sociale, sécurité financière", "impact": "Réduction de la précarité résidentielle; amélioration de la stabilité financière des ménages; diminution du stress économique; renforcement de l'inclusion sociale et de l'équité en santé.", "sens": "+", "populations": "Ménages à faible revenu, personnes seules, familles monoparentales, travailleurs essentiels, jeunes ménages, personnes en situation de vulnérabilité.", "codes": "2.4"}, {"effet": "Accélérer la construction de logements abordables en facilitant les processus et en se positionnant comme un catalyseur des projets répondant aux besoins de la collectivité", "determinant": "Disponibilité du logement, sécurité économique, gouvernance locale, développement communautaire", "impact": "Réponse plus rapide aux besoins en logement; réduction des inégalités sociales de santé, réduction des effets négatifs de la pénurie de logements sur la santé mentale et le bien-être collectif, favorise la rétention de la main-d’œuvre.", "sens": "+?", "populations": "Travailleurs, nouveaux résidents, employeurs, jeunes familles, ménages en recherche de logement.", "codes": "2.5"}], "gagne1": "La stratégie 2 présente un potentiel d'impact fortement positif sur la santé et le bien-être de la population puisqu'elle agit directement sur plusieurs déterminants sociaux de la santé, notamment le logement, le revenu, l'accès aux services, la mobilité et l'inclusion sociale. Les bénéfices attendus sont particulièrement importants pour les ménages à faible ou moyen revenu, les travailleurs, les jeunes ménages et les personnes âgées, qui sont actuellement les groupes les plus affectés par les difficultés d'accès au logement à Mont-Tremblant.", "gagne2": "", "vigilanceTitre": "Conditions pour que l’effet reste positif et enjeux à surveiller", "vigilance": ["Densification douce (2.1) : les logements additionnels doivent être occupés à l’année. Sans encadrement, ils risquent d’alimenter le parc de location à court terme.", "Concentration au centre-ville (2.2) : la hausse des valeurs foncières peut déplacer les locataires actuels, dont 88 % habitent Saint-Jovite. Il faut protéger le parc locatif existant (démolition, conversion) et prévoir des logements abordables dans les nouveaux projets.", "Qualité du parc (2.3) : les rénovations peuvent entraîner des hausses de loyer ou des évictions. Elles doivent s’accompagner de mesures de protection des locataires.", "Accès à la propriété (2.4) : ces mesures profitent surtout aux ménages à revenu moyen et ne doivent pas se faire au détriment du logement hors marché.", "Accélération de la construction (2.5) : l’effet n’est positif que si les logements sont réellement abordables, le restent dans le temps et sont occupés par des résidents. La simplification des processus ne doit pas affaiblir les exigences de qualité, d’accessibilité et de protection des milieux naturels.", "Possibles résistances citoyennes à la densification résidentielle.", "Pressions accrues sur le stationnement, les infrastructures et certains services municipaux.", "Risque de perte de qualité du milieu de vie si les projets de densification ne sont pas accompagnés d'espaces verts, d'aménagements conviviaux et d'infrastructures adéquates."], "recoIntro": "Neuf recommandations, reprises sans reformulation.", "recos": [{"code": "R2.1", "couleur": "", "titre": "Fixer des cibles quantitatives et un échéancier pour le logement social et abordable.", "contexte": "La politique indique vouloir développer l’offre de logements sociaux et abordables pour rattraper le retard accumulé. Toutefois, elle ne précise aucune cible quantitative ou d’échéancier précis :", "moyens": ["Intégrer des objectifs et un échéancier clair dans la politique permettrait une meilleure imputabilité.", "Viser un minimum de 20 % de logements abordables, sociaux ou familiaux parmi les nouveaux logements construits sur l’ensemble du territoire, en mettant en place des mesures pour atteindre cette proportion."]}, {"code": "R2.2", "couleur": "", "titre": "Traduire l’accessibilité universelle en normes réglementaires et non seulement en intentions.", "contexte": "Le plan mentionne peu explicitement l’accessibilité universelle :", "moyens": ["Concevoir des immeubles répondant aux normes de l’accessibilité universelle et aptes à s’adapter aux besoins des aînés et des personnes vivant avec une limitation d’activité.", "Intégrer au règlement de zonage et au futur plan directeur de design urbain des normes d’accessibilité universelle pour les parcours piétons vers les entrées des commerces, les accès aux parcs et aux plans d’eau (plage municipale, lac Mercier, rivière du Diable), les toilettes publiques et les arrêts de transport collectif.", "Prévoir que tout réaménagement subventionné de façade commerciale (moyens 4.2.4, 4.2.5, 5.2.8) soit conditionnel à la mise en accessibilité du seuil d’entrée."]}, {"code": "R2.3", "couleur": "", "titre": "Limiter le nombre de logements à louer à court terme par les entreprises de location dans certains secteurs de la ville.", "contexte": "", "moyens": []}, {"code": "R2.4", "couleur": "", "titre": "Moduler les redevances au développement et les frais municipaux pour les projets de développement de logements abordables et sociaux.", "contexte": "Offrir un éventail de solutions :", "moyens": ["Congé de taxes.", "Allègement réglementaire.", "Soutien des professionnels municipaux aux projets de développement de logements abordables et sociaux.", "Contribution de la ville pour défrayer une partie des frais de raccordement (aqueduc, égouts)."]}, {"code": "R2.5", "couleur": "", "titre": "Évaluer la possibilité d’adopter un règlement de zonage différencié.", "contexte": "", "moyens": []}, {"code": "R2.6", "couleur": "", "titre": "Réserver une part fixe des revenus de la taxe sur les résidences de tourisme au fonds pour le logement social et abordable (moyen 2.4.3).", "contexte": "Bien que le maintien de la taxe sur les résidences de tourisme soit mentionné comme source de revenus, la politique ne s’engage sur aucun montant initial ou pourcentage budgétaire fixe dédié à la réalisation de projets de logements hors marché spéculatif (réserve financière) :", "moyens": ["Inscrire dans la politique un montant initial ou un pourcentage annuel des revenus de cette taxe versé à une réserve financière dédiée aux projets de logements hors marché."]}, {"code": "R2.7", "couleur": "", "titre": "Adopter des seuils minimaux de densité différenciés.", "contexte": "Le plan d’urbanisme évoque la densification douce (moyen 2.1) et la concentration au centre-ville (moyen 2.2), mais ne fixe aucun seuil minimal de densité résidentielle nette chiffré :", "moyens": ["Fixer des seuils planchers différenciés (log/ha nets), plus élevés au centre-ville, intermédiaires dans les secteurs à consolider desservis par l’aqueduc/égout, et adaptés au Village afin de préserver son cachet.", "Exiger que tout empiètement futur dans un milieu naturel ou agricole soit précédé d’une démonstration que les efforts de densification et de requalification ont été réalisés."]}, {"code": "R2.8", "couleur": "", "titre": "Prioriser l’implantation des logements abordables et pour personnes aînées à distance de marche des services, des parcs et des arrêts de transport collectif.", "contexte": "Le plan veut concentrer les nouveaux logements au centre-ville (2.2), mais ne précise pas où implanter en priorité ceux destinés aux ménages qui en ont le plus besoin :", "moyens": ["Prioriser, dans la réserve foncière (2.4.3) et le soutien aux projets (2.5), les terrains situés à distance de marche des services de proximité, des parcs et des arrêts de transport collectif.", "Arrimer ces choix au réseau de parcours actifs sécuritaires prévu à la stratégie 3 (R3.1)."]}, {"code": "R2.9", "couleur": "", "titre": "Prévenir l’effet de barrière et l’étalement par un plafond d’expansion du périmètre d’urbanisation.", "contexte": "", "moyens": ["Inscrire au plan l’engagement qu’aucune extension du PU ne sera autorisée tant que les terrains vacants ou sous-valorisés identifiés au centre-ville (moyen 2.2.1) n’auront pas atteint un taux d’occupation cible."]}], "indIntro": "Neuf pistes d’indicateurs, avec leur source possible et la tendance favorable à la santé.", "indicateurs": [{"indicateur": "Proportion des nouveaux logements construits à l’intérieur du périmètre d’urbanisation existant", "source": "Permis, cadastre et données géomatiques municipales", "frequence": "", "ventilation": "", "direction": "↑", "unite": ""}, {"indicateur": "Proportion des logements abordables, sociaux ou familiaux parmi les nouveaux logements", "source": "Données municipales et organismes d’habitation", "frequence": "", "ventilation": "", "direction": "↑", "unite": ""}, {"indicateur": "Nombre net de logements hors marché créés annuellement", "source": "Données municipales et organismes d’habitation", "frequence": "", "ventilation": "", "direction": "↑", "unite": ""}, {"indicateur": "Proportion des nouveaux projets résidentiels conformes aux normes d’accessibilité universelle", "source": "Permis, plans et inspections municipales", "frequence": "", "ventilation": "", "direction": "↑", "unite": ""}, {"indicateur": "Proportion de logements consacrés à la location à court terme pour l’ensemble du territoire", "source": "Permis et données municipales", "frequence": "", "ventilation": "", "direction": "↓", "unite": ""}, {"indicateur": "Densité résidentielle nette des nouveaux projets (logements/ha) par secteur", "source": "Permis, cadastre et données géomatiques municipales", "frequence": "", "ventilation": "", "direction": "↑", "unite": ""}, {"indicateur": "Proportion des ménages consacrant 30 % ou plus de leur revenu aux frais de logement", "source": "Recensement", "frequence": "", "ventilation": "", "direction": "↓", "unite": ""}, {"indicateur": "Taux d’inoccupation des logements locatifs", "source": "SCHL; Institut de la statistique du Québec", "frequence": "", "ventilation": "", "direction": "↑", "unite": ""}, {"indicateur": "Proportion des logements occupés par un ménage résident", "source": "Rôle d’évaluation foncière", "frequence": "", "ventilation": "", "direction": "↑", "unite": ""}], "plusLoin": "Cette section présente des repères pratiques sur un outil évoqué dans les recommandations, à l’intention des équipes municipales qui voudraient le mettre en œuvre.\n# Le zonage différencié, en bref (R2.5)\nLa Loi sur l’aménagement et l’urbanisme (art. 145.35.5 à 145.35.7) permet à une municipalité d’adopter un règlement de zonage différencié. Ce règlement prévoit des normes de remplacement plus permissives, par exemple plus d’étages ou plus de superficie de plancher, réservées aux projets composés principalement de logements sociaux ou abordables. Il peut viser, entre autres, les projets de coopératives, d’organismes à but non lucratif ou d’offices d’habitation.\nLe règlement doit garantir le caractère social ou abordable des logements pendant une durée déterminée, par exemple des loyers sous 80 % du loyer médian du marché local pendant au moins 20 ans. Les usages permis ne peuvent pas être modifiés. Le permis est délivré par le fonctionnaire responsable, sans passer par le conseil. Les règlements dont le projet est adopté avant le 6 juin 2029 sont exemptés de l’approbation référendaire (art. 181, L.Q. 2024, c. 24).\nIl ne faut pas le confondre avec le zonage incitatif, un outil que la Ville pourrait mobiliser pour mettre en œuvre le moyen 2.2.2 : celui-ci accorde des normes plus permissives à tout projet, en échange d’une contribution du promoteur.\n# Références\nGouvernement du Québec, La prise de décision en urbanisme : [Règlement de zonage différencié](https://www.quebec.ca/habitation-territoire/amenagement-developpement-territoires/amenagement-territoire/guide-prise-decision-urbanisme/reglementation/reglement-zonage-differencie)\nVille de Montréal, arrondissement du Sud-Ouest : [assemblée publique sur un projet de règlement de zonage différencié](https://montreal.ca/evenements/assemblee-publique-reglement-sur-le-zonage-differencie-113954) (2026; taux d’implantation porté de 50 % à 55 % pour les projets de logements abordables ou sociaux)\n# Sutton mise sur le zonage différencié\nSutton, ville touristique de l'Estrie, a intégré le zonage différencié à ses nouveaux règlements d'urbanisme, adoptés en 2026. L'outil sert deux objectifs de son plan d'urbanisme : densifier le cœur villageois et garantir l'abordabilité du logement à long terme. Ses normes ont été élaborées avec des organismes d'habitation à but non lucratif de la région. Un cas comparable pour R2.5.\n[Communiqué de la Ville de Sutton](https://sutton.ca/la-ville-de-sutton-adopte-ses-nouveaux-reglements-durbanisme/)", "sources": [{"libelle": "", "url": "https://statistique.quebec.ca/docs-ken/vitrine/occupation-vitalite-territoire/documents/habitation_01.xlsx"}, {"libelle": "", "url": "https://www150.statcan.gc.ca/n1/pub/11-621-m/11-621-m2023008-fra.htm"}, {"libelle": "", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/parc_non_permanent_tremblant.html"}, {"libelle": "", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/population_pointe_tremblant.html"}, {"libelle": "Projections de ménages des municipalités", "url": "https://statistique.quebec.ca/fr/document/projections-de-menages-municipalites"}, {"libelle": "", "url": "https://eranlorob-dotcom.github.io/CISSSLAURENTIDES/EISTremblant/logement_mont_tremblant.html"}, {"libelle": "", "url": "https://www12.statcan.gc.ca/census-recensement/2021/dp-pd/prof/index.cfm?Lang=F"}, {"libelle": "", "url": "https://vdmt.ca/storage/app/media/informations-municipales/administration-et-finances/plans-et-politiques/20241015rapportfinaletatsitutation.pdf"}, {"libelle": "", "url": "https://www.santelaurentides.gouv.qc.ca/fileadmin/internet/cisss_laurentides/Sante_Publique/Donnees_sur_la_population/Fiches_Regard_Sante_Plus/2023/Fiche_Sante__Le_logement_maj_2023.pdf"}, {"libelle": "", "url": "https://www.inspq.qc.ca/publications/3262"}, {"libelle": "", "url": "https://doi.org/10.1080/00343404.2026.2670360"}, {"libelle": "", "url": "https://catalog.results4america.org/programs/inclusionary-zoning-policies"}, {"libelle": "", "url": "https://multifamily.fanniemae.com/media/14236"}, {"libelle": "", "url": "https://ocpm.qc.ca/sites/default/files/pdf/P104/3-1-1_reglementmixite_resumecommunications_juin2019.pdf"}, {"libelle": "", "url": "https://www.finances.gouv.qc.ca/ministere/outils_services/consultations_publiques/consultations_prebudgetaires/2023-2024/memoires/Memoire_CQHCS.pdf"}, {"libelle": "", "url": "http://collections.banq.qc.ca/ark:/52327/bs2945967"}, {"libelle": "", "url": "https://www.nrdc.org/sites/default/files/citizens_guide_LEED%20ND.pdf"}, {"libelle": "", "url": "https://www.inspq.qc.ca/publications/2864"}], "retour": "383f99f94ce3407f883a4ce04f065a06", "pdf": "/documents/EIS_Mont-Tremblant.pdf"}/*FIN*/;
+try{ var sv=JSON.parse(localStorage.getItem(KEY)||"null"); if(sv) D=migrate(sv); }catch(e){}
 buildForm();
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
