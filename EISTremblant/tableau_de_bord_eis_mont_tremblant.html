@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -793,6 +794,9 @@ header{grid-area:head;display:flex;align-items:center;gap:.9rem;padding:.6rem 1r
 body{grid-template-columns:13rem 1fr 21rem;grid-template-rows:auto auto 1fr 14rem;
   grid-template-areas:"head head head" "note note note" "kpi map side" "kpi charts lg";gap:0}
 body.panel-off{grid-template-columns:13rem 1fr 0}
+/* Petits écrans (hauteur) : hauteur minimale de la mise en page, la page défile au lieu d'écraser la carte et les tuiles */
+html{overflow-y:auto;overflow-x:hidden}
+@media (min-width:801px){body{height:max(100%,46rem)}}
 body.panel-off #side,body.panel-off #lg{display:none}
 #kpis{grid-area:kpi;display:grid;grid-template-rows:repeat(4,1fr);gap:.5rem;padding:.5rem;background:var(--bg);border-right:1px solid var(--line);min-height:0}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.4rem;min-height:0}
@@ -868,6 +872,7 @@ body{grid-template-rows:auto 0 1fr 15rem}
 .leaflet-tooltip.lbl{background:none;border:0;color:var(--warn)}
 .nolbl .lbl{display:none}
 @media (max-width:800px){.hb .r.wide{grid-template-columns:8rem 1fr 4.6rem}}
+@media (min-width:801px) and (max-width:1400px){.hb .r,.hb .r.wide{grid-template-columns:minmax(0,7.2rem) minmax(1.5rem,1fr) auto;gap:.4rem;font-size:.75rem;line-height:1.15}}
 </style>
 </head>
 <body>
