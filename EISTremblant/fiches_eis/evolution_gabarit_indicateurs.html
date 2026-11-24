@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Évolution du gabarit · Partie 6 « Comment savoir si ça fonctionne » · ÉIS Mont-Tremblant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#140C74;--ink:#070620;--card:#11103e;--teal:#21AEAD;--blue:#0482D3;--lav:#a8a2ee;--amber:#e6a23c;--txt:#1f2240;--soft:#5b5f86;--line:#d9dbea;--bg:#f4f5fb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:'Source Sans 3',system-ui,sans-serif;line-height:1.55}
+.mono{font-family:'JetBrains Mono',Consolas,monospace}
+header{background:var(--ink);color:#eef0fb;padding:2.6rem 1.5rem 2.2rem}
+.wrap{max-width:62rem;margin:0 auto}
+.kicker{font-size:.78rem;color:#8b8fc4;letter-spacing:.04em;margin:0 0 .5rem}
+h1{font-size:2rem;line-height:1.15;font-weight:800;margin:0 0 .7rem}
+header p{color:#c4c8ea;font-size:1.08rem;max-width:44rem;margin:0}
+.steps{display:flex;gap:.6rem;flex-wrap:wrap;margin:1.8rem 0 0}
+.steps a{flex:1 1 13rem;display:block;text-decoration:none;color:#eef0fb;background:var(--card);border-top:3px solid var(--c);padding:.8rem 1rem}
+.steps a span{display:block;font-size:.72rem;color:var(--c)}
+.steps a b{font-size:1.02rem}
+.steps a small{display:block;color:#8b8fc4;font-size:.85rem}
+main{padding:0 1.5rem 3rem}
+section{margin:2.8rem 0 0}
+.shead{display:flex;align-items:baseline;gap:.8rem;margin:0 0 .3rem}
+.num{font-size:.8rem;font-weight:600;color:#fff;background:var(--c);padding:.15rem .5rem}
+h2{font-size:1.5rem;font-weight:800;margin:0;color:var(--navy)}
+.lead{color:var(--soft);margin:0 0 1.2rem;max-width:46rem}
+.grid2{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(16rem,1fr);gap:1.4rem;align-items:start}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.paper{background:#fff;border:1px solid var(--line);box-shadow:0 2px 10px rgba(20,12,116,.06);padding:1.4rem 1.5rem;font-family:Calibri,Arial,sans-serif;font-size:.86rem;overflow-x:auto}
+.paper .ptitle{font-family:Arial,sans-serif;font-size:1.35rem;font-weight:700;color:var(--navy);margin:0 0 .6rem}
+.paper .pmail{color:#1f4e9c;margin:0 0 .2rem}
+.paper table{border-collapse:collapse;width:100%;min-width:34rem}
+.paper td,.paper th{border:1px solid #cfd0e6;padding:.35rem .5rem;vertical-align:top;text-align:left}
+.v1 th{background:#ecebf7;font-weight:700}
+.prop table td,.prop table th{border:2px double #333}
+.prop th{font-weight:700;text-align:center}
+.c{text-align:center}
+.cut{color:#8a8ca8;font-style:italic;text-align:center;border-style:dashed!important}
+.note{background:#fff;border-left:4px solid var(--c);padding:1rem 1.2rem}
+.note h3{font-size:.8rem;margin:0 0 .5rem;color:var(--c);font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.note ul{margin:0;padding-left:1.1rem}
+.note li{margin:0 0 .45rem}
+.screen{max-width:52rem;background:var(--ink);padding:1.6rem 1.5rem;border:1px solid #1d1b50;font-family:'Source Sans 3',sans-serif}
+.screen .pk{display:block;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:#8b8fc4;margin:0 0 .35rem}
+.screen h4{font-size:1.4rem;font-weight:800;color:#eef0fb;margin:0 0 .8rem;line-height:1.22}
+.screen p.i{color:#c4c8ea;font-size:1.04rem;line-height:1.6;margin:0 0 1rem;max-width:40rem}
+.corr{width:100%;border-collapse:collapse;background:#fff;font-size:.95rem}
+.corr th{background:var(--navy);color:#fff;text-align:left;padding:.55rem .7rem;font-weight:600}
+.corr td{border-bottom:1px solid var(--line);padding:.5rem .7rem;vertical-align:top}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:.1rem .5rem;border-radius:2px}
+.t-ok{background:#e1f5f4;color:#127574}.t-ref{background:#e4eefb;color:#0b5aa0}.t-reg{background:#efedfc;color:#5446b8}.t-out{background:#fbeede;color:#a3600c}
+.muted{color:#9a9cb8}
+.arrow{text-align:center;color:var(--soft);font-size:1.4rem;margin:1.6rem 0 0}
+.valider{background:var(--ink);color:#eef0fb;padding:1.6rem 1.6rem 1.2rem;margin-top:1rem}
+.valider h2{color:#eef0fb}
+.valider ol{padding-left:1.3rem;margin:.8rem 0 0}
+.valider li{margin:0 0 .8rem;color:#c4c8ea}
+.valider li b{color:#eef0fb}
+.valider .q{display:block;color:var(--teal);font-size:.95rem;margin-top:.15rem}
+footer{color:var(--soft);font-size:.85rem;padding:1.5rem;text-align:center}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <p class="kicker mono">ÉIS Mont-Tremblant · Gabarit des fiches-stratégies · Partie 6</p>
+  <h1>« Comment savoir si ça fonctionne » : évolution du tableau des indicateurs</h1>
+  <p>Proposition soumise à l’équipe ÉIS pour discussion et approbation. La fiche 2 Habitation sert d’exemple pour suivre le tableau du gabarit Word initial jusqu’à sa version web.</p>
+  <nav class="steps">
+    <a href="#v1" style="--c:#8b8fc4"><span class="mono">ÉTAPE 1</span><b>Version 1</b><small>Gabarit Word initial · 5 colonnes</small></a>
+    <a href="#v2" style="--c:#e6a23c"><span class="mono">ÉTAPE 2</span><b>Proposition</b><small>Tableau simplifié · 3 colonnes</small></a>
+    <a href="#v3" style="--c:#21AEAD"><span class="mono">ÉTAPE 3</span><b>Version web</b><small>Fiche HTML · cartes</small></a>
+  </nav>
+</div></header>
+<main><div class="wrap">
+
+<section id="v1" style="--c:#8b8fc4">
+  <div class="shead"><span class="num mono">1</span><h2>Version 1 : le gabarit Word initial</h2></div>
+  <p class="lead">Un tableau à cinq colonnes, avec neuf indicateurs pour la fiche Habitation.</p>
+  <div class="grid2">
+    <div class="paper v1">
+      <p class="ptitle">Comment savoir si ça fonctionne</p>
+      <table>
+        <tr><th>Indicateur</th><th>Source</th><th>Fréquence</th><th>Ventilation</th><th>Direction attendue</th></tr>
+<tr><td>1. Proportion des nouveaux logements construits &#224; l&#8217;int&#233;rieur du p&#233;rim&#232;tre d&#8217;urbanisation existant</td><td>Permis, cadastre et donn&#233;es g&#233;omatiques municipales</td><td>Bisannuelle</td><td>Secteur g&#233;ographique</td><td>&#8593;</td></tr>
+<tr><td>2. Proportion des logements abordables, sociaux ou familiaux parmi les nouveaux logements</td><td>Donn&#233;es municipales et organismes d&#8217;habitation</td><td>Bisannuelle</td><td>Secteur g&#233;ographique; type de logement</td><td>&#8593;</td></tr>
+<tr><td>3. Nombre net de logements hors march&#233; cr&#233;&#233;s annuellement</td><td>Donn&#233;es municipales et organismes d&#8217;habitation</td><td>Annuelle</td><td>Secteur g&#233;ographique; type de logement hors march&#233;</td><td>&#8593;</td></tr>
+<tr><td>4. Proportion des nouveaux projets r&#233;sidentiels conformes aux normes d&#8217;accessibilit&#233; universelle</td><td>Permis, plans et inspections municipales</td><td>Annuelle</td><td>Secteur g&#233;ographique; type de projet r&#233;sidentiel</td><td>&#8593; vers 100 %</td></tr>
+<tr><td>5. Proportion de logements consacr&#233;s &#224; la location &#224; court terme pour l&#8217;ensemble du territoire</td><td>Permis et donn&#233;es municipales</td><td>Annuelle</td><td>Ensemble du secteur</td><td>&#8595;</td></tr>
+        <tr><td colspan="5" class="cut">… quatre autres indicateurs (6 à 9)</td></tr>
+      </table>
+    </div>
+    <div class="note">
+      <h3>Ce qu’on observe</h3>
+      <ul>
+        <li>La <b>fréquence</b> et la <b>ventilation</b> fixent des choix de suivi qui relèvent de la Ville, comme la colonne « Responsable » retirée en octobre.</li>
+        <li>La <b>direction attendue</b> mélange parfois une tendance et une cible (« ↑ vers 100 % »).</li>
+        <li>Neuf indicateurs, dont certains se recoupent (logements abordables et logements hors marché).</li>
+        <li>Le tableau se coupe d’une page à l’autre et se lit mal sur un téléphone.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<p class="arrow">&#8595;</p>
+
+<section id="v2" style="--c:#e6a23c">
+  <div class="shead"><span class="num mono">2</span><h2>La proposition : un tableau simplifié</h2></div>
+  <p class="lead">Trois colonnes, six pistes et une phrase qui rappelle que le choix final revient à la Ville.</p>
+  <div class="grid2">
+    <div class="paper prop">
+      <p class="pmail">Bonjour,</p>
+      <p class="pmail" style="margin-bottom:1rem">Voici une proposition :</p>
+      <p style="margin:0 0 .8rem">Les indicateurs suivants sont propos&#233;s &#224; titre de pistes pour suivre les effets du plan d&#8217;urbanisme sur la sant&#233;. Il revient &#224; la Ville de retenir ceux qui correspondent &#224; ses priorit&#233;s, aux donn&#233;es dont elle dispose et &#224; sa capacit&#233; de suivi.</p>
+      <table>
+        <tr><th>Piste d’indicateur</th><th>Source possible</th><th>Tendance favorable à la santé</th></tr>
+<tr><td>1. Part des nouveaux logements construits dans le p&#233;rim&#232;tre d&#8217;urbanisation</td><td>Permis et donn&#233;es g&#233;omatiques municipales</td><td class="c">&#8593;</td></tr>
+<tr><td>2. Part des logements abordables, sociaux ou hors march&#233; parmi les nouveaux logements</td><td>Donn&#233;es municipales et organismes d&#8217;habitation</td><td class="c">&#8593;</td></tr>
+<tr><td>3. Part des nouveaux projets r&#233;sidentiels int&#233;grant l&#8217;accessibilit&#233; universelle</td><td>Permis et inspections municipales</td><td class="c">&#8593;</td></tr>
+<tr><td>4. Part des logements consacr&#233;s &#224; la location &#224; court terme</td><td>Donn&#233;es municipales</td><td class="c">&#8595;</td></tr>
+<tr><td>5. Densit&#233; r&#233;sidentielle nette des nouveaux projets</td><td>Permis et donn&#233;es g&#233;omatiques municipales</td><td class="c">&#8593;</td></tr>
+<tr><td>6. Part des m&#233;nages consacrant 30 % ou plus de leur revenu au logement</td><td>Recensement</td><td class="c">&#8595;</td></tr>
+      </table>
+    </div>
+    <div class="note">
+      <h3>Ce qui change</h3>
+      <ul>
+        <li><b>Cinq colonnes deviennent trois.</b> On retire la fréquence et la ventilation : la Ville les fixera selon ses données et sa capacité de suivi.</li>
+        <li><b>« Indicateur » devient « Piste d’indicateur ».</b> Ce sont des suggestions, pas un tableau de bord imposé.</li>
+        <li><b>« Direction attendue » devient « Tendance favorable à la santé ».</b> On dit dans quel sens la santé y gagne, sans cible chiffrée.</li>
+        <li><b>Une phrase d’introduction type</b> précise que la Ville retient les indicateurs qui lui conviennent.</li>
+        <li><b>Neuf pistes deviennent six</b>, formulées plus simplement (« Part des… »). La correspondance est détaillée ci-dessous.</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="font-size:1.05rem;color:var(--navy);margin:1.8rem 0 .6rem">Correspondance des pistes (fiche 2 Habitation)</h3>
+  <div style="overflow-x:auto"><table class="corr">
+    <tr><th>Version 1</th><th>Proposition</th><th>Changement</th></tr>
+<tr><td>1. Nouveaux logements &#224; l&#8217;int&#233;rieur du PU existant</td><td>1. Nouveaux logements dans le PU</td><td><span class="tag t-ref">Reformulé</span></td></tr>
+<tr><td>2. Logements abordables, sociaux ou familiaux</td><td rowspan="2">2. Logements abordables, sociaux ou hors march&#233;</td><td rowspan="2"><span class="tag t-reg">Regroupé</span></td></tr>
+<tr><td>3. Nombre net de logements hors march&#233;</td></tr>
+<tr><td>4. Projets conformes &#224; l&#8217;accessibilit&#233; universelle</td><td>3. Projets int&#233;grant l&#8217;accessibilit&#233; universelle</td><td><span class="tag t-ref">Reformulé</span></td></tr>
+<tr><td>5. Location &#224; court terme (ensemble du territoire)</td><td>4. Location &#224; court terme</td><td><span class="tag t-ref">Reformulé</span></td></tr>
+<tr><td>6. Densit&#233; r&#233;sidentielle nette par secteur</td><td>5. Densit&#233; r&#233;sidentielle nette des nouveaux projets</td><td><span class="tag t-ref">Reformulé</span></td></tr>
+<tr><td>7. M&#233;nages consacrant 30 % ou plus au logement</td><td>6. M&#233;nages consacrant 30 % ou plus au logement</td><td><span class="tag t-ok">Conservé</span></td></tr>
+<tr><td>8. Taux d&#8217;inoccupation des logements locatifs</td><td><span class="muted">(aucune)</span></td><td><span class="tag t-out">Retiré</span></td></tr>
+<tr><td>9. Logements occup&#233;s par un m&#233;nage r&#233;sident</td><td><span class="muted">(aucune)</span></td><td><span class="tag t-out">Retiré</span></td></tr>
+  </table></div>
+</section>
+
+<p class="arrow">&#8595;</p>
+
+<section id="v3" style="--c:#21AEAD">
+  <div class="shead"><span class="num mono">3</span><h2>La version web : la proposition en cartes</h2></div>
+  <p class="lead">Le contenu de la proposition est repris mot pour mot. Seule la présentation change : chaque piste devient une carte.</p>
+  <div class="screen">
+    <span class="pk">Partie 6</span>
+    <h4>Comment savoir si ça fonctionne</h4>
+    <p class="i">Les indicateurs suivants sont propos&#233;s &#224; titre de pistes pour suivre les effets du plan d&#8217;urbanisme sur la sant&#233;. Il revient &#224; la Ville de retenir ceux qui correspondent &#224; ses priorit&#233;s, aux donn&#233;es dont elle dispose et &#224; sa capacit&#233; de suivi.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:0.8rem;margin:0;">
+      <div style="background-color:#11103e;border-top:3px solid #21AEAD;padding:1rem 1.15rem 0.95rem;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;margin:0 0 0.75rem;">
+          <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;background-color:rgba(33,174,173,0.16);color:#21AEAD;font-size:1.2rem;font-weight:700;line-height:1;">&#8593;</span>
+          <span style="flex:1 1 auto;font-size:0.82rem;font-weight:600;color:#21AEAD;margin-left:0.6rem;">Hausse favorable &#224; la sant&#233;</span>
+          <span style="flex:0 0 auto;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.78rem;color:#5d60a0;">01</span>
+        </div>
+        <p style="flex:1 1 auto;margin:0 0 0.9rem;font-size:1.02rem;font-weight:700;color:#eef0fb;line-height:1.38;">Part des nouveaux logements construits dans le p&#233;rim&#232;tre d&#8217;urbanisation</p>
+        <div style="border-top:1px solid #23215a;padding-top:0.6rem;">
+          <p style="margin:0 0 0;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:#8b8fc4;">Source possible</p>
+          <p style="margin:0.1rem 0 0;font-size:0.88rem;color:#c4c8ea;line-height:1.45;">Permis et donn&#233;es g&#233;omatiques municipales</p>
+        </div>
+      </div>
+      <div style="background-color:#11103e;border-top:3px solid #21AEAD;padding:1rem 1.15rem 0.95rem;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;margin:0 0 0.75rem;">
+          <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;background-color:rgba(33,174,173,0.16);color:#21AEAD;font-size:1.2rem;font-weight:700;line-height:1;">&#8593;</span>
+          <span style="flex:1 1 auto;font-size:0.82rem;font-weight:600;color:#21AEAD;margin-left:0.6rem;">Hausse favorable &#224; la sant&#233;</span>
+          <span style="flex:0 0 auto;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.78rem;color:#5d60a0;">02</span>
+        </div>
+        <p style="flex:1 1 auto;margin:0 0 0.9rem;font-size:1.02rem;font-weight:700;color:#eef0fb;line-height:1.38;">Part des logements abordables, sociaux ou hors march&#233; parmi les nouveaux logements</p>
+        <div style="border-top:1px solid #23215a;padding-top:0.6rem;">
+          <p style="margin:0 0 0;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:#8b8fc4;">Source possible</p>
+          <p style="margin:0.1rem 0 0;font-size:0.88rem;color:#c4c8ea;line-height:1.45;">Donn&#233;es municipales et organismes d&#8217;habitation</p>
+        </div>
+      </div>
+      <div style="background-color:#11103e;border-top:3px solid #21AEAD;padding:1rem 1.15rem 0.95rem;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;margin:0 0 0.75rem;">
+          <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;background-color:rgba(33,174,173,0.16);color:#21AEAD;font-size:1.2rem;font-weight:700;line-height:1;">&#8593;</span>
+          <span style="flex:1 1 auto;font-size:0.82rem;font-weight:600;color:#21AEAD;margin-left:0.6rem;">Hausse favorable &#224; la sant&#233;</span>
+          <span style="flex:0 0 auto;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.78rem;color:#5d60a0;">03</span>
+        </div>
+        <p style="flex:1 1 auto;margin:0 0 0.9rem;font-size:1.02rem;font-weight:700;color:#eef0fb;line-height:1.38;">Part des nouveaux projets r&#233;sidentiels int&#233;grant l&#8217;accessibilit&#233; universelle</p>
+        <div style="border-top:1px solid #23215a;padding-top:0.6rem;">
+          <p style="margin:0 0 0;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:#8b8fc4;">Source possible</p>
+          <p style="margin:0.1rem 0 0;font-size:0.88rem;color:#c4c8ea;line-height:1.45;">Permis et inspections municipales</p>
+        </div>
+      </div>
+      <div style="background-color:#11103e;border-top:3px solid #a8a2ee;padding:1rem 1.15rem 0.95rem;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;margin:0 0 0.75rem;">
+          <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;background-color:rgba(168,162,238,0.16);color:#a8a2ee;font-size:1.2rem;font-weight:700;line-height:1;">&#8595;</span>
+          <span style="flex:1 1 auto;font-size:0.82rem;font-weight:600;color:#a8a2ee;margin-left:0.6rem;">Baisse favorable &#224; la sant&#233;</span>
+          <span style="flex:0 0 auto;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.78rem;color:#5d60a0;">04</span>
+        </div>
+        <p style="flex:1 1 auto;margin:0 0 0.9rem;font-size:1.02rem;font-weight:700;color:#eef0fb;line-height:1.38;">Part des logements consacr&#233;s &#224; la location &#224; court terme</p>
+        <div style="border-top:1px solid #23215a;padding-top:0.6rem;">
+          <p style="margin:0 0 0;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:#8b8fc4;">Source possible</p>
+          <p style="margin:0.1rem 0 0;font-size:0.88rem;color:#c4c8ea;line-height:1.45;">Donn&#233;es municipales</p>
+        </div>
+      </div>
+      <div style="background-color:#11103e;border-top:3px solid #21AEAD;padding:1rem 1.15rem 0.95rem;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;margin:0 0 0.75rem;">
+          <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;background-color:rgba(33,174,173,0.16);color:#21AEAD;font-size:1.2rem;font-weight:700;line-height:1;">&#8593;</span>
+          <span style="flex:1 1 auto;font-size:0.82rem;font-weight:600;color:#21AEAD;margin-left:0.6rem;">Hausse favorable &#224; la sant&#233;</span>
+          <span style="flex:0 0 auto;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.78rem;color:#5d60a0;">05</span>
+        </div>
+        <p style="flex:1 1 auto;margin:0 0 0.9rem;font-size:1.02rem;font-weight:700;color:#eef0fb;line-height:1.38;">Densit&#233; r&#233;sidentielle nette des nouveaux projets</p>
+        <div style="border-top:1px solid #23215a;padding-top:0.6rem;">
+          <p style="margin:0 0 0;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:#8b8fc4;">Source possible</p>
+          <p style="margin:0.1rem 0 0;font-size:0.88rem;color:#c4c8ea;line-height:1.45;">Permis et donn&#233;es g&#233;omatiques municipales</p>
+        </div>
+      </div>
+      <div style="background-color:#11103e;border-top:3px solid #a8a2ee;padding:1rem 1.15rem 0.95rem;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;margin:0 0 0.75rem;">
+          <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;background-color:rgba(168,162,238,0.16);color:#a8a2ee;font-size:1.2rem;font-weight:700;line-height:1;">&#8595;</span>
+          <span style="flex:1 1 auto;font-size:0.82rem;font-weight:600;color:#a8a2ee;margin-left:0.6rem;">Baisse favorable &#224; la sant&#233;</span>
+          <span style="flex:0 0 auto;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.78rem;color:#5d60a0;">06</span>
+        </div>
+        <p style="flex:1 1 auto;margin:0 0 0.9rem;font-size:1.02rem;font-weight:700;color:#eef0fb;line-height:1.38;">Part des m&#233;nages consacrant 30 % ou plus de leur revenu au logement</p>
+        <div style="border-top:1px solid #23215a;padding-top:0.6rem;">
+          <p style="margin:0 0 0;font-family:'JetBrains Mono',Consolas,monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:#8b8fc4;">Source possible</p>
+          <p style="margin:0.1rem 0 0;font-size:0.88rem;color:#c4c8ea;line-height:1.45;">Recensement</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="note" style="margin-top:1.2rem">
+    <h3>Choix de présentation</h3>
+    <ul>
+      <li><b>Des cartes plutôt qu’un tableau :</b> deux colonnes à l’écran, une seule sur téléphone, sans défilement horizontal.</li>
+      <li><b>La tendance en tête de carte :</b> une flèche et le libellé « Hausse » ou « Baisse favorable à la santé ». Hausse en sarcelle, baisse en lavande; pas de vert ni de rouge, puisque les deux sens sont favorables.</li>
+      <li><b>La source en pied de carte,</b> et le numéro de la piste en haut à droite pour s’y référer en réunion.</li>
+      <li><b>Produit automatiquement</b> par l’atelier des fiches à partir du tableau Word à trois colonnes. Une précision ajoutée après la flèche dans le Word (p. ex. « ↑ vers 100 % ») s’affiche entre parenthèses.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="valider">
+    <h2>À valider avec l’équipe</h2>
+    <ol>
+      <li><b>Adopter le tableau à trois colonnes</b> (piste d’indicateur, source possible, tendance favorable à la santé) dans le gabarit Word de toutes les fiches.<span class="q">Est-ce que des colonnes vous manquent?</span></li>
+      <li><b>Utiliser la même phrase d’introduction</b> dans toutes les fiches. L’atelier l’ajoute d’office si la fiche n’en a pas.<span class="q">La formulation vous convient-elle?</span></li>
+      <li><b>Présenter les pistes en cartes</b> dans la version web des fiches.<span class="q">Préférez-vous les cartes ou un tableau?</span></li>
+      <li><b>Ajuster les fiches déjà rédigées</b> sur l’ancien gabarit : la fréquence et la ventilation n’y seraient plus affichées.<span class="q">Qui souhaite revoir ses pistes d’indicateurs?</span></li>
+    </ol>
+  </div>
+</section>
+
+</div></main>
+<footer>Direction de santé publique · Santé Québec Laurentides · ÉIS du plan d’urbanisme de Mont-Tremblant · Document de travail, novembre 2026</footer>
+</body></html>
